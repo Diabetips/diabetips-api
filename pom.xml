@@ -18,8 +18,21 @@
 
     <properties>
         <java.version>11</java.version>
-        <spring.profiles.active>local</spring.profiles.active>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>no-test</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+            <activation>
+                <file>
+                    <missing>src/main/resources/application-local.properties</missing>
+                </file>
+            </activation>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -86,7 +99,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-Dspring.profiles.active=${spring.profiles.active}</argLine>
+                    <argLine>-Dspring.profiles.active=local</argLine>
                 </configuration>
             </plugin>
         </plugins>
