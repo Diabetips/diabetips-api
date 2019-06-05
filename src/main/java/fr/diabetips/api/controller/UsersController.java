@@ -71,10 +71,15 @@ public class UsersController {
      * @param uid the uid of the user to delete
      */
     @DeleteMapping(path = "/v1/users/{uid}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable UUID uid) {
         usersService.deleteUser(uid);
     }
 
+    /**
+     * Reset a user's password
+     * @param u the user's email wrapped in a User object
+     */
     @PostMapping(path = "/v1/reset-password")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void resetPassword(@RequestBody User u) {

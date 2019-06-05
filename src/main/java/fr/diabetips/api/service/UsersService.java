@@ -49,7 +49,7 @@ public class UsersService {
     }
 
     public List<User> getAllUsers(Pageable p) {
-        return usersRepository.findAll(p).getContent();
+        return usersRepository.findAllByDeletedFalse(p).getContent();
     }
 
     public User registerUser(User u) {
@@ -64,7 +64,7 @@ public class UsersService {
     }
 
     public User getUser(UUID uid) {
-        Optional<User> optionalUser = usersRepository.findByUid(uid);
+        Optional<User> optionalUser = usersRepository.findByUidAndDeletedFalse(uid);
         if (optionalUser.isEmpty())
             throw new ApiException(ApiError.USER_NOT_FOUND, "User '" + uid + "' not found");
         return optionalUser.get();
@@ -90,41 +90,44 @@ public class UsersService {
     }
 
     public void resetUserPassword(User email) {
-        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        Set<ConstraintViolation<User>> violations = validator.validateProperty(email, "email");
-        if (!violations.isEmpty())
-            return;
+        Thread t = new Thread(() -> {
+            Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+            Set<ConstraintViolation<User>> violations = validator.validateProperty(email, "email");
+            if (!violations.isEmpty())
+                return;
 
-        Optional<User> optionalUser = usersRepository.findByEmailAndDeletedFalse(email.getEmail());
-        if (optionalUser.isEmpty())
-            return;
-        User u = optionalUser.get();
+            Optional<User> optionalUser = usersRepository.findByEmailAndDeletedFalse(email.getEmail());
+            if (optionalUser.isEmpty())
+                return;
+            User u = optionalUser.get();
 
-        String newPassword = generateRandomPassword(RANDOM_PASSWORD_LENGTH);
+            String newPassword = generateRandomPassword(RANDOM_PASSWORD_LENGTH);
 
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            message.setFrom(
-                    new InternetAddress(mailFrom, "Diabetips"));
-            message.setRecipients(Message.RecipientType.TO, u.getEmail());
-            message.setSubject("Reset your password");
-            String template =
-                    "Hi %s,<br>" +
-                    "You've recently requested to reset your password for your Diabetips account.<br>" +
-                    "Here is your new password: <pre>%s</pre>" +
-                    "Change it as soon as possible!<br><br>" +
-                    "Cheers,<br>" +
-                    "The Diabeteam";
-            message.setText(String.format(template, u.getFirstName(), newPassword), "utf-8", "html");
+            try {
+                MimeMessage message = mailSender.createMimeMessage();
+                message.setFrom(
+                        new InternetAddress(mailFrom, "Diabetips"));
+                message.setRecipients(Message.RecipientType.TO, u.getEmail());
+                message.setSubject("Reset your password");
+                String template =
+                        "Hi %s,<br>" +
+                        "You've recently requested to reset your password for your Diabetips account.<br>" +
+                        "Here is your new password: <pre>%s</pre>" +
+                        "Change it as soon as possible!<br><br>" +
+                        "Cheers,<br>" +
+                        "The Diabeteam";
+                message.setText(String.format(template, u.getFirstName(), newPassword), "utf-8", "html");
 
-            mailSender.send(message);
-        } catch (MessagingException | UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return;
-        }
+                mailSender.send(message);
+            } catch (MessagingException | UnsupportedEncodingException e) {
+                e.printStackTrace();
+                return;
+            }
 
-        u.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
-        usersRepository.save(u);
+            u.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+            usersRepository.save(u);
+        });
+        t.start();
     }
 
 
