@@ -75,4 +75,10 @@ public class UsersController {
         usersService.deleteUser(uid);
     }
 
+    @PostMapping(path = "/v1/reset-password")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void resetPassword(@RequestBody User u) {
+        usersService.resetUserPassword(u);
+    }
+
 }

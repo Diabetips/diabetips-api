@@ -4,13 +4,21 @@ import fr.diabetips.api.exception.ApiError;
 import fr.diabetips.api.exception.ApiException;
 import fr.diabetips.api.model.User;
 import fr.diabetips.api.repository.UsersRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import java.io.UnsupportedEncodingException;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -20,10 +28,24 @@ import java.util.UUID;
 @Service
 public class UsersService {
 
+    @Value("${diabetips.mailFrom}")
+    private String mailFrom;
+
+    private static final char[] RANDOM_PASSWORD_CHARSET = (
+            "abcdefghijklmnopqrstuvwxyz" +
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+            "0123456789"
+        ).toCharArray();
+
+    private static final int RANDOM_PASSWORD_LENGTH = 12;
+
     private final UsersRepository usersRepository;
 
-    public UsersService(UsersRepository usersRepository) {
+    private final JavaMailSender mailSender;
+
+    public UsersService(UsersRepository usersRepository, JavaMailSender mailSender) {
         this.usersRepository = usersRepository;
+        this.mailSender = mailSender;
     }
 
     public List<User> getAllUsers(Pageable p) {
@@ -63,13 +85,46 @@ public class UsersService {
 
     public void deleteUser(UUID uid) {
         User user = getUser(uid);
-
-        // Actually delete the user for now
-        /*
         user.setDeleted(true);
         usersRepository.save(user);
-        */
-        usersRepository.delete(user);
+    }
+
+    public void resetUserPassword(User email) {
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        Set<ConstraintViolation<User>> violations = validator.validateProperty(email, "email");
+        if (!violations.isEmpty())
+            return;
+
+        Optional<User> optionalUser = usersRepository.findByEmailAndDeletedFalse(email.getEmail());
+        if (optionalUser.isEmpty())
+            return;
+        User u = optionalUser.get();
+
+        String newPassword = generateRandomPassword(RANDOM_PASSWORD_LENGTH);
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            message.setFrom(
+                    new InternetAddress(mailFrom, "Diabetips"));
+            message.setRecipients(Message.RecipientType.TO, u.getEmail());
+            message.setSubject("Reset your password");
+            String template =
+                    "Hi %s,<br>" +
+                    "You've recently requested to reset your password for your Diabetips account.<br>" +
+                    "Here is your new password: <pre>%s</pre>" +
+                    "Change it as soon as possible!<br><br>" +
+                    "Cheers,<br>" +
+                    "The Diabeteam";
+            message.setText(String.format(template, u.getFirstName(), newPassword), "utf-8", "html");
+
+            mailSender.send(message);
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        u.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+        usersRepository.save(u);
     }
 
 
@@ -83,4 +138,13 @@ public class UsersService {
             throw new ApiException(ApiError.VALIDATION_ERROR, "Validation error: " + joiner.toString());
         }
     }
+
+    private String generateRandomPassword(int length) {
+        SecureRandom random = new SecureRandom();
+        StringBuilder builder = new StringBuilder();
+        while (length-- > 0)
+            builder.append(RANDOM_PASSWORD_CHARSET[random.nextInt(RANDOM_PASSWORD_CHARSET.length)]);
+        return builder.toString();
+    }
+
 }
