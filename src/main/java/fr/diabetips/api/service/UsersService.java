@@ -10,19 +10,17 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.StringJoiner;
 import java.util.UUID;
 
 @Service
@@ -39,6 +37,10 @@ public class UsersService {
 
     private static final int RANDOM_PASSWORD_LENGTH = 12;
 
+    private static final String[] PROPS_USER_EMAIL    = { "email" };
+    private static final String[] PROPS_USER_PASSWORD = { "password" };
+    private static final String[] PROPS_USER_PROFILE  = { "firstName", "lastName" };
+
     private final UsersRepository usersRepository;
 
     private final JavaMailSender mailSender;
@@ -53,10 +55,20 @@ public class UsersService {
     }
 
     public User registerUser(User u) {
-        validateUser(u);
+        ServiceUtils.validate(u);
 
         if (usersRepository.countByEmailAndDeletedFalse(u.getEmail()) > 0)
             throw new ApiException(ApiError.EMAIL_ALREADY_TAKEN);
+
+        new Thread(() -> {
+            String template = "<h3>Welcome %s,</h3>" +
+                    "Thanks for registering with Diabetips. We’re thrilled to have you on board!<br><br>" +
+                    "For reference, here's your login information:<br>" +
+                    "<pre>Email: %s</pre><br>" +
+                    "Cheers,<br>" +
+                    "The Diabeteam";
+           sendMailToUser(u, "Welcome to Diabetips!", template, u.getFirstName(), u.getEmail());
+        }).start();
 
         u.setUid(UUID.randomUUID());
         u.setPassword(BCrypt.hashpw(u.getPassword(), BCrypt.gensalt()));
@@ -71,16 +83,50 @@ public class UsersService {
     }
 
     public User updateUser(UUID uid, User newUser) {
-        User oldUser = getUser(uid);
-        validateUser(newUser);
+        User u = getUser(uid);
 
-        // Manually copy properties for now, TODO: check permissions + send confirm email, etc
-        oldUser.setEmail(newUser.getEmail());
-        oldUser.setPassword(BCrypt.hashpw(newUser.getPassword(), BCrypt.gensalt()));
-        oldUser.setFirstName(newUser.getFirstName());
-        oldUser.setLastName(newUser.getLastName());
+        // Process profile changes first to have correct info in emails
+        ServiceUtils.validateNonNull(newUser, PROPS_USER_PROFILE);
+        ServiceUtils.copyNonNullProperties(newUser, u, PROPS_USER_PROFILE);
 
-        return usersRepository.save(oldUser);
+        if (ServiceUtils.isPropertyNonNull(newUser, PROPS_USER_EMAIL) &&
+            !newUser.getEmail().equals(u.getEmail())) {
+            ServiceUtils.validate(newUser, PROPS_USER_EMAIL);
+
+            if (usersRepository.countByEmailAndDeletedFalse(newUser.getEmail()) > 0)
+                throw new ApiException(ApiError.EMAIL_ALREADY_TAKEN);
+
+            new Thread(() ->  {
+                String template = "<h3>Hi %s</h3>" +
+                        "The email for your Diabetips account was changed from %s.<br>" +
+                        "Your new email is %s.<br><br>" +
+                        "If you didn't change your Diabetips account email address, please contact our support to revert this change.<br><br>" +
+                        "Cheers,<br>" +
+                        "The Diabetips Team";
+                sendMailTo(new String[] { u.getEmail(), newUser.getEmail() }, "Email changed",
+                        template, u.getFirstName(), u.getEmail(), newUser.getEmail());
+            }).start();
+
+            ServiceUtils.copyProperties(newUser, u, PROPS_USER_EMAIL);
+        }
+
+        if (ServiceUtils.isPropertyNonNull(newUser, PROPS_USER_PASSWORD) &&
+            !BCrypt.checkpw(newUser.getPassword(), u.getPassword())) {
+            ServiceUtils.validate(newUser, PROPS_USER_PASSWORD);
+
+            new Thread(() ->  {
+                String template = "<h3>Hi %s</h3>" +
+                        "The password for your Diabetips account was recently changed.<br><br>" +
+                        "If you didn't change your Diabetips account password, please contact our support to revert this change.<br><br>" +
+                        "Cheers,<br>" +
+                        "The Diabetips Team";
+                sendMailToUser(u, "Password changed", template, u.getFirstName());
+            }).start();
+
+            u.setPassword(BCrypt.hashpw(newUser.getPassword(), BCrypt.gensalt()));
+        }
+
+        return usersRepository.save(u);
     }
 
     public void deleteUser(UUID uid) {
@@ -90,12 +136,7 @@ public class UsersService {
     }
 
     public void resetUserPassword(User email) {
-        Thread t = new Thread(() -> {
-            Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-            Set<ConstraintViolation<User>> violations = validator.validateProperty(email, "email");
-            if (!violations.isEmpty())
-                return;
-
+        new Thread(() -> {
             Optional<User> optionalUser = usersRepository.findByEmailAndDeletedFalse(email.getEmail());
             if (optionalUser.isEmpty())
                 return;
@@ -103,43 +144,19 @@ public class UsersService {
 
             String newPassword = generateRandomPassword(RANDOM_PASSWORD_LENGTH);
 
-            try {
-                MimeMessage message = mailSender.createMimeMessage();
-                message.setFrom(
-                        new InternetAddress(mailFrom, "Diabetips"));
-                message.setRecipients(Message.RecipientType.TO, u.getEmail());
-                message.setSubject("Reset your password");
-                String template =
-                        "Hi %s,<br>" +
-                        "You've recently requested to reset your password for your Diabetips account.<br>" +
-                        "Here is your new password: <pre>%s</pre>" +
-                        "Change it as soon as possible!<br><br>" +
-                        "Cheers,<br>" +
-                        "The Diabeteam";
-                message.setText(String.format(template, u.getFirstName(), newPassword), "utf-8", "html");
-
-                mailSender.send(message);
-            } catch (MessagingException | UnsupportedEncodingException e) {
-                e.printStackTrace();
+            String template = "<h3>Hi %s,</h3>" +
+                    "You've recently requested to reset your password for your Diabetips account.<br>" +
+                    "Here is your new password:" +
+                    "<pre>%s</pre>" +
+                    "Change it as soon as possible!<br><br>" +
+                    "Cheers,<br>" +
+                    "The Diabetips Team";
+            if (!sendMailToUser(u, "Password reset", template, u.getFirstName(), newPassword))
                 return;
-            }
 
             u.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
             usersRepository.save(u);
-        });
-        t.start();
-    }
-
-
-    private void validateUser(User u) {
-        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        Set<ConstraintViolation<User>> violations = validator.validate(u);
-        if (!violations.isEmpty()) {
-            StringJoiner joiner = new StringJoiner(", ");
-            for (ConstraintViolation<User> violation : violations)
-                joiner.add(violation.getMessage());
-            throw new ApiException(ApiError.VALIDATION_ERROR, "Validation error: " + joiner.toString());
-        }
+        }).start();
     }
 
     private String generateRandomPassword(int length) {
@@ -148,6 +165,29 @@ public class UsersService {
         while (length-- > 0)
             builder.append(RANDOM_PASSWORD_CHARSET[random.nextInt(RANDOM_PASSWORD_CHARSET.length)]);
         return builder.toString();
+    }
+
+    private boolean sendMailToUser(User u, String subject, String template, Object... args) {
+        return sendMailTo(new String[] { u.getEmail() }, subject, template, args);
+    }
+
+    private boolean sendMailTo(String[] to, String subject, String template, Object... args) {
+        try {
+            List<Address> addresses = new ArrayList<>();
+            for (String address : to)
+                addresses.add(new InternetAddress(address));
+
+            MimeMessage message = mailSender.createMimeMessage();
+            message.setFrom(new InternetAddress(mailFrom, "Diabetips"));
+            message.setRecipients(Message.RecipientType.TO, addresses.toArray(new Address[0]));
+            message.setSubject(subject);
+            message.setText(String.format(template, args), "utf-8", "html");
+            mailSender.send(message);
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
 }
