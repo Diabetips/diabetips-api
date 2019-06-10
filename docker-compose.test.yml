@@ -1,4 +1,7 @@
 version: '3'
 services:
   api:
-    command: mvn test
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    command: mvn test -Dmaven.test.skip=false
