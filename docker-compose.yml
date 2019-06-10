@@ -2,3 +2,4 @@ version: '3'
 services:
   api:
     build: .
+    command: 'java -jar diabetips-api.jar'

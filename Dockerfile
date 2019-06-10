@@ -5,4 +5,3 @@ RUN mvn package
 
 FROM openjdk:11.0.3-stretch
 COPY --from=0 ./target/diabetips-api-*.jar ./diabetips-api.jar
-CMD ["java", "-jar", "diabetips-api.jar"]
