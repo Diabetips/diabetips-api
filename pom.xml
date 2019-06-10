@@ -20,20 +20,6 @@
     <name>diabetips-api</name>
     <description>Diabetips API</description>
 
-    <profiles>
-        <profile>
-            <id>no-test</id>
-            <properties>
-                <maven.test.skip>true</maven.test.skip>
-            </properties>
-            <activation>
-                <file>
-                    <missing>src/main/resources/application-test.properties</missing>
-                </file>
-            </activation>
-        </profile>
-    </profiles>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -80,6 +66,12 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
