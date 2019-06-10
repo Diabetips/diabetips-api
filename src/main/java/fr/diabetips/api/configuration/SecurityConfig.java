@@ -22,7 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UsersService usersService;
 
-    public SecurityConfig(ErrorController errorController, UsersService usersService) {
+    public SecurityConfig(UsersService usersService) {
         this.usersService = usersService;
     }
 
