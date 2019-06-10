@@ -90,9 +90,9 @@ public class UsersService implements UserDetailsService {
             throw new ApiException(ApiError.USER_NOT_FOUND, "User '" + uid + "' not found");
         User u = optionalUser.get();
         User currentUser = ServiceUtils.getCurrentUser();
-        if (currentUser == null || (
+        if (currentUser != null &&
                 !ServiceUtils.userHasAuthority(currentUser, "ROLE_ADMIN") &&
-                currentUser.getId().equals(u.getId())))
+                !currentUser.getId().equals(u.getId()))
             throw new ApiException(ApiError.USER_NOT_FOUND, "User '" + uid + "' not found");
         return u;
     }

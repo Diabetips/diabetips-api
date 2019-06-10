@@ -32,6 +32,7 @@ public class OauthResourcesServerConfig extends ResourceServerConfigurerAdapter 
                 .authorizeRequests()
                 .antMatchers(ErrorController.ERROR_PATH).permitAll()
                 .antMatchers(HttpMethod.POST, "/v1/users").permitAll()
+                .antMatchers(HttpMethod.POST, "/v1/reset-password").permitAll()
                 .antMatchers("/**").access("#oauth2.isUser()");
     }
 }
