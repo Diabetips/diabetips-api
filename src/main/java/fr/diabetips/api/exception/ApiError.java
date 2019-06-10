@@ -7,7 +7,8 @@ public enum ApiError {
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Database error"),
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "Validation error"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User not found"),
-    EMAIL_ALREADY_TAKEN(HttpStatus.FORBIDDEN, "Email already taken");
+    EMAIL_ALREADY_TAKEN(HttpStatus.FORBIDDEN, "Email already taken"),
+    ACCESS_DENIED(HttpStatus.FORBIDDEN, "Access denied");
 
     private final HttpStatus httpStatus;
 
