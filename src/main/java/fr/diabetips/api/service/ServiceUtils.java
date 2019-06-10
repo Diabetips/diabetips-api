@@ -2,8 +2,10 @@ package fr.diabetips.api.service;
 
 import fr.diabetips.api.exception.ApiError;
 import fr.diabetips.api.exception.ApiException;
+import fr.diabetips.api.model.User;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -12,6 +14,23 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 class ServiceUtils {
+
+    static User getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof User)
+            return (User) principal;
+        return null;
+    }
+
+    static boolean userHasAuthority(User u, String authority) {
+        if (u == null)
+            return false;
+        return u.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(authority));
+    }
+
+    static boolean currentUserHasAuthority(String authority) {
+        return userHasAuthority(getCurrentUser(), authority);
+    }
 
     static void copyProperties(Object src, Object dest, String... properties) {
         BeanWrapper srcWrap  = PropertyAccessorFactory.forBeanPropertyAccess(src);

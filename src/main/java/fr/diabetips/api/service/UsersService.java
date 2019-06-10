@@ -7,6 +7,10 @@ import fr.diabetips.api.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +28,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class UsersService {
+public class UsersService implements UserDetailsService {
 
-    @Value("${diabetips.mailFrom}")
+    @Value("${diabetips.mail.from}")
     private String mailFrom;
 
     private static final char[] RANDOM_PASSWORD_CHARSET = (
@@ -51,7 +55,12 @@ public class UsersService {
     }
 
     public List<User> getAllUsers(Pageable p) {
-        return usersRepository.findAllByDeletedFalse(p).getContent();
+        User currentUser = ServiceUtils.getCurrentUser();
+        if (currentUser == null)
+            throw new ApiException(ApiError.ACCESS_DENIED);
+        if (ServiceUtils.userHasAuthority(currentUser, "ROLE_ADMIN"))
+            return usersRepository.findAll(p).getContent();
+        return Arrays.asList(currentUser);
     }
 
     public User registerUser(User u) {
@@ -79,7 +88,13 @@ public class UsersService {
         Optional<User> optionalUser = usersRepository.findByUidAndDeletedFalse(uid);
         if (optionalUser.isEmpty())
             throw new ApiException(ApiError.USER_NOT_FOUND, "User '" + uid + "' not found");
-        return optionalUser.get();
+        User u = optionalUser.get();
+        User currentUser = ServiceUtils.getCurrentUser();
+        if (currentUser == null || (
+                !ServiceUtils.userHasAuthority(currentUser, "ROLE_ADMIN") &&
+                currentUser.getId().equals(u.getId())))
+            throw new ApiException(ApiError.USER_NOT_FOUND, "User '" + uid + "' not found");
+        return u;
     }
 
     public User updateUser(UUID uid, User newUser) {
@@ -190,4 +205,12 @@ public class UsersService {
         return true;
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String email)
+            throws UsernameNotFoundException {
+        Optional<User> optionalUser = usersRepository.findByEmailAndDeletedFalse(email);
+        if (optionalUser.isEmpty())
+            throw new UsernameNotFoundException("No account with email '" + email + "' found");
+        return optionalUser.get();
+    }
 }
