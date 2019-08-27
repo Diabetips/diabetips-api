@@ -1,9 +1,0 @@
-version: '3'
-services:
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile.test
-    command: mvn test -Dmaven.test.skip=false
-    volumes:
-      - ./test-result:/target/surefire-reports

@@ -1,9 +1,0 @@
-/.mvn/
-/src/main/resources/application-local.properties
-/target/
-/.dockerignore
-/.gitignore
-/api.iml
-/mvnw
-/mvnw.cmd
-/README.md
