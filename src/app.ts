@@ -15,6 +15,9 @@ import { httpLogger, log4js, logger } from "./logger";
 
 export const app = express();
 
+// Express settings
+app.set("x-powered-by", false);
+
 app.use(log4js.connectLogger(httpLogger, { level: "info" }));
 
 // API routes
