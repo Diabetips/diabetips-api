@@ -14,14 +14,12 @@ export class FoodController extends BaseController {
     public static tmpCucumber = {
         id: 15,
         name: "Concombre",
-        quantity: 150,
         unit: "g",
     };
 
     public static tmpCream = {
         id: 59,
         name: "Crème Fraîche",
-        quantity: 200,
         unit: "mL",
     };
 
