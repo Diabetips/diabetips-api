@@ -200,7 +200,7 @@ components:
     page-sort:
       in: query
       name: sort
-      description: 'A collectirton of sort directives in the format `($propertyName,)+[asc|desc]`'
+      description: 'A collection of sort directives in the format `($propertyName,)+[asc|desc]`'
       schema:
         type: string
   schemas:

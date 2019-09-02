@@ -61,3 +61,11 @@ export abstract class BaseEntity extends TypeOrmBaseEntity {
         return super.save();
     }
 }
+
+export interface IBaseQueryOptions {
+    hideDeleted?: boolean;
+}
+
+export function optionDefault(value: any, defaultValue: any): any {
+    return value === undefined ? defaultValue : value;
+}
