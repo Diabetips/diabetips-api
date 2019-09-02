@@ -9,7 +9,7 @@
 import express = require("express");
 import { NextFunction, Request, Response } from "express";
 
-import { AuthController, FoodController, RecipeController, UserController } from "./controllers";
+import { AuthController, FoodController, RecipeController, UserController, UserMealController } from "./controllers";
 import { ApiError, HttpStatus } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
 
@@ -23,6 +23,7 @@ app.use(log4js.connectLogger(httpLogger, { level: "info" }));
 // API routes
 app.use("/v1/auth", new AuthController().router);
 app.use("/v1/users", new UserController().router);
+app.use("/v1/users", new UserMealController().router);
 app.use("/v1/food", new FoodController().router);
 app.use("/v1/recipes", new RecipeController().router);
 
