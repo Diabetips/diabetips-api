@@ -18,11 +18,11 @@ export class RecipeController extends BaseController {
         name: "Salade de concombres",
         ingredients: [
             {
-                food_id: FoodController.tmpCucumber.id,
+                food: FoodController.tmpCucumber,
                 quantity: 150,
             },
             {
-                food_id: FoodController.tmpCream.id,
+                food: FoodController.tmpCream,
                 quantity: 200,
             },
         ],
