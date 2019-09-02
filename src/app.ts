@@ -27,6 +27,7 @@ app.use("/v1/users", new UserController().router);
 // 404 handler
 app.use((req: Request, res: Response, next: NextFunction) => {
     throw new ApiError(HttpStatus.NOT_FOUND,
+        "invalid_route",
         `"${req.method} ${req.originalUrl.split("?", 1)[0]}" is not a valid route on this server`);
 });
 
@@ -36,7 +37,9 @@ app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction)
         res
         .status(err.status)
         .send({
-            error: err.message,
+            status: err.status,
+            error: err.error,
+            message: err.message,
         });
     } else {
         res

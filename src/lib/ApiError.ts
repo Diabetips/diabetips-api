@@ -10,10 +10,9 @@ import { HttpStatus } from "./HttpStatus";
 
 export class ApiError extends Error {
 
-    // Common API error
-    public static MISSING_BODY = () => new ApiError(HttpStatus.BAD_REQUEST, "Missing body in request");
-
-    constructor(public status: HttpStatus, message: string) {
+    constructor(public status: HttpStatus,
+                public error: string,
+                message: string) {
         super(message);
     }
 

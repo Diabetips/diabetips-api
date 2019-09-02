@@ -69,8 +69,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        '403':
-          description: 'Email already taken'
+        '409':
+          description: 'Email address already used'
           content:
             application/json:
               schema:
@@ -207,14 +207,10 @@ components:
     Error:
       type: object
       properties:
-        'status':
-          type: integer
-          format: uint32
-          example: 400
-        'code':
-          type: string
-          example: '400-0000'
         'error':
+          type: string
+          example: 'example_error'
+        'message':
           type: string
           example: 'Error description message'
     User.Uid:
