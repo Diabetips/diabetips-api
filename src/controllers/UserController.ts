@@ -17,11 +17,11 @@ export class UserController extends BaseController {
         super();
 
         this.router
-        .get("/",                          this.getAllUsers)
-        .post("/",        this.jsonParser, this.registerUser)
-        .get("/:uid",                      this.getUser)
-        .put("/:uid",     this.jsonParser, this.updateUser)
-        .delete("/:uid",                   this.deleteUser);
+            .get("/", this.getAllUsers)
+            .post("/", this.jsonParser, this.registerUser)
+            .get("/:uid", this.getUser)
+            .put("/:uid", this.jsonParser, this.updateUser)
+            .delete("/:uid", this.deleteUser);
     }
 
     private getAllUsers(req: Request, res: Response) {
@@ -64,8 +64,8 @@ export class UserController extends BaseController {
 
     private deleteUser(req: Request, res: Response) {
         res
-        .status(HttpStatus.NO_CONTENT)
-        .send();
+            .status(HttpStatus.NO_CONTENT)
+            .send();
     }
 
 }
