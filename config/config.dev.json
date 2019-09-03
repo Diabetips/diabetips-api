@@ -1,0 +1,7 @@
+{
+    "db": {
+        "type": "sqlite",
+        "database": "@{pkg.name}_dev.sqlite",
+        "synchronize": true
+    }
+}
