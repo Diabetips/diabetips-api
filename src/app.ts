@@ -38,18 +38,18 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof ApiError) {
         res
-        .status(err.status)
-        .send({
-            status: err.status,
-            error: err.error,
-            message: err.message,
-        });
+            .status(err.status)
+            .send({
+                status: err.status,
+                error: err.error,
+                message: err.message,
+            });
     } else {
         res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .send({
-            error: "Internal server error",
-        });
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .send({
+                error: "Internal server error",
+            });
         logger.error(err.stack);
     }
 });

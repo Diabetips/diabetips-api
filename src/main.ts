@@ -18,7 +18,7 @@ import { log4js, logger } from "./logger";
 import { UserService } from "./services";
 
 async function main(args: string[]): Promise<void> {
-    logger.info(`Starting ${config.pkg.name} version ${config.pkg.version}`);
+    logger.info(`Starting ${config.pkg.name} ${config.pkg.version} ${config.env}`);
 
     let once = false;
     process.on("SIGINT", (signal) => {

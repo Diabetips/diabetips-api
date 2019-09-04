@@ -8,7 +8,7 @@
 
 import { guard, loadJsonFile, merge } from "./lib";
 
-const env = process.env.DIABETIP_ENV || "dev";
+const env = process.env.DIABETIPS_ENV || "dev";
 
 const baseConfig = loadJsonFile("config/config.json");
 const profileConfig = loadJsonFile(`config/config.${env}.json`);

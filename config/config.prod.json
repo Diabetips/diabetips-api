@@ -5,7 +5,7 @@
         "synchronize": true
     },
     "mail": {
-        "host": "smtp.diabetips.fr",
+        "host": "mail.diabetips.fr",
         "port": 465,
         "auth": {
             "user": "account@diabetips.fr",
