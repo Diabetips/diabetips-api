@@ -9,6 +9,7 @@
 import bodyParser = require("body-parser");
 import { Request, Response } from "express";
 
+import { UserService } from "../services";
 import { BaseController, HttpStatus } from "./BaseController";
 
 export class UserController extends BaseController {
@@ -17,55 +18,34 @@ export class UserController extends BaseController {
         super();
 
         this.router
-        .get("/",                          this.getAllUsers)
-        .post("/",        this.jsonParser, this.registerUser)
-        .get("/:uid",                      this.getUser)
-        .put("/:uid",     this.jsonParser, this.updateUser)
-        .delete("/:uid",                   this.deleteUser);
+            .get("/",                          this.getAllUsers)
+            .post("/",        this.jsonParser, this.registerUser)
+            .get("/:uid",                      this.getUser)
+            .put("/:uid",     this.jsonParser, this.updateUser)
+            .delete("/:uid",                   this.deleteUser);
     }
 
-    private getAllUsers(req: Request, res: Response) {
-        res.send([
-            {
-                uid: "00000000-0000-0000-0000-000000000000",
-                email: "jane.doe@example.com",
-                first_name: "Jane",
-                last_name: "Doe",
-            },
-        ]);
+    private async getAllUsers(req: Request, res: Response) {
+        res.send(await UserService.getAllUsers());
     }
 
-    private registerUser(req: Request, res: Response) {
-        res.send({
-            uid: "00000000-0000-0000-0000-000000000000",
-            email: "jane.doe@example.com",
-            first_name: "Jane",
-            last_name: "Doe",
-        });
+    private async registerUser(req: Request, res: Response) {
+        res.send(await UserService.registerUser(req.body));
     }
 
-    private getUser(req: Request, res: Response) {
-        res.send({
-            uid: "00000000-0000-0000-0000-000000000000",
-            email: "jane.doe@example.com",
-            first_name: "Jane",
-            last_name: "Doe",
-        });
+    private async getUser(req: Request, res: Response) {
+        res.send(await UserService.getUser(req.params.uid));
     }
 
-    private updateUser(req: Request, res: Response) {
-        res.send({
-            uid: "00000000-0000-0000-0000-000000000000",
-            email: "jane.doe@example.com",
-            first_name: "Jane",
-            last_name: "Doe",
-        });
+    private async updateUser(req: Request, res: Response) {
+        res.send(await UserService.updateUser(req.params.uid, req.body));
     }
 
-    private deleteUser(req: Request, res: Response) {
+    private async deleteUser(req: Request, res: Response) {
+        await UserService.deleteUser(req.params.uid);
         res
-        .status(HttpStatus.NO_CONTENT)
-        .send();
+            .status(HttpStatus.NO_CONTENT)
+            .send();
     }
 
 }

@@ -16,48 +16,56 @@ export abstract class BaseEntity extends TypeOrmBaseEntity {
     Promise<T | T[]> {
         if (entityOrEntities instanceof Array) {
             for (const entity of entityOrEntities as T[]) {
-                entity.updatedAt = new Date();
+                entity._updated_at = new Date();
             }
         } else {
-            (entityOrEntities as T).updatedAt = new Date();
+            (entityOrEntities as T)._updated_at = new Date();
         }
         return super.save(entityOrEntities as any, options);
     }
 
-    @PrimaryGeneratedColumn()
-    private id: number;
+    @PrimaryGeneratedColumn({ name: "id" })
+    private _id: number;
 
-    @Column()
-    private createdAt: Date = new Date();
+    @Column({ name: "created_at" })
+    private _created_at: Date = new Date();
 
-    @Column()
-    private updatedAt: Date = new Date();
+    @Column({ name: "updated_at" })
+    private _updated_at: Date = new Date();
 
-    @Column({ type: "datetime", nullable: true, default: undefined })
-    private deletedAt: Date | undefined = undefined;
+    @Column({ name: "deleted_at", type: "datetime", nullable: true, default: undefined })
+    private _deleted_at: Date | undefined = undefined;
 
-    @Column({ default: false })
-    private deleted: boolean = false;
+    @Column({ name: "deleted", default: false })
+    private _deleted: boolean = false;
 
-    public get $id(): number {
-        return this.id;
+    public get id(): number {
+        return this._id;
     }
 
-    public get $createdAt(): Date {
-        return this.createdAt;
+    public get createdAt(): Date {
+        return this._created_at;
     }
 
-    public get $deleted(): boolean {
-        return this.deleted;
+    public get updateAt(): Date {
+        return this._updated_at;
     }
 
-    public set $deleted(deleted: boolean) {
-        this.deleted = deleted;
-        this.deletedAt = deleted ? new Date() : undefined;
+    public get deletedAt(): Date | undefined {
+        return this._deleted_at;
+    }
+
+    public get deleted(): boolean {
+        return this._deleted;
+    }
+
+    public set deleted(deleted: boolean) {
+        this._deleted = deleted;
+        this._deleted_at = deleted ? new Date() : undefined;
     }
 
     public save(): Promise<this> {
-        this.updatedAt = new Date();
+        this._updated_at = new Date();
         return super.save();
     }
 }

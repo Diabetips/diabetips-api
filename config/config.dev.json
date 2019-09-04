@@ -3,5 +3,13 @@
         "type": "sqlite",
         "database": "@{pkg.name}_dev.sqlite",
         "synchronize": true
+    },
+    "mail": {
+        "host": "smtp.ethereal.email",
+        "port": 587,
+        "auth": {
+            "user": "eva81@ethereal.email",
+            "pass": "c2D7zXJHM4G7qYYxch"
+        }
     }
 }

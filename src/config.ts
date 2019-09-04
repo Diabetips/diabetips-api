@@ -6,7 +6,7 @@
 ** Created by Arthur MELIN on Wed Aug 28 2019
 */
 
-import { guard, loadJsonFile, merge } from "./lib/utils";
+import { guard, loadJsonFile, merge } from "./lib";
 
 const env = process.env.DIABETIP_ENV || "dev";
 
@@ -18,8 +18,8 @@ const tmp = merge(baseConfig, profileConfig);
 
 export const config = {
     ...tmp,
-    pkg,
     env,
+    pkg,
 };
 
 function get(obj: any, path: string): any {

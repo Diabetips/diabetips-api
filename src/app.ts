@@ -10,12 +10,13 @@ import express = require("express");
 import { NextFunction, Request, Response } from "express";
 
 import { AuthController, UserController } from "./controllers";
-import { ApiError, HttpStatus } from "./lib";
+import { ApiError, HttpStatus, jsonReplacer } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
 
 export const app = express();
 
 // Express settings
+app.set("json replacer", jsonReplacer);
 app.set("x-powered-by", false);
 
 app.use(log4js.connectLogger(httpLogger, { level: "info" }));

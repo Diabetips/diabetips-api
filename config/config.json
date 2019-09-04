@@ -36,5 +36,12 @@
                 "level": "all"
             }
         }
+    },
+    "mailDefaults": {
+        "from": {
+            "name": "Diabetips",
+            "address": "account@diabetips.fr"
+        },
+        "replyTo": "noreply@diabetips.fr"
     }
 }

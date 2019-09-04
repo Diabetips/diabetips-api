@@ -1,3 +1,4 @@
 import { ApiError } from "./ApiError";
 import { HttpStatus } from "./HttpStatus";
-export { ApiError, HttpStatus };
+import { guard, jsonReplacer, loadJsonFile, merge } from "./utils";
+export { ApiError, HttpStatus, guard, jsonReplacer, loadJsonFile, merge };
