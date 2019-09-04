@@ -6,7 +6,6 @@
 ** Created by Arthur MELIN on Fri Aug 30 2019
 */
 
-import bodyParser = require("body-parser");
 import { Request, Response } from "express";
 
 import { UserService } from "../services";

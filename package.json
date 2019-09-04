@@ -31,6 +31,7 @@
         "bcrypt": "^3.0.6",
         "body-parser": "^1.19.0",
         "express": "^4.17.1",
+        "express-async-errors": "^3.1.1",
         "log4js": "^5.1.0",
         "mysql3": "^0.3.1",
         "nodemailer": "^6.3.0",

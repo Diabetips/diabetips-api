@@ -7,6 +7,8 @@
 */
 
 import express = require("express");
+// tslint:disable-next-line:no-var-requires
+require("express-async-errors"); // patch express to forward errors in async handlers
 import { NextFunction, Request, Response } from "express";
 
 import { AuthController, UserController } from "./controllers";
