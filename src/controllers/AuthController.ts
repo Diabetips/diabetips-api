@@ -10,6 +10,7 @@ import bodyParser = require("body-parser");
 import { Request, Response } from "express";
 
 import { ApiError, BaseController, HttpStatus } from "./BaseController";
+import { UserService } from "../services";
 
 export class AuthController extends BaseController {
 
@@ -17,9 +18,9 @@ export class AuthController extends BaseController {
         super();
 
         this.router
-        .get("/authorize",       this.authorize)
-        .post("/token",          this.formParser, this.token)
-        .post("/reset-password", this.jsonParser, this.resetPassword);
+            .get("/authorize",       this.authorize)
+            .post("/token",          this.formParser, this.token)
+            .post("/reset-password", this.jsonParser, this.resetPassword);
     }
 
     private authorize(req: Request, res: Response) {
@@ -45,17 +46,18 @@ export class AuthController extends BaseController {
             });
         } else {
             res
-            .status(HttpStatus.BAD_REQUEST)
-            .send({
-                error: "invalid_request",
-            });
+                .status(HttpStatus.BAD_REQUEST)
+                .send({
+                    error: "invalid_request",
+                });
         }
     }
 
-    private resetPassword(req: Request, res: Response) {
+    private async resetPassword(req: Request, res: Response) {
+        await UserService.resetUserPassword(req.body);
         res
-        .status(HttpStatus.ACCEPTED)
-        .send({});
+            .status(HttpStatus.ACCEPTED)
+            .send({});
     }
 
 }

@@ -1,0 +1,15 @@
+{
+    "db": {
+        "type": "sqlite",
+        "database": "@{pkg.name}_prod.sqlite",
+        "synchronize": true
+    },
+    "mail": {
+        "host": "mail.diabetips.fr",
+        "port": 465,
+        "auth": {
+            "user": "account@diabetips.fr",
+            "pass": "${DIABETIPS_MAIL_PASS}"
+        }
+    }
+}

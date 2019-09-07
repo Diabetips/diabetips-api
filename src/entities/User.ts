@@ -6,6 +6,8 @@
 ** Created by Arthur MELIN on Wed Aug 28 2019
 */
 
+import bcrypt = require("bcrypt");
+
 import { Column, Entity } from "typeorm";
 
 import { BaseEntity, IBaseQueryOptions, optionDefault } from "./BaseEntity";
@@ -68,14 +70,22 @@ export class User extends BaseEntity {
     @Column({ length: 200})
     public email: string;
 
-    @Column({ length: 100, select: false })
-    public password: string;
+    @Column({ name: "password", length: 100, select: false })
+    private _password: string;
 
     @Column({ length: 100 })
     public first_name: string;
 
     @Column({ length: 100 })
     public last_name: string;
+
+    public get password(): string {
+        return this._password;
+    }
+
+    public set password(password: string) {
+        this._password = bcrypt.hashSync(password, 12);
+    }
 
 }
 

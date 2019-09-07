@@ -7,15 +7,18 @@
 */
 
 import express = require("express");
+// tslint:disable-next-line:no-var-requires
+require("express-async-errors"); // patch express to forward errors in async handlers
 import { NextFunction, Request, Response } from "express";
 
 import { AuthController, FoodController, RecipeController, UserController, UserMealController } from "./controllers";
-import { ApiError, HttpStatus } from "./lib";
+import { ApiError, HttpStatus, jsonReplacer } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
 
 export const app = express();
 
 // Express settings
+app.set("json replacer", jsonReplacer);
 app.set("x-powered-by", false);
 
 app.use(log4js.connectLogger(httpLogger, { level: "info" }));
