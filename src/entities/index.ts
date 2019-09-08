@@ -1,2 +1,2 @@
-import { User } from "./User";
-export { User };
+import { IUserQueryOptions, User } from "./User";
+export { IUserQueryOptions, User };
