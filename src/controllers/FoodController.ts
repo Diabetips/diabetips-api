@@ -7,6 +7,7 @@
 */
 
 import { Request, Response } from "express";
+import { FoodService } from "../services/FoodService";
 import { BaseController } from "./BaseController";
 
 export class FoodController extends BaseController {
@@ -28,21 +29,21 @@ export class FoodController extends BaseController {
 
         this.router
             .get("/", this.getAllFood)
-            .get("/:id", this.getFood);
+            .get("/:id", this.getFood)
+            // TODO: Remove temporary route
+            .post("/", this.jsonParser, this.addFood);
     }
 
-    private getAllFood(req: Request, res: Response) {
-        // TODO: Do the logic
+    private async getAllFood(req: Request, res: Response) {
         // TODO: Need pagination
-        // TODO: Need to add filtering/searching
-        res.send([
-            FoodController.tmpCucumber,
-            FoodController.tmpCream,
-        ]);
+        res.send(await FoodService.getAllFood(req.query));
     }
 
-    private getFood(req: Request, res: Response) {
-        // TODO: Do the logic
-        res.send(FoodController.tmpCucumber);
+    private async getFood(req: Request, res: Response) {
+        res.send(await FoodService.getFood(parseInt(req.params.id, 10)));
+    }
+
+    private async addFood(req: Request, res: Response) {
+        res.send(await FoodService.addFood(req.body));
     }
 }

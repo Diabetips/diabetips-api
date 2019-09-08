@@ -1,2 +1,3 @@
+import { Food } from "./Food";
 import { User } from "./User";
-export { User };
+export { Food, User };

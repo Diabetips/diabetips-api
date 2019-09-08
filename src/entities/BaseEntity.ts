@@ -13,7 +13,7 @@ export abstract class BaseEntity extends TypeOrmBaseEntity {
     public static save<T extends BaseEntity>(this: ObjectType<T>, entities: T[], options?: SaveOptions): Promise<T[]>;
     public static save<T extends BaseEntity>(this: ObjectType<T>, entity: T, options?: SaveOptions): Promise<T>;
     public static save<T extends BaseEntity>(this: ObjectType<T>, entityOrEntities: T | T[], options?: SaveOptions):
-    Promise<T | T[]> {
+        Promise<T | T[]> {
         if (entityOrEntities instanceof Array) {
             for (const entity of entityOrEntities as T[]) {
                 entity._updated_at = new Date();
@@ -76,4 +76,8 @@ export interface IBaseQueryOptions {
 
 export function optionDefault(value: any, defaultValue: any): any {
     return value === undefined ? defaultValue : value;
+}
+
+export interface IBaseSearchRequest {
+    page?: number;
 }
