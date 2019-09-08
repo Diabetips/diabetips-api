@@ -6,6 +6,7 @@
 ** Created by Arthur MELIN on Tue Aug 27 2019
 */
 
+import cors = require("cors");
 import express = require("express");
 // tslint:disable-next-line:no-var-requires
 require("express-async-errors"); // patch express to forward errors in async handlers
@@ -21,6 +22,10 @@ export const app = express();
 app.set("json replacer", jsonReplacer);
 app.set("x-powered-by", false);
 
+app.use(cors({
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+}));
 app.use(log4js.connectLogger(httpLogger, { level: "info" }));
 
 // API routes
