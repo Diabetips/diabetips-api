@@ -90,7 +90,7 @@ export class UserService extends BaseService {
         if (req.last_name !== undefined) { user.last_name = req.last_name; }
 
         if (req.email !== undefined && req.email !== user.email) {
-            if (await User.countByEmail(user.email) > 0) {
+            if (await User.countByEmail(req.email) > 0) {
                 throw new ApiError(HttpStatus.CONFLICT, "email_conflict", "Email address already used by another account");
             }
 
