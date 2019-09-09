@@ -9,10 +9,12 @@
 import { Request, Response } from "express";
 
 import { RecipeController } from ".";
+import { UserMealService } from "../services/UserMealService";
 import { BaseController, HttpStatus } from "./BaseController";
 
 export class UserMealController extends BaseController {
 
+    // TODO: remove this
     private static tmpMeal = {
         id: 2,
         time: "some timestamp here",
@@ -27,33 +29,46 @@ export class UserMealController extends BaseController {
         super();
 
         this.router
-            .get("/:useruid/meals/", this.getUserMeals)
-            .post("/:useruid/meals/", this.addUserMeal)
-            .get("/:useruid/meals/:id", this.getUserMeal)
-            .put("/:useruid/meals/:id", this.updateUserMeal)
-            .delete("/:useruid/meals/:id", this.deleteUserMeal);
+            .get("/:userUid/meals/", this.getAllUserMeals)
+            .post("/:userUid/meals/", this.addUserMeal)
+            .get("/:userUid/meals/:id", this.getUserMeal)
+            .put("/:userUid/meals/:id", this.updateUserMeal)
+            .delete("/:userUid/meals/:id", this.deleteUserMeal);
     }
 
-    private getUserMeals(req: Request, res: Response) {
-        res.send([
-            UserMealController.tmpMeal,
-            UserMealController.tmpMeal,
-        ]);
+    private async getAllUserMeals(req: Request, res: Response) {
+        res.send(await UserMealService.getAllUserMeals(req.params.useruid, req.query));
     }
 
-    private getUserMeal(req: Request, res: Response) {
-        res.send(UserMealController.tmpMeal);
+    private async getUserMeal(req: Request, res: Response) {
+        const params = {
+            userUid: req.params.userUid,
+            mealId: parseInt(req.params.mealId, 10),
+        };
+
+        res.send(await UserMealService.getUserMeal(params));
     }
 
-    private addUserMeal(req: Request, res: Response) {
-        res.send(UserMealController.tmpMeal);
+    private async addUserMeal(req: Request, res: Response) {
+        res.send(await UserMealService.addUserMeal(req.params.useruid, req.body));
     }
 
-    private updateUserMeal(req: Request, res: Response) {
-        res.send(UserMealController.tmpMeal);
+    private async updateUserMeal(req: Request, res: Response) {
+        const params = {
+            userUid: req.params.userUid,
+            mealId: parseInt(req.params.mealId, 10),
+        };
+
+        res.send(await UserMealService.updateUserMeal(params, req.body));
     }
 
-    private deleteUserMeal(req: Request, res: Response) {
+    private async deleteUserMeal(req: Request, res: Response) {
+        const params = {
+            userUid: req.params.userUid,
+            mealId: parseInt(req.params.mealId, 10),
+        };
+
+        await UserMealService.deleteUserMeal(params);
         res
             .status(HttpStatus.NO_CONTENT)
             .send();

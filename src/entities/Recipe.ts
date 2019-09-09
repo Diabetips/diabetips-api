@@ -51,6 +51,6 @@ interface IRecipeQueryOptions extends IBaseQueryOptions {
 
 }
 
-interface IRecipeSearchRequest extends IBaseSearchRequest {
+export interface IRecipeSearchRequest extends IBaseSearchRequest {
     name?: string;
 }

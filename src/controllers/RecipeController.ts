@@ -14,7 +14,7 @@ import { BaseController, HttpStatus } from "./BaseController";
 
 export class RecipeController extends BaseController {
 
-    // TODO: remove that 
+    // TODO: remove that
     public static tmpSalad = {
         id: 0,
         name: "Salade de concombres",

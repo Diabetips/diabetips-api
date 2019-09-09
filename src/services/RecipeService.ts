@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
-import { Recipe } from "../entities/Recipe";
+import { IRecipeSearchRequest, Recipe } from "../entities/Recipe";
 import { ApiError, BaseService, HttpStatus } from "./BaseService";
 
 export interface ICreateRecipeRequest {
@@ -25,7 +25,7 @@ export interface IUpdateRecipeRequest {
 
 export class RecipeService extends BaseService {
 
-    public static async getAllRecipes(query: any): Promise<Recipe[]> {
+    public static async getAllRecipes(query: IRecipeSearchRequest = {}): Promise<Recipe[]> {
         return Recipe.findAll(query);
     }
 
