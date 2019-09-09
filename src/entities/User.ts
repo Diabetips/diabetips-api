@@ -31,7 +31,7 @@ export class User extends BaseEntity {
         .select("user")
         .where("user.uid = :uid", { uid });
         if (optionDefault(options.selectPassword, false)) {
-            query = query.addSelect("user.password");
+            query = query.addSelect("user.password", "user_password");
         }
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("user.deleted = 0");
@@ -45,7 +45,7 @@ export class User extends BaseEntity {
         .select("user")
         .where("user.email = :email", { email });
         if (optionDefault(options.selectPassword, false)) {
-            query = query.addSelect("user.password");
+            query = query.addSelect("user.password", "user_password");
         }
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("user.deleted = 0");
@@ -71,7 +71,7 @@ export class User extends BaseEntity {
     public email: string;
 
     @Column({ name: "password", length: 100, select: false })
-    private _password: string;
+    private _password?: string;
 
     @Column({ length: 100 })
     public first_name: string;
@@ -79,16 +79,16 @@ export class User extends BaseEntity {
     @Column({ length: 100 })
     public last_name: string;
 
-    public get password(): string {
+    public get password(): string | undefined {
         return this._password;
     }
 
-    public set password(password: string) {
-        this._password = bcrypt.hashSync(password, 12);
+    public set password(password: string | undefined) {
+        this._password = password === undefined ? undefined : bcrypt.hashSync(password, 12);
     }
 
 }
 
-interface IUserQueryOptions extends IBaseQueryOptions {
+export interface IUserQueryOptions extends IBaseQueryOptions {
     selectPassword?: boolean;
 }

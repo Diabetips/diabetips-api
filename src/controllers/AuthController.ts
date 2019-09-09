@@ -6,11 +6,10 @@
 ** Created by Arthur MELIN on Sat Aug 31 2019
 */
 
-import bodyParser = require("body-parser");
 import { Request, Response } from "express";
 
-import { ApiError, BaseController, HttpStatus } from "./BaseController";
 import { UserService } from "../services";
+import { ApiError, BaseController, HttpStatus } from "./BaseController";
 
 export class AuthController extends BaseController {
 

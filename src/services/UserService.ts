@@ -9,7 +9,7 @@
 import bcrypt = require("bcrypt");
 import uuid = require("uuid");
 
-import { User } from "../entities";
+import { IUserQueryOptions, User } from "../entities";
 import { mail, render } from "../mail";
 import { ApiError, BaseService, HttpStatus } from "./BaseService";
 
@@ -52,7 +52,7 @@ export class UserService extends BaseService {
 
         user.uid = uuid.v4();
         user.email = req.email;
-        user.password = req.password;  // hash password
+        user.password = req.password;  // hashes password
         user.first_name = req.first_name;
         user.last_name = req.last_name;
 
@@ -69,12 +69,12 @@ export class UserService extends BaseService {
         return user.save();
     }
 
-    public static async getUser(uid: string): Promise<User> {
+    public static async getUser(uid: string, options?: IUserQueryOptions): Promise<User> {
         // TODO
         // * access checks:
         //   if no current user: throw access denied error
         //   if current user uid != uid or current user not admin: throw not found
-        const user = await User.findByUid(uid);
+        const user = await User.findByUid(uid, options);
         if (user === undefined) {
             throw new ApiError(HttpStatus.NOT_FOUND, "user_not_found", `User ${uid} not found`);
         }
@@ -84,13 +84,13 @@ export class UserService extends BaseService {
     public static async updateUser(uid: string, req: IUpdateUserRequest): Promise<User> {
         // TODO
         // * validation
-        const user = await this.getUser(uid);
+        const user = await this.getUser(uid, { selectPassword: true });
 
         if (req.first_name !== undefined) { user.first_name = req.first_name; }
         if (req.last_name !== undefined) { user.last_name = req.last_name; }
 
         if (req.email !== undefined && req.email !== user.email) {
-            if (await User.countByEmail(user.email) > 0) {
+            if (await User.countByEmail(req.email) > 0) {
                 throw new ApiError(HttpStatus.CONFLICT, "email_conflict", "Email address already used by another account");
             }
 
@@ -103,14 +103,14 @@ export class UserService extends BaseService {
             user.email = req.email;
         }
 
-        if (req.password !== undefined && await bcrypt.compare(req.password, user.password)) {
+        if (req.password !== undefined && !await bcrypt.compare(req.password, user.password as string)) {
             mail.sendMail({
                 to: user.email,
                 subject: "Changement de votre mot de passe",
                 html: render("account-password-changed"),
             });
 
-            user.password = req.password; // hash password
+            user.password = req.password; // hashes password
         }
 
         return user.save();
@@ -133,7 +133,7 @@ export class UserService extends BaseService {
             }
 
             const password = this.generatePassword();
-            user.password = password; // hash password
+            user.password = password; // hashes password
             user.save();
 
             mail.sendMail({

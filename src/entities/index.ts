@@ -1,3 +1,3 @@
 import { Food } from "./Food";
-import { User } from "./User";
-export { Food, User };
+import { IUserQueryOptions, User } from "./User";
+export { IUserQueryOptions, Food, User };
