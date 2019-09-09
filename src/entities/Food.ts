@@ -16,12 +16,13 @@ export class Food extends BaseEntity {
         let query = this
             .createQueryBuilder("food")
             .select("food");
+
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("food.deleted = 0");
         }
 
         if (req.name !== undefined) {
-            query = query.andWhere(`name LIKE :name`, { name: "%" + req.name + "%" });
+            query = query.andWhere(`food.name LIKE :name`, { name: "%" + req.name + "%" });
         }
         return query.getMany();
     }
@@ -31,6 +32,7 @@ export class Food extends BaseEntity {
             .createQueryBuilder("food")
             .select("food")
             .where("food.id = :id", { id });
+
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("food.deleted = 0");
         }
@@ -44,10 +46,9 @@ export class Food extends BaseEntity {
     public unit: string;
 }
 
-// tslint:disable-next-line: no-empty-interface
 interface IFoodQueryOptions extends IBaseQueryOptions {
 }
 
-export interface IFoodSearchRequest extends IBaseSearchRequest {
+interface IFoodSearchRequest extends IBaseSearchRequest {
     name?: string;
 }

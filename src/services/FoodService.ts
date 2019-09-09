@@ -7,21 +7,20 @@
 */
 
 import { Food } from "../entities";
-import { IFoodSearchRequest } from "../entities/Food";
-import { BaseService } from "./BaseService";
+import { ApiError, BaseService, HttpStatus } from "./BaseService";
 
 export class FoodService extends BaseService {
-    public static async getAllFood(req: IFoodSearchRequest): Promise<Food[]> {
+    public static async getAllFood(query: any): Promise<Food[]> {
         // TODO: pagination
-        return Food.findAll(req);
+        return Food.findAll(query);
     }
 
-    public static async getFood(id: number): Promise<Food | undefined> {
-        if (Number.isNaN(id)) {
-            // TODO: What to do in case of NaN ? Verify in controller or here ?
-            console.log("woop woop");
+    public static async getFood(id: number): Promise<Food> {
+        const food = await Food.findById(id);
+        if (food === undefined) {
+            throw new ApiError(HttpStatus.NOT_FOUND, "food_not_found", `Food ${id} not found`);
         }
-        return Food.findById(id);
+        return food;
     }
 
     // TODO: this is temporary

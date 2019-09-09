@@ -9,13 +9,16 @@
 import { Request, Response } from "express";
 
 import { FoodController } from ".";
+import { RecipeService } from "../services/RecipeService";
 import { BaseController, HttpStatus } from "./BaseController";
 
 export class RecipeController extends BaseController {
 
+    // TODO: remove that 
     public static tmpSalad = {
         id: 0,
         name: "Salade de concombres",
+        description: "hello this is a description",
         ingredients: [
             {
                 ...FoodController.tmpCucumber,
@@ -39,33 +42,25 @@ export class RecipeController extends BaseController {
             .delete("/:id", this.deleteRecipe);
     }
 
-    private getAllRecipes(req: Request, res: Response) {
-        // TODO: Do the logic
+    private async getAllRecipes(req: Request, res: Response) {
         // TODO: need pagination
-        // TODO: Need to add search/filtering
-        res.send([
-            RecipeController.tmpSalad,
-            RecipeController.tmpSalad,
-        ]);
+        res.send(await RecipeService.getAllRecipes(req.query));
     }
 
-    private getRecipe(req: Request, res: Response) {
-        // TODO: Do the logic
-        res.send(RecipeController.tmpSalad);
+    private async getRecipe(req: Request, res: Response) {
+        res.send(await RecipeService.getRecipe(parseInt(req.params.id, 10)));
     }
 
-    private createRecipe(req: Request, res: Response) {
-        // TODO: Do the logic
-        res.send(RecipeController.tmpSalad);
+    private async createRecipe(req: Request, res: Response) {
+        res.send(await RecipeService.createRecipe(req.body));
     }
 
-    private updateRecipe(req: Request, res: Response) {
-        // TODO: Do the logic
-        res.send(RecipeController.tmpSalad);
+    private async updateRecipe(req: Request, res: Response) {
+        res.send(await RecipeService.updateRecipe(parseInt(req.params.id, 10), req.body));
     }
 
-    private deleteRecipe(req: Request, res: Response) {
-        // TODO: Do the logic
+    private async deleteRecipe(req: Request, res: Response) {
+        await RecipeService.deleteRecipe(parseInt(req.params.id, 10));
         res
             .status(HttpStatus.NO_CONTENT)
             .send();
