@@ -8,12 +8,42 @@
 
 import bcrypt = require("bcrypt");
 
-import { Column, Entity } from "typeorm";
+import { Column, Entity, Index } from "typeorm";
 
 import { BaseEntity, IBaseQueryOptions, optionDefault } from "./BaseEntity";
 
+export interface IUserQueryOptions extends IBaseQueryOptions {
+    selectPassword?: boolean;
+}
+
 @Entity()
 export class User extends BaseEntity {
+
+    @Column({ length: 36, unique: true })
+    public uid: string;
+
+    @Column({ length: 200})
+    @Index()
+    public email: string;
+
+    @Column({ name: "password", length: 100, select: false })
+    private _password?: string;
+
+    @Column({ length: 100 })
+    public first_name: string;
+
+    @Column({ length: 100 })
+    public last_name: string;
+
+    public get password(): string | undefined {
+        return this._password;
+    }
+
+    public set password(password: string | undefined) {
+        this._password = password === undefined ? undefined : bcrypt.hashSync(password, 12);
+    }
+
+    // Repository functions
 
     public static async findAll(options: IUserQueryOptions = {}): Promise<User[]> {
         let query = this
@@ -64,31 +94,4 @@ export class User extends BaseEntity {
         return query.getCount();
     }
 
-    @Column({ length: 36, unique: true })
-    public uid: string;
-
-    @Column({ length: 200})
-    public email: string;
-
-    @Column({ name: "password", length: 100, select: false })
-    private _password?: string;
-
-    @Column({ length: 100 })
-    public first_name: string;
-
-    @Column({ length: 100 })
-    public last_name: string;
-
-    public get password(): string | undefined {
-        return this._password;
-    }
-
-    public set password(password: string | undefined) {
-        this._password = password === undefined ? undefined : bcrypt.hashSync(password, 12);
-    }
-
-}
-
-export interface IUserQueryOptions extends IBaseQueryOptions {
-    selectPassword?: boolean;
 }

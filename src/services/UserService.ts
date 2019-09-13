@@ -10,8 +10,10 @@ import bcrypt = require("bcrypt");
 import uuid = require("uuid");
 
 import { IUserQueryOptions, User } from "../entities";
+import { ApiError } from "../errors";
+import { HttpStatus } from "../lib";
 import { mail, render } from "../mail";
-import { ApiError, BaseService, HttpStatus } from "./BaseService";
+import { BaseService } from "./BaseService";
 
 export interface ICreateUserRequest {
     email: string;
@@ -120,12 +122,19 @@ export class UserService extends BaseService {
         const user = await this.getUser(uid); // getUser handles access checks
         user.deleted = true;
         user.save();
+
+        mail.sendMail({
+            to: user.email,
+            subject: "Désactivation de votre compte",
+            html: render("account-deletion"),
+        });
     }
 
     public static async resetUserPassword(req: IResetPasswordRequest): Promise<void> {
         // TODO
         // * replace by sending a token in a link to the auth portal
-        // run in async to prevent timing attacks
+
+        // Prevent timing attacks by responding immediatly and doing the actual work in async
         (async () => {
             const user = await User.findByEmail(req.email);
             if (user === undefined) {

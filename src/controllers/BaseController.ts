@@ -9,10 +9,6 @@
 import bodyParser = require("body-parser");
 import express = require("express");
 
-import { ApiError, HttpStatus } from "../lib";
-
-export { ApiError, HttpStatus };
-
 export interface IControllerOptions {
     routerOptions?: express.RouterOptions;
     jsonParserOptions?: bodyParser.OptionsJson;
