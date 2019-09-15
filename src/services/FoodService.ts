@@ -7,7 +7,9 @@
 */
 
 import { Food } from "../entities";
-import { ApiError, BaseService, HttpStatus } from "./BaseService";
+import { ApiError } from "../errors";
+import { HttpStatus } from "../lib";
+import { BaseService } from "./BaseService";
 
 export class FoodService extends BaseService {
     public static async getAllFood(query: any): Promise<Food[]> {

@@ -13,7 +13,8 @@ require("express-async-errors"); // patch express to forward errors in async han
 import { NextFunction, Request, Response } from "express";
 
 import { AuthController, FoodController, RecipeController, UserController, UserMealController } from "./controllers";
-import { ApiError, HttpStatus, jsonReplacer } from "./lib";
+import { ApiError } from "./errors";
+import { HttpStatus, jsonReplacer } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
 
 export const app = express();

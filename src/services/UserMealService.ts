@@ -6,8 +6,9 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
-import { IUserMealSearchRequest, UserMeal } from "../entities/Meal";
-import { ApiError, HttpStatus } from "../lib";
+import { IUserMealSearchRequest, UserMeal } from "../entities/UserMeal";
+import { ApiError } from "../errors";
+import { HttpStatus } from "../lib";
 import { BaseService } from "./BaseService";
 
 interface ICreateUserMealRequest {

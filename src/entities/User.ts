@@ -8,66 +8,22 @@
 
 import bcrypt = require("bcrypt");
 
-import { Column, Entity } from "typeorm";
+import { Column, Entity, Index } from "typeorm";
 
 import { BaseEntity, IBaseQueryOptions, optionDefault } from "./BaseEntity";
+
+export interface IUserQueryOptions extends IBaseQueryOptions {
+    selectPassword?: boolean;
+}
 
 @Entity()
 export class User extends BaseEntity {
 
-    public static async findAll(options: IUserQueryOptions = {}): Promise<User[]> {
-        let query = this
-        .createQueryBuilder("user")
-        .select("user");
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("user.deleted = 0");
-        }
-        return query.getMany();
-    }
-
-    public static async findByUid(uid: string, options: IUserQueryOptions = {}): Promise<User | undefined> {
-        let query = this
-        .createQueryBuilder("user")
-        .select("user")
-        .where("user.uid = :uid", { uid });
-        if (optionDefault(options.selectPassword, false)) {
-            query = query.addSelect("user.password", "user_password");
-        }
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("user.deleted = 0");
-        }
-        return query.getOne();
-    }
-
-    public static async findByEmail(email: string, options: IUserQueryOptions = {}): Promise<User | undefined> {
-        let query = this
-        .createQueryBuilder("user")
-        .select("user")
-        .where("user.email = :email", { email });
-        if (optionDefault(options.selectPassword, false)) {
-            query = query.addSelect("user.password", "user_password");
-        }
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("user.deleted = 0");
-        }
-        return query.getOne();
-    }
-
-    public static async countByEmail(email: string, options: IUserQueryOptions = {}): Promise<number> {
-        let query = this
-        .createQueryBuilder("user")
-        .select()
-        .where("user.email = :email", { email });
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("user.deleted = 0");
-        }
-        return query.getCount();
-    }
-
     @Column({ length: 36, unique: true })
     public uid: string;
 
-    @Column({ length: 200})
+    @Column({ length: 200 })
+    @Index()
     public email: string;
 
     @Column({ name: "password", length: 100, select: false })
@@ -87,8 +43,55 @@ export class User extends BaseEntity {
         this._password = password === undefined ? undefined : bcrypt.hashSync(password, 12);
     }
 
-}
+    // Repository functions
 
-export interface IUserQueryOptions extends IBaseQueryOptions {
-    selectPassword?: boolean;
+    public static async findAll(options: IUserQueryOptions = {}): Promise<User[]> {
+        let query = this
+            .createQueryBuilder("user")
+            .select("user");
+        if (optionDefault(options.hideDeleted, true)) {
+            query = query.andWhere("user.deleted = 0");
+        }
+        return query.getMany();
+    }
+
+    public static async findByUid(uid: string, options: IUserQueryOptions = {}): Promise<User | undefined> {
+        let query = this
+            .createQueryBuilder("user")
+            .select("user")
+            .where("user.uid = :uid", { uid });
+        if (optionDefault(options.selectPassword, false)) {
+            query = query.addSelect("user.password", "user_password");
+        }
+        if (optionDefault(options.hideDeleted, true)) {
+            query = query.andWhere("user.deleted = 0");
+        }
+        return query.getOne();
+    }
+
+    public static async findByEmail(email: string, options: IUserQueryOptions = {}): Promise<User | undefined> {
+        let query = this
+            .createQueryBuilder("user")
+            .select("user")
+            .where("user.email = :email", { email });
+        if (optionDefault(options.selectPassword, false)) {
+            query = query.addSelect("user.password", "user_password");
+        }
+        if (optionDefault(options.hideDeleted, true)) {
+            query = query.andWhere("user.deleted = 0");
+        }
+        return query.getOne();
+    }
+
+    public static async countByEmail(email: string, options: IUserQueryOptions = {}): Promise<number> {
+        let query = this
+            .createQueryBuilder("user")
+            .select()
+            .where("user.email = :email", { email });
+        if (optionDefault(options.hideDeleted, true)) {
+            query = query.andWhere("user.deleted = 0");
+        }
+        return query.getCount();
+    }
+
 }

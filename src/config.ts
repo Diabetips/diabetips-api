@@ -36,7 +36,8 @@ function resolve(obj: any) {
         if (typeof obj[key] === "object") {
             resolve(obj[key]);
         } else if (typeof obj[key] === "string") {
-            obj[key] = obj[key].replace(/[@%$]\{[^}]+\}/, (s: string) => guard(() => {
+            obj[key] = obj[key].replace(/[@%$]\{[^}]+\}/,
+                (s: string) => JSON.parse("\"" + guard(() => {
                 const m = s.match(/(?<type>.)\{(?<arg>.*)\}/);
                 if (m == null || m.groups == null) {
                     return s;
@@ -52,7 +53,7 @@ function resolve(obj: any) {
                         // tslint:disable-next-line:no-eval
                         return eval(arg);
                 }
-            }, s));
+            }, s) + "\""));
         }
     }
 }

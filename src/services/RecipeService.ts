@@ -7,7 +7,9 @@
 */
 
 import { IRecipeSearchRequest, Recipe } from "../entities/Recipe";
-import { ApiError, BaseService, HttpStatus } from "./BaseService";
+import { ApiError } from "../errors";
+import { HttpStatus } from "../lib";
+import { BaseService } from "./BaseService";
 
 export interface ICreateRecipeRequest {
     name: string;

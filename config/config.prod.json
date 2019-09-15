@@ -1,4 +1,7 @@
 {
+    "auth": {
+        "token_key": "${DIABETIPS_TOKEN_KEY}"
+    },
     "db": {
         "type": "sqlite",
         "database": "@{pkg.name}_prod.sqlite",

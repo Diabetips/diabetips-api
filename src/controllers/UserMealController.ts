@@ -9,8 +9,9 @@
 import { Request, Response } from "express";
 
 import { RecipeController } from ".";
+import { HttpStatus } from "../lib";
 import { UserMealService } from "../services/UserMealService";
-import { BaseController, HttpStatus } from "./BaseController";
+import { BaseController } from "./BaseController";
 
 export class UserMealController extends BaseController {
 
