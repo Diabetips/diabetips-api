@@ -8,10 +8,15 @@
 
 import { Request, Response } from "express";
 
+import { ApiPath } from "swagger-express-ts";
 import { HttpStatus } from "../lib";
 import { UserService } from "../services";
 import { BaseController } from "./BaseController";
 
+@ApiPath({
+    path: "/users",
+    name: "Users",
+})
 export class UserController extends BaseController {
 
     constructor() {

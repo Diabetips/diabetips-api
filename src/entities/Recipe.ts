@@ -7,10 +7,15 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
+import { ApiModel, ApiModelProperty } from "swagger-express-ts";
 import { Column, Entity } from "typeorm";
 import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
 
 @Entity()
+@ApiModel({
+    description: "Model for a Recipe object",
+    name: "Recipe",
+})
 export class Recipe extends BaseEntity {
 
     public static async findAll(req: IRecipeSearchRequest = {}, options: IRecipeQueryOptions = {}): Promise<Recipe[]> {
@@ -40,9 +45,17 @@ export class Recipe extends BaseEntity {
     }
 
     @Column({ length: 50 })
+    @ApiModelProperty({
+        description: "Name of the recipe",
+        example: "Lasagna",
+    })
     public name: string;
 
     @Column({ length: 200 })
+    @ApiModelProperty({
+        description: "Description of the recipe",
+        example: "Lasagnas are a delicious and cheap italian dish.",
+    })
     public description: string;
 }
 

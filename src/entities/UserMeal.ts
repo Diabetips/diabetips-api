@@ -8,9 +8,14 @@
 
 import { Column, Entity } from "typeorm";
 
+import { ApiModel, ApiModelProperty } from "swagger-express-ts";
 import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
 
 @Entity()
+@ApiModel({
+    description: "Model for a user's meal",
+    name: "UserMeal",
+})
 export class UserMeal extends BaseEntity {
 
     public static async findAll(patientUid: string, req: IUserMealSearchRequest = {},
@@ -40,6 +45,10 @@ export class UserMeal extends BaseEntity {
     }
 
     @Column({ length: 200 })
+    @ApiModelProperty({
+        description: "Description of the meal set by the user.",
+        example: "Lunch on the 7th of March",
+    })
     public description: string;
 
     // TODO: add recipes

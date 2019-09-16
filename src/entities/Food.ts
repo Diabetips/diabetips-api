@@ -6,10 +6,15 @@
 ** Created by Alexandre DE BEAUMONT on Mon Sep 02 2019
 */
 
+import { ApiModel, ApiModelProperty } from "swagger-express-ts";
 import { Column, Entity } from "typeorm";
 import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
 
 @Entity()
+@ApiModel({
+    description: "Model for a Food object",
+    name: "Food",
+})
 export class Food extends BaseEntity {
 
     public static async findAll(req: IFoodSearchRequest = {}, options: IFoodQueryOptions = {}): Promise<Food[]> {
@@ -40,9 +45,17 @@ export class Food extends BaseEntity {
     }
 
     @Column({ length: 200 })
+    @ApiModelProperty({
+        description: "Name of the food",
+        example: "Apple",
+    })
     public name: string;
 
     @Column({ length: 4 })
+    @ApiModelProperty({
+        description: "Measuring unit for the food",
+        example: "kg",
+    })
     public unit: string;
 }
 

@@ -12,12 +12,27 @@ import express = require("express");
 require("express-async-errors"); // patch express to forward errors in async handlers
 import { NextFunction, Request, Response } from "express";
 
+import * as swagger from "swagger-express-ts";
 import { AuthController, FoodController, RecipeController, UserController, UserMealController } from "./controllers";
 import { ApiError } from "./errors";
 import { HttpStatus, jsonReplacer } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
-
 export const app = express();
+
+// Swagger doc generator
+app.use(swagger.express(
+    {
+        definition: {
+            info: {
+                title: "My api",
+                version: "1.0",
+            },
+        },
+    },
+));
+
+app.use("/api-docs/swagger", express.static("swagger"));
+app.use("/api-docs/swagger/assets", express.static("node_modules/swagger-ui-dist"));
 
 // Express settings
 app.set("json replacer", jsonReplacer);
