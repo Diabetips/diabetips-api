@@ -21,5 +21,5 @@
 .gitignore
 /docker-compose*.yml
 /Dockerfile*
-/READMED.md
+/README.md
 /tslint.json

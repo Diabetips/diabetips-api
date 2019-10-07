@@ -7,6 +7,9 @@
         "database": "@{pkg.name}_dev.sqlite",
         "synchronize": true
     },
+    "diabetips": {
+        "accountUrl": "http://localhost:9080"
+    },
     "mail": {
         "host": "smtp.ethereal.email",
         "port": 587,

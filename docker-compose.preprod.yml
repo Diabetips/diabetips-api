@@ -1,8 +1,8 @@
 version: "3"
 services:
-  api:
+  diabetips-api:
     environment:
-        - DIABETIPS_ENV=preprod
-        - NODE_ENV=production
+      - DIABETIPS_ENV=preprod
+      - NODE_ENV=production
     ports:
       - "8081:8080"

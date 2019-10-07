@@ -14,22 +14,33 @@ import { NextFunction, Request, Response } from "express";
 
 import { AuthController, UserController } from "./controllers";
 import { ApiError } from "./errors";
-import { HttpStatus, jsonReplacer } from "./lib";
+import { HttpStatus, Utils } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
+import { AuthService } from "./services";
 
 export const app = express();
 
 // Express settings
-app.set("json replacer", jsonReplacer);
+app.set("json replacer", Utils.jsonReplacer);
 app.set("x-powered-by", false);
 
+// Middlewares
 app.use(cors({
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
 }));
 app.use(log4js.connectLogger(httpLogger, { level: "info" }));
+app.use(async (req: Request, res: Response, next: NextFunction) => {
+    req.context = {
+        auth: await AuthService.decodeAuthorization(req.header("Authorization")),
+    };
+    next();
+});
 
 // API routes
+app.get("/", (req: Request, res: Response) => {
+    res.send({});
+});
 app.use("/v1/auth", new AuthController().router);
 app.use("/v1/users", new UserController().router);
 

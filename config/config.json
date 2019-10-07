@@ -4,6 +4,9 @@
             "%{__dirname}/entities/**/*.{js,ts}"
         ]
     },
+    "diabetips": {
+        "accountUrl": "https://account.diabetips.fr"
+    },
     "http": {
         "host": "::",
         "port": 8080
