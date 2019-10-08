@@ -22,4 +22,6 @@
 /docker-compose*.yml
 /Dockerfile*
 /README.md
+/secrets.txt
+/secrets.txt.sample
 /tslint.json

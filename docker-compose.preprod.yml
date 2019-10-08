@@ -1,6 +1,7 @@
 version: "3"
 services:
   diabetips-api:
+    env_file: secrets.txt
     environment:
       - DIABETIPS_ENV=preprod
       - NODE_ENV=production
