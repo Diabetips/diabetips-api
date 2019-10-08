@@ -67,6 +67,6 @@ app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction)
             .send({
                 error: "Internal server error",
             });
-        logger.error(err.stack);
+        logger.error(err.stack || err);
     }
 });

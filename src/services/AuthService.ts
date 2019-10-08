@@ -53,7 +53,7 @@ export class AuthService extends BaseService {
                 }
                 user = tmp;
             } catch (err) {
-                logger.error("Token verification failed:", err.stack);
+                logger.error("Token verification failed:", err.stack || err);
                 throw new ApiError(HttpStatus.BAD_REQUEST, "invalid_auth", "Invalid authorization token");
             }
 
@@ -135,7 +135,7 @@ export class AuthService extends BaseService {
             }
             user = tmp;
         } catch (err) {
-            logger.error("Authorization code verification failed:", err.stack);
+            logger.error("Authorization code verification failed:", err.stack || err);
             throw new AuthError("invalid_grant", "Invalid authorization code");
         }
 
@@ -182,7 +182,7 @@ export class AuthService extends BaseService {
             }
             user = tmp;
         } catch (err) {
-            logger.error("Refresh token verification failed:", err.stack);
+            logger.error("Refresh token verification failed:", err.stack || err);
             throw new AuthError("invalid_grant", "Invalid refresh token");
         }
 

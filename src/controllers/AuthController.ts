@@ -57,7 +57,7 @@ export class AuthController extends BaseController {
                     error_description: err.description,
                 });
         } else {
-            logger.error(err.stack);
+            logger.error(err.stack || err);
             res
                 .status(500)
                 .send({
