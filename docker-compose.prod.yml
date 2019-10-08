@@ -1,6 +1,7 @@
 version: "3"
 services:
   diabetips-api:
+    env_file: env.txt
     environment:
       - DIABETIPS_ENV=prod
       - NODE_ENV=production
