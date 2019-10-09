@@ -9,3 +9,6 @@
 
 # Sqlite database files
 *.sqlite
+
+# Secrets
+/secrets.txt

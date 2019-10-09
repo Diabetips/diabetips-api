@@ -69,6 +69,10 @@ export class User extends BaseEntity {
         return query.getOne();
     }
 
+    public static async hasUid(uid: string, options: IUserQueryOptions = {}): Promise<boolean> {
+        return await this.findByUid(uid, options) != null;
+    }
+
     public static async findByEmail(email: string, options: IUserQueryOptions = {}): Promise<User | undefined> {
         let query = this
             .createQueryBuilder("user")

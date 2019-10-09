@@ -11,29 +11,42 @@ import uuid = require("uuid");
 
 import { IUserQueryOptions, User } from "../entities";
 import { ApiError } from "../errors";
-import { HttpStatus } from "../lib";
+import { Context, HttpStatus } from "../lib";
 import { mail, render } from "../mail";
 import { BaseService } from "./BaseService";
 
-export interface ICreateUserRequest {
+export interface CreateUserReq {
     email: string;
     password: string;
     first_name: string;
     last_name: string;
 }
 
-export interface IUpdateUserRequest {
+export interface UpdateUserReq {
     email?: string;
     password?: string;
     first_name?: string;
     last_name?: string;
 }
 
-export interface IResetPasswordRequest {
+export interface ResetPasswordReq {
     email: string;
 }
 
 export class UserService extends BaseService {
+
+    /**
+     * @warning throws ApiErrors if no user is logged in
+     */
+    public static getCurrentUser(ctx: Context): User {
+        if (ctx.auth == null) {
+            throw new ApiError(HttpStatus.UNAUTHORIZED, "unauthorized", "Please provide an authorization token");
+        }
+        if (ctx.auth.type !== "user") {
+            throw new ApiError(HttpStatus.FORBIDDEN, "access_denied", "Access denied");
+        }
+        return ctx.auth.user;
+    }
 
     public static async getAllUsers(): Promise<User[]> {
         // TODO
@@ -44,7 +57,7 @@ export class UserService extends BaseService {
         return User.findAll();
     }
 
-    public static async registerUser(req: ICreateUserRequest): Promise<User> {
+    public static async registerUser(req: CreateUserReq): Promise<User> {
         // TODO
         // * access checks:
         //   if current user and current user not admin: throw access denied error
@@ -83,7 +96,7 @@ export class UserService extends BaseService {
         return user;
     }
 
-    public static async updateUser(uid: string, req: IUpdateUserRequest): Promise<User> {
+    public static async updateUser(uid: string, req: UpdateUserReq): Promise<User> {
         // TODO
         // * validation
         const user = await this.getUser(uid, { selectPassword: true });
@@ -130,7 +143,7 @@ export class UserService extends BaseService {
         });
     }
 
-    public static async resetUserPassword(req: IResetPasswordRequest): Promise<void> {
+    public static async resetUserPassword(req: ResetPasswordReq): Promise<void> {
         // TODO
         // * replace by sending a token in a link to the auth portal
 

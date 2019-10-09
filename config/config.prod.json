@@ -1,18 +1,12 @@
 {
     "auth": {
-        "token_key": "${DIABETIPS_TOKEN_KEY}"
+        "token_key": "${DIABETIPS_AUTH_TOKEN_KEY}"
     },
     "db": {
-        "type": "sqlite",
-        "database": "@{pkg.name}_prod.sqlite",
-        "synchronize": true
+        "type": "mariadb",
+        "url": "${DIABETIPS_DB_URL}"
     },
     "mail": {
-        "host": "mail.diabetips.fr",
-        "port": 465,
-        "auth": {
-            "user": "account@diabetips.fr",
-            "pass": "${DIABETIPS_MAIL_PASS}"
-        }
+        "url": "${DIABETIPS_MAIL_URL}"
     }
 }

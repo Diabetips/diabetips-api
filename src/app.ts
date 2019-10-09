@@ -15,8 +15,10 @@ import { NextFunction, Request, Response } from "express";
 import * as swagger from "swagger-express-ts";
 import { AuthController, FoodController, RecipeController, UserController, UserMealController } from "./controllers";
 import { ApiError } from "./errors";
-import { HttpStatus, jsonReplacer } from "./lib";
+import { HttpStatus, Utils } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
+import { AuthService } from "./services";
+
 export const app = express();
 
 // Swagger doc generator
@@ -35,16 +37,26 @@ app.use("/api-docs/swagger", express.static("swagger"));
 app.use("/api-docs/swagger/assets", express.static("node_modules/swagger-ui-dist"));
 
 // Express settings
-app.set("json replacer", jsonReplacer);
+app.set("json replacer", Utils.jsonReplacer);
 app.set("x-powered-by", false);
 
+// Middlewares
 app.use(cors({
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
 }));
 app.use(log4js.connectLogger(httpLogger, { level: "info" }));
+app.use(async (req: Request, res: Response, next: NextFunction) => {
+    req.context = {
+        auth: await AuthService.decodeAuthorization(req.header("Authorization")),
+    };
+    next();
+});
 
 // API routes
+app.get("/", (req: Request, res: Response) => {
+    res.send({});
+});
 app.use("/v1/auth", new AuthController().router);
 app.use("/v1/users", new UserController().router);
 app.use("/v1/users", new UserMealController().router);
@@ -74,6 +86,6 @@ app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction)
             .send({
                 error: "Internal server error",
             });
-        logger.error(err.stack);
+        logger.error(err.stack || err);
     }
 });

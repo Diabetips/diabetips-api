@@ -7,7 +7,9 @@
 */
 
 import { NextFunction, Request, Response } from "express";
+import querystring = require("querystring");
 
+import { config } from "../config";
 import { AuthError } from "../errors";
 import { HttpStatus } from "../lib";
 import { logger } from "../logger";
@@ -20,23 +22,23 @@ export class AuthController extends BaseController {
         super();
 
         this.router
-            .get("/authorize", this.authorize, this.errorHandler)
-            .post("/token", this.formParser, this.token, this.errorHandler)
+            .get("/authorize",                        this.authorize,           this.errorHandler)
+            .post("/authorize",      this.formParser, this.authorizeInternal)
+            .post("/token",          this.formParser, this.token,               this.errorHandler)
             .post("/reset-password", this.jsonParser, this.resetPassword);
     }
 
     private authorize(req: Request, res: Response) {
-        if (req.query.response_type === "code") {
-            res.redirect("http://example.com/callback?code=abcdef&state=xyz");
-        } else if (req.query.response_type === "token") {
-            res.redirect("http://example.com/callback#access_token=abcdef&state=xyz&token_type=bearer&expires_in=3600");
-        } else {
-            res.redirect("http://example.com/callback?error=invalid_request");
-        }
+        res.redirect(config.diabetips.accountUrl + "/oauth/authorize?" +
+            querystring.stringify(req.query));
+    }
+
+    private async authorizeInternal(req: Request, res: Response) {
+        res.send(await AuthService.authorize(req.context, req.body));
     }
 
     private async token(req: Request, res: Response) {
-        res.send(await AuthService.getToken(req.body));
+        res.send(await AuthService.getToken(req.context, req.body));
     }
 
     private async resetPassword(req: Request, res: Response) {
@@ -55,7 +57,7 @@ export class AuthController extends BaseController {
                     error_description: err.description,
                 });
         } else {
-            logger.error(err.stack);
+            logger.error(err.stack || err);
             res
                 .status(500)
                 .send({
