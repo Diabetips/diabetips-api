@@ -4,6 +4,8 @@ FROM node:${node_version}
 RUN useradd -m diabetips-api
 USER diabetips-api
 WORKDIR /home/diabetips-api
+COPY swagger ./swagger
+COPY patches ./patches
 COPY package.json package-lock.json tsconfig.json ./
 RUN npm install --production
 COPY src ./src
