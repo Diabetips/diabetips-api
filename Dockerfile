@@ -19,4 +19,6 @@ COPY package.json ./
 COPY --from=0 /home/diabetips-api/node_modules ./node_modules
 COPY config ./config
 COPY views ./views
+COPY swagger ./swagger
+COPY patches ./patches
 COPY --from=0 /home/diabetips-api/build ./build
