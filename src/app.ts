@@ -33,7 +33,7 @@ app.use(swagger.express(
     },
 ));
 
-app.use("/api-docs/swagger", express.static("swagger"));
+app.use("/v1/api-docs/swagger", express.static("swagger"));
 app.use("/api-docs/swagger/assets", express.static("node_modules/swagger-ui-dist"));
 
 // Express settings
