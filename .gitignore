@@ -11,4 +11,5 @@
 *.sqlite
 
 # Secrets
+/ormconfig.json
 /secrets.txt
