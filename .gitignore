@@ -1,6 +1,9 @@
 # Build directory
 /build
 
+# Personal developer config
+/config/config.local.json
+
 # Logs directory
 /logs
 
