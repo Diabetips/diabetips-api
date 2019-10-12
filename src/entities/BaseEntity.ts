@@ -6,32 +6,21 @@
 ** Created by Arthur MELIN on Thu Aug 29 2019
 */
 
-import { BaseEntity as TypeOrmBaseEntity, Column, ObjectType, PrimaryGeneratedColumn, SaveOptions } from "typeorm";
+import {
+    BaseEntity as TypeOrmBaseEntity, Column, CreateDateColumn, ObjectType, PrimaryGeneratedColumn, SaveOptions,
+    UpdateDateColumn
+} from "typeorm";
 
 export abstract class BaseEntity extends TypeOrmBaseEntity {
-
-    public static save<T extends BaseEntity>(this: ObjectType<T>, entities: T[], options?: SaveOptions): Promise<T[]>;
-    public static save<T extends BaseEntity>(this: ObjectType<T>, entity: T, options?: SaveOptions): Promise<T>;
-    public static save<T extends BaseEntity>(this: ObjectType<T>, entityOrEntities: T | T[], options?: SaveOptions):
-        Promise<T | T[]> {
-        if (entityOrEntities instanceof Array) {
-            for (const entity of entityOrEntities as T[]) {
-                entity._updated_at = new Date();
-            }
-        } else {
-            (entityOrEntities as T)._updated_at = new Date();
-        }
-        return super.save(entityOrEntities as any, options);
-    }
 
     @PrimaryGeneratedColumn({ name: "id" })
     private _id: number;
 
-    @Column({ name: "created_at" })
-    private _created_at: Date = new Date();
+    @CreateDateColumn({ name: "created_at" })
+    private _created_at: Date;
 
-    @Column({ name: "updated_at" })
-    private _updated_at: Date = new Date();
+    @UpdateDateColumn({ name: "updated_at" })
+    private _updated_at: Date;
 
     @Column({ name: "deleted_at", type: "datetime", nullable: true, default: undefined })
     private _deleted_at: Date | undefined = undefined;
@@ -64,10 +53,6 @@ export abstract class BaseEntity extends TypeOrmBaseEntity {
         this._deleted_at = deleted ? new Date() : undefined;
     }
 
-    public save(): Promise<this> {
-        this._updated_at = new Date();
-        return super.save();
-    }
 }
 
 export interface IBaseQueryOptions {

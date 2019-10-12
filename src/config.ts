@@ -14,10 +14,14 @@ const baseConfig = Utils.loadJsonFile("config/config.json");
 const profileConfig = Utils.loadJsonFile(`config/config.${env}.json`);
 const pkg = Utils.guard(() => Utils.loadJsonFile("package.json"), {});
 
-const tmp = Utils.merge(baseConfig, profileConfig);
+let mergedConfig = Utils.merge(baseConfig, profileConfig);
+if (env === "dev") {
+    const localConfig = Utils.guard(() => Utils.loadJsonFile("config/config.local.json"), {});
+    mergedConfig = Utils.merge(mergedConfig, localConfig);
+}
 
 export const config = {
-    ...tmp,
+    ...mergedConfig,
     env,
     pkg,
 };
