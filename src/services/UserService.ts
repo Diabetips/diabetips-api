@@ -13,6 +13,7 @@ import { IUserQueryOptions, User } from "../entities";
 import { ApiError } from "../errors";
 import { Context, HttpStatus } from "../lib";
 import { mail, render } from "../mail";
+
 import { BaseService } from "./BaseService";
 
 export interface CreateUserReq {
@@ -134,7 +135,7 @@ export class UserService extends BaseService {
     public static async deleteUser(uid: string): Promise<void> {
         const user = await this.getUser(uid); // getUser handles access checks
         user.deleted = true;
-        user.save();
+        await user.save();
 
         mail.sendMail({
             to: user.email,

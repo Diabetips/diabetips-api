@@ -8,17 +8,17 @@
 
 import bcrypt = require("bcrypt");
 
-import { Column, Entity, Index, ManyToOne, OneToMany } from "typeorm";
+import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany } from "typeorm";
 
+import { BaseEntityHiddenId, IBaseQueryOptions, optionDefault } from "./BaseEntityHiddenId";
 import { UserMeal } from ".";
-import { BaseEntity, IBaseQueryOptions, optionDefault } from "./BaseEntity";
 
 export interface IUserQueryOptions extends IBaseQueryOptions {
     selectPassword?: boolean;
 }
 
 @Entity()
-export class User extends BaseEntity {
+export class User extends BaseEntityHiddenId {
 
     @Column({ length: 36, unique: true })
     public uid: string;
@@ -46,6 +46,18 @@ export class User extends BaseEntity {
     public set password(password: string | undefined) {
         this._password = password === undefined ? undefined : bcrypt.hashSync(password, 12);
     }
+
+    @ManyToMany((type) => User)
+    @JoinTable({
+        name: "user_connections",
+        joinColumn: {
+            name: "source_user",
+        },
+        inverseJoinColumn: {
+            name: "target_user",
+        },
+    })
+    public connections: Promise<User[]>;
 
     // Repository functions
 
