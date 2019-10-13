@@ -6,6 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
+import { User } from "../entities";
 import { IUserMealSearchRequest, UserMeal } from "../entities/UserMeal";
 import { ApiError } from "../errors";
 import { HttpStatus } from "../lib";
@@ -33,10 +34,18 @@ export class UserMealService extends BaseService {
     }
 
     public static async addUserMeal(patientUid: string, req: ICreateUserMealRequest): Promise<UserMeal> {
-        const meal = new UserMeal();
 
+        // Get the user
+        const user = await User.findByUid(patientUid);
+
+        if (user === undefined) {
+            throw new ApiError(HttpStatus.NOT_FOUND, "user_not_found", `User (${patientUid}) not found`);
+        }
+
+        // Add meal
+        const meal = new UserMeal();
         meal.description = req.description;
-        // TODO: Add recipes
+        meal.user = user;
 
         return meal.save();
     }

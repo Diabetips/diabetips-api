@@ -8,8 +8,9 @@
 
 import bcrypt = require("bcrypt");
 
-import { Column, Entity, Index } from "typeorm";
+import { Column, Entity, Index, ManyToOne, OneToMany } from "typeorm";
 
+import { UserMeal } from ".";
 import { BaseEntity, IBaseQueryOptions, optionDefault } from "./BaseEntity";
 
 export interface IUserQueryOptions extends IBaseQueryOptions {
@@ -34,6 +35,9 @@ export class User extends BaseEntity {
 
     @Column({ length: 100 })
     public last_name: string;
+
+    @OneToMany((type) => UserMeal, (meal) => meal.user)
+    public meals: Promise<UserMeal[]>;
 
     public get password(): string | undefined {
         return this._password;

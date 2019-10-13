@@ -23,11 +23,11 @@ export class UserMealController extends BaseController {
         super();
 
         this.router
-            .get("/:userUid/meals/", this.getAllUserMeals)
-            .post("/:userUid/meals/", this.addUserMeal)
-            .get("/:userUid/meals/:id", this.getUserMeal)
-            .put("/:userUid/meals/:id", this.updateUserMeal)
-            .delete("/:userUid/meals/:id", this.deleteUserMeal);
+            .get("/:userUid/meals/",                          this.getAllUserMeals)
+            .post("/:userUid/meals/",      this.jsonParser,   this.addUserMeal)
+            .get("/:userUid/meals/:id",                       this.getUserMeal)
+            .put("/:userUid/meals/:id",    this.jsonParser,   this.updateUserMeal)
+            .delete("/:userUid/meals/:id",                    this.deleteUserMeal);
     }
 
     @ApiOperationGet({
@@ -64,7 +64,7 @@ export class UserMealController extends BaseController {
         },
     })
     private async getAllUserMeals(req: Request, res: Response) {
-        res.send(await UserMealService.getAllUserMeals(req.params.useruid, req.query));
+        res.send(await UserMealService.getAllUserMeals(req.params.userUid, req.query));
     }
 
     @ApiOperationGet({
@@ -97,7 +97,7 @@ export class UserMealController extends BaseController {
     private async getUserMeal(req: Request, res: Response) {
         const params = {
             userUid: req.params.userUid,
-            mealId: parseInt(req.params.mealId, 10),
+            mealId: parseInt(req.params.id, 10),
         };
 
         res.send(await UserMealService.getUserMeal(params));
@@ -128,7 +128,7 @@ export class UserMealController extends BaseController {
         },
     })
     private async addUserMeal(req: Request, res: Response) {
-        res.send(await UserMealService.addUserMeal(req.params.useruid, req.body));
+        res.send(await UserMealService.addUserMeal(req.params.userUid, req.body));
     }
 
     @ApiOperationPut({
@@ -165,7 +165,7 @@ export class UserMealController extends BaseController {
     private async updateUserMeal(req: Request, res: Response) {
         const params = {
             userUid: req.params.userUid,
-            mealId: parseInt(req.params.mealId, 10),
+            mealId: parseInt(req.params.id, 10),
         };
 
         res.send(await UserMealService.updateUserMeal(params, req.body));
@@ -201,7 +201,7 @@ export class UserMealController extends BaseController {
     private async deleteUserMeal(req: Request, res: Response) {
         const params = {
             userUid: req.params.userUid,
-            mealId: parseInt(req.params.mealId, 10),
+            mealId: parseInt(req.params.id, 10),
         };
 
         await UserMealService.deleteUserMeal(params);
