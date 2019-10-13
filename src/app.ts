@@ -12,7 +12,7 @@ import express = require("express");
 require("express-async-errors"); // patch express to forward errors in async handlers
 import { NextFunction, Request, Response } from "express";
 
-import { AuthController, UserController } from "./controllers";
+import { AuthController, UserConnectionController, UserController } from "./controllers";
 import { ApiError } from "./errors";
 import { HttpStatus, Utils } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
@@ -43,6 +43,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 app.use("/v1/auth", new AuthController().router);
 app.use("/v1/users", new UserController().router);
+app.use("/v1/users", new UserConnectionController().router);
 
 // 404 handler
 app.use((req: Request, res: Response, next: NextFunction) => {

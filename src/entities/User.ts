@@ -8,7 +8,7 @@
 
 import bcrypt = require("bcrypt");
 
-import { Column, Entity, Index } from "typeorm";
+import { Column, Entity, Index, JoinTable, ManyToMany } from "typeorm";
 
 import { BaseEntity, IBaseQueryOptions, optionDefault } from "./BaseEntity";
 
@@ -42,6 +42,18 @@ export class User extends BaseEntity {
     public set password(password: string | undefined) {
         this._password = password === undefined ? undefined : bcrypt.hashSync(password, 12);
     }
+
+    @ManyToMany((type) => User)
+    @JoinTable({
+        name: "user_connections",
+        joinColumn: {
+            name: "source_user",
+        },
+        inverseJoinColumn: {
+            name: "target_user",
+        },
+    })
+    public connections: Promise<User[]>;
 
     // Repository functions
 

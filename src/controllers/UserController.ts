@@ -10,6 +10,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { HttpStatus } from "../lib";
 import { UserService } from "../services";
+
 import { BaseController } from "./BaseController";
 
 export class UserController extends BaseController {
