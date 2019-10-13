@@ -10,14 +10,14 @@ import bcrypt = require("bcrypt");
 
 import { Column, Entity, Index, JoinTable, ManyToMany } from "typeorm";
 
-import { BaseEntity, IBaseQueryOptions, optionDefault } from "./BaseEntity";
+import { BaseEntityHiddenId, IBaseQueryOptions, optionDefault } from "./BaseEntityHiddenId";
 
 export interface IUserQueryOptions extends IBaseQueryOptions {
     selectPassword?: boolean;
 }
 
 @Entity()
-export class User extends BaseEntity {
+export class User extends BaseEntityHiddenId {
 
     @Column({ length: 36, unique: true })
     public uid: string;

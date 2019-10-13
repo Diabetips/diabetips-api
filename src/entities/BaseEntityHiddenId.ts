@@ -9,10 +9,10 @@
 import { BaseEntity as TypeOrmBaseEntity, Column, CreateDateColumn, ObjectType, PrimaryGeneratedColumn, SaveOptions,
          UpdateDateColumn } from "typeorm";
 
-export abstract class BaseEntity extends TypeOrmBaseEntity {
+export abstract class BaseEntityHiddenId extends TypeOrmBaseEntity {
 
-    @PrimaryGeneratedColumn()
-    public id: number;
+    @PrimaryGeneratedColumn({ name: "id" })
+    private _id: number;
 
     @CreateDateColumn({ name: "created_at" })
     private _created_at: Date;
@@ -25,6 +25,10 @@ export abstract class BaseEntity extends TypeOrmBaseEntity {
 
     @Column({ name: "deleted", default: false })
     private _deleted: boolean = false;
+
+    public get id(): number {
+        return this._id;
+    }
 
     public get createdAt(): Date {
         return this._created_at;
