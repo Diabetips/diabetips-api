@@ -39,24 +39,34 @@ export class UserConnectionService extends BaseService {
                  }),
             });
         } else {
-            const connections = await user.connections;
-            if (connections.find((val) => val.uid === target.uid) != null) {
-                return;
-            }
-            user.connections = Promise.resolve(connections.concat(target));
-            await user.save();
+            await this.addConnection(user, target);
+            await this.addConnection(target, user);
         }
     }
 
     public static async deleteUserConnection(uid: string, connectionUid: string) {
         const user = await UserService.getUser(uid);
         const connections = await user.connections;
-        if (connections.find((val) => val.uid === connectionUid) == null) {
+        const target = connections.find((val) => val.uid === connectionUid);
+        if (target == null) {
             throw new ApiError(HttpStatus.NOT_FOUND, "user_not_found", `Connection ${connectionUid} not found`);
         }
-
-        user.connections = Promise.resolve(connections.filter((val) => val.uid !== connectionUid));
-        await user.save();
+        await this.removeConnection(user, target);
+        await this.removeConnection(target, user);
     }
 
+    private static async addConnection(source: User, target: User) {
+        const connections = await source.connections;
+        if (connections.find((val) => val.uid === target.uid) != null) {
+            return;
+        }
+        source.connections = Promise.resolve(connections.concat(target));
+        await source.save();
+    }
+
+    private static async removeConnection(source: User, target: User) {
+        const connections = await source.connections;
+        source.connections = Promise.resolve(connections.filter((val) => val.uid !== target.uid));
+        await source.save();
+    }
 }
