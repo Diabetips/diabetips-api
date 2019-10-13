@@ -7,5 +7,6 @@
 */
 
 import { AuthController } from "./AuthController";
+import { UserConnectionController } from "./UserConnectionController";
 import { UserController } from "./UserController";
-export { AuthController, UserController };
+export { AuthController, UserConnectionController, UserController };

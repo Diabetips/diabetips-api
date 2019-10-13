@@ -14,6 +14,7 @@ import { User } from "../entities";
 import { ApiError, AuthError } from "../errors";
 import { AuthInfo, Context, HttpStatus } from "../lib";
 import { logger } from "../logger";
+
 import { BaseService } from "./BaseService";
 
 interface AuthCodeRes {
