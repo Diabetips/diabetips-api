@@ -21,30 +21,31 @@ export class UserMeal extends BaseEntity {
 
     public static async findAll(patientUid: string, req: IUserMealSearchRequest = {},
                                 options: IUserMealQueryOptions = {}): Promise<UserMeal[]> {
-
         let query = this
             .createQueryBuilder("meal")
-            .addSelect("meal.id", "meal_id")
+            .leftJoinAndSelect("meal.recipes", "recipes")
             .leftJoin("meal.user", "user")
             .andWhere("user.uid = :patientUid", { patientUid });
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("user.deleted = 0")
-                            .andWhere("meal.deleted = 0");
+                            .andWhere("meal.deleted = 0")
+                            .andWhere("recipes.deleted = 0");
         }
         return query.getMany();
     }
 
     public static async findById(patientUid: string, mealId: number,
                                  options: IUserMealQueryOptions = {}): Promise<UserMeal | undefined> {
-
         let query = this
             .createQueryBuilder("meal")
-            .addSelect("meal.id", "meal.id")
+            .andWhere("meal.id = :mealId", { mealId })
+            .leftJoinAndSelect("meal.recipes", "recipes")
             .leftJoin("meal.user", "user")
             .andWhere("user.uid = :patientUid", { patientUid });
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("user.deleted = 0")
-                            .andWhere("meal.deleted = 0");
+                            .andWhere("meal.deleted = 0")
+                            .andWhere("recipes.deleted = 0");
         }
         return query.getOne();
     }
@@ -65,11 +66,12 @@ export class UserMeal extends BaseEntity {
 
 }
 
+// tslint:disable-next-line: no-empty-interface
 interface IUserMealQueryOptions extends IBaseQueryOptions {
 
 }
 
-// TODO? Will it be used ?
+// tslint:disable-next-line: no-empty-interface
 export interface IUserMealSearchRequest extends IBaseSearchRequest {
 
 }

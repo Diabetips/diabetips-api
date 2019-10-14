@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
-import { User } from "../entities";
+import { Recipe, User } from "../entities";
 import { IUserMealSearchRequest, UserMeal } from "../entities/UserMeal";
 import { ApiError } from "../errors";
 import { HttpStatus } from "../lib";
@@ -14,12 +14,12 @@ import { BaseService } from "./BaseService";
 
 interface ICreateUserMealRequest {
     description: string;
-    // TODO: add recipes
+    recipeIDs: number[];
 }
 
 interface IUpdateUserMealRequest {
     description?: string;
-    // TODO: add recipes
+    recipeIDs?: number[];
 }
 
 export class UserMealService extends BaseService {
@@ -30,11 +30,14 @@ export class UserMealService extends BaseService {
     }
 
     public static async getUserMeal(params: IUserMealParams) {
-        return UserMeal.findById(params.userUid, params.mealId);
+        const meal = UserMeal.findById(params.userUid, params.mealId);
+        if (meal === undefined) {
+            throw new ApiError(HttpStatus.NOT_FOUND, "meal_not_found", `Meal ${params.mealId} not found`);
+        }
+        return meal;
     }
 
     public static async addUserMeal(patientUid: string, req: ICreateUserMealRequest): Promise<UserMeal> {
-
         // Get the user
         const user = await User.findByUid(patientUid);
 
@@ -46,6 +49,15 @@ export class UserMealService extends BaseService {
         const meal = new UserMeal();
         meal.description = req.description;
         meal.user = user;
+        meal.recipes = [];
+
+        for (const recipeID of req.recipeIDs) {
+            const r = await Recipe.findById(recipeID);
+            if (r === undefined) {
+                throw new ApiError(HttpStatus.NOT_FOUND, "recipe_not_found", `Recipe (${recipeID}) not found`);
+            }
+            meal.recipes.push(r);
+        }
 
         return meal.save();
     }
@@ -59,7 +71,17 @@ export class UserMealService extends BaseService {
         }
 
         if (req.description !== undefined) { meal.description = req.description; }
-        // TODO: Add recipes
+        if (req.recipeIDs !== undefined) {
+            meal.recipes = [];
+
+            for (const recipeID of req.recipeIDs) {
+                const r = await Recipe.findById(recipeID);
+                if (r === undefined) {
+                    throw new ApiError(HttpStatus.NOT_FOUND, "recipe_not_found", `Recipe (${recipeID}) not found`);
+                }
+                meal.recipes.push(r);
+            }
+        }
 
         return meal.save();
     }

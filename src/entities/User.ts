@@ -11,7 +11,7 @@ import bcrypt = require("bcrypt");
 import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany } from "typeorm";
 
 import { BaseEntityHiddenId, IBaseQueryOptions, optionDefault } from "./BaseEntityHiddenId";
-import { UserMeal } from ".";
+import { UserMeal } from "./UserMeal";
 
 export interface IUserQueryOptions extends IBaseQueryOptions {
     selectPassword?: boolean;

@@ -21,7 +21,7 @@ export class UserConnectionController extends BaseController {
         this.router
             .get("/:uid/connections",                                   this.getAllConnections)
             .post("/:uid/connections",              this.jsonParser,    this.createConnection)
-            .delete("/:uid/connections/:conn_uid",                     this.deleteConnection);
+            .delete("/:uid/connections/:conn_uid",                      this.deleteConnection);
     }
 
     private async getAllConnections(req: Request, res: Response) {

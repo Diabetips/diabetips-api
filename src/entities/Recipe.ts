@@ -8,8 +8,9 @@
 */
 
 import { ApiModel, ApiModelProperty } from "swagger-express-ts";
-import { Column, Entity } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
+import { Ingredient } from "./Ingredient";
 
 @Entity()
 @ApiModel({
@@ -21,7 +22,8 @@ export class Recipe extends BaseEntity {
     public static async findAll(req: IRecipeSearchRequest = {}, options: IRecipeQueryOptions = {}): Promise<Recipe[]> {
         let query = this
             .createQueryBuilder("recipe")
-            .select("recipe");
+            .leftJoinAndSelect("recipe.ingredients", "ingredients")
+            .leftJoinAndSelect("ingredients.food", "food")
 
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("recipe.deleted = 0");
@@ -35,8 +37,9 @@ export class Recipe extends BaseEntity {
     public static async findById(id: number, options: IRecipeQueryOptions = {}): Promise<Recipe | undefined> {
         let query = this
             .createQueryBuilder("recipe")
-            .select("recipe")
-            .where("recipe.id = :id", { id });
+            .leftJoinAndSelect("recipe.ingredients", "ingredients")
+            .leftJoinAndSelect("ingredients.food", "food")
+            .andWhere("recipe.id = :id", { id });
 
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("recipe.deleted = 0");
@@ -57,6 +60,9 @@ export class Recipe extends BaseEntity {
         example: "Lasagnas are a delicious and cheap italian dish.",
     })
     public description: string;
+
+    @OneToMany((type) => Ingredient, (ingredient) => ingredient.recipe, { cascade: true })
+    public ingredients: Ingredient[];
 }
 
 // tslint:disable-next-line: no-empty-interface

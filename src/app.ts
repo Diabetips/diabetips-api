@@ -13,7 +13,8 @@ require("express-async-errors"); // patch express to forward errors in async han
 import { NextFunction, Request, Response } from "express";
 
 import * as swagger from "swagger-express-ts";
-import { AuthController, FoodController, RecipeController, UserConnectionController, UserController, UserMealController } from "./controllers";
+import { AuthController, FoodController, RecipeController,
+    UserConnectionController, UserController, UserMealController } from "./controllers";
 import { ApiError } from "./errors";
 import { HttpStatus, Utils } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";

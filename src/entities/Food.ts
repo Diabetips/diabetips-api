@@ -29,6 +29,7 @@ export class Food extends BaseEntity {
         if (req.name !== undefined) {
             query = query.andWhere(`food.name LIKE :name`, { name: "%" + req.name + "%" });
         }
+        // TODO: pagination
         return query.getMany();
     }
 
@@ -54,7 +55,7 @@ export class Food extends BaseEntity {
     @Column({ length: 4 })
     @ApiModelProperty({
         description: "Measuring unit for the food",
-        example: "kg",
+        example: "g",
     })
     public unit: string;
 }

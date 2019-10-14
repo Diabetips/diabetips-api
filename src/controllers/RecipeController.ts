@@ -8,7 +8,8 @@
 
 import { Request, Response } from "express";
 
-import { ApiOperationGet, ApiOperationPost, ApiOperationPut, ApiPath, SwaggerDefinitionConstant, ApiOperationDelete } from "swagger-express-ts";
+import { ApiOperationDelete, ApiOperationGet, ApiOperationPost, 
+    ApiOperationPut, ApiPath, SwaggerDefinitionConstant } from "swagger-express-ts";
 import { FoodController } from ".";
 import { HttpStatus } from "../lib";
 import { RecipeService } from "../services/RecipeService";
@@ -19,23 +20,6 @@ import { BaseController } from "./BaseController";
     name: "Recipes",
 })
 export class RecipeController extends BaseController {
-
-    // TODO: remove that
-    public static tmpSalad = {
-        id: 0,
-        name: "Salade de concombres",
-        description: "hello this is a description",
-        ingredients: [
-            {
-                ...FoodController.tmpCucumber,
-                quantity: 150,
-            },
-            {
-                ...FoodController.tmpCream,
-                quantity: 200,
-            },
-        ],
-    };
 
     constructor() {
         super();
