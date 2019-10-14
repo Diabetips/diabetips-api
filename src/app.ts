@@ -12,13 +12,30 @@ import express = require("express");
 require("express-async-errors"); // patch express to forward errors in async handlers
 import { NextFunction, Request, Response } from "express";
 
-import { AuthController, UserConnectionController, UserController } from "./controllers";
+import * as swagger from "swagger-express-ts";
+import { AuthController, FoodController, RecipeController,
+    UserConnectionController, UserController, UserMealController } from "./controllers";
 import { ApiError } from "./errors";
 import { HttpStatus, Utils } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
 import { AuthService } from "./services";
 
 export const app = express();
+
+// Swagger doc generator
+app.use(swagger.express(
+    {
+        definition: {
+            info: {
+                title: "My api",
+                version: "1.0",
+            },
+        },
+    },
+));
+
+app.use("/v1/api-docs/swagger", express.static("swagger"));
+app.use("/api-docs/swagger/assets", express.static("node_modules/swagger-ui-dist"));
 
 // Express settings
 app.set("json replacer", Utils.jsonReplacer);
@@ -44,6 +61,9 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/v1/auth", new AuthController().router);
 app.use("/v1/users", new UserController().router);
 app.use("/v1/users", new UserConnectionController().router);
+app.use("/v1/users", new UserMealController().router);
+app.use("/v1/food", new FoodController().router);
+app.use("/v1/recipes", new RecipeController().router);
 
 // 404 handler
 app.use((req: Request, res: Response, next: NextFunction) => {

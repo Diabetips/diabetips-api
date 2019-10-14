@@ -7,6 +7,10 @@
 */
 
 import { AuthController } from "./AuthController";
-import { UserConnectionController } from "./UserConnectionController";
+import { FoodController } from "./FoodController";
+import { RecipeController } from "./RecipeController";
+import { UserConnectionController} from "./UserConnectionController";
 import { UserController } from "./UserController";
-export { AuthController, UserConnectionController, UserController };
+import { UserMealController } from "./UserMealController";
+export { AuthController, UserController, RecipeController, FoodController,
+    UserConnectionController, UserMealController };

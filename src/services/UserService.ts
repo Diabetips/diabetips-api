@@ -111,7 +111,7 @@ export class UserService extends BaseService {
             }
 
             mail.sendMail({
-                to: [ user.email, req.email ],
+                to: [user.email, req.email],
                 subject: "Changement de votre adresse email",
                 html: render("account-email-changed", { oldEmail: user.email, newEmail: req.email }),
             });
@@ -169,8 +169,8 @@ export class UserService extends BaseService {
 
     private static generatePassword(): string {
         const charset = "abcdefghijklmnopqrstuvwxyz"
-                      + "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                      + "0123456789";
+            + "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            + "0123456789";
         let res = "";
         for (let i = 0; i < 12; ++i) {
             res += charset[Math.floor(charset.length * Math.random())];

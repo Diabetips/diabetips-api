@@ -1,0 +1,12 @@
+diff --git a/node_modules/swagger-express-ts/api-model-property.decorator.d.ts b/node_modules/swagger-express-ts/api-model-property.decorator.d.ts
+index 10d0231..cb33946 100644
+--- a/node_modules/swagger-express-ts/api-model-property.decorator.d.ts
++++ b/node_modules/swagger-express-ts/api-model-property.decorator.d.ts
+@@ -37,6 +37,6 @@ export interface IApiModelPropertyArgs {
+     /**
+      * Define example.
+      */
+-    example?: any[];
++    example?: any;
+ }
+ export declare function ApiModelProperty(args?: IApiModelPropertyArgs): PropertyDecorator;
