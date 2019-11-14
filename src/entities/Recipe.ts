@@ -47,6 +47,13 @@ export class Recipe extends BaseEntity {
         return query.getOne();
     }
 
+    // Necessaryrop duplication of ID for documentation purposes
+    @ApiModelProperty({
+        description: "ID of the recipe",
+        example: 7,
+    })
+    public id: number;
+
     @Column({ length: 50 })
     @ApiModelProperty({
         description: "Name of the recipe",
@@ -61,6 +68,10 @@ export class Recipe extends BaseEntity {
     })
     public description: string;
 
+    @ApiModelProperty({
+        description: "Ingredients of the recipe",
+        model: "Ingredient",
+    })
     @OneToMany((type) => Ingredient, (ingredient) => ingredient.recipe, { cascade: true })
     public ingredients: Ingredient[];
 }

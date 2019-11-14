@@ -10,7 +10,6 @@ import { Request, Response } from "express";
 
 import { ApiOperationDelete, ApiOperationGet, ApiOperationPost, 
     ApiOperationPut, ApiPath, SwaggerDefinitionConstant } from "swagger-express-ts";
-import { FoodController } from ".";
 import { HttpStatus } from "../lib";
 import { RecipeService } from "../services/RecipeService";
 import { BaseController } from "./BaseController";
@@ -70,7 +69,7 @@ export class RecipeController extends BaseController {
         responses: {
             200: {
                 description: "A recipe",
-                type: SwaggerDefinitionConstant.Response.Type.OBJECT, model: "Food",
+                type: SwaggerDefinitionConstant.Response.Type.OBJECT, model: "Recipe",
             },
             404: {
                 description: "Recipe not found",
@@ -105,7 +104,7 @@ export class RecipeController extends BaseController {
             body: {
                 description: "Body for a recipe",
                 required: true,
-                model: "Recipe",
+                model: "RecipePOST",
             },
         },
     })
@@ -130,7 +129,7 @@ export class RecipeController extends BaseController {
         parameters: {
             body: {
                 description: "Body for a recipe",
-                model: "Recipe",
+                model: "RecipePOST",
             },
             path: {
                 id: {
@@ -150,7 +149,6 @@ export class RecipeController extends BaseController {
         responses: {
             200: {
                 description: "Recipe successfully removed.",
-                type: SwaggerDefinitionConstant.Response.Type.OBJECT, model: "Recipe",
             },
             404: {
                 description: "Recipe not found",

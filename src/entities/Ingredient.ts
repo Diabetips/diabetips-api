@@ -6,6 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Thu Oct 10 2019
 */
 
+import { ApiModelProperty } from "swagger-express-ts";
 import { Column, Entity, ManyToOne } from "typeorm";
 import { Food, Recipe } from ".";
 import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
@@ -46,13 +47,20 @@ export class Ingredient extends BaseEntity {
 
     }
 
-
+    @ApiModelProperty({
+        description: "Quantity of the ingredient in the recipe",
+        example: "200",
+    })
     @Column({})
     public quantity: number;
 
     @ManyToOne((type) => Recipe)
     public recipe: Recipe;
 
+    @ApiModelProperty({
+        description: "Food element of the ingredient",
+        model: "Food",
+    })
     @ManyToOne((type) => Food)
     public food: Food;
 }

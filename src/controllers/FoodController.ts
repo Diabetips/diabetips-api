@@ -17,18 +17,6 @@ import { BaseController } from "./BaseController";
 })
 export class FoodController extends BaseController {
 
-    public static tmpCucumber = {
-        id: 15,
-        name: "Concombre",
-        unit: "g",
-    };
-
-    public static tmpCream = {
-        id: 59,
-        name: "Crème Fraîche",
-        unit: "mL",
-    };
-
     constructor() {
         super();
 

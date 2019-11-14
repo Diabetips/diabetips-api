@@ -10,6 +10,7 @@ import bcrypt = require("bcrypt");
 
 import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany } from "typeorm";
 
+import { ApiModelProperty } from "swagger-express-ts";
 import { BaseEntityHiddenId, IBaseQueryOptions, optionDefault } from "./BaseEntityHiddenId";
 import { UserMeal } from "./UserMeal";
 
@@ -20,9 +21,17 @@ export interface IUserQueryOptions extends IBaseQueryOptions {
 @Entity()
 export class User extends BaseEntityHiddenId {
 
+    @ApiModelProperty({
+        description: "Users's UID",
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    })
     @Column({ length: 36, unique: true })
     public uid: string;
 
+    @ApiModelProperty({
+        description: "Users's email",
+        example: "user@example.com",
+    })
     @Column({ length: 200 })
     @Index()
     public email: string;
@@ -30,9 +39,17 @@ export class User extends BaseEntityHiddenId {
     @Column({ name: "password", length: 100, select: false })
     private _password?: string;
 
+    @ApiModelProperty({
+        description: "Users's first name",
+        example: "John",
+    })
     @Column({ length: 100 })
     public first_name: string;
 
+    @ApiModelProperty({
+        description: "Users's first name",
+        example: "Snow",
+    })    
     @Column({ length: 100 })
     public last_name: string;
 

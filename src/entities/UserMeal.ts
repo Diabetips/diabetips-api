@@ -50,6 +50,13 @@ export class UserMeal extends BaseEntity {
         return query.getOne();
     }
 
+    // Necessary duplication of ID for documentation purposes
+    @ApiModelProperty({
+        description: "ID of the recipe",
+        example: 7,
+    })
+    public id: number;
+
     @Column({ length: 200 })
     @ApiModelProperty({
         description: "Description of the meal set by the user.",
@@ -60,6 +67,10 @@ export class UserMeal extends BaseEntity {
     @ManyToOne((type) => User, (user) => user.meals, { cascade: true })
     public user: User;
 
+    @ApiModelProperty({
+        description: "Recipes of the meal",
+        model: "Recipe",
+    })
     @ManyToMany((type) => Recipe)
     @JoinTable()
     public recipes: Recipe[];

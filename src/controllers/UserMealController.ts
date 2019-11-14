@@ -8,7 +8,8 @@
 
 import { Request, Response } from "express";
 
-import { ApiOperationGet, ApiOperationPost, ApiOperationPut, ApiPath, SwaggerDefinitionConstant, ApiOperationDelete } from "swagger-express-ts";
+import { ApiOperationDelete, ApiOperationGet, ApiOperationPost, ApiOperationPut,
+    ApiPath, SwaggerDefinitionConstant } from "swagger-express-ts";
 import { HttpStatus } from "../lib";
 import { UserMealService } from "../services/UserMealService";
 import { BaseController } from "./BaseController";
@@ -57,7 +58,7 @@ export class UserMealController extends BaseController {
             },
             path: {
                 userUid: {
-                    description: "The recipe's ID",
+                    description: "The user's UID",
                     required: true,
                 },
             },
@@ -76,7 +77,7 @@ export class UserMealController extends BaseController {
                 type: SwaggerDefinitionConstant.Response.Type.OBJECT, model: "UserMeal",
             },
             404: {
-                description: "Recipe not found",
+                description: "User or meal not found",
                 type: SwaggerDefinitionConstant.Response.Type.OBJECT, model: "ApiError",
             },
         },
@@ -84,11 +85,11 @@ export class UserMealController extends BaseController {
         parameters: {
             path: {
                 userUid: {
-                    description: "The recipe's ID",
+                    description: "The user's UID",
                     required: true,
                 },
                 id: {
-                    description: "The recipe's ID",
+                    description: "The meal's ID",
                     required: true,
                 },
             },
@@ -117,11 +118,11 @@ export class UserMealController extends BaseController {
             body: {
                 description: "Body for a meal",
                 required: true,
-                model: "UserMeal",
+                model: "UserMealPOST",
             },
             path: {
                 userUid: {
-                    description: "The recipe's ID",
+                    description: "The user's UID",
                     required: true,
                 },
             },
@@ -148,15 +149,15 @@ export class UserMealController extends BaseController {
         parameters: {
             body: {
                 description: "Body for a meal",
-                model: "UserMeal",
+                model: "UserMealPOST",
             },
             path: {
                 userUid: {
-                    description: "The recipe's ID",
+                    description: "The user's UID",
                     required: true,
                 },
                 id: {
-                    description: "The Meal's ID",
+                    description: "The meal's ID",
                     required: true,
                 },
             },
@@ -177,7 +178,6 @@ export class UserMealController extends BaseController {
         responses: {
             200: {
                 description: "Meal successfully removed.",
-                type: SwaggerDefinitionConstant.Response.Type.OBJECT, model: "UserMeal",
             },
             404: {
                 description: "Meal not found",
@@ -188,7 +188,7 @@ export class UserMealController extends BaseController {
         parameters: {
             path: {
                 userUid: {
-                    description: "The recipe's ID",
+                    description: "The user's UID",
                     required: true,
                 },
                 id: {

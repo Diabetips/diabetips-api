@@ -45,6 +45,13 @@ export class Food extends BaseEntity {
         return query.getOne();
     }
 
+    // Necessary duplication of ID for documentation purposes
+    @ApiModelProperty({
+        description: "ID of the recipe",
+        example: 7,
+    })
+    public id: number;
+
     @Column({ length: 200 })
     @ApiModelProperty({
         description: "Name of the food",
