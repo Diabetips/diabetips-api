@@ -16,11 +16,12 @@ import * as swagger from "swagger-express-ts";
 import { AuthController, FoodController, RecipeController,
     UserConnectionController, UserController, UserMealController } from "./controllers";
 import { UserGlucoseController } from "./controllers/UserGlucoseController";
+import { UserHbA1CController } from "./controllers/UserHbA1CController";
+import { UserInsulinController } from "./controllers/UserInsulinController";
 import { ApiError } from "./errors";
 import { HttpStatus, Utils } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
 import { AuthService } from "./services";
-import { UserInsulinController } from "./controllers/UserInsulinController";
 
 export const app = express();
 
@@ -67,6 +68,7 @@ app.use("/" + apiVersion + "/users", new UserConnectionController().router);
 app.use("/" + apiVersion + "/users", new UserMealController().router);
 app.use("/" + apiVersion + "/users", new UserGlucoseController().router);
 app.use("/" + apiVersion + "/users", new UserInsulinController().router);
+app.use("/" + apiVersion + "/users", new UserHbA1CController().router);
 app.use("/" + apiVersion + "/food", new FoodController().router);
 app.use("/" + apiVersion + "/recipes", new RecipeController().router);
 
