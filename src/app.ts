@@ -19,6 +19,7 @@ import { ApiError } from "./errors";
 import { HttpStatus, Utils } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
 import { AuthService } from "./services";
+import { UserGlucoseController } from "./controllers/UserGlucoseController";
 
 export const app = express();
 
@@ -58,12 +59,14 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
 app.get("/", (req: Request, res: Response) => {
     res.send({});
 });
-app.use("/v1/auth", new AuthController().router);
-app.use("/v1/users", new UserController().router);
-app.use("/v1/users", new UserConnectionController().router);
-app.use("/v1/users", new UserMealController().router);
-app.use("/v1/food", new FoodController().router);
-app.use("/v1/recipes", new RecipeController().router);
+const apiVersion = "v1";
+app.use("/" + apiVersion + "/auth", new AuthController().router);
+app.use("/" + apiVersion + "/users", new UserController().router);
+app.use("/" + apiVersion + "/users", new UserConnectionController().router);
+app.use("/" + apiVersion + "/users", new UserMealController().router);
+app.use("/" + apiVersion + "/users", new UserGlucoseController().router);
+app.use("/" + apiVersion + "/food", new FoodController().router);
+app.use("/" + apiVersion + "/recipes", new RecipeController().router);
 
 // 404 handler
 app.use((req: Request, res: Response, next: NextFunction) => {
