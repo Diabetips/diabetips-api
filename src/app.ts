@@ -11,10 +11,11 @@ import express = require("express");
 // tslint:disable-next-line:no-var-requires
 require("express-async-errors"); // patch express to forward errors in async handlers
 import { NextFunction, Request, Response } from "express";
-
 import * as swagger from "swagger-express-ts";
-import { AuthController, FoodController, RecipeController,
-    UserConnectionController, UserController, UserMealController } from "./controllers";
+
+import { config } from "./config";
+import { AuthAppController, AuthController, FoodController, RecipeController,
+    UserAppController, UserConnectionController, UserController, UserMealController } from "./controllers";
 import { ApiError } from "./errors";
 import { HttpStatus, Utils } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
@@ -66,11 +67,13 @@ app.get("/", (req: Request, res: Response) => {
     });
 });
 app.use("/v1/auth", new AuthController().router);
-app.use("/v1/users", new UserController().router);
-app.use("/v1/users", new UserConnectionController().router);
-app.use("/v1/users", new UserMealController().router);
+app.use("/v1/auth", new AuthAppController().router);
 app.use("/v1/food", new FoodController().router);
 app.use("/v1/recipes", new RecipeController().router);
+app.use("/v1/users", new UserController().router);
+app.use("/v1/users", new UserAppController().router);
+app.use("/v1/users", new UserConnectionController().router);
+app.use("/v1/users", new UserMealController().router);
 
 // 404 handler
 app.use((req: Request, res: Response, next: NextFunction) => {
