@@ -11,13 +11,12 @@ import express = require("express");
 // tslint:disable-next-line:no-var-requires
 require("express-async-errors"); // patch express to forward errors in async handlers
 import { NextFunction, Request, Response } from "express";
-
 import * as swagger from "swagger-express-ts";
-import { AuthController, FoodController, RecipeController,
-    UserConnectionController, UserController, UserMealController } from "./controllers";
-import { UserGlucoseController } from "./controllers/UserGlucoseController";
-import { UserHbA1CController } from "./controllers/UserHbA1CController";
-import { UserInsulinController } from "./controllers/UserInsulinController";
+
+import { config } from "./config";
+import { AuthAppController, AuthController, FoodController, RecipeController,
+    UserAppController, UserConnectionController, UserController, UserGlucoseController,
+    UserHbA1CController, UserInsulinController, UserMealController } from "./controllers";
 import { ApiError } from "./errors";
 import { HttpStatus, Utils } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
@@ -28,17 +27,22 @@ export const app = express();
 // Swagger doc generator
 app.use(swagger.express(
     {
+        path: "/docs/swagger.json",
         definition: {
             info: {
-                title: "My api",
-                version: "1.0",
+                title: "Diabetips API",
+                description: "This is the documentation for the Diabetips API.",
+                version: config.pkg.version,
+                contact: {
+                    email: "contact@diabetips.fr",
+                },
             },
         },
     },
 ));
 
-app.use("/v1/api-docs/swagger", express.static("swagger"));
-app.use("/api-docs/swagger/assets", express.static("node_modules/swagger-ui-dist"));
+app.use("/docs", express.static("swagger"));
+app.use("/docs/assets", express.static("node_modules/swagger-ui-dist"));
 
 // Express settings
 app.set("json replacer", Utils.jsonReplacer);
@@ -59,18 +63,22 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
 
 // API routes
 app.get("/", (req: Request, res: Response) => {
-    res.send({});
+    res.send({
+        documentation_url: "/docs",
+    });
 });
-const apiVersion = "v1";
-app.use("/" + apiVersion + "/auth", new AuthController().router);
-app.use("/" + apiVersion + "/users", new UserController().router);
-app.use("/" + apiVersion + "/users", new UserConnectionController().router);
-app.use("/" + apiVersion + "/users", new UserMealController().router);
-app.use("/" + apiVersion + "/users", new UserGlucoseController().router);
-app.use("/" + apiVersion + "/users", new UserInsulinController().router);
-app.use("/" + apiVersion + "/users", new UserHbA1CController().router);
-app.use("/" + apiVersion + "/food", new FoodController().router);
-app.use("/" + apiVersion + "/recipes", new RecipeController().router);
+
+app.use("/v1/auth", new AuthController().router);
+app.use("/v1/auth", new AuthAppController().router);
+app.use("/v1/users", new UserController().router);
+app.use("/v1/users", new UserAppController().router);
+app.use("/v1/users", new UserConnectionController().router);
+app.use("/v1/users", new UserMealController().router);
+app.use("/v1/users", new UserGlucoseController().router);
+app.use("/v1/users", new UserInsulinController().router);
+app.use("/v1/users", new UserHbA1CController().router);
+app.use("/v1/food", new FoodController().router);
+app.use("/v1/recipes", new RecipeController().router);
 
 // 404 handler
 app.use((req: Request, res: Response, next: NextFunction) => {

@@ -20,8 +20,8 @@ export class BaseController {
     public router: express.Router;
 
     // Pre-configured middlewares
-    public formParser: express.RequestHandler;
-    public jsonParser: express.RequestHandler;
+    protected formParser: express.RequestHandler;
+    protected jsonParser: express.RequestHandler;
 
     constructor(options: IControllerOptions = {}) {
         this.router = express.Router(options.routerOptions);

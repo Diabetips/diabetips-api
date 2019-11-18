@@ -13,6 +13,7 @@ import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany } from "typeorm
 import { ApiModelProperty } from "swagger-express-ts";
 import { BaseEntityHiddenId, IBaseQueryOptions, optionDefault } from "./BaseEntityHiddenId";
 import { UserMeal } from "./UserMeal";
+import { AuthApp } from ".";
 
 export interface IUserQueryOptions extends IBaseQueryOptions {
     selectPassword?: boolean;
@@ -63,6 +64,18 @@ export class User extends BaseEntityHiddenId {
     public set password(password: string | undefined) {
         this._password = password === undefined ? undefined : bcrypt.hashSync(password, 12);
     }
+
+    @ManyToMany((type) => AuthApp)
+    @JoinTable({
+        name: "user_apps",
+        joinColumn: {
+            name: "user",
+        },
+        inverseJoinColumn: {
+            name: "app",
+        },
+    })
+    public apps: Promise<AuthApp[]>;
 
     @ManyToMany((type) => User)
     @JoinTable({
