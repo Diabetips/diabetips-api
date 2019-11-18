@@ -25,17 +25,22 @@ export const app = express();
 // Swagger doc generator
 app.use(swagger.express(
     {
+        path: "/docs/swagger.json",
         definition: {
             info: {
-                title: "My api",
-                version: "1.0",
+                title: "Diabetips API",
+                description: "This is the documentation for the Diabetips API.",
+                version: config.pkg.version,
+                contact: {
+                    email: "contact@diabetips.fr",
+                },
             },
         },
     },
 ));
 
-app.use("/v1/api-docs/swagger", express.static("swagger"));
-app.use("/api-docs/swagger/assets", express.static("node_modules/swagger-ui-dist"));
+app.use("/docs", express.static("swagger"));
+app.use("/docs/assets", express.static("node_modules/swagger-ui-dist"));
 
 // Express settings
 app.set("json replacer", Utils.jsonReplacer);
@@ -56,7 +61,9 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
 
 // API routes
 app.get("/", (req: Request, res: Response) => {
-    res.send({});
+    res.send({
+        documentation_url: "/docs",
+    });
 });
 app.use("/v1/auth", new AuthController().router);
 app.use("/v1/users", new UserController().router);
