@@ -7,6 +7,7 @@
 */
 
 import { AuthAppController } from "./AuthAppController";
+import { AuthAppLogoController } from "./AuthAppLogoController";
 import { AuthController } from "./AuthController";
 import { FoodController } from "./FoodController";
 import { RecipeController } from "./RecipeController";
@@ -17,7 +18,8 @@ import { UserGlucoseController } from "./UserGlucoseController";
 import { UserHbA1CController } from "./UserHbA1CController";
 import { UserInsulinController } from "./UserInsulinController";
 import { UserMealController } from "./UserMealController";
+import { UserPhotoController } from "./UserPhotoController";
 
-export { AuthAppController, AuthController, FoodController, RecipeController,
-    UserAppController, UserConnectionController, UserGlucoseController,
-    UserHbA1CController, UserInsulinController, UserMealController, UserController };
+export { AuthAppController, AuthAppLogoController, AuthController, FoodController, RecipeController, UserAppController,
+    UserConnectionController, UserGlucoseController, UserHbA1CController, UserInsulinController, UserMealController,
+    UserPhotoController, UserController };

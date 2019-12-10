@@ -7,9 +7,13 @@
 */
 
 import { Request, Response } from "express";
-
+import { ApiPath } from "swagger-express-ts";
 import { BaseController } from "./BaseController";
 
+@ApiPath({
+    path: "users/{userUid}/glucose",
+    name: "Glucose",
+})
 export class UserGlucoseController extends BaseController {
 
     public static glucoseSample = {
@@ -32,7 +36,7 @@ export class UserGlucoseController extends BaseController {
             .get("/:userUid/glucose/",                              this.getAllUserGlucose)
             .post("/:userUid/glucose/",            this.jsonParser, this.addUserGlucose)
             .get("/:userUid/glucose/:start/:end",                   this.getUserGlucoseRange)
-            .delete("/:userUid/glucose/:start/:end",                this.deleteUserGlucoseRange);
+            .delete("/:userUid/glucose/:start/:end",                  this.deleteUserGlucoseRange);
     }
 
     private async getAllUserGlucose(req: Request, res: Response) {
@@ -48,7 +52,7 @@ export class UserGlucoseController extends BaseController {
     }
 
     private async deleteUserGlucoseRange(req: Request, res: Response) {
-        //
+        // res.send(this.glucoseSample);
     }
 
 }

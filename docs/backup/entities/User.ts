@@ -10,16 +10,29 @@ import bcrypt = require("bcrypt");
 
 import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany } from "typeorm";
 
-import { BaseEntityHiddenId, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntityHiddenId";
+import { ApiModelProperty } from "swagger-express-ts";
+import { BaseEntityHiddenId, IBaseQueryOptions, optionDefault } from "./BaseEntityHiddenId";
+import { UserMeal } from "./UserMeal";
+import { AuthApp } from ".";
 
-import { AuthApp, Meal } from ".";
+export interface IUserQueryOptions extends IBaseQueryOptions {
+    selectPassword?: boolean;
+}
 
 @Entity()
 export class User extends BaseEntityHiddenId {
 
+    @ApiModelProperty({
+        description: "Users's UID",
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    })
     @Column({ length: 36, unique: true })
     public uid: string;
 
+    @ApiModelProperty({
+        description: "Users's email",
+        example: "user@example.com",
+    })
     @Column({ length: 200 })
     @Index()
     public email: string;
@@ -27,14 +40,32 @@ export class User extends BaseEntityHiddenId {
     @Column({ name: "password", length: 100, select: false })
     private _password?: string;
 
-    @Column({length: 10})
-    public lang: string;
+    public lang: string = "fr";
 
+    @ApiModelProperty({
+        description: "Users's first name",
+        example: "John",
+    })
     @Column({ length: 100 })
     public first_name: string;
 
+    @ApiModelProperty({
+        description: "Users's first name",
+        example: "Snow",
+    })
     @Column({ length: 100 })
     public last_name: string;
+
+    @OneToMany((type) => UserMeal, (meal) => meal.user)
+    public meals: Promise<UserMeal[]>;
+
+    public get password(): string | undefined {
+        return this._password;
+    }
+
+    public set password(password: string | undefined) {
+        this._password = password === undefined ? undefined : bcrypt.hashSync(password, 12);
+    }
 
     @ManyToMany((type) => AuthApp)
     @JoinTable({
@@ -59,17 +90,6 @@ export class User extends BaseEntityHiddenId {
         },
     })
     public connections: Promise<User[]>;
-
-    @OneToMany((type) => Meal, (meal) => meal.user)
-    public meals: Promise<Meal[]>;
-
-    public get password(): string | undefined {
-        return this._password;
-    }
-
-    public set password(password: string | undefined) {
-        this._password = password === undefined ? undefined : bcrypt.hashSync(password, 12);
-    }
 
     // Repository functions
 
@@ -126,12 +146,4 @@ export class User extends BaseEntityHiddenId {
         return query.getCount();
     }
 
-}
-
-export interface IUserQueryOptions extends IBaseQueryOptions {
-    selectPassword?: boolean;
-}
-
-// tslint:disable-next-line: no-empty-interface
-export interface IUserSearchRequest extends IBaseSearchRequest {
 }

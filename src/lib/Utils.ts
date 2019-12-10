@@ -7,6 +7,7 @@
 */
 
 import fs = require("fs");
+import yaml = require("yaml");
 
 export class Utils {
     /**
@@ -38,6 +39,14 @@ export class Utils {
      */
     public static loadJsonFile(path: string): any {
         return JSON.parse(fs.readFileSync(path, { encoding: "utf-8" }));
+    }
+
+    /**
+     * Synchronously load and parse a JSON file
+     * @param path The path of the file to load
+     */
+    public static loadYamlFile(path: string, options?: yaml.ParseOptions | undefined): any {
+        return yaml.parse(fs.readFileSync(path, { encoding: "utf-8" }), options);
     }
 
     /**

@@ -7,31 +7,23 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
+import { ApiModel, ApiModelProperty } from "swagger-express-ts";
 import { Column, Entity, OneToMany } from "typeorm";
-
 import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
-
-import { Ingredient } from ".";
+import { Ingredient } from "./Ingredient";
 
 @Entity()
+@ApiModel({
+    description: "Model for a Recipe object",
+    name: "Recipe",
+})
 export class Recipe extends BaseEntity {
-
-    @Column({ length: 50 })
-    public name: string;
-
-    @Column({ length: 200 })
-    public description: string;
-
-    @OneToMany((type) => Ingredient, (ingredient) => ingredient.recipe, { cascade: true })
-    public ingredients: Ingredient[];
-
-    // Repository functions
 
     public static async findAll(req: IRecipeSearchRequest = {}, options: IRecipeQueryOptions = {}): Promise<Recipe[]> {
         let query = this
             .createQueryBuilder("recipe")
             .leftJoinAndSelect("recipe.ingredients", "ingredients")
-            .leftJoinAndSelect("ingredients.food", "food");
+            .leftJoinAndSelect("ingredients.food", "food")
 
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("recipe.deleted = 0");
@@ -55,10 +47,38 @@ export class Recipe extends BaseEntity {
         return query.getOne();
     }
 
+    // Necessaryrop duplication of ID for documentation purposes
+    @ApiModelProperty({
+        description: "ID of the recipe",
+        example: 7,
+    })
+    public id: number;
+
+    @Column({ length: 50 })
+    @ApiModelProperty({
+        description: "Name of the recipe",
+        example: "Lasagna",
+    })
+    public name: string;
+
+    @Column({ length: 200 })
+    @ApiModelProperty({
+        description: "Description of the recipe",
+        example: "Lasagnas are a delicious and cheap italian dish.",
+    })
+    public description: string;
+
+    @ApiModelProperty({
+        description: "Ingredients of the recipe",
+        model: "Ingredient",
+    })
+    @OneToMany((type) => Ingredient, (ingredient) => ingredient.recipe, { cascade: true })
+    public ingredients: Ingredient[];
 }
 
 // tslint:disable-next-line: no-empty-interface
-export interface IRecipeQueryOptions extends IBaseQueryOptions {
+interface IRecipeQueryOptions extends IBaseQueryOptions {
+
 }
 
 export interface IRecipeSearchRequest extends IBaseSearchRequest {

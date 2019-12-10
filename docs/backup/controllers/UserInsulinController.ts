@@ -7,9 +7,13 @@
 */
 
 import { Request, Response } from "express";
-
+import { ApiPath } from "swagger-express-ts";
 import { BaseController } from "./BaseController";
 
+@ApiPath({
+    path: "users/{userUid}/Insulin",
+    name: "Insulin",
+})
 export class UserInsulinController extends BaseController {
     public static insulinSample = {
         timestamp: new Date().getTime(),
@@ -44,7 +48,6 @@ export class UserInsulinController extends BaseController {
     }
 
     private async deleteUserInsulin(req: Request, res: Response) {
-        //
     }
 
 }

@@ -8,7 +8,7 @@
 
 import { AuthApp } from "../entities";
 import { ApiError } from "../errors";
-import { Context, HttpStatus } from "../lib";
+import { HttpStatus } from "../lib";
 
 import { BaseService } from "./BaseService";
 import { UserService } from "./UserService";

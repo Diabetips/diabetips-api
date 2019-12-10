@@ -6,20 +6,16 @@
 ** Created by Alexandre DE BEAUMONT on Mon Sep 02 2019
 */
 
+import { ApiModel, ApiModelProperty } from "swagger-express-ts";
 import { Column, Entity } from "typeorm";
-
 import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
 
 @Entity()
+@ApiModel({
+    description: "Model for a Food object",
+    name: "Food",
+})
 export class Food extends BaseEntity {
-
-    @Column({ length: 200 })
-    public name: string;
-
-    @Column({ length: 4 })
-    public unit: string;
-
-    // Repository functions
 
     public static async findAll(req: IFoodSearchRequest = {}, options: IFoodQueryOptions = {}): Promise<Food[]> {
         let query = this
@@ -49,12 +45,31 @@ export class Food extends BaseEntity {
         return query.getOne();
     }
 
+    // Necessary duplication of ID for documentation purposes
+    @ApiModelProperty({
+        description: "ID of the recipe",
+        example: 7,
+    })
+    public id: number;
+
+    @Column({ length: 200 })
+    @ApiModelProperty({
+        description: "Name of the food",
+        example: "Apple",
+    })
+    public name: string;
+
+    @Column({ length: 4 })
+    @ApiModelProperty({
+        description: "Measuring unit for the food",
+        example: "g",
+    })
+    public unit: string;
 }
 
-// tslint:disable-next-line: no-empty-interface
-export interface IFoodQueryOptions extends IBaseQueryOptions {
+interface IFoodQueryOptions extends IBaseQueryOptions {
 }
 
-export interface IFoodSearchRequest extends IBaseSearchRequest {
+interface IFoodSearchRequest extends IBaseSearchRequest {
     name?: string;
 }

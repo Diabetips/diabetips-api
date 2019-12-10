@@ -24,12 +24,10 @@ export class UserConnectionController extends BaseController {
             .delete("/:uid/connections/:conn_uid",                      this.deleteConnection);
     }
 
-    // TODO: Need documentation
     private async getAllConnections(req: Request, res: Response) {
         res.send(await UserConnectionService.getAllUserConnections(req.params.uid));
     }
 
-    // TODO: Need documentation
     private async createConnection(req: Request, res: Response) {
         await UserConnectionService.createUserConnection(req.params.uid, req.body);
         res
@@ -37,7 +35,6 @@ export class UserConnectionController extends BaseController {
             .send();
     }
 
-    // TODO: Need documentation
     private async deleteConnection(req: Request, res: Response) {
         await UserConnectionService.deleteUserConnection(req.params.uid, req.params.conn_uid);
         res

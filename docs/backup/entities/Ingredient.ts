@@ -6,25 +6,18 @@
 ** Created by Alexandre DE BEAUMONT on Thu Oct 10 2019
 */
 
+import { ApiModelProperty } from "swagger-express-ts";
 import { Column, Entity, ManyToOne } from "typeorm";
-
+import { Food, Recipe } from ".";
 import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
 
-import { Food, Recipe } from ".";
+export interface IIngredientRequest {
+    foodID: number;
+    quantity: number;
+}
 
 @Entity()
 export class Ingredient extends BaseEntity {
-
-    @Column()
-    public quantity: number;
-
-    @ManyToOne((type) => Recipe)
-    public recipe: Recipe;
-
-    @ManyToOne((type) => Food)
-    public food: Food;
-
-    // Repository functions
 
     public static async findAll(req: IIngredientSearchRequest = {},
                                 options: IIngredientQueryOptions = {}): Promise<Ingredient[]> {
@@ -54,10 +47,27 @@ export class Ingredient extends BaseEntity {
 
     }
 
+    @ApiModelProperty({
+        description: "Quantity of the ingredient in the recipe",
+        example: "200",
+    })
+    @Column({})
+    public quantity: number;
+
+    @ManyToOne((type) => Recipe)
+    public recipe: Recipe;
+
+    @ApiModelProperty({
+        description: "Food element of the ingredient",
+        model: "Food",
+    })
+    @ManyToOne((type) => Food)
+    public food: Food;
 }
 
 // tslint:disable-next-line: no-empty-interface
-export interface IIngredientQueryOptions extends IBaseQueryOptions {
+interface IIngredientQueryOptions extends IBaseQueryOptions {
+
 }
 
 // tslint:disable-next-line: no-empty-interface

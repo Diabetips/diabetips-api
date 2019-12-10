@@ -6,10 +6,7 @@
 ** Created by Arthur MELIN on Thu Aug 29 2019
 */
 
-import {
-    BaseEntity as TypeOrmBaseEntity, Column, CreateDateColumn, PrimaryGeneratedColumn,
-    UpdateDateColumn,
-} from "typeorm";
+import { BaseEntity as TypeOrmBaseEntity, Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export abstract class BaseEntity extends TypeOrmBaseEntity {
 
@@ -55,10 +52,10 @@ export interface IBaseQueryOptions {
     hideDeleted?: boolean;
 }
 
-export function optionDefault(value: any, defaultValue: any): any {
-    return value === undefined ? defaultValue : value;
-}
-
 export interface IBaseSearchRequest {
     page?: number;
+}
+
+export function optionDefault(value: any, defaultValue: any): any {
+    return value === undefined ? defaultValue : value;
 }

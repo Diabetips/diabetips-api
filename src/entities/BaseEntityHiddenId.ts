@@ -6,8 +6,10 @@
 ** Created by Arthur MELIN on Thu Aug 29 2019
 */
 
-import { BaseEntity as TypeOrmBaseEntity, Column, CreateDateColumn, ObjectType, PrimaryGeneratedColumn, SaveOptions,
-         UpdateDateColumn } from "typeorm";
+import { BaseEntity as TypeOrmBaseEntity, Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+
+import { IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
+export { IBaseQueryOptions, IBaseSearchRequest, optionDefault };
 
 export abstract class BaseEntityHiddenId extends TypeOrmBaseEntity {
 
@@ -51,12 +53,4 @@ export abstract class BaseEntityHiddenId extends TypeOrmBaseEntity {
         this._deleted_at = deleted ? new Date() : undefined;
     }
 
-}
-
-export interface IBaseQueryOptions {
-    hideDeleted?: boolean;
-}
-
-export function optionDefault(value: any, defaultValue: any): any {
-    return value === undefined ? defaultValue : value;
 }

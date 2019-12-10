@@ -6,38 +6,38 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
-import { Recipe, User } from "../entities";
-import { IUserMealSearchRequest, UserMeal } from "../entities/UserMeal";
+import { IMealSearchRequest, Meal, Recipe, User } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus } from "../lib";
+
 import { BaseService } from "./BaseService";
 
-interface ICreateUserMealRequest {
+interface ICreateMealRequest {
     description: string;
     recipeIDs: number[];
 }
 
-interface IUpdateUserMealRequest {
+interface IUpdateMealRequest {
     description?: string;
     recipeIDs?: number[];
 }
 
-export class UserMealService extends BaseService {
+export class MealService extends BaseService {
 
-    public static async getAllUserMeals(patientUid: string, query: IUserMealSearchRequest): Promise<UserMeal[]> {
+    public static async getAllMeals(patientUid: string, query: IMealSearchRequest): Promise<Meal[]> {
         // TODO: pagination in the future ?
-        return UserMeal.findAll(patientUid);
+        return Meal.findAll(patientUid);
     }
 
-    public static async getUserMeal(params: IUserMealParams) {
-        const meal = UserMeal.findById(params.userUid, params.mealId);
+    public static async getMeal(params: IMealParams) {
+        const meal = Meal.findById(params.userUid, params.mealId);
         if (meal === undefined) {
             throw new ApiError(HttpStatus.NOT_FOUND, "meal_not_found", `Meal ${params.mealId} not found`);
         }
         return meal;
     }
 
-    public static async addUserMeal(patientUid: string, req: ICreateUserMealRequest): Promise<UserMeal> {
+    public static async addMeal(patientUid: string, req: ICreateMealRequest): Promise<Meal> {
         // Get the user
         const user = await User.findByUid(patientUid);
 
@@ -46,7 +46,7 @@ export class UserMealService extends BaseService {
         }
 
         // Add meal
-        const meal = new UserMeal();
+        const meal = new Meal();
         meal.description = req.description;
         meal.user = user;
         meal.recipes = [];
@@ -62,8 +62,8 @@ export class UserMealService extends BaseService {
         return meal.save();
     }
 
-    public static async updateUserMeal(params: IUserMealParams, req: IUpdateUserMealRequest): Promise<UserMeal> {
-        const meal = await UserMeal.findById(params.userUid, params.mealId);
+    public static async updateMeal(params: IMealParams, req: IUpdateMealRequest): Promise<Meal> {
+        const meal = await Meal.findById(params.userUid, params.mealId);
 
         // TODO? might have to change the error on that one ?
         if (meal === undefined) {
@@ -86,8 +86,8 @@ export class UserMealService extends BaseService {
         return meal.save();
     }
 
-    public static async deleteUserMeal(params: IUserMealParams): Promise<UserMeal> {
-        const meal = await UserMeal.findById(params.userUid, params.mealId);
+    public static async deleteMeal(params: IMealParams): Promise<Meal> {
+        const meal = await Meal.findById(params.userUid, params.mealId);
 
         // TODO? might have to change the error on that one ?
         if (meal === undefined) {
@@ -100,7 +100,7 @@ export class UserMealService extends BaseService {
 
 }
 
-interface IUserMealParams {
+interface IMealParams {
     userUid: string;
     mealId: number;
 }

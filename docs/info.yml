@@ -1,0 +1,9 @@
+info:
+  title: 'Diabetips API'
+  description: 'This is the documentation for the Diabetips REST API'
+  version: '0.3.0'
+  contact:
+    email: 'contact@diabetips.fr'
+servers:
+  - url: 'https://api.diabetips.fr'
+    description: 'Production server'

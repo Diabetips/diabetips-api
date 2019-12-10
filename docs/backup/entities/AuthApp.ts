@@ -6,16 +6,28 @@
 ** Created by Arthur MELIN on Mon Oct 14 2019
 */
 
+import { ApiModel, ApiModelProperty } from "swagger-express-ts";
 import { Column, Entity } from "typeorm";
 
 import { BaseEntityHiddenId, IBaseQueryOptions, optionDefault } from "./BaseEntityHiddenId";
 
+@ApiModel({
+    description: "Model for an OAuth application",
+})
 @Entity()
 export class AuthApp extends BaseEntityHiddenId {
 
+    @ApiModelProperty({
+        description: "Application ID",
+        example: "568705dd-7928-4412-be9a-afc561e5c5c5",
+    })
     @Column({ length: 36, unique: true })
     public appid: string;
 
+    @ApiModelProperty({
+        description: "Application name",
+        example: "Diabetips for Android",
+    })
     @Column({ length: 200 })
     public name: string;
 

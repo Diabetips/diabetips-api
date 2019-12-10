@@ -7,9 +7,13 @@
 */
 
 import { Request, Response } from "express";
-
+import { ApiPath } from "swagger-express-ts";
 import { BaseController } from "./BaseController";
 
+@ApiPath({
+    path: "users/{userUid}/hba1c",
+    name: "HbA1C",
+})
 export class UserHbA1CController extends BaseController {
 
     public static hba1cSample = {
@@ -45,7 +49,6 @@ export class UserHbA1CController extends BaseController {
     }
 
     private async deleteUserHbA1C(req: Request, res: Response) {
-        //
     }
 
 }
