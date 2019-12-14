@@ -7,9 +7,9 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
-import { Column, Entity, OneToMany } from "typeorm";
+import { Column, Entity, OneToMany} from "typeorm";
 
-import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
+import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, manualPagination, optionDefault } from "./BaseEntity";
 
 import { Ingredient } from ".";
 
@@ -29,9 +29,9 @@ export class Recipe extends BaseEntity {
 
     public static async findAll(req: IRecipeSearchRequest = {}, options: IRecipeQueryOptions = {}): Promise<Recipe[]> {
         let query = this
-            .createQueryBuilder("recipe")
-            .leftJoinAndSelect("recipe.ingredients", "ingredients")
-            .leftJoinAndSelect("ingredients.food", "food");
+        .createQueryBuilder("recipe")
+        .leftJoinAndSelect("recipe.ingredients", "ingredients")
+        .leftJoinAndSelect("ingredients.food", "food");
 
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("recipe.deleted = 0");
@@ -39,7 +39,8 @@ export class Recipe extends BaseEntity {
         if (req.name !== undefined) {
             query = query.andWhere(`recipe.name LIKE :name`, { name: "%" + req.name + "%" });
         }
-        return query.getMany();
+
+        return manualPagination(await query.getMany(), req);
     }
 
     public static async findById(id: number, options: IRecipeQueryOptions = {}): Promise<Recipe | undefined> {

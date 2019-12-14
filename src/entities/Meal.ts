@@ -8,7 +8,7 @@
 
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from "typeorm";
 
-import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
+import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, manualPagination, optionDefault } from "./BaseEntity";
 
 import { Recipe, User } from ".";
 
@@ -39,7 +39,8 @@ export class Meal extends BaseEntity {
                             .andWhere("meal.deleted = 0")
                             .andWhere("recipes.deleted = 0");
         }
-        return query.getMany();
+
+        return manualPagination(await query.getMany(), req);
     }
 
     public static async findById(patientUid: string, mealId: number,

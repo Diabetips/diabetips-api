@@ -6,7 +6,8 @@
 ** Created by Arthur MELIN on Thu Aug 29 2019
 */
 
-import { BaseEntity as TypeOrmBaseEntity, Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity as TypeOrmBaseEntity, Column, CreateDateColumn, PrimaryGeneratedColumn,
+    SelectQueryBuilder, UpdateDateColumn } from "typeorm";
 
 export abstract class BaseEntity extends TypeOrmBaseEntity {
 
@@ -54,8 +55,33 @@ export interface IBaseQueryOptions {
 
 export interface IBaseSearchRequest {
     page?: number;
+    size?: number;
 }
 
 export function optionDefault(value: any, defaultValue: any): any {
     return value === undefined ? defaultValue : value;
+}
+
+export function getPageableQuery<T>(query: SelectQueryBuilder<T>, req: IBaseSearchRequest): SelectQueryBuilder<T> {
+    const size: number = Number(optionDefault(req.size, 20));
+    const page: number = Number(optionDefault(req.page, 0));
+
+    if (page !== undefined && size !== undefined) {
+        query = query.limit(size)
+                     .offset(size * page);
+    }
+    return query;
+}
+
+// Use manualPagination if you want pagination in a request with JOINs
+export function manualPagination(results: any[], req: IBaseSearchRequest): any[] {
+    const size: number = Number(optionDefault(req.size, 20));
+    const page: number = Number(optionDefault(req.page, 0));
+
+    const start: number = page * size;
+    const end: number = start + size;
+
+    // Slice seems to handle [index out of reach] on its own :)
+    const res = results.slice(start, end);
+    return res;
 }

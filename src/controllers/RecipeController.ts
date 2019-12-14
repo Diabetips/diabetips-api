@@ -27,7 +27,6 @@ export class RecipeController extends BaseController {
     }
 
     private async getAllRecipes(req: Request, res: Response) {
-        // TODO: need pagination
         res.send(await RecipeService.getAllRecipes(req.query));
     }
 

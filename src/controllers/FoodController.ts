@@ -25,7 +25,6 @@ export class FoodController extends BaseController {
     }
 
     private async getAllFood(req: Request, res: Response) {
-        // TODO: Need pagination
         res.send(await FoodService.getAllFood(req.query));
     }
 

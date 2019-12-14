@@ -8,7 +8,7 @@
 
 import { Column, Entity } from "typeorm";
 
-import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
+import { BaseEntity, getPageableQuery, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
 
 @Entity()
 export class Food extends BaseEntity {
@@ -21,7 +21,8 @@ export class Food extends BaseEntity {
 
     // Repository functions
 
-    public static async findAll(req: IFoodSearchRequest = {}, options: IFoodQueryOptions = {}): Promise<Food[]> {
+    public static async findAll(req: IFoodSearchRequest = {}, options: IFoodQueryOptions = {}):
+    Promise<Food[]> {
         let query = this
             .createQueryBuilder("food")
             .select("food");
@@ -33,7 +34,9 @@ export class Food extends BaseEntity {
         if (req.name !== undefined) {
             query = query.andWhere(`food.name LIKE :name`, { name: "%" + req.name + "%" });
         }
-        // TODO: pagination
+
+        query = getPageableQuery(query, req);
+
         return query.getMany();
     }
 

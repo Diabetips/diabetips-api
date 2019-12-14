@@ -14,7 +14,6 @@ import { BaseService } from "./BaseService";
 
 export class FoodService extends BaseService {
     public static async getAllFood(query: any): Promise<Food[]> {
-        // TODO: pagination
         return Food.findAll(query);
     }
 

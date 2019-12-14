@@ -34,7 +34,7 @@ export class UserController extends BaseController {
     }
 
     private async getAllUsers(req: Request, res: Response) {
-        res.send(await UserService.getAllUsers());
+        res.send(await UserService.getAllUsers(req.query));
     }
 
     private async registerUser(req: Request, res: Response) {

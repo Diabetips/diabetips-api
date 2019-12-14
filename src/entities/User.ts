@@ -10,9 +10,10 @@ import bcrypt = require("bcrypt");
 
 import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany } from "typeorm";
 
-import { BaseEntityHiddenId, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntityHiddenId";
+import { BaseEntityHiddenId, IBaseQueryOptions, optionDefault } from "./BaseEntityHiddenId";
 
 import { AuthApp, Meal } from ".";
+import { getPageableQuery, IBaseSearchRequest } from "./BaseEntity";
 
 @Entity()
 export class User extends BaseEntityHiddenId {
@@ -73,13 +74,16 @@ export class User extends BaseEntityHiddenId {
 
     // Repository functions
 
-    public static async findAll(options: IUserQueryOptions = {}): Promise<User[]> {
+    public static async findAll(req: IBaseSearchRequest = {}, options: IUserQueryOptions = {}): Promise<User[]> {
         let query = this
             .createQueryBuilder("user")
             .select("user");
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("user.deleted = 0");
         }
+
+        query = getPageableQuery(query, req);
+
         return query.getMany();
     }
 
