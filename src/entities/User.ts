@@ -14,6 +14,8 @@ import { BaseEntityHiddenId, IBaseQueryOptions, optionDefault } from "./BaseEnti
 
 import { AuthApp, Meal } from ".";
 import { getPageableQuery, IBaseSearchRequest } from "./BaseEntity";
+import { HbA1C } from "./HbA1C";
+import { Insulin } from "./Insulin";
 
 @Entity()
 export class User extends BaseEntityHiddenId {
@@ -63,6 +65,12 @@ export class User extends BaseEntityHiddenId {
 
     @OneToMany((type) => Meal, (meal) => meal.user)
     public meals: Promise<Meal[]>;
+
+    @OneToMany((type) => Insulin, (insulin) => insulin.user)
+    public insulin: Promise<Insulin[]>;
+
+    @OneToMany((type) => HbA1C, (hba1c) => hba1c.user)
+    public hba1c: Promise<HbA1C[]>;
 
     public get password(): string | undefined {
         return this._password;

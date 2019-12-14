@@ -22,7 +22,7 @@ export class Insulin extends BaseEntity {
     @Column({ name: "description" })
     public description: string;
 
-    @ManyToOne((type) => User, (user) => user.meals, { cascade: true })
+    @ManyToOne((type) => User, (user) => user.insulin, { cascade: true })
     public user: User;
 
     public static async findAll(patientUid: string, req: IInsulinSearchRequest = {},
