@@ -28,8 +28,8 @@ export class MealService extends BaseService {
         return Meal.findAll(patientUid, query);
     }
 
-    public static async getMeal(params: IMealParams) {
-        const meal = Meal.findById(params.userUid, params.mealId);
+    public static async getMeal(params: IMealParams): Promise<Meal> {
+        const meal = await Meal.findById(params.userUid, params.mealId);
         if (meal === undefined) {
             throw new ApiError(HttpStatus.NOT_FOUND, "meal_not_found", `Meal ${params.mealId} not found`);
         }

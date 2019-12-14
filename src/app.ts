@@ -33,12 +33,13 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"],
 }));
 app.use(log4js.connectLogger(httpLogger, { level: "info" }));
-app.use(async (req: Request, res: Response, next: NextFunction) => {
-    req.context = {
-        auth: await AuthService.decodeAuthorization(req.header("Authorization")),
-    };
-    next();
-});
+// TODO: Uncomment here
+// app.use(async (req: Request, res: Response, next: NextFunction) => {
+//     req.context = {
+//         // auth: await AuthService.decodeAuthorization(req.header("Authorization")),
+//     };
+//     next();
+// });
 
 app.get("/", (req: Request, res: Response) => {
     res.send({
@@ -58,6 +59,7 @@ app.use("/v1/users", new UserGlucoseController().router);
 app.use("/v1/users", new UserInsulinController().router);
 app.use("/v1/users", new UserHbA1CController().router);
 app.use("/v1/users", new UserMealController().router);
+app.use("/v1/users", new UserInsulinController().router);
 app.use("/v1/users", new UserPhotoController().router);
 app.use("/v1/food", new FoodController().router);
 app.use("/v1/recipes", new RecipeController().router);

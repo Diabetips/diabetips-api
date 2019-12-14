@@ -8,6 +8,8 @@
 
 import { Request, Response } from "express";
 
+import { HttpStatus } from "../lib";
+import { InsulinService } from "../services/InsulinService";
 import { BaseController } from "./BaseController";
 
 export class UserInsulinController extends BaseController {
@@ -28,23 +30,39 @@ export class UserInsulinController extends BaseController {
     }
 
     private async getAllUserInsulin(req: Request, res: Response) {
-        res.send([UserInsulinController.insulinSample]);
+        res.send(await InsulinService.getAllInsulin(req.params.userUid, req.query));
     }
 
     private async addUserInsulin(req: Request, res: Response) {
-        res.send(UserInsulinController.insulinSample);
+        res.send(await InsulinService.addInsulin(req.params.userUid, req.body));
     }
 
     private async getUserInsulin(req: Request, res: Response) {
-        res.send(UserInsulinController.insulinSample);
+        const params = {
+            userUid: req.params.userUid,
+            insulinId: parseInt(req.params.id, 10),
+        };
+        res.send(await InsulinService.getInsulin(params));
     }
 
     private async updateUserInsulin(req: Request, res: Response) {
-        res.send(UserInsulinController.insulinSample);
+        const params = {
+            userUid: req.params.userUid,
+            insulinId: parseInt(req.params.id, 10),
+        };
+        res.send(await InsulinService.updateInsulin(params, req.body));
     }
 
     private async deleteUserInsulin(req: Request, res: Response) {
-        //
+        const params = {
+            userUid: req.params.userUid,
+            insulinId: parseInt(req.params.id, 10),
+        };
+
+        await InsulinService.deleteInsulin(params);
+        res
+            .status(HttpStatus.NO_CONTENT)
+            .send();
     }
 
 }

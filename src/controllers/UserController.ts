@@ -29,7 +29,8 @@ export class UserController extends BaseController {
     }
 
     private asCurrentUser(req: Request, res: Response, next: NextFunction) {
-        req.url = "/" + UserService.getCurrentUser(req.context).uid + req.url.slice(3);
+        // TODO: uncomment here
+        // req.url = "/" + UserService.getCurrentUser(req.context).uid + req.url.slice(3);
         next("route");
     }
 
