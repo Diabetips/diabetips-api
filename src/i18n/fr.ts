@@ -48,7 +48,7 @@ class French implements Lang {
             ],
         },
         "account-password-reset": {
-            subject: "Réinitialisation de votre mot de passe Diabetips",
+            subject: "Réinitialisation de votre mot de passe",
             title: "Mot de passe réinitialisé",
             intro_text: [
                 "Bonjour,",
