@@ -1,0 +1,7 @@
+extends template
+include template-paragraph
+
+block body
+    each paragraph in text
+        +p
+            | #{paragraph}

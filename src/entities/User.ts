@@ -27,7 +27,7 @@ export class User extends BaseEntityHiddenId {
     @Column({ name: "password", length: 100, select: false })
     private _password?: string;
 
-    @Column({length: 10})
+    @Column({ length: 10 })
     public lang: string;
 
     @Column({ length: 100 })

@@ -9,7 +9,7 @@
 import { User } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus } from "../lib";
-import { mail, render } from "../mail";
+import { sendMail } from "../mail";
 
 import { BaseService } from "./BaseService";
 import { UserService } from "./UserService";
@@ -30,13 +30,9 @@ export class UserConnectionService extends BaseService {
         const user = await UserService.getUser(uid);
         const target = await User.findByEmail(req.email);
         if (target === undefined) {
-            mail.sendMail({
-                to: req.email,
-                subject: `${user.first_name} ${user.last_name} vous a invité à rejoindre Diabetips`,
-                html: render("invite-connection", {
-                    first_name: user.first_name,
-                    last_name: user.last_name,
-                 }),
+            sendMail("invite-connection", user.lang, req.email, {
+                first_name: user.first_name,
+                last_name: user.last_name,
             });
         } else {
             await this.addConnection(user, target);
