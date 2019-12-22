@@ -24,7 +24,7 @@ export class UserHbA1CController extends BaseController {
             .get("/:userUid/hba1c/",                        this.getAllUserHbA1C)
             .post("/:userUid/hba1c/",      this.jsonParser, this.addUserHbA1C)
             .get("/:userUid/hba1c/:id",                     this.getUserHbA1C)
-            .post("/:userUid/hba1c/:id",   this.jsonParser, this.updateUserHbA1C)
+            .put("/:userUid/hba1c/:id",   this.jsonParser, this.updateUserHbA1C)
             .delete("/:userUid/hba1c/:id",                  this.deleteUserHbA1C);
     }
 
