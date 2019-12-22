@@ -12,24 +12,24 @@ import uuid = require("uuid");
 import { IUserQueryOptions, User } from "../entities";
 import { ApiError } from "../errors";
 import { Context, HttpStatus } from "../lib";
-import { mail, render } from "../mail";
+import { sendMail } from "../mail";
 
 import { BaseService } from "./BaseService";
 
 export interface CreateUserReq {
     email: string;
     password: string;
+    lang: string;
     first_name: string;
     last_name: string;
-    lang: string;
 }
 
 export interface UpdateUserReq {
     email?: string;
     password?: string;
+    lang?: string;
     first_name?: string;
     last_name?: string;
-    lang?: string;
 }
 
 export interface ResetPasswordReq {
@@ -70,6 +70,7 @@ export class UserService extends BaseService {
         user.uid = uuid.v4();
         user.email = req.email;
         user.password = req.password;  // hashes password
+        user.lang = req.lang;
         user.first_name = req.first_name;
         user.last_name = req.last_name;
         user.lang = req.lang;
@@ -78,13 +79,10 @@ export class UserService extends BaseService {
         //     throw new ApiError(HttpStatus.CONFLICT, "email_conflict", "Email address already used by another account");
         // }
 
-        // mail.sendMail({
-        //     to: user.email,
-        //     subject: "Bienvenue sur Diabetips !",
-        //     html: render("account-registration", { email: user.email }),
-        // });
+        sendMail("account-registration", user.lang, user.email, {
+            email: user.email,
+        });
 
-        console.log("helo");
         return user.save();
     }
 
@@ -105,6 +103,7 @@ export class UserService extends BaseService {
         // * validation
         const user = await this.getUser(uid, { selectPassword: true });
 
+        if (req.lang !== undefined) { user.lang = req.lang; }
         if (req.first_name !== undefined) { user.first_name = req.first_name; }
         if (req.last_name !== undefined) { user.last_name = req.last_name; }
         if (req.lang !== undefined) { user.lang = req.lang; }
@@ -114,23 +113,18 @@ export class UserService extends BaseService {
                 throw new ApiError(HttpStatus.CONFLICT, "email_conflict", "Email address already used by another account");
             }
 
-            mail.sendMail({
-                to: [user.email, req.email],
-                subject: "Changement de votre adresse email",
-                html: render("account-email-changed", { oldEmail: user.email, newEmail: req.email }),
+            sendMail("account-email-changed", user.lang, [user.email, req.email], {
+                old_email: user.email,
+                new_email: req.email,
             });
 
             user.email = req.email;
         }
 
         if (req.password !== undefined && !await bcrypt.compare(req.password, user.password as string)) {
-            mail.sendMail({
-                to: user.email,
-                subject: "Changement de votre mot de passe",
-                html: render("account-password-changed"),
-            });
-
             user.password = req.password; // hashes password
+
+            sendMail("account-password-changed", user.lang, user.email);
         }
 
         return user.save();
@@ -141,11 +135,7 @@ export class UserService extends BaseService {
         user.deleted = true;
         await user.save();
 
-        mail.sendMail({
-            to: user.email,
-            subject: "Désactivation de votre compte",
-            html: render("account-deletion"),
-        });
+        sendMail("account-deletion", user.lang, user.email);
     }
 
     public static async resetUserPassword(req: ResetPasswordReq): Promise<void> {
@@ -163,10 +153,8 @@ export class UserService extends BaseService {
             user.password = password; // hashes password
             user.save();
 
-            mail.sendMail({
-                to: user.email,
-                subject: "Réinitialisation de votre mot de passe",
-                html: render("account-password-reset", { password }),
+            sendMail("account-password-reset", user.lang, user.email, {
+                password,
             });
         })();
     }
