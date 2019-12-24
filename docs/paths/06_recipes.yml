@@ -1,0 +1,25 @@
+"/v1/food":
+  get:
+    summary: "Get all food items"
+    tags:
+      - "Recipes"
+"/v1/food/{id}":
+  get:
+    summary: "Get food item"
+    tags:
+      - "Recipes"
+"/v1/food/{id}/picture":
+  get:
+    summary: "Get food picture"
+    tags:
+      - "Recipes"
+"/v1/recipes":
+  get:
+    summary: "Get all recipes"
+    tags:
+      - "Recipes"
+"/v1/recipes/{id}":
+  get:
+    summary: "Get recipe"
+    tags:
+      - "Recipes"

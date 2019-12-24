@@ -105,7 +105,7 @@ export class User extends BaseEntityHiddenId {
         let query = this
             .createQueryBuilder("user")
             .select("user")
-            .where("user.email = :email", { email });
+            .where("lower(user.email) = lower(:email)", { email });
         if (optionDefault(options.selectPassword, false)) {
             query = query.addSelect("user.password", "user_password");
         }
@@ -119,7 +119,7 @@ export class User extends BaseEntityHiddenId {
         let query = this
             .createQueryBuilder("user")
             .select()
-            .where("user.email = :email", { email });
+            .where("lower(user.email) = lower(:email)", { email });
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("user.deleted = 0");
         }

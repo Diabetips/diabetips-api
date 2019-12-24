@@ -1,0 +1,31 @@
+"/v1/users":
+  get:
+    summary: "Get all users"
+    tags:
+      - "Users"
+  post:
+    summary: "Register user"
+    tags:
+      - "Users"
+"/v1/users/{uid}":
+  get:
+    summary: "Get user"
+    tags:
+      - "Users"
+  put:
+    summary: "Update user"
+    tags:
+      - "Users"
+  delete:
+    summary: "Unregister user"
+    tags:
+      - "Users"
+"/v1/users/{uid}/picture":
+  get:
+    summary: "Get profile picture"
+    tags:
+      - "Users"
+  post:
+    summary: "Update profile picture"
+    tags:
+      - "Users"

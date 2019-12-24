@@ -1,0 +1,30 @@
+User:
+  type: "object"
+  properties:
+    "uid":
+      type: "string"
+      format: "uuid"
+      description: "The user's unique identifier"
+      example: "01234567-89ab-cdef-0123-456789abcdef"
+      readOnly: true
+    "email":
+      type: "string"
+      format: "email"
+      description: "The user's email address"
+      example: "user@example.com"
+    "password":
+      type: "string"
+      description: "The user's password"
+      writeOnly: true
+    "lang":
+      type: "string"
+      description: "The user's ISO 639-1 language code"
+      example: "fr"
+    "first_name":
+      type: "string"
+      description: "The user's first name"
+      example: "Jane"
+    "last_name":
+      type: "string"
+      description: "The user's last name"
+      example: "Doe"

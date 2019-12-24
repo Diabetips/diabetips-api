@@ -1,0 +1,14 @@
+"/v1/users/{uid}/connections":
+  get:
+    summary: "Get all connections"
+    tags:
+      - "Connections"
+  post:
+    summary: "Invite user"
+    tags:
+      - "Connections"
+"/v1/users/{uid}/connections/{other_uid}":
+  delete:
+    summary: "Remove a connection"
+    tags:
+      - "Connections"

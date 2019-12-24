@@ -51,6 +51,8 @@ app.get("/openapi.yml", getDocsSpec);
 app.use("/v1/auth", new AuthController().router);
 app.use("/v1/auth/apps", new AuthAppController().router);
 app.use("/v1/auth/apps", new AuthAppLogoController().router);
+app.use("/v1/food", new FoodController().router);
+app.use("/v1/recipes", new RecipeController().router);
 app.use("/v1/users", new UserController().router);
 app.use("/v1/users", new UserAppController().router);
 app.use("/v1/users", new UserConnectionController().router);
@@ -59,8 +61,6 @@ app.use("/v1/users", new UserInsulinController().router);
 app.use("/v1/users", new UserHbA1CController().router);
 app.use("/v1/users", new UserMealController().router);
 app.use("/v1/users", new UserPhotoController().router);
-app.use("/v1/food", new FoodController().router);
-app.use("/v1/recipes", new RecipeController().router);
 
 // 404 handler
 app.use((req: Request, res: Response, next: NextFunction) => {

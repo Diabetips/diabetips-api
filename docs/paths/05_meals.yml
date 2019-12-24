@@ -1,0 +1,22 @@
+"/v1/users/{uid}/meals":
+  get:
+    summary: "Get all meals"
+    tags:
+      - "Meals"
+  post:
+    summary: "Add a meal"
+    tags:
+      - "Meals"
+"/v1/users/{uid}/meals/{id}":
+  get:
+    summary: "Get meal"
+    tags:
+      - "Meals"
+  put:
+    summary: "Update meal"
+    tags:
+      - "Meals"
+  delete:
+    summary: "Remove meal"
+    tags:
+      - "Meals"
