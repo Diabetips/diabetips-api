@@ -1,31 +1,174 @@
 "/v1/users":
   get:
+    tags:
+      - "Users"
     summary: "Get all users"
-    tags:
-      - "Users"
+    description: >
+      Get a list of all the users the currently authenticated user has permissions to see (depending on the user's
+      account type and their connections).
+    responses:
+      200:
+        description: "List of all visible users"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                - $component: "schemas:user.yml:User"
   post:
+    tags:
+      - "Users"
     summary: "Register user"
-    tags:
-      - "Users"
+    description: >
+      Register a new user account using the supplied information.
+
+
+      The specified email must not be already used by another active user account.
+    requestBody:
+      required: true
+      content:
+        application/json:
+         schema:
+          $component: "schemas:user.yml:User"
+    responses:
+      201:
+        description: "The user account was created"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:user.yml:User"
+      409:
+        description: "The specified email address conflicts with another already registered user"
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $component: "schemas:error.yml:Error"
+                - properties:
+                    "status":
+                      example: 409
+                    "error":
+                      example: "email_conflict"
+                    "message":
+                      example: "Email address already used by another account"
 "/v1/users/{uid}":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
   get:
+    tags:
+      - "Users"
     summary: "Get user"
-    tags:
-      - "Users"
+    description: >
+      Get the user with the specified UID.
+    responses:
+      200:
+        description: "The user's data"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:user.yml:User"
+      404:
+        description: >
+          No user with the specified UID was not found or the current authenticated user does not have permission to
+          view them.
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $component: "schemas:error.yml:Error"
+                - properties:
+                    "status":
+                      example: 404
+                    "error":
+                      example: "user_not_found"
+                    "message":
+                      example: "User 01234567-89ab-cdef-0123-456789abcdef not found"
   put:
+    tags:
+      - "Users"
     summary: "Update user"
-    tags:
-      - "Users"
+    description: >
+      Update the user with the specified UID.
+
+
+      Not all fields of the request body are required, only the fields that should be updated must be present.
+    requestBody:
+      required: true
+      content:
+        application/json:
+         schema:
+          $component: "schemas:user.yml:User"
+    responses:
+      200:
+        description: "The updated user's data"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:user.yml:User"
+      404:
+        description: >
+          No user with the specified UID was not found or the current authenticated user does not have permission to
+          modify them.
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $component: "schemas:error.yml:Error"
+                - properties:
+                    "status":
+                      example: 404
+                    "error":
+                      example: "user_not_found"
+                    "message":
+                      example: "User 01234567-89ab-cdef-0123-456789abcdef not found"
+      409:
+        description: "The specified email address conflicts with another already registered user"
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $component: "schemas:error.yml:Error"
+                - properties:
+                    "status":
+                      example: 409
+                    "error":
+                      example: "email_conflict"
+                    "message":
+                      example: "Email address already used by another account"
   delete:
-    summary: "Unregister user"
     tags:
       - "Users"
+    summary: "Deactivate user account"
+    description: >
+      Deactivate the account of the user with the specified UID.
+
+
+      *WARNING: This can only be reversed by Diabetips customer support and administrators.*
+    responses:
+      204:
+        description: "The user account has been deactivated."
+      404:
+        description: >
+          No user with the specified UID was not found or the current authenticated user does not have permission to
+          modify them.
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $component: "schemas:error.yml:Error"
+                - properties:
+                    "status":
+                      example: 404
+                    "error":
+                      example: "user_not_found"
+                    "message":
+                      example: "User 01234567-89ab-cdef-0123-456789abcdef not found"
 "/v1/users/{uid}/picture":
   get:
+    tags:
+      - "Users"
     summary: "Get profile picture"
-    tags:
-      - "Users"
   post:
-    summary: "Update profile picture"
     tags:
       - "Users"
+    summary: "Update profile picture"

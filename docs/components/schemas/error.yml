@@ -1,0 +1,12 @@
+Error:
+  type: "object"
+  properties:
+    "status":
+      type: "integer"
+      description: "The error's HTTP status code"
+    "error":
+      type: "string"
+      description: "The error's unique name"
+    "message":
+      type: "string"
+      description: "The error's description message"

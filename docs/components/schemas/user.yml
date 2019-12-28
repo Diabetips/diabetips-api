@@ -14,7 +14,9 @@ User:
       example: "user@example.com"
     "password":
       type: "string"
+      format: "password"
       description: "The user's password"
+      example: "************"
       writeOnly: true
     "lang":
       type: "string"

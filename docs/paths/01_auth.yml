@@ -1,13 +1,13 @@
 "/v1/auth/authorize":
   get:
-    summary: "OAuth 2.0 authorize endpoint"
     tags:
       - "Authentication"
+    summary: "OAuth 2.0 authorize endpoint"
 "/v1/auth/token":
   post:
-    summary: "OAuth 2.0 token endpoint"
     tags:
       - "Authentication"
+    summary: "OAuth 2.0 token endpoint"
 "/v1/auth/reset-password":
   post:
     tags:
@@ -27,7 +27,7 @@
             type: "object"
             properties:
               "email":
-                $ref: "!schemas:user.yml:User/properties/email"
+                $component: "schemas:user.yml:User/properties/email"
     responses:
       202:
         description: "The password reset request is being processed"

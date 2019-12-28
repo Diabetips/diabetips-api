@@ -43,33 +43,31 @@ async function generateDocsSpec() {
     const componentFilesCache = new Map<string, any>();
 
     async function resolveReferences(obj: any): Promise<any> {
-        if (typeof(obj) === "object") {
-            if (typeof(obj.$ref) === "string") {
-                const ref: string = obj.$ref;
-                if (ref.startsWith("!")) {
-                    const m = ref.match(/^!(.*?):(.*?):([^/]*)(\/.*)?/);
-                    if (m == null) {
-                        throw new Error("Invalid import reference string");
-                    }
-                    const type = m[1];
-                    const file = m[2];
-                    const component = m[3];
-                    const subcomponent = m[4] || "";
-                    const path = `docs/components/${type}/${file}`;
-                    if (!componentFilesCache.has(path)) {
-                        componentFilesCache.set(path,
-                            await resolveReferences(await loadAndWatchYamlFile(path)));
-                    }
-                    if (componentSpecs[type] === undefined) {
-                        componentSpecs[type] = {};
-                    }
-                    if (componentSpecs[type][component] === undefined) {
-                        componentSpecs[type][component] = componentFilesCache.get(path)[component];
-                    }
-                    return {
-                        $ref: `#/components/${type}/${component}` + subcomponent,
-                    };
+        if (typeof(obj) === "object" && obj != null) {
+            if (typeof(obj.$component) === "string") {
+                const expr: string = obj.$component;
+                const m = expr.match(/^(.*?):(.*?):([^/]*)(\/.*)?/);
+                if (m == null) {
+                    throw new Error("Invalid component import string");
                 }
+                const type = m[1];
+                const file = m[2];
+                const component = m[3];
+                const subcomponent = m[4] || "";
+                const path = `docs/components/${type}/${file}`;
+                if (!componentFilesCache.has(path)) {
+                    componentFilesCache.set(path,
+                        await resolveReferences(await loadAndWatchYamlFile(path)));
+                }
+                if (componentSpecs[type] === undefined) {
+                    componentSpecs[type] = {};
+                }
+                if (componentSpecs[type][component] === undefined) {
+                    componentSpecs[type][component] = componentFilesCache.get(path)[component];
+                }
+                return {
+                    $ref: `#/components/${type}/${component}` + subcomponent,
+                };
             } else if (Array.isArray(obj)) {
                 const resolved: any[] = [];
                 for (const sub of obj) {
