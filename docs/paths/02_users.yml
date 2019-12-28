@@ -42,15 +42,7 @@
         content:
           application/json:
             schema:
-              allOf:
-                - $component: "schemas:error.yml:Error"
-                - properties:
-                    "status":
-                      example: 409
-                    "error":
-                      example: "email_conflict"
-                    "message":
-                      example: "Email address already used by another account"
+              $component: "schemas:error.yml:ErrorUserNotFound"
 "/v1/users/{uid}":
   parameters:
     - $component: "parameters:uid.yml:UID"
@@ -69,20 +61,12 @@
               $component: "schemas:user.yml:User"
       404:
         description: >
-          No user with the specified UID was not found or the current authenticated user does not have permission to
-          view them.
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
         content:
           application/json:
             schema:
-              allOf:
-                - $component: "schemas:error.yml:Error"
-                - properties:
-                    "status":
-                      example: 404
-                    "error":
-                      example: "user_not_found"
-                    "message":
-                      example: "User 01234567-89ab-cdef-0123-456789abcdef not found"
+              $component: "schemas:error.yml:ErrorUserNotFound"
   put:
     tags:
       - "Users"
@@ -107,20 +91,12 @@
               $component: "schemas:user.yml:User"
       404:
         description: >
-          No user with the specified UID was not found or the current authenticated user does not have permission to
-          modify them.
+          No user with the specified UID was found or the current authenticated user does not have permission to modify
+          them
         content:
           application/json:
             schema:
-              allOf:
-                - $component: "schemas:error.yml:Error"
-                - properties:
-                    "status":
-                      example: 404
-                    "error":
-                      example: "user_not_found"
-                    "message":
-                      example: "User 01234567-89ab-cdef-0123-456789abcdef not found"
+              $component: "schemas:error.yml:ErrorUserNotFound"
       409:
         description: "The specified email address conflicts with another already registered user"
         content:
@@ -149,26 +125,62 @@
         description: "The user account has been deactivated."
       404:
         description: >
-          No user with the specified UID was not found or the current authenticated user does not have permission to
-          modify them.
+          No user with the specified UID was found or the current authenticated user does not have permission to modify
+          them
         content:
           application/json:
             schema:
-              allOf:
-                - $component: "schemas:error.yml:Error"
-                - properties:
-                    "status":
-                      example: 404
-                    "error":
-                      example: "user_not_found"
-                    "message":
-                      example: "User 01234567-89ab-cdef-0123-456789abcdef not found"
+              $component: "schemas:error.yml:ErrorUserNotFound"
 "/v1/users/{uid}/picture":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
   get:
     tags:
       - "Users"
     summary: "Get profile picture"
+    description: >
+      Get the profile picture of the user with the specified UID.
+
+
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+    responses:
+      200:
+        description: "The user's profile picture"
+        content:
+          image/png:
+            schema:
+              type: "binary"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
   post:
     tags:
       - "Users"
     summary: "Update profile picture"
+    description: >
+      Update the profile picture of the user with the specified UID.
+
+
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+    requestBody:
+      required: true
+      content:
+        application/png:
+          schema:
+            type: "binary"
+    responses:
+      204:
+        description: "The user's profile picture has been updated"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to modify
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"

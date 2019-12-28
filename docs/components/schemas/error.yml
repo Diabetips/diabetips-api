@@ -10,3 +10,13 @@ Error:
     "message":
       type: "string"
       description: "The error's description message"
+ErrorUserNotFound:
+  allOf:
+    - $component: "schemas:error.yml:Error"
+    - properties:
+        "status":
+          example: 404
+        "error":
+          example: "user_not_found"
+        "message":
+          example: "User 01234567-89ab-cdef-0123-456789abcdef not found"

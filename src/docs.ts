@@ -40,7 +40,7 @@ async function generateDocsSpec() {
     const pathSpecs: any = {};
     const componentSpecs: any = {};
 
-    const componentFilesCache = new Map<string, any>();
+    const componentCache = new Map<string, any>();
 
     async function resolveReferences(obj: any): Promise<any> {
         if (typeof(obj) === "object" && obj != null) {
@@ -55,15 +55,19 @@ async function generateDocsSpec() {
                 const component = m[3];
                 const subcomponent = m[4] || "";
                 const path = `docs/components/${type}/${file}`;
-                if (!componentFilesCache.has(path)) {
-                    componentFilesCache.set(path,
-                        await resolveReferences(await loadAndWatchYamlFile(path)));
+                const componentPath = `${path}/${component}`;
+                if (!componentCache.has(componentPath)) {
+                    const newComponents = await loadAndWatchYamlFile(path);
+                    for (const newComponent of Object.keys(newComponents)) {
+                        const newComponentPath = `${path}/${newComponent}`;
+                        componentCache.set(newComponentPath, await resolveReferences(newComponents[newComponent]));
+                    }
                 }
                 if (componentSpecs[type] === undefined) {
                     componentSpecs[type] = {};
                 }
                 if (componentSpecs[type][component] === undefined) {
-                    componentSpecs[type][component] = componentFilesCache.get(path)[component];
+                    componentSpecs[type][component] = componentCache.get(componentPath);
                 }
                 return {
                     $ref: `#/components/${type}/${component}` + subcomponent,
