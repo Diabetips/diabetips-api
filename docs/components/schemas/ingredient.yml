@@ -11,5 +11,5 @@ Ingredient:
         - readOnly: true
     "food_id":
       allOf:
-        - $component: "schemas:food.yml:Food/properties/id"
+        - $component: "schemas:food.yml:FoodId"
         - writeOnly: true

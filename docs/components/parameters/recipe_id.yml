@@ -1,8 +1,6 @@
 RecipeId:
   in: "path"
-  name: "id"
-  description: "The recipe's identifier."
+  name: "recipe_id"
   required: true
   schema:
-    type: "integer"
-    example: 15
+    $component: "schemas:recipe.yml:RecipeId"

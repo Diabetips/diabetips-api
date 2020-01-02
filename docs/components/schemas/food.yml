@@ -1,11 +1,14 @@
+FoodId:
+  type: "integer"
+  description: "The food's identifier"
+  example: 132
 Food:
   type: "object"
   properties:
     "id":
-      type: "integer"
-      description: "The food's identifier"
-      example: 132
-      #readOnly: true
+      allOf:
+        - $component: "schemas:food.yml:FoodId"
+        - readOnly: true
     "name":
       type: "string"
       description: "The food's name"

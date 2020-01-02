@@ -1,8 +1,6 @@
 FoodId:
   in: "path"
-  name: "id"
-  description: "The food item's identifier."
+  name: "food_id"
   required: true
   schema:
-    type: "integer"
-    example: 132
+    $component: "schemas:food.yml:FoodId"

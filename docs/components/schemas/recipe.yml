@@ -1,11 +1,14 @@
+RecipeId:
+  type: "integer"
+  description: "The recipe's identifier"
+  example: 15
 Recipe:
   type: "object"
   properties:
     "id":
-      type: "integer"
-      description: "The recipe's identifier"
-      example: 15
-      readOnly: true
+      allOf:
+        - $component: "schemas:recipe.yml:RecipeId"
+        - readOnly: true
     "name":
       type: "string"
       description: "The recipe's name"

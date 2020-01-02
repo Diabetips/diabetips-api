@@ -1,0 +1,27 @@
+MealId:
+  type: "integer"
+  description: "The meal's identifier"
+  example: 7
+Meal:
+  type: "object"
+  properties:
+    "id":
+      allOf:
+        - $component: "schemas:meal.yml:MealId"
+        - readOnly: true
+    "description":
+      type: "string"
+      description: "The meal's description"
+      example: "Lunch of October 7th 2019"
+    "recipes":
+      type: "array"
+      description: "The meal's components' recipes"
+      items:
+        $component: "schemas:recipe.yml:Recipe"
+      readOnly: true
+    "recipes_ids":
+      type: "array"
+      description: "The meal's components' recipes' identifiers"
+      items:
+        $component: "schemas:recipe.yml:RecipeId"
+      writeOnly: true
