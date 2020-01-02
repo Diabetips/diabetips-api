@@ -14,7 +14,7 @@
             schema:
               type: "array"
               items:
-                - $component: "schemas:user.yml:User"
+                $component: "schemas:user.yml:User"
   post:
     tags:
       - "Users"
@@ -54,7 +54,7 @@
       Get the user with the specified UID.
     responses:
       200:
-        description: "The user's data"
+        description: "The user"
         content:
           application/json:
             schema:

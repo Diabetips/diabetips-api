@@ -15,7 +15,7 @@
             schema:
               type: "array"
               items:
-                - $component: "schemas:user.yml:User"
+                $component: "schemas:user.yml:User"
       404:
         description: >
           No user with the specified UID was found or the current authenticated user does not have permission to view

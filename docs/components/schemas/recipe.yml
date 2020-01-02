@@ -1,0 +1,21 @@
+Recipe:
+  type: "object"
+  properties:
+    "id":
+      type: "integer"
+      description: "The recipe's identifier"
+      example: 15
+      readOnly: true
+    "name":
+      type: "string"
+      description: "The recipe's name"
+      example: "Lasagna"
+    "description":
+      type: "string"
+      description: "The recipe's description"
+      example: "Lasagnas are an Italian pasta dish with tomato sauce and cheese."
+    "ingredients":
+      type: "array"
+      description: "The recipe's ingredients"
+      items:
+        $component: "schemas:ingredient.yml:Ingredient"

@@ -1,62 +1,90 @@
 "/v1/users/{uid}/glucose":
   get:
-    summary: "<TODO>"
     tags:
       - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
   post:
-    summary: "<TODO>"
     tags:
       - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
 "/v1/users/{uid}/glucose/{start}/{end}":
   get:
-    summary: "<TODO>"
     tags:
       - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
   delete:
-    summary: "<TODO>"
     tags:
       - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
 "/v1/users/{uid}/hba1c":
   get:
-    summary: "<TODO>"
     tags:
       - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
   post:
-    summary: "<TODO>"
     tags:
       - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
 "/v1/users/{uid}/hba1c/{id}":
   get:
-    summary: "<TODO>"
     tags:
       - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
   put:
-    summary: "<TODO>"
     tags:
       - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
   delete:
-    summary: "<TODO>"
     tags:
       - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
 "/v1/users/{uid}/insulin":
   get:
-    summary: "<TODO>"
     tags:
       - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
   post:
-    summary: "<TODO>"
     tags:
       - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
 "/v1/users/{uid}/insulin/{id}":
   get:
-    summary: "<TODO>"
     tags:
       - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
   put:
-    summary: "<TODO>"
     tags:
       - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
   delete:
-    summary: "<TODO>"
     tags:
       - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**

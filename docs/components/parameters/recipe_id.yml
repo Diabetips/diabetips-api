@@ -1,0 +1,8 @@
+RecipeId:
+  in: "path"
+  name: "id"
+  description: "The recipe's identifier."
+  required: true
+  schema:
+    type: "integer"
+    example: 15

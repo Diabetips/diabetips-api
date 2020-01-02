@@ -1,0 +1,8 @@
+FoodId:
+  in: "path"
+  name: "id"
+  description: "The food item's identifier."
+  required: true
+  schema:
+    type: "integer"
+    example: 132

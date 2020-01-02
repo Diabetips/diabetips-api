@@ -17,7 +17,14 @@ let cache: any;
 let watches: fs.FSWatcher[] = [];
 
 async function loadAndWatchYamlFile(filename: string) {
-    const content = await Utils.loadYamlFile(filename);
+    let content: any;
+
+    try {
+        content = await Utils.loadYamlFile(filename);
+    } catch (err) {
+        err.message = filename + ": " + err.message;
+        throw err;
+    }
 
     if (config.env === "dev") {
         watches.push(fs.watch(filename, {
@@ -62,6 +69,9 @@ async function generateDocsSpec() {
                         const newComponentPath = `${path}/${newComponent}`;
                         componentCache.set(newComponentPath, await resolveReferences(newComponents[newComponent]));
                     }
+                }
+                if (!componentCache.has(componentPath)) {
+                    throw new Error(`Imported file "${path}" does not contain requested component ${componentPath}`);
                 }
                 if (componentSpecs[type] === undefined) {
                     componentSpecs[type] = {};
