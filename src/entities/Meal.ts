@@ -21,19 +21,27 @@ export class Meal extends BaseEntity {
     @Column({ length: 200 })
     public description: string;
 
-    @JoinTable()
     @ManyToMany((type) => Recipe)
+    @JoinTable({
+        name: "meal_recipes",
+        joinColumn: {
+            name: "meal_id",
+        },
+        inverseJoinColumn: {
+            name: "recipe_id",
+        },
+    })
     public recipes: Recipe[];
 
     // Repository functions
 
-    public static async findAll(patientUid: string, req: IMealSearchRequest = {},
+    public static async findAll(uid: string, req: IMealSearchRequest = {},
                                 options: IMealQueryOptions = {}): Promise<Meal[]> {
         let query = this
             .createQueryBuilder("meal")
             .leftJoinAndSelect("meal.recipes", "recipes")
             .leftJoin("meal.user", "user")
-            .andWhere("user.uid = :patientUid", { patientUid });
+            .andWhere("user.uid = :uid", { uid });
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("user.deleted = 0")
                             .andWhere("meal.deleted = 0")
@@ -42,14 +50,14 @@ export class Meal extends BaseEntity {
         return query.getMany();
     }
 
-    public static async findById(patientUid: string, mealId: number,
+    public static async findById(uid: string, mealId: number,
                                  options: IMealQueryOptions = {}): Promise<Meal | undefined> {
         let query = this
             .createQueryBuilder("meal")
             .andWhere("meal.id = :mealId", { mealId })
             .leftJoinAndSelect("meal.recipes", "recipes")
             .leftJoin("meal.user", "user")
-            .andWhere("user.uid = :patientUid", { patientUid });
+            .andWhere("user.uid = :uid", { uid });
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("user.deleted = 0")
                             .andWhere("meal.deleted = 0")

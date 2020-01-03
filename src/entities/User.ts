@@ -40,10 +40,10 @@ export class User extends BaseEntityHiddenId {
     @JoinTable({
         name: "user_apps",
         joinColumn: {
-            name: "user",
+            name: "user_id",
         },
         inverseJoinColumn: {
-            name: "app",
+            name: "app_id",
         },
     })
     public apps: Promise<AuthApp[]>;
@@ -52,10 +52,10 @@ export class User extends BaseEntityHiddenId {
     @JoinTable({
         name: "user_connections",
         joinColumn: {
-            name: "source_user",
+            name: "source_user_id",
         },
         inverseJoinColumn: {
-            name: "target_user",
+            name: "target_user_id",
         },
     })
     public connections: Promise<User[]>;

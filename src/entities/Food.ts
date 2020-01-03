@@ -16,7 +16,7 @@ export class Food extends BaseEntity {
     @Column({ length: 200 })
     public name: string;
 
-    @Column({ length: 4 })
+    @Column({ length: 10 })
     public unit: string;
 
     // Repository functions
