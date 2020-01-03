@@ -8,7 +8,7 @@
 
 import bcrypt = require("bcrypt");
 
-import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany } from "typeorm";
+import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne } from "typeorm";
 
 import { BaseEntityHiddenId, IBaseQueryOptions, optionDefault } from "./BaseEntityHiddenId";
 
@@ -16,6 +16,9 @@ import { AuthApp, Meal } from ".";
 import { getPageableQuery, IBaseSearchRequest } from "./BaseEntity";
 import { HbA1C } from "./HbA1C";
 import { Insulin } from "./Insulin";
+
+import { UserPicture } from "./UserPicture";
+export { UserPicture };
 
 @Entity()
 export class User extends BaseEntityHiddenId {
@@ -38,6 +41,10 @@ export class User extends BaseEntityHiddenId {
 
     @Column({ length: 100 })
     public last_name: string;
+
+    @OneToOne((type) => UserPicture, (picture) => picture.id)
+    @JoinColumn({ name: "picture_id" })
+    public picture: Promise<UserPicture>;
 
     @ManyToMany((type) => AuthApp)
     @JoinTable({

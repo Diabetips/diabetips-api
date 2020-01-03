@@ -11,11 +11,11 @@ import { Food, IFoodQueryOptions, IFoodSearchRequest } from "./Food";
 import { IIngredientQueryOptions, IIngredientSearchRequest, Ingredient } from "./Ingredient";
 import { IMealQueryOptions, IMealSearchRequest, Meal } from "./Meal";
 import { IRecipeQueryOptions, IRecipeSearchRequest, Recipe } from "./Recipe";
-import { IUserQueryOptions, IUserSearchRequest, User } from "./User";
+import { IUserQueryOptions, IUserSearchRequest, User, UserPicture } from "./User";
 
 export { AuthApp,
     Food, IFoodQueryOptions, IFoodSearchRequest,
     Ingredient, IIngredientQueryOptions, IIngredientSearchRequest,
     Meal, IMealQueryOptions, IMealSearchRequest,
     Recipe, IRecipeQueryOptions, IRecipeSearchRequest,
-    User, IUserQueryOptions, IUserSearchRequest };
+    User, UserPicture, IUserQueryOptions, IUserSearchRequest };
