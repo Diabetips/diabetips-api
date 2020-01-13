@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Thu Oct 10 2019
 */
 
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
 import { IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
 
@@ -20,9 +20,11 @@ export class Ingredient extends BaseEntityHiddenId {
     public quantity: number;
 
     @ManyToOne((type) => Recipe)
+    @JoinColumn({ name: "recipe_id" })
     public recipe: Recipe;
 
     @ManyToOne((type) => Food)
+    @JoinColumn({ name: "food_id" })
     public food: Food;
 
     // Repository functions

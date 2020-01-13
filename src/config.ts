@@ -10,13 +10,13 @@ import { Utils } from "./lib";
 
 const env = process.env.DIABETIPS_ENV || "dev";
 
-const baseConfig = Utils.loadJsonFile("config/config.json");
-const profileConfig = Utils.loadJsonFile(`config/config.${env}.json`);
-const pkg = Utils.guard(() => Utils.loadJsonFile("package.json"), {});
+const baseConfig = Utils.loadJsonFileSync("config/config.json");
+const profileConfig = Utils.loadJsonFileSync(`config/config.${env}.json`);
+const pkg = Utils.guard(() => Utils.loadJsonFileSync("package.json"), {});
 
 let mergedConfig = Utils.merge(baseConfig, profileConfig);
 if (env === "dev") {
-    const localConfig = Utils.guard(() => Utils.loadJsonFile("config/config.local.json"), {});
+    const localConfig = Utils.guard(() => Utils.loadJsonFileSync("config/config.local.json"), {});
     mergedConfig = Utils.merge(mergedConfig, localConfig);
 }
 

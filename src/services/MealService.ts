@@ -14,12 +14,12 @@ import { BaseService } from "./BaseService";
 
 interface ICreateMealRequest {
     description: string;
-    recipeIDs: number[];
+    recipes_ids: number[];
 }
 
 interface IUpdateMealRequest {
     description?: string;
-    recipeIDs?: number[];
+    recipes_ids?: number[];
 }
 
 export class MealService extends BaseService {
@@ -50,7 +50,7 @@ export class MealService extends BaseService {
         meal.user = user;
         meal.recipes = [];
 
-        for (const recipeID of req.recipeIDs) {
+        for (const recipeID of req.recipes_ids) {
             const r = await Recipe.findById(recipeID);
             if (r === undefined) {
                 throw new ApiError(HttpStatus.NOT_FOUND, "recipe_not_found", `Recipe (${recipeID}) not found`);
@@ -70,10 +70,10 @@ export class MealService extends BaseService {
         }
 
         if (req.description !== undefined) { meal.description = req.description; }
-        if (req.recipeIDs !== undefined) {
+        if (req.recipes_ids !== undefined) {
             meal.recipes = [];
 
-            for (const recipeID of req.recipeIDs) {
+            for (const recipeID of req.recipes_ids) {
                 const r = await Recipe.findById(recipeID);
                 if (r === undefined) {
                     throw new ApiError(HttpStatus.NOT_FOUND, "recipe_not_found", `Recipe (${recipeID}) not found`);

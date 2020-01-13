@@ -34,18 +34,68 @@ export class Utils {
     }
 
     /**
-     * Synchronously load and parse a JSON file
+     * Asynchronously load a file
      * @param path The path of the file to load
      */
-    public static loadJsonFile(path: string): any {
-        return JSON.parse(fs.readFileSync(path, { encoding: "utf-8" }));
+    public static async readFile(path: string): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            fs.readFile(path, { encoding: "utf-8" }, (err, data) => {
+                if (err != null) {
+                    reject(err);
+                } else {
+                    resolve(data);
+                }
+            });
+        });
+    }
+
+    /**
+     * Asynchronously list the content of a director
+     * @param path The path of the directory to list
+     */
+    public static async readDir(path: string): Promise<string[]> {
+        return new Promise<string[]>((resolve, reject) => {
+            fs.readdir(path, (err, files) => {
+                if (err != null) {
+                    reject(err);
+                } else {
+                    resolve(files);
+                }
+            });
+        });
+    }
+
+    /**
+     * Asynchronously load and parse a JSON file
+     * @param path The path of the file to load
+     */
+    public static async loadJsonFile(path: string): Promise<any> {
+        return JSON.parse(await this.readFile(path));
     }
 
     /**
      * Synchronously load and parse a JSON file
      * @param path The path of the file to load
      */
-    public static loadYamlFile(path: string, options?: yaml.ParseOptions | undefined): any {
+    public static loadJsonFileSync(path: string): any {
+        return JSON.parse(fs.readFileSync(path, { encoding: "utf-8" }));
+    }
+
+    /**
+     * Asynchronously load and parse a YAML file
+     * @param path The path of the file to load
+     * @param options The YAML parsing options
+     */
+    public static async loadYamlFile(path: string, options?: yaml.ParseOptions | undefined): Promise<any> {
+        return yaml.parse(await this.readFile(path), options);
+    }
+
+    /**
+     * Synchronously load and parse a YAML file
+     * @param path The path of the file to load
+     * @param options The YAML parsing options
+     */
+    public static loadYamlFileSync(path: string, options?: yaml.ParseOptions | undefined): any {
         return yaml.parse(fs.readFileSync(path, { encoding: "utf-8" }), options);
     }
 

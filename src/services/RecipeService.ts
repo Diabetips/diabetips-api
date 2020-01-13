@@ -12,7 +12,7 @@ import { HttpStatus } from "../lib";
 import { BaseService } from "./BaseService";
 
 interface IIngredientRequest {
-    foodID: number;
+    food_id: number;
     quantity: number;
 }
 
@@ -49,9 +49,9 @@ export class RecipeService extends BaseService {
         recipe.description = req.description;
         recipe.ingredients = [];
         for (const ingReq of req.ingredients) {
-            const f = await Food.findById(ingReq.foodID);
+            const f = await Food.findById(ingReq.food_id);
             if (f === undefined) {
-                throw new ApiError(HttpStatus.NOT_FOUND, "food_not_found", `Food (${ingReq.foodID}) not found`);
+                throw new ApiError(HttpStatus.NOT_FOUND, "food_not_found", `Food (${ingReq.food_id}) not found`);
             }
             const ing = new Ingredient();
             ing.quantity = ingReq.quantity;
@@ -77,9 +77,9 @@ export class RecipeService extends BaseService {
         if (req.ingredients !== undefined) {
             recipe.ingredients = [];
             for (const ingReq of req.ingredients) {
-                const f = await Food.findById(ingReq.foodID);
+                const f = await Food.findById(ingReq.food_id);
                 if (f === undefined) {
-                    throw new ApiError(HttpStatus.NOT_FOUND, "food_not_found", `Food (${ingReq.foodID}) not found`);
+                    throw new ApiError(HttpStatus.NOT_FOUND, "food_not_found", `Food (${ingReq.food_id}) not found`);
                 }
                 const ing = new Ingredient();
                 ing.quantity = ingReq.quantity;

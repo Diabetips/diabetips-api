@@ -1,0 +1,169 @@
+"/v1/food":
+  get:
+    tags:
+      - "Recipes"
+    summary: "Get all food items"
+    description: >
+      Get a list of all food items available.
+    responses:
+      200:
+        description: "List of all available food items"
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $component: "schemas:food.yml:Food"
+"/v1/food/{food_id}":
+  parameters:
+    - $component: "parameters:food_id.yml:FoodId"
+  get:
+    tags:
+      - "Recipes"
+    summary: "Get food item"
+    description: >
+      Get the food item with the specified ID.
+    responses:
+      200:
+        description: "The food item's data"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:food.yml:Food"
+      404:
+        description: "No food with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorFoodNotFound"
+"/v1/food/{food_id}/picture":
+  parameters:
+    - $component: "parameters:food_id.yml:FoodId"
+  get:
+    tags:
+      - "Recipes"
+    summary: "Get food picture"
+    description: >
+      Get the picture of the food with the specified ID.
+
+
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+    responses:
+      200:
+        description: "The food item's picture"
+        content:
+          image/png:
+            schema:
+              type: "binary"
+      404:
+        description: "No food with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorFoodNotFound"
+"/v1/recipes":
+  get:
+    tags:
+      - "Recipes"
+    summary: "Get all recipes"
+    description: >
+      Get a list of all the recipes available.
+    responses:
+      200:
+        description: "List of all available recipes"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:recipe.yml:Recipe"
+  post:
+    tags:
+      - "Recipes"
+    summary: "Create recipe"
+    description: >
+      Create a recipe from the specified information and ingredients list.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:recipe.yml:Recipe"
+    responses:
+      200:
+        description: "The recipe was created"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:recipe.yml:Recipe"
+      404:
+        description: "No food with the specified ID from the list of ingredients was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorFoodNotFound"
+"/v1/recipes/{recipe_id}":
+  parameters:
+    - $component: "parameters:recipe_id.yml:RecipeId"
+  get:
+    tags:
+      - "Recipes"
+    summary: "Get recipe"
+    description: >
+      Get the recipe with the specified ID.
+    responses:
+      200:
+        description: "The recipe's data"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:recipe.yml:Recipe"
+      404:
+        description: "No recipe with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorRecipeNotFound"
+  put:
+    tags:
+      - "Recipes"
+    summary: "Update recipe"
+    description: >
+      Update the recipe with the specified ID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:recipe.yml:Recipe"
+    responses:
+      200:
+        description: "The updated recipe's data"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:recipe.yml:Recipe"
+      404:
+        description: >
+          Either:
+            * No recipe with the specified ID was found
+            * No food with the specified ID from the list of ingredients was found
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorRecipeNotFound"
+  delete:
+    tags:
+      - "Recipes"
+    summary: "Remove recipe"
+    description: >
+      Remove the recipe with the specified ID.
+    responses:
+      204:
+        description: "The recipe was removed"
+      404:
+        description: "No recipe with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorRecipeNotFound"

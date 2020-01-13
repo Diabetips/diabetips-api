@@ -24,8 +24,7 @@ export class UserController extends BaseController {
             .all(/\/me(\/.*)?/,                this.asCurrentUser)
             .get("/:uid",                      this.getUser)
             .put("/:uid",     this.jsonParser, this.updateUser)
-            .delete("/:uid",                   this.deleteUser)
-            .post("/:uid/confirm-email", this.jsonParser, this.confirmUserEmail);
+            .delete("/:uid",                   this.deleteUser);
     }
 
     private asCurrentUser(req: Request, res: Response, next: NextFunction) {
@@ -55,9 +54,5 @@ export class UserController extends BaseController {
         res
             .status(HttpStatus.NO_CONTENT)
             .send();
-    }
-
-    private async confirmUserEmail(req: Request, res: Response) {
-        res.send(HttpStatus.ACCEPTED);
     }
 }

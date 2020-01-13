@@ -4,6 +4,7 @@
     },
     "db": {
         "type": "mariadb",
+        "database": "diabetips",
         "url": "${DIABETIPS_DB_URL}"
     },
     "mail": {

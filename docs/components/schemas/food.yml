@@ -1,0 +1,19 @@
+FoodId:
+  type: "integer"
+  description: "The food's identifier"
+  example: 132
+Food:
+  type: "object"
+  properties:
+    "id":
+      allOf:
+        - $component: "schemas:food.yml:FoodId"
+        - readOnly: true
+    "name":
+      type: "string"
+      description: "The food's name"
+      example: "Tomato sauce"
+    "unit":
+      type: "string"
+      description: "The food's most common measuring unit"
+      example: "g"

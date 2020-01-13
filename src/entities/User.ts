@@ -43,10 +43,10 @@ export class User extends BaseEntityHiddenId {
     @JoinTable({
         name: "user_apps",
         joinColumn: {
-            name: "user",
+            name: "user_id",
         },
         inverseJoinColumn: {
-            name: "app",
+            name: "app_id",
         },
     })
     public apps: Promise<AuthApp[]>;
@@ -55,10 +55,10 @@ export class User extends BaseEntityHiddenId {
     @JoinTable({
         name: "user_connections",
         joinColumn: {
-            name: "source_user",
+            name: "source_user_id",
         },
         inverseJoinColumn: {
-            name: "target_user",
+            name: "target_user_id",
         },
     })
     public connections: Promise<User[]>;
@@ -117,7 +117,7 @@ export class User extends BaseEntityHiddenId {
         let query = this
             .createQueryBuilder("user")
             .select("user")
-            .where("user.email = :email", { email });
+            .where("lower(user.email) = lower(:email)", { email });
         if (optionDefault(options.selectPassword, false)) {
             query = query.addSelect("user.password", "user_password");
         }
@@ -131,7 +131,7 @@ export class User extends BaseEntityHiddenId {
         let query = this
             .createQueryBuilder("user")
             .select()
-            .where("user.email = :email", { email });
+            .where("lower(user.email) = lower(:email)", { email });
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("user.deleted = 0");
         }

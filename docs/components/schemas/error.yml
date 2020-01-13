@@ -1,0 +1,42 @@
+Error:
+  type: "object"
+  properties:
+    "status":
+      type: "integer"
+      description: "The error's HTTP status code"
+    "error":
+      type: "string"
+      description: "The error's unique name"
+    "message":
+      type: "string"
+      description: "The error's description message"
+ErrorUserNotFound:
+  allOf:
+    - $component: "schemas:error.yml:Error"
+    - properties:
+        "status":
+          example: 404
+        "error":
+          example: "user_not_found"
+        "message":
+          example: "User 01234567-89ab-cdef-0123-456789abcdef not found"
+ErrorFoodNotFound:
+  allOf:
+    - $component: "schemas:error.yml:Error"
+    - properties:
+        "status":
+          example: 404
+        "error":
+          example: "food_not_found"
+        "message":
+          example: "Food 132 not found"
+ErrorRecipeNotFound:
+  allOf:
+    - $component: "schemas:error.yml:Error"
+    - properties:
+        "status":
+          example: 404
+        "error":
+          example: "recipe_not_found"
+        "message":
+          example: "Recipe 15 not found"

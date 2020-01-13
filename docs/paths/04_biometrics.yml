@@ -1,0 +1,90 @@
+"/v1/users/{uid}/glucose":
+  get:
+    tags:
+      - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+  post:
+    tags:
+      - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+"/v1/users/{uid}/glucose/{start}/{end}":
+  get:
+    tags:
+      - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+  delete:
+    tags:
+      - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+"/v1/users/{uid}/hba1c":
+  get:
+    tags:
+      - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+  post:
+    tags:
+      - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+"/v1/users/{uid}/hba1c/{id}":
+  get:
+    tags:
+      - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+  put:
+    tags:
+      - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+  delete:
+    tags:
+      - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+"/v1/users/{uid}/insulin":
+  get:
+    tags:
+      - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+  post:
+    tags:
+      - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+"/v1/users/{uid}/insulin/{id}":
+  get:
+    tags:
+      - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+  put:
+    tags:
+      - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+  delete:
+    tags:
+      - "Biometrics"
+    summary: "<TODO>"
+    description: >
+      **WARNING: work in progress, documentation may be incomplete or subject to changes**

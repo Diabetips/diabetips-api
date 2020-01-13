@@ -1,0 +1,32 @@
+openapi: "3.0.0"
+info:
+  title: "Diabetips API"
+  description: "This is the documentation for the Diabetips REST API."
+  version: "0.3.0"
+  contact:
+    email: "contact@diabetips.fr"
+servers:
+  - url: "https://api.diabetips.fr"
+tags:
+  - name: "Authentication"
+    description: >
+      The Diabetips API uses an OAuth 2.0 based authentication system with JSON Web Tokens. Almost all of this API
+      routes require a valid authenticated user access token be passed via the `Authorization: Bearer xyz` HTTP header.
+
+
+      Tokens can be obtained via the OAuth flow that is most appropriate for your type of application, this API supports
+      the following flows:
+       * Authorization code
+       * Implicit
+       * Password
+       * Refresh
+
+
+      See also:
+       * [RFC 6749: OAuth 2.0](https://tools.ietf.org/html/rfc6749)
+       * [RFC 7519: JSON Web Token](https://tools.ietf.org/html/rfc7519)
+  - name: "Users"
+  - name: "Connections"
+  - name: "Biometrics"
+  - name: "Meals"
+  - name: "Recipes"

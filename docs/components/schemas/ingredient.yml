@@ -1,0 +1,15 @@
+Ingredient:
+  type: "object"
+  properties:
+    "quantity":
+      type: "number"
+      description: "Quantity of the ingredient in the recipe"
+      example: 200
+    "food":
+      allOf:
+        - $component: "schemas:food.yml:Food"
+        - readOnly: true
+    "food_id":
+      allOf:
+        - $component: "schemas:food.yml:FoodId"
+        - writeOnly: true

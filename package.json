@@ -11,11 +11,11 @@
     ],
     "main": "build/main.js",
     "scripts": {
-        "build": "./node_modules/.bin/tsc",
-        "lint": "./node_modules/.bin/tslint -p .",
+        "build": "npx tsc",
+        "lint": "npx tslint -p .",
         "start": "node build/main.js",
         "clean": "rm -rf build",
-        "dev": "./node_modules/.bin/ts-node-dev src/main.ts"
+        "dev": "npx ts-node-dev src/main.ts"
     },
     "repository": {
         "type": "git",
