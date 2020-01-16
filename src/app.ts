@@ -33,13 +33,12 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"],
 }));
 app.use(log4js.connectLogger(httpLogger, { level: "info" }));
-// TODO: Uncomment here
-// app.use(async (req: Request, res: Response, next: NextFunction) => {
-//     req.context = {
-//         // auth: await AuthService.decodeAuthorization(req.header("Authorization")),
-//     };
-//     next();
-// });
+app.use(async (req: Request, res: Response, next: NextFunction) => {
+    req.context = {
+        auth: await AuthService.decodeAuthorization(req.header("Authorization")),
+    };
+    next();
+});
 
 app.get("/", (req: Request, res: Response) => {
     res.send({
