@@ -25,7 +25,8 @@ interface IUpdateInsulinRequest {
 }
 
 export class InsulinService extends BaseService {
-    public static async getAllInsulin(patientUid: string, query: IInsulinSearchRequest): Promise<Insulin[]> {
+    public static async getAllInsulin(patientUid: string, query: IInsulinSearchRequest):
+                                      Promise<[Insulin[], Promise<number>]> {
         return Insulin.findAll(patientUid, query);
     }
 

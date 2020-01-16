@@ -9,6 +9,8 @@
 import { Request, Response } from "express";
 
 import { HttpStatus } from "../lib";
+
+import { getPageHeader } from "../entities/BaseEntity";
 import { InsulinService } from "../services/InsulinService";
 import { BaseController } from "./BaseController";
 
@@ -30,7 +32,11 @@ export class UserInsulinController extends BaseController {
     }
 
     private async getAllUserInsulin(req: Request, res: Response) {
-        res.send(await InsulinService.getAllInsulin(req.params.userUid, req.query));
+        const [insulin, count] = await InsulinService.getAllInsulin(req.params.userUid, req.query);
+        const header = getPageHeader(await count, req.query);
+
+        res.setHeader("X-Pages", header);
+        res.send(insulin);
     }
 
     private async addUserInsulin(req: Request, res: Response) {

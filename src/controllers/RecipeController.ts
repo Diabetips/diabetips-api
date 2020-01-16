@@ -11,6 +11,7 @@ import { Request, Response } from "express";
 import { HttpStatus } from "../lib";
 import { RecipeService } from "../services";
 
+import { getPageHeader } from "../entities/BaseEntity";
 import { BaseController } from "./BaseController";
 
 export class RecipeController extends BaseController {
@@ -27,7 +28,11 @@ export class RecipeController extends BaseController {
     }
 
     private async getAllRecipes(req: Request, res: Response) {
-        res.send(await RecipeService.getAllRecipes(req.query));
+        const [recipes, count] = await RecipeService.getAllRecipes(req.query);
+        const header = getPageHeader(await count, req.query);
+
+        res.setHeader("X-Pages", header);
+        res.send(recipes);
     }
 
     private async getRecipe(req: Request, res: Response) {

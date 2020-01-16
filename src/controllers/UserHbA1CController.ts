@@ -9,6 +9,8 @@
 import { Request, Response } from "express";
 
 import { HttpStatus } from "../lib";
+
+import { getPageHeader } from "../entities/BaseEntity";
 import { Hba1CService } from "../services/Hba1CService";
 import { BaseController } from "./BaseController";
 
@@ -31,7 +33,11 @@ export class UserHbA1CController extends BaseController {
     }
 
     private async getAllUserHbA1C(req: Request, res: Response) {
-        res.send(await Hba1CService.getAllHba1C(req.params.userUid, req.query));
+        const [hba1c, count] = await Hba1CService.getAllHba1C(req.params.userUid, req.query);
+        const header = getPageHeader(await count, req.query);
+
+        res.setHeader("X-Pages", header);
+        res.send(hba1c);
     }
 
     private async addUserHbA1C(req: Request, res: Response) {

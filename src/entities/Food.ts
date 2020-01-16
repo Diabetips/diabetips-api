@@ -19,10 +19,13 @@ export class Food extends BaseEntity {
     @Column({ length: 10 })
     public unit: string;
 
+    @Column()
+    public sugar: number;
+
     // Repository functions
 
     public static async findAll(req: IFoodSearchRequest = {}, options: IFoodQueryOptions = {}):
-    Promise<Food[]> {
+                                Promise<[Promise<Food[]>, Promise<number>]> {
         let query = this
             .createQueryBuilder("food")
             .select("food");
@@ -37,7 +40,7 @@ export class Food extends BaseEntity {
 
         query = getPageableQuery(query, req);
 
-        return query.getMany();
+        return [query.getMany(), query.getCount()];
     }
 
     public static async findById(id: number, options: IFoodQueryOptions = {}): Promise<Food | undefined> {
@@ -45,13 +48,11 @@ export class Food extends BaseEntity {
             .createQueryBuilder("food")
             .select("food")
             .where("food.id = :id", { id });
-
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("food.deleted = 0");
         }
         return query.getOne();
     }
-
 }
 
 // tslint:disable-next-line: no-empty-interface

@@ -26,7 +26,7 @@ export class Insulin extends BaseEntity {
     public user: User;
 
     public static async findAll(patientUid: string, req: IInsulinSearchRequest = {},
-                                options: IInsulinQueryOptions = {}): Promise<Insulin[]> {
+                                options: IInsulinQueryOptions = {}): Promise<[Insulin[], Promise<number>]> {
         let query = this
             .createQueryBuilder("insulin")
             .leftJoin("insulin.user", "user")
@@ -36,7 +36,7 @@ export class Insulin extends BaseEntity {
                 .andWhere("insulin.deleted = 0");
         }
 
-        return manualPagination(await query.getMany(), req);
+        return [manualPagination(await query.getMany(), req), query.getCount()];
     }
 
     public static async findById(patientUid: string, insulinId: number,

@@ -27,7 +27,8 @@ export class Recipe extends BaseEntity {
 
     // Repository functions
 
-    public static async findAll(req: IRecipeSearchRequest = {}, options: IRecipeQueryOptions = {}): Promise<Recipe[]> {
+    public static async findAll(req: IRecipeSearchRequest = {}, options: IRecipeQueryOptions = {}): 
+                                Promise<[Recipe[], Promise<number>]> {
         let query = this
         .createQueryBuilder("recipe")
         .leftJoinAndSelect("recipe.ingredients", "ingredients")
@@ -40,7 +41,7 @@ export class Recipe extends BaseEntity {
             query = query.andWhere(`recipe.name LIKE :name`, { name: "%" + req.name + "%" });
         }
 
-        return manualPagination(await query.getMany(), req);
+        return [manualPagination(await query.getMany(), req), query.getCount()];
     }
 
     public static async findById(id: number, options: IRecipeQueryOptions = {}): Promise<Recipe | undefined> {

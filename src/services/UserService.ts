@@ -51,7 +51,7 @@ export class UserService extends BaseService {
         return ctx.auth.user;
     }
 
-    public static async getAllUsers(query: any): Promise<User[]> {
+    public static async getAllUsers(query: any): Promise<[Promise<User[]>, Promise<number>]> {
         // TODO
         // * access checks:
         //   if no current user: throw access denied error
@@ -75,9 +75,9 @@ export class UserService extends BaseService {
         user.last_name = req.last_name;
         user.lang = req.lang;
 
-        // if (await User.countByEmail(user.email) > 0) {
-        //     throw new ApiError(HttpStatus.CONFLICT, "email_conflict", "Email address already used by another account");
-        // }
+        if (await User.countByEmail(user.email) > 0) {
+            throw new ApiError(HttpStatus.CONFLICT, "email_conflict", "Email address already used by another account");
+        }
 
         sendMail("account-registration", user.lang, user.email, {
             email: user.email,
