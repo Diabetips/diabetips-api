@@ -30,7 +30,7 @@ export interface IUpdateRecipeRequest {
 
 export class RecipeService extends BaseService {
 
-    public static async getAllRecipes(query: IRecipeSearchRequest = {}): Promise<Recipe[]> {
+    public static async getAllRecipes(query: IRecipeSearchRequest = {}): Promise<[Recipe[], Promise<number>]> {
         return Recipe.findAll(query);
     }
 

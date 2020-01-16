@@ -8,7 +8,7 @@
 
 import { Column, Entity } from "typeorm";
 
-import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
+import { BaseEntity, getPageableQuery, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
 
 @Entity()
 export class Food extends BaseEntity {
@@ -19,9 +19,13 @@ export class Food extends BaseEntity {
     @Column({ length: 10 })
     public unit: string;
 
+    @Column()
+    public sugar: number;
+
     // Repository functions
 
-    public static async findAll(req: IFoodSearchRequest = {}, options: IFoodQueryOptions = {}): Promise<Food[]> {
+    public static async findAll(req: IFoodSearchRequest = {}, options: IFoodQueryOptions = {}):
+                                Promise<[Promise<Food[]>, Promise<number>]> {
         let query = this
             .createQueryBuilder("food")
             .select("food");
@@ -33,8 +37,10 @@ export class Food extends BaseEntity {
         if (req.name !== undefined) {
             query = query.andWhere(`food.name LIKE :name`, { name: "%" + req.name + "%" });
         }
-        // TODO: pagination
-        return query.getMany();
+
+        query = getPageableQuery(query, req);
+
+        return [query.getMany(), query.getCount()];
     }
 
     public static async findById(id: number, options: IFoodQueryOptions = {}): Promise<Food | undefined> {
@@ -42,13 +48,11 @@ export class Food extends BaseEntity {
             .createQueryBuilder("food")
             .select("food")
             .where("food.id = :id", { id });
-
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("food.deleted = 0");
         }
         return query.getOne();
     }
-
 }
 
 // tslint:disable-next-line: no-empty-interface

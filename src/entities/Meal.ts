@@ -8,7 +8,7 @@
 
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from "typeorm";
 
-import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
+import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, manualPagination, optionDefault } from "./BaseEntity";
 
 import { Recipe, User } from ".";
 
@@ -36,7 +36,7 @@ export class Meal extends BaseEntity {
     // Repository functions
 
     public static async findAll(uid: string, req: IMealSearchRequest = {},
-                                options: IMealQueryOptions = {}): Promise<Meal[]> {
+                                options: IMealQueryOptions = {}): Promise<[Meal[], Promise<number>]> {
         let query = this
             .createQueryBuilder("meal")
             .leftJoinAndSelect("meal.recipes", "recipes")
@@ -47,7 +47,8 @@ export class Meal extends BaseEntity {
                             .andWhere("meal.deleted = 0")
                             .andWhere("recipes.deleted = 0");
         }
-        return query.getMany();
+
+        return [manualPagination(await query.getMany(), req), query.getCount()];
     }
 
     public static async findById(uid: string, mealId: number,

@@ -12,9 +12,16 @@ import { HttpStatus } from "../lib";
 
 import { BaseService } from "./BaseService";
 
+// TODO: remove that too
+export interface ICreateFoodRequest {
+    name: string;
+    unit: string;
+    sugar: number;
+}
+
 export class FoodService extends BaseService {
-    public static async getAllFood(query: any): Promise<Food[]> {
-        // TODO: pagination
+
+    public static async getAllFood(query: any): Promise<[Promise<Food[]>, Promise<number>]> {
         return Food.findAll(query);
     }
 
@@ -27,11 +34,12 @@ export class FoodService extends BaseService {
     }
 
     // TODO: this is temporary
-    public static async addFood(req: any): Promise<Food> {
+    public static async addFood(req: ICreateFoodRequest): Promise<Food> {
         const food = new Food();
 
         food.name = req.name;
         food.unit = req.unit;
+        food.sugar = req.sugar;
         return food.save();
     }
 }

@@ -11,6 +11,7 @@ import { Request, Response } from "express";
 import { HttpStatus } from "../lib";
 import { MealService } from "../services";
 
+import { getPageHeader } from "../entities/BaseEntity";
 import { BaseController } from "./BaseController";
 
 export class UserMealController extends BaseController {
@@ -27,7 +28,11 @@ export class UserMealController extends BaseController {
     }
 
     private async getAllUserMeals(req: Request, res: Response) {
-        res.send(await MealService.getAllMeals(req.params.userUid, req.query));
+        const [meals, count] = await MealService.getAllMeals(req.params.userUid, req.query);
+        const header = getPageHeader(await count, req.query);
+
+        res.setHeader("X-Pages", header);
+        res.send(meals);
     }
 
     private async getUserMeal(req: Request, res: Response) {

@@ -8,12 +8,13 @@
 
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
-import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
+import { IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
 
 import { Food, Recipe } from ".";
+import { BaseEntityHiddenId } from "./BaseEntityHiddenId";
 
 @Entity()
-export class Ingredient extends BaseEntity {
+export class Ingredient extends BaseEntityHiddenId {
 
     @Column()
     public quantity: number;
@@ -37,7 +38,6 @@ export class Ingredient extends BaseEntity {
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("ingredient.deleted = 0");
         }
-        // TODO: pagination
 
         return query.getMany();
     }
