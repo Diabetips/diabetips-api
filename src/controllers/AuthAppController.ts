@@ -18,8 +18,8 @@ export class AuthAppController extends BaseController {
         super();
 
         this.router
-            .get("/",          this.getAllApps)
-            .get("/:appid",    this.getApp);
+            .get("/",       this.getAllApps)
+            .get("/:appid", this.getApp);
     }
 
     private async getAllApps(req: Request, res: Response) {

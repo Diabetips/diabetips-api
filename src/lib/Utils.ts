@@ -34,7 +34,7 @@ export class Utils {
     }
 
     /**
-     * Asynchronously load a file
+     * Asynchronously load a text file
      * @param path The path of the file to load
      */
     public static async readFile(path: string): Promise<string> {

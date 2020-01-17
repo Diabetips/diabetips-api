@@ -18,8 +18,8 @@ export class AuthAppLogoController extends BaseController {
         super();
 
         this.router
-            .get("/:appid/logo",       this.getAppLogo)
-            .post("/:appid/logo",    this.uploadAppLogo);
+            .get("/:appid/logo",  this.getAppLogo)
+            .post("/:appid/logo", this.uploadAppLogo);
     }
 
     private async getAppLogo(req: Request, res: Response) {

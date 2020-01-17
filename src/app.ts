@@ -14,7 +14,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { AuthAppController, AuthAppLogoController, AuthController, FoodController, RecipeController,
     UserAppController, UserConnectionController, UserController, UserGlucoseController, UserHbA1CController,
-    UserInsulinController, UserMealController, UserPhotoController } from "./controllers";
+    UserInsulinController, UserMealController, UserPictureController } from "./controllers";
 import { getDocsSpec } from "./docs";
 import { ApiError } from "./errors";
 import { HttpStatus, Utils } from "./lib";
@@ -60,7 +60,7 @@ app.use("/v1/users", new UserGlucoseController().router);
 app.use("/v1/users", new UserHbA1CController().router);
 app.use("/v1/users", new UserMealController().router);
 app.use("/v1/users", new UserInsulinController().router);
-app.use("/v1/users", new UserPhotoController().router);
+app.use("/v1/users", new UserPictureController().router);
 
 // 404 handler
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -74,14 +74,26 @@ app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction)
     if (err instanceof ApiError) {
         res
             .status(err.status)
+            .type("json")
             .send({
                 status: err.status,
                 error: err.error,
                 message: err.message,
             });
+    } else if (err && typeof((err as any).status) === "number") {
+        const httpError = err as any;
+        res
+            .status(httpError.status)
+            .type("json")
+            .send({
+                status: httpError.status,
+                error: "http",
+                message: httpError.message,
+            });
     } else {
         res
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .type("json")
             .send({
                 error: "Internal server error",
             });

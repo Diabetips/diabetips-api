@@ -19,10 +19,10 @@ export class FoodController extends BaseController {
         super();
 
         this.router
-            .get("/", this.getAllFood)
+            .get("/",    this.getAllFood)
             .get("/:id", this.getFood)
-            // TODO: Remove this route
-            .post("/", this.jsonParser, this.addFood);
+            // TODO: Remove temporary route
+            .post("/",   this.jsonParser, this.addFood);
     }
 
     private async getAllFood(req: Request, res: Response) {

@@ -19,8 +19,8 @@ export class UserAppController extends BaseController {
         super();
 
         this.router
-            .get("/:uid/apps",              this.getAllUserApps)
-            .delete("/:uid/apps/:appid",    this.deauthorizeApp);
+            .get("/:uid/apps",           this.getAllUserApps)
+            .delete("/:uid/apps/:appid", this.deauthorizeApp);
     }
 
     private async getAllUserApps(req: Request, res: Response) {

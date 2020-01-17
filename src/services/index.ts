@@ -11,6 +11,8 @@ import { AuthService } from "./AuthService";
 import { MealService } from "./MealService";
 import { RecipeService } from "./RecipeService";
 import { UserConnectionService } from "./UserConnectionService";
+import { UserPictureService } from "./UserPictureService";
 import { UserService } from "./UserService";
 
-export { AuthAppService, AuthService, MealService, RecipeService, UserConnectionService, UserService };
+export { AuthAppService, AuthService, MealService, RecipeService,
+    UserConnectionService, UserPictureService, UserService };

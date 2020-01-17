@@ -20,11 +20,11 @@ export class UserMealController extends BaseController {
         super();
 
         this.router
-            .get("/:userUid/meals/",                          this.getAllUserMeals)
-            .post("/:userUid/meals/",      this.jsonParser,   this.addUserMeal)
-            .get("/:userUid/meals/:id",                       this.getUserMeal)
-            .put("/:userUid/meals/:id",    this.jsonParser,   this.updateUserMeal)
-            .delete("/:userUid/meals/:id",                    this.deleteUserMeal);
+            .get("/:userUid/meals/",                        this.getAllUserMeals)
+            .post("/:userUid/meals/",      this.jsonParser, this.addUserMeal)
+            .get("/:userUid/meals/:id",                     this.getUserMeal)
+            .put("/:userUid/meals/:id",    this.jsonParser, this.updateUserMeal)
+            .delete("/:userUid/meals/:id",                  this.deleteUserMeal);
     }
 
     private async getAllUserMeals(req: Request, res: Response) {

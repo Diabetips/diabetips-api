@@ -42,8 +42,7 @@ export class User extends BaseEntityHiddenId {
     @Column({ length: 100 })
     public last_name: string;
 
-    @OneToOne((type) => UserPicture, (picture) => picture.id)
-    @JoinColumn({ name: "picture_id" })
+    @OneToOne((type) => UserPicture, (picture) => picture.user)
     public picture: Promise<UserPicture>;
 
     @ManyToMany((type) => AuthApp)

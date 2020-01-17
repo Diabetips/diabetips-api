@@ -6,14 +6,21 @@
 ** Created by Arthur MELIN on Mon Dec 16 2019
 */
 
-import { Column, Entity } from "typeorm";
+import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
-import { BaseEntity } from "./BaseEntity";
+import { User } from "./User";
 
 @Entity()
 export class UserPicture extends BaseEntity {
 
+    @PrimaryGeneratedColumn()
+    public id: number;
+
+    @OneToOne((type) => User, (user) => user.picture)
+    @JoinColumn({ name: "user_id" })
+    public user: Promise<User>;
+
     @Column()
-    public picture: Buffer;
+    public blob: Buffer;
 
 }

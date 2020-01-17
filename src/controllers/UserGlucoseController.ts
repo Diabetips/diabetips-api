@@ -29,10 +29,10 @@ export class UserGlucoseController extends BaseController {
         super();
 
         this.router
-            .get("/:userUid/glucose/",                              this.getAllUserGlucose)
-            .post("/:userUid/glucose/",            this.jsonParser, this.addUserGlucose)
-            .get("/:userUid/glucose/:start/:end",                   this.getUserGlucoseRange)
-            .delete("/:userUid/glucose/:start/:end",                this.deleteUserGlucoseRange);
+            .get("/:userUid/glucose/",                                this.getAllUserGlucose)
+            .post("/:userUid/glucose/",              this.jsonParser, this.addUserGlucose)
+            .get("/:userUid/glucose/:start/:end",                     this.getUserGlucoseRange)
+            .delete("/:userUid/glucose/:start/:end",                  this.deleteUserGlucoseRange);
     }
 
     private async getAllUserGlucose(req: Request, res: Response) {
