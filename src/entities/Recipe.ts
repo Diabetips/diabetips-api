@@ -27,7 +27,7 @@ export class Recipe extends BaseEntity {
 
     // Repository functions
 
-    public static async findAll(req: IRecipeSearchRequest = {}, options: IRecipeQueryOptions = {}): 
+    public static async findAll(req: IRecipeSearchRequest = {}, options: IRecipeQueryOptions = {}):
                                 Promise<[Recipe[], Promise<number>]> {
         let query = this
         .createQueryBuilder("recipe")

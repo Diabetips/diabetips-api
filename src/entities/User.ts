@@ -88,7 +88,7 @@ export class User extends BaseEntityHiddenId {
 
     // Repository functions
 
-    public static async findAll(req: IBaseSearchRequest = {}, options: IUserQueryOptions = {}): 
+    public static async findAll(req: IBaseSearchRequest = {}, options: IUserQueryOptions = {}):
                                 Promise<[Promise<User[]>, Promise<number>]> {
         let query = this
             .createQueryBuilder("user")

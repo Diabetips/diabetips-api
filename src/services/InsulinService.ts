@@ -51,7 +51,7 @@ export class InsulinService extends BaseService {
         insulin.timestamp = req.timestamp;
         insulin.quantity = req.quantity;
         insulin.description = req.description;
-        insulin.user = user;
+        insulin.user = Promise.resolve(user);
 
         return insulin.save();
     }

@@ -44,6 +44,7 @@ app.set("x-powered-by", false);
 app.use(cors({
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["X-Pages"],
 }));
 app.use(log4js.connectLogger(httpLogger, { level: "info" }));
 app.use(async (req: Request, res: Response, next: NextFunction) => {

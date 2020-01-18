@@ -10,8 +10,9 @@ import { Column, Entity, ManyToOne } from "typeorm";
 import { User } from ".";
 import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, manualPagination, optionDefault } from "./BaseEntity";
 
-@Entity()
+@Entity({ name: "hba1c" })
 export class HbA1C extends BaseEntity {
+
     @Column({ name: "value" })
     public value: number;
 
@@ -19,7 +20,7 @@ export class HbA1C extends BaseEntity {
     public timestamp: number;
 
     @ManyToOne((type) => User, (user) => user.meals, { cascade: true })
-    public user: User;
+    public user: Promise<User>;
 
     public static async findAll(patientUid: string, req: IHbA1CSearchRequest = {},
                                 options: IHbA1CQueryOptions = {}): Promise<[HbA1C[], Promise<number>]> {
@@ -48,6 +49,7 @@ export class HbA1C extends BaseEntity {
         }
         return query.getOne();
     }
+
 }
 
 // tslint:disable-next-line: no-empty-interface

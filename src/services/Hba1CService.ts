@@ -24,7 +24,7 @@ interface IUpdateHba1CRequest {
 }
 
 export class Hba1CService extends BaseService {
-    public static async getAllHba1C(patientUid: string, query: IHbA1CSearchRequest): 
+    public static async getAllHba1C(patientUid: string, query: IHbA1CSearchRequest):
                                     Promise<[HbA1C[], Promise<number>]> {
         return HbA1C.findAll(patientUid, query);
     }
@@ -49,7 +49,7 @@ export class Hba1CService extends BaseService {
         const hba1c = new HbA1C();
         hba1c.timestamp = req.timestamp;
         hba1c.value = req.value;
-        hba1c.user = user;
+        hba1c.user = Promise.resolve(user);
 
         return hba1c.save();
     }
