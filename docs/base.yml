@@ -9,6 +9,32 @@ info:
 servers:
   - url: "https://api.diabetips.fr"
 tags:
+  - name: "Pagination"
+    description: >
+      Multitple routes of this API implement pagination, which you can interact with by using the following queries:  
+        * `size=X` where X is the size you want the pages to be. 
+
+        Default: 20
+        * `page=X` where X is the page you want to GET. 
+
+        First page is found at X=1 (and not X=0).
+
+        Default: 1
+
+      Along with the requested data, the response's header will also contain the key `x-pages` which will hold the
+      following information:
+        * `previous: X` where X is the previous page of the one requested (if one exists).
+        * `next: X` where X is the next page of the one requested (if one exists).
+        * `last: X` where X is the last page that can be requested, based on the requested size.
+
+      Routes that implement pagination: 
+        [Users](https://docs.diabetips.fr/#tag/Users),
+        [Meals](https://docs.diabetips.fr/#tag/Meals),
+        [Recipe](https://docs.diabetips.fr/#tag/Recipe),
+        [Food](https://docs.diabetips.fr/#tag/Recipe),
+        [HbA1C](https://docs.diabetips.fr/#tag/Biometrics),
+        [Insulin](https://docs.diabetips.fr/#tag/Biometrics).
+
   - name: "Authentication"
     description: >
       The Diabetips API uses an OAuth 2.0 based authentication system with JSON Web Tokens. Almost all of this API

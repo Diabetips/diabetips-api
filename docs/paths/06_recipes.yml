@@ -5,6 +5,9 @@
     summary: "Get all food items"
     description: >
       Get a list of all food items available.
+
+
+      Implements [Pagination](https://docs.diabetips.fr/#tag/Pagination)
     responses:
       200:
         description: "List of all available food items"
@@ -71,6 +74,9 @@
     summary: "Get all recipes"
     description: >
       Get a list of all the recipes available.
+
+
+      Implements [Pagination](https://docs.diabetips.fr/#tag/Pagination)
     responses:
       200:
         description: "List of all available recipes"

@@ -31,6 +31,9 @@
     summary: "<TODO>"
     description: >
       **WARNING: work in progress, documentation may be incomplete or subject to changes**
+
+
+      Implements [Pagination](https://docs.diabetips.fr/#tag/Pagination)
   post:
     tags:
       - "Biometrics"
@@ -63,6 +66,9 @@
     summary: "<TODO>"
     description: >
       **WARNING: work in progress, documentation may be incomplete or subject to changes**
+
+
+      Implements [Pagination](https://docs.diabetips.fr/#tag/Pagination)
   post:
     tags:
       - "Biometrics"

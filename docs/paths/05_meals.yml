@@ -7,6 +7,9 @@
     summary: "Get all meals"
     description: >
       Get a list of all the meals of the user with the specified UID.
+
+
+      Implements [Pagination](https://docs.diabetips.fr/#tag/Pagination)
     responses:
       200:
         description: "The user's meals"
