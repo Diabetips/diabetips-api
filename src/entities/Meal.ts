@@ -21,6 +21,9 @@ export class Meal extends BaseEntity {
     @Column({ length: 200 })
     public description: string;
 
+    @Column()
+    public total_sugar: number;
+
     @ManyToMany((type) => Recipe)
     @JoinTable({
         name: "meal_recipes",
