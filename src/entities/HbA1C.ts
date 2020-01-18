@@ -6,20 +6,21 @@
 ** Created by Alexandre DE BEAUMONT on Sat Dec 14 2019
 */
 
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { User } from ".";
 import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, manualPagination, optionDefault } from "./BaseEntity";
 
 @Entity({ name: "hba1c" })
 export class HbA1C extends BaseEntity {
 
-    @Column({ name: "value" })
+    @Column({ type: "float" })
     public value: number;
 
-    @Column({ name: "timestamp" })
+    @Column()
     public timestamp: number;
 
     @ManyToOne((type) => User, (user) => user.meals, { cascade: true })
+    @JoinColumn({ name: "user_id" })
     public user: Promise<User>;
 
     public static async findAll(patientUid: string, req: IHbA1CSearchRequest = {},

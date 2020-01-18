@@ -22,7 +22,7 @@ export class Recipe extends BaseEntity {
     @Column({ length: 200 })
     public description: string;
 
-    @Column({ type: "decimal", precision: 10, scale: 6 })
+    @Column({ type: "float" })
     public total_sugar: number;
 
     @OneToMany((type) => Ingredient, (ingredient) => ingredient.recipe, { cascade: true })

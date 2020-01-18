@@ -28,6 +28,9 @@ export class AuthApp extends BaseEntityHiddenId {
     @Column({ name: "client_secret", length: 100 })
     private _clientSecret?: string;
 
+    @OneToOne((type) => AuthAppLogo, (logo) => logo.app)
+    public logo: Promise<AuthAppLogo>;
+
     public get clientId(): string | undefined {
         return this._clientId;
     }
@@ -35,9 +38,6 @@ export class AuthApp extends BaseEntityHiddenId {
     public get clientSecret(): string | undefined {
         return this._clientSecret;
     }
-
-    @OneToOne((type) => AuthAppLogo, (logo) => logo.app)
-    public logo: Promise<AuthAppLogo>;
 
     // Repository functions
 

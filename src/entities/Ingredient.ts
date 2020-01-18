@@ -16,10 +16,10 @@ import { BaseEntityHiddenId } from "./BaseEntityHiddenId";
 @Entity()
 export class Ingredient extends BaseEntityHiddenId {
 
-    @Column()
+    @Column({ type: "float" })
     public quantity: number;
 
-    @Column({ type: "decimal", precision: 10, scale: 6 })
+    @Column({ type: "float" })
     public total_sugar: number;
 
     @ManyToOne((type) => Recipe)

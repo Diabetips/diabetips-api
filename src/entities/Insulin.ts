@@ -6,23 +6,25 @@
 ** Created by Alexandre DE BEAUMONT on Sat Dec 14 2019
 */
 
-import { Column, Entity,  ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { User } from ".";
 import { BaseEntity, IBaseSearchRequest, manualPagination, optionDefault } from "./BaseEntity";
 import { IBaseQueryOptions } from "./BaseEntityHiddenId";
 
 @Entity()
 export class Insulin extends BaseEntity {
-    @Column({ name: "timestamp"})
+
+    @Column()
     public timestamp: number;
 
-    @Column({ name: "quantity" })
+    @Column({ type: "float" })
     public quantity: number;
 
-    @Column({ name: "description" })
+    @Column()
     public description: string;
 
     @ManyToOne((type) => User, (user) => user.insulin, { cascade: true })
+    @JoinColumn({ name: "user_id" })
     public user: Promise<User>;
 
     public static async findAll(patientUid: string, req: IInsulinSearchRequest = {},

@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Mon Sep 02 2019
 */
 
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne } from "typeorm";
 
 import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, manualPagination, optionDefault } from "./BaseEntity";
 
@@ -16,12 +16,13 @@ import { Recipe, User } from ".";
 export class Meal extends BaseEntity {
 
     @ManyToOne((type) => User, (user) => user.meals, { cascade: true })
+    @JoinColumn({ name: "user_id" })
     public user: Promise<User>;
 
     @Column({ length: 200 })
     public description: string;
 
-    @Column({ type: "decimal", precision: 10, scale: 6 })
+    @Column({ type: "float" })
     public total_sugar: number;
 
     @ManyToMany((type) => Recipe)
