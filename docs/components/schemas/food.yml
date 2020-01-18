@@ -17,3 +17,7 @@ Food:
       type: "string"
       description: "The food's most common measuring unit"
       example: "g"
+    "sugars_100g":
+      type: "number"
+      description: "Quantity of sugar (g) per 100g of food"
+      example: 2.5
