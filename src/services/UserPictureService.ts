@@ -29,7 +29,7 @@ export class UserPictureService extends BaseService {
     public static async setUserPicture(uid: string, buf: Buffer) {
         const user = await UserService.getUser(uid);
 
-        const pic = new UserPicture();
+        const pic = await user.picture || new UserPicture();
         try {
             pic.blob = await sharp(buf)
                 .resize(300, 300)
@@ -38,15 +38,8 @@ export class UserPictureService extends BaseService {
         } catch (err) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "bad_image", "Bad image file");
         }
-
-        const oldPic = await user.picture;
-
-        user.picture = Promise.resolve(await pic.save());
-        await user.save();
-
-        if (oldPic) {
-            await UserPicture.delete(oldPic.id);
-        }
+        pic.user = Promise.resolve(user);
+        return pic.save();
     }
 
 }

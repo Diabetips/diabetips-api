@@ -6,6 +6,7 @@
 ** Created by Arthur MELIN on Tue Dec 10 2019
 */
 
+import { AuthAppLogoService } from "./AuthAppLogoService";
 import { AuthAppService } from "./AuthAppService";
 import { AuthService } from "./AuthService";
 import { MealService } from "./MealService";
@@ -14,5 +15,13 @@ import { UserConnectionService } from "./UserConnectionService";
 import { UserPictureService } from "./UserPictureService";
 import { UserService } from "./UserService";
 
-export { AuthAppService, AuthService, MealService, RecipeService,
-    UserConnectionService, UserPictureService, UserService };
+export {
+    AuthAppLogoService,
+    AuthAppService,
+    AuthService,
+    MealService,
+    RecipeService,
+    UserConnectionService,
+    UserPictureService,
+    UserService,
+};

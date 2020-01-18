@@ -6,32 +6,46 @@
 ** Created by Arthur MELIN on Mon Nov 18 2019
 */
 
+import createHttpError = require("http-errors");
+
 import { Request, Response } from "express";
 
-import { BaseController } from "./BaseController";
+import { HttpStatus } from "../lib";
+import { AuthAppLogoService } from "../services";
 
-const IMG_PLACEHOLDER = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQI12P4//8/AAX+Av7czFnnAAAAAElFTkSuQmCC", "base64");
+import { BaseController } from "./BaseController";
 
 export class AuthAppLogoController extends BaseController {
 
     constructor() {
-        super();
+        super({
+            rawParserOptions: {
+                limit: "2mb",
+                type: (req) => {
+                    if (req.headers["content-type"] !== "image/png") {
+                        throw createHttpError(415);
+                    }
+                    return true;
+                },
+            },
+        });
 
         this.router
-            .get("/:appid/logo",  this.getAppLogo)
-            .post("/:appid/logo", this.uploadAppLogo);
+            .get("/:appid/logo",                  this.getAppLogo)
+            .post("/:appid/logo", this.rawParser, this.uploadAppLogo);
     }
 
     private async getAppLogo(req: Request, res: Response) {
         res
-        .contentType("png")
-        .send(IMG_PLACEHOLDER);
+            .contentType("png")
+            .send(await AuthAppLogoService.getAppLogo(req.params.appid));
     }
 
     private async uploadAppLogo(req: Request, res: Response) {
+        await AuthAppLogoService.setAppLogo(req.params.appid, req.body);
         res
-        .contentType("png")
-        .send(IMG_PLACEHOLDER);
+            .status(HttpStatus.NO_CONTENT)
+            .send();
     }
 
 }

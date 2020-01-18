@@ -8,4 +8,8 @@
 
 import { ApiError } from "./ApiError";
 import { AuthError } from "./AuthError";
-export { ApiError, AuthError };
+
+export {
+    ApiError,
+    AuthError,
+};
