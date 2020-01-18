@@ -23,7 +23,7 @@ export class Food extends BaseEntity {
     public unit: string;
 
     @Column()
-    public sugar: number;
+    public sugars_100g: number;
 
     @OneToOne((type) => FoodPicture, (pic) => pic.food)
     public picture: Promise<FoodPicture>;

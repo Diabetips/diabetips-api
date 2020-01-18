@@ -39,7 +39,7 @@ export class FoodService extends BaseService {
 
         food.name = req.name;
         food.unit = req.unit;
-        food.sugar = req.sugar;
+        food.sugars_100g = req.sugar;
         return food.save();
     }
 }
