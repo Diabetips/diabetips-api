@@ -11,8 +11,9 @@ import express = require("express");
 
 export interface IControllerOptions {
     routerOptions?: express.RouterOptions;
-    jsonParserOptions?: bodyParser.OptionsJson;
     formParserOptions?: bodyParser.OptionsUrlencoded;
+    jsonParserOptions?: bodyParser.OptionsJson;
+    rawParserOptions?: bodyParser.Options;
 }
 
 export class BaseController {
@@ -22,6 +23,7 @@ export class BaseController {
     // Pre-configured middlewares
     protected formParser: express.RequestHandler;
     protected jsonParser: express.RequestHandler;
+    protected rawParser: express.RequestHandler;
 
     constructor(options: IControllerOptions = {}) {
         this.router = express.Router(options.routerOptions);
@@ -29,6 +31,7 @@ export class BaseController {
             extended: true,
         });
         this.jsonParser = bodyParser.json(options.jsonParserOptions);
+        this.rawParser = bodyParser.raw(options.rawParserOptions);
     }
 
 }

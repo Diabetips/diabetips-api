@@ -142,12 +142,15 @@
       Get the profile picture of the user with the specified UID.
 
 
+      The returned profile picture's dimensions will always be 300 by 300 pixels.
+
+
       **WARNING: work in progress, documentation may be incomplete or subject to changes**
     responses:
       200:
         description: "The user's profile picture"
         content:
-          image/png:
+          image/jpeg:
             schema:
               type: "binary"
       404:
@@ -166,11 +169,22 @@
       Update the profile picture of the user with the specified UID.
 
 
+      The `Content-Type` header is ignored, the format of the file is auto-detected.
+      The supported image file formats are:
+       - JPEG
+       - PNG
+       - WebP
+       - TIFF
+
+      The maximum file upload size is 5 MB. There are no constraints on the uploaded image's dimensions, but it will be
+      resized and cropped to 300 by 300 pixels.
+
+
       **WARNING: work in progress, documentation may be incomplete or subject to changes**
     requestBody:
       required: true
       content:
-        application/png:
+        "*/*":
           schema:
             type: "binary"
     responses:

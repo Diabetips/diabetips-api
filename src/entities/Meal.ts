@@ -16,7 +16,7 @@ import { Recipe, User } from ".";
 export class Meal extends BaseEntity {
 
     @ManyToOne((type) => User, (user) => user.meals, { cascade: true })
-    public user: User;
+    public user: Promise<User>;
 
     @Column({ length: 200 })
     public description: string;

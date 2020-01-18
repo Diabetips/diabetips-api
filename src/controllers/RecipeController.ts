@@ -20,11 +20,11 @@ export class RecipeController extends BaseController {
         super();
 
         this.router
-            .get("/", this.getAllRecipes)
-            .post("/", this.jsonParser, this.createRecipe)
-            .get("/:id", this.getRecipe)
-            .put("/:id", this.jsonParser, this.updateRecipe)
-            .delete("/:id", this.deleteRecipe);
+            .get("/",                        this.getAllRecipes)
+            .post("/",      this.jsonParser, this.createRecipe)
+            .get("/:id",                     this.getRecipe)
+            .put("/:id",    this.jsonParser, this.updateRecipe)
+            .delete("/:id",                  this.deleteRecipe);
     }
 
     private async getAllRecipes(req: Request, res: Response) {

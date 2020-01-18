@@ -11,4 +11,9 @@ import { Context } from "./Context";
 import { HttpStatus } from "./HttpStatus";
 import { Utils } from "./Utils";
 
-export { AuthInfo, Context, HttpStatus, Utils };
+export {
+    AuthInfo,
+    Context,
+    HttpStatus,
+    Utils,
+};

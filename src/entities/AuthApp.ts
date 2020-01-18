@@ -6,9 +6,12 @@
 ** Created by Arthur MELIN on Mon Oct 14 2019
 */
 
-import { Column, Entity } from "typeorm";
+import { Column, Entity, OneToOne } from "typeorm";
 
 import { BaseEntityHiddenId, IBaseQueryOptions, optionDefault } from "./BaseEntityHiddenId";
+
+import { AuthAppLogo } from "./AuthAppLogo";
+export { AuthAppLogo };
 
 @Entity()
 export class AuthApp extends BaseEntityHiddenId {
@@ -32,6 +35,11 @@ export class AuthApp extends BaseEntityHiddenId {
     public get clientSecret(): string | undefined {
         return this._clientSecret;
     }
+
+    @OneToOne((type) => AuthAppLogo, (logo) => logo.app)
+    public logo: Promise<AuthAppLogo>;
+
+    // Repository functions
 
     public static async findAll(options: IBaseQueryOptions = {}): Promise<AuthApp[]> {
         let query = this

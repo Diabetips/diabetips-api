@@ -8,7 +8,7 @@
 
 import bcrypt = require("bcrypt");
 
-import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany } from "typeorm";
+import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne } from "typeorm";
 
 import { BaseEntityHiddenId, IBaseQueryOptions, optionDefault } from "./BaseEntityHiddenId";
 
@@ -16,6 +16,9 @@ import { AuthApp, Meal } from ".";
 import { getPageableQuery, IBaseSearchRequest } from "./BaseEntity";
 import { HbA1C } from "./HbA1C";
 import { Insulin } from "./Insulin";
+
+import { UserPicture } from "./UserPicture";
+export { UserPicture };
 
 @Entity()
 export class User extends BaseEntityHiddenId {
@@ -38,6 +41,9 @@ export class User extends BaseEntityHiddenId {
 
     @Column({ length: 100 })
     public last_name: string;
+
+    @OneToOne((type) => UserPicture, (picture) => picture.user)
+    public picture: Promise<UserPicture>;
 
     @ManyToMany((type) => AuthApp)
     @JoinTable({
@@ -82,7 +88,7 @@ export class User extends BaseEntityHiddenId {
 
     // Repository functions
 
-    public static async findAll(req: IBaseSearchRequest = {}, options: IUserQueryOptions = {}): 
+    public static async findAll(req: IBaseSearchRequest = {}, options: IUserQueryOptions = {}):
                                 Promise<[Promise<User[]>, Promise<number>]> {
         let query = this
             .createQueryBuilder("user")

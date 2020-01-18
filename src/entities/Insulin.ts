@@ -23,7 +23,7 @@ export class Insulin extends BaseEntity {
     public description: string;
 
     @ManyToOne((type) => User, (user) => user.insulin, { cascade: true })
-    public user: User;
+    public user: Promise<User>;
 
     public static async findAll(patientUid: string, req: IInsulinSearchRequest = {},
                                 options: IInsulinQueryOptions = {}): Promise<[Insulin[], Promise<number>]> {

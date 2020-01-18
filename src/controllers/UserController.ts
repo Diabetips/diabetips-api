@@ -20,12 +20,12 @@ export class UserController extends BaseController {
         super();
 
         this.router
-            .get("/",                          this.getAllUsers)
-            .post("/",        this.jsonParser, this.registerUser)
-            .all(/\/me(\/.*)?/,                this.asCurrentUser)
-            .get("/:uid",                      this.getUser)
-            .put("/:uid",     this.jsonParser, this.updateUser)
-            .delete("/:uid",                   this.deleteUser);
+            .get("/",                            this.getAllUsers)
+            .post("/",          this.jsonParser, this.registerUser)
+            .all(/\/me(\/.*)?/,                  this.asCurrentUser)
+            .get("/:uid",                        this.getUser)
+            .put("/:uid",       this.jsonParser, this.updateUser)
+            .delete("/:uid",                     this.deleteUser);
     }
 
     private asCurrentUser(req: Request, res: Response, next: NextFunction) {

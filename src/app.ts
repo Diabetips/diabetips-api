@@ -12,9 +12,22 @@ import express = require("express");
 require("express-async-errors"); // Express patch to handle errors correctly while using async handlers
 import { NextFunction, Request, Response } from "express";
 
-import { AuthAppController, AuthAppLogoController, AuthController, FoodController, RecipeController,
-    UserAppController, UserConnectionController, UserController, UserGlucoseController, UserHbA1CController,
-    UserInsulinController, UserMealController, UserPhotoController } from "./controllers";
+import {
+    AuthAppController,
+    AuthAppLogoController,
+    AuthController,
+    FoodController,
+    FoodPictureController,
+    RecipeController,
+    UserAppController,
+    UserConnectionController,
+    UserController,
+    UserGlucoseController,
+    UserHbA1CController,
+    UserInsulinController,
+    UserMealController,
+    UserPictureController,
+} from "./controllers";
 import { getDocsSpec } from "./docs";
 import { ApiError } from "./errors";
 import { HttpStatus, Utils } from "./lib";
@@ -31,6 +44,7 @@ app.set("x-powered-by", false);
 app.use(cors({
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["X-Pages"],
 }));
 app.use(log4js.connectLogger(httpLogger, { level: "info" }));
 app.use(async (req: Request, res: Response, next: NextFunction) => {
@@ -52,6 +66,7 @@ app.use("/v1/auth", new AuthController().router);
 app.use("/v1/auth/apps", new AuthAppController().router);
 app.use("/v1/auth/apps", new AuthAppLogoController().router);
 app.use("/v1/food", new FoodController().router);
+app.use("/v1/food", new FoodPictureController().router);
 app.use("/v1/recipes", new RecipeController().router);
 app.use("/v1/users", new UserController().router);
 app.use("/v1/users", new UserAppController().router);
@@ -60,7 +75,7 @@ app.use("/v1/users", new UserGlucoseController().router);
 app.use("/v1/users", new UserHbA1CController().router);
 app.use("/v1/users", new UserMealController().router);
 app.use("/v1/users", new UserInsulinController().router);
-app.use("/v1/users", new UserPhotoController().router);
+app.use("/v1/users", new UserPictureController().router);
 
 // 404 handler
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -74,14 +89,26 @@ app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction)
     if (err instanceof ApiError) {
         res
             .status(err.status)
+            .type("json")
             .send({
                 status: err.status,
                 error: err.error,
                 message: err.message,
             });
+    } else if (err && typeof((err as any).status) === "number") {
+        const httpError = err as any;
+        res
+            .status(httpError.status)
+            .type("json")
+            .send({
+                status: httpError.status,
+                error: "http",
+                message: httpError.message,
+            });
     } else {
         res
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .type("json")
             .send({
                 error: "Internal server error",
             });

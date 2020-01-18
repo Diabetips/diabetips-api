@@ -48,7 +48,7 @@ export class MealService extends BaseService {
         // Add meal
         const meal = new Meal();
         meal.description = req.description;
-        meal.user = user;
+        meal.user = Promise.resolve(user);
         meal.recipes = [];
 
         for (const recipeID of req.recipes_ids) {
