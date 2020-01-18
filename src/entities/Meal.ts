@@ -21,7 +21,7 @@ export class Meal extends BaseEntity {
     @Column({ length: 200 })
     public description: string;
 
-    @Column()
+    @Column({ type: "decimal", precision: 10, scale: 6 })
     public total_sugar: number;
 
     @ManyToMany((type) => Recipe)

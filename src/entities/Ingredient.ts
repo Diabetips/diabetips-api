@@ -19,7 +19,7 @@ export class Ingredient extends BaseEntityHiddenId {
     @Column()
     public quantity: number;
 
-    @Column()
+    @Column({ type: "decimal", precision: 10, scale: 6 })
     public total_sugar: number;
 
     @ManyToOne((type) => Recipe)

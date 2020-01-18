@@ -22,7 +22,7 @@ export class Food extends BaseEntity {
     @Column({ length: 10 })
     public unit: string;
 
-    @Column()
+    @Column({ type: "decimal", precision: 10, scale: 6 })
     public sugars_100g: number;
 
     @OneToOne((type) => FoodPicture, (pic) => pic.food)
