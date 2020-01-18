@@ -48,6 +48,7 @@ export class RecipeService extends BaseService {
         recipe.name = req.name;
         recipe.description = req.description;
         recipe.ingredients = [];
+        recipe.total_sugar = 0;
         for (const ingReq of req.ingredients) {
             const f = await Food.findById(ingReq.food_id);
             if (f === undefined) {
@@ -56,6 +57,8 @@ export class RecipeService extends BaseService {
             const ing = new Ingredient();
             ing.quantity = ingReq.quantity;
             ing.food = f;
+            ing.total_sugar = ing.quantity * f.sugars_100g / 100;
+            recipe.total_sugar += ing.total_sugar;
             recipe.ingredients.push(ing);
         }
 
@@ -76,6 +79,7 @@ export class RecipeService extends BaseService {
         if (req.description !== undefined) { recipe.description = req.description; }
         if (req.ingredients !== undefined) {
             recipe.ingredients = [];
+            recipe.total_sugar = 0;
             for (const ingReq of req.ingredients) {
                 const f = await Food.findById(ingReq.food_id);
                 if (f === undefined) {
@@ -84,6 +88,8 @@ export class RecipeService extends BaseService {
                 const ing = new Ingredient();
                 ing.quantity = ingReq.quantity;
                 ing.food = f;
+                ing.total_sugar = ing.quantity * f.sugars_100g / 100;
+                recipe.total_sugar += ing.total_sugar;
                 recipe.ingredients.push(ing);
             }
         }

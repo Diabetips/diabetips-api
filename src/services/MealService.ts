@@ -50,18 +50,19 @@ export class MealService extends BaseService {
         meal.description = req.description;
         meal.user = Promise.resolve(user);
         meal.recipes = [];
+        meal.total_sugar = 0;
 
         for (const recipeID of req.recipes_ids) {
             const r = await Recipe.findById(recipeID);
             if (r === undefined) {
                 throw new ApiError(HttpStatus.NOT_FOUND, "recipe_not_found", `Recipe (${recipeID}) not found`);
             }
+            meal.total_sugar += r.total_sugar;
             meal.recipes.push(r);
         }
 
         return meal.save();
     }
-
     public static async updateMeal(params: IMealParams, req: IUpdateMealRequest): Promise<Meal> {
         const meal = await Meal.findById(params.userUid, params.mealId);
 
@@ -73,12 +74,14 @@ export class MealService extends BaseService {
         if (req.description !== undefined) { meal.description = req.description; }
         if (req.recipes_ids !== undefined) {
             meal.recipes = [];
+            meal.total_sugar = 0;
 
             for (const recipeID of req.recipes_ids) {
                 const r = await Recipe.findById(recipeID);
                 if (r === undefined) {
                     throw new ApiError(HttpStatus.NOT_FOUND, "recipe_not_found", `Recipe (${recipeID}) not found`);
                 }
+                meal.total_sugar += r.total_sugar;
                 meal.recipes.push(r);
             }
         }

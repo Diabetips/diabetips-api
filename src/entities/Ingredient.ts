@@ -19,6 +19,9 @@ export class Ingredient extends BaseEntityHiddenId {
     @Column()
     public quantity: number;
 
+    @Column()
+    public total_sugar: number;
+
     @ManyToOne((type) => Recipe)
     @JoinColumn({ name: "recipe_id" })
     public recipe: Recipe;
