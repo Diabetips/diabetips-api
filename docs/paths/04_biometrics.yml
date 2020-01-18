@@ -24,73 +24,243 @@
     summary: "<TODO>"
     description: >
       **WARNING: work in progress, documentation may be incomplete or subject to changes**
+
 "/v1/users/{uid}/hba1c":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
   get:
     tags:
       - "Biometrics"
-    summary: "<TODO>"
+    summary: "Get all HbA1C"
     description: >
-      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+      Get a list of all the HbA1C of the user with the specified UID
 
 
       Implements [Pagination](https://docs.diabetips.fr/#tag/Pagination)
+    responses:
+      200:
+        description: "The user's HbA1C"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:hba1c.yml:HbA1C"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
   post:
     tags:
       - "Biometrics"
-    summary: "<TODO>"
+    summary: "Add HbA1C"
     description: >
-      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+      Add an HbA1C take for the specified user.
+    responses:
+      200:
+        description: "The HbA1C take was added"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:hba1c.yml:HbA1C"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to
+          modify them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
 "/v1/users/{uid}/hba1c/{id}":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+    - $component: "parameters:hba1c_id.yml:HbA1CId"
   get:
     tags:
       - "Biometrics"
-    summary: "<TODO>"
+    summary: "Get specific HbA1C take"
     description: >
-      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+      Get a specific HbA1C take for the specified user.
+    responses:
+      200:
+        description: "The HbA1C take"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:hba1c.yml:HbA1C"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to view
+           them
+           * No HbA1C with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
   put:
     tags:
       - "Biometrics"
-    summary: "<TODO>"
+    summary: "Update an HbA1C take"
     description: >
-      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+      Update the HbA1C take of the user with the specified UID and ID.
+    responses:
+      200:
+        description: "The updated HbA1C take's data"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:hba1c.yml:HbA1C"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No HbA1C take with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
   delete:
     tags:
       - "Biometrics"
-    summary: "<TODO>"
+    summary: "Remove an HbA1C take"
     description: >
-      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+      Remove the HbA1C take of the user with the specified UID and ID.
+    responses:
+      204:
+        description: "The HbA1C take was removed"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No HbA1C take with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+
 "/v1/users/{uid}/insulin":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
   get:
     tags:
       - "Biometrics"
-    summary: "<TODO>"
+    summary: "Get all insulin takes"
     description: >
-      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+      Get a list of all the insulin takes of the user with the specified UID.
 
 
       Implements [Pagination](https://docs.diabetips.fr/#tag/Pagination)
+    responses:
+      200:
+        description: "The user's insulin takes"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:insulin.yml:Insulin"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
   post:
     tags:
       - "Biometrics"
-    summary: "<TODO>"
+    summary: "Add insulin take"
     description: >
-      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+      Add an insulin take for the specified user.
+    responses:
+      200:
+        description: "The insulin take was added"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:insulin.yml:Insulin"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to
+          modify them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
 "/v1/users/{uid}/insulin/{id}":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+    - $component: "parameters:insulin_id.yml:InsulinId"
   get:
     tags:
       - "Biometrics"
-    summary: "<TODO>"
+    summary: "Get specific insulin take"
     description: >
-      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+      Get a specific insulin take for the specified user.
+    responses:
+      200:
+        description: "The insulin take"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:insulin.yml:Insulin"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to view
+           them
+           * No Insulin with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
   put:
     tags:
       - "Biometrics"
-    summary: "<TODO>"
+    summary: "Update an Insulin take"
     description: >
-      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+      Update the insulin take of the user with the specified UID and ID.
+    responses:
+      200:
+        description: "The updated insulin take's data"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:insulin.yml:Insulin"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No insulin take with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
   delete:
     tags:
       - "Biometrics"
-    summary: "<TODO>"
+    summary: "Remove an insulin take"
     description: >
-      **WARNING: work in progress, documentation may be incomplete or subject to changes**
+      Remove the insulin take of the user with the specified UID and ID.
+    responses:
+      204:
+        description: "The insulin take was removed"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No insulin take with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"

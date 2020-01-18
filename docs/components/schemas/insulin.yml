@@ -1,0 +1,22 @@
+InsulinId:
+  type: "integer"
+  description: "The insulin take's identifier"
+  example: 2
+Insulin:
+  type: "object"
+  properties:
+    "id":
+      allOf:
+        - $component: "schemas:insulin.yml:InsulinId"
+        - readOnly: true
+    "description":
+      type: "string"
+      description: "The insulin take's description"
+      example: "Slow insulin before bed"
+    "quantity":
+      type: "number"
+      description: "Quantity of insulin taken"
+    "timestamp":
+      type: "number"
+      description: "Timestamp of the insulin take (in UTC format)"
+      example: 1576359970

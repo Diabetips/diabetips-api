@@ -1,0 +1,18 @@
+HbA1CId:
+  type: "integer"
+  description: "The HbA1C take's identifier"
+  example: 2
+HbA1C:
+  type: "object"
+  properties:
+    "id":
+      allOf:
+        - $component: "schemas:hba1c.yml:HbA1CId"
+        - readOnly: true
+    "value":
+      type: "number"
+      description: "Value of the HbA1C take"
+    "timestamp":
+      type: "number"
+      description: "Timestamp of the HbA1C take (in UTC format)"
+      example: 1576359970

@@ -1,0 +1,6 @@
+InsulinId:
+  in: "path"
+  name: "insulin_id"
+  required: true
+  schema:
+    $component: "schemas:insulin.yml:InsulinId"
