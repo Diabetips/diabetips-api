@@ -7,7 +7,7 @@
 */
 
 import { AuthApp, AuthAppLogo } from "./AuthApp";
-import { Food, IFoodQueryOptions, IFoodSearchRequest } from "./Food";
+import { Food, FoodPicture, IFoodQueryOptions, IFoodSearchRequest } from "./Food";
 import { IIngredientQueryOptions, IIngredientSearchRequest, Ingredient } from "./Ingredient";
 import { IMealQueryOptions, IMealSearchRequest, Meal } from "./Meal";
 import { IRecipeQueryOptions, IRecipeSearchRequest, Recipe } from "./Recipe";
@@ -17,6 +17,7 @@ export {
     AuthApp,
     AuthAppLogo,
     Food,
+    FoodPicture,
     IFoodQueryOptions,
     IFoodSearchRequest,
     Ingredient,
@@ -29,7 +30,7 @@ export {
     IRecipeQueryOptions,
     IRecipeSearchRequest,
     User,
+    UserPicture,
     IUserQueryOptions,
     IUserSearchRequest,
-    UserPicture,
 };

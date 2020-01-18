@@ -6,7 +6,6 @@
 ** Created by Arthur MELIN on Fri Jan 17 2020
 */
 
-import fs = require("fs");
 import sharp = require("sharp");
 
 import { UserPicture } from "../entities";
@@ -16,7 +15,7 @@ import { HttpStatus } from "../lib";
 import { BaseService } from "./BaseService";
 import { UserService } from "./UserService";
 
-const DEFAULT_USER_PICTURE = fs.readFileSync("data/default_user_picture.jpg");
+const DEFAULT_USER_PICTURE = sharp("data/default_user_picture.svg").jpeg().toBuffer();
 
 export class UserPictureService extends BaseService {
 

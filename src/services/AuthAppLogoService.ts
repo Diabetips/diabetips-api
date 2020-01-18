@@ -6,7 +6,6 @@
 ** Created by Arthur MELIN on Fri Jan 17 2020
 */
 
-import fs = require("fs");
 import sharp = require("sharp");
 
 import { AuthAppLogo } from "../entities";
@@ -16,7 +15,7 @@ import { HttpStatus } from "../lib";
 import { AuthAppService } from "./AuthAppService";
 import { BaseService } from "./BaseService";
 
-const DEFAULT_APP_LOGO = fs.readFileSync("data/default_app_logo.png");
+const DEFAULT_APP_LOGO = sharp("data/default_app_logo.svg").png().toBuffer();
 
 export class AuthAppLogoService extends BaseService {
 

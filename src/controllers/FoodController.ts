@@ -8,7 +8,7 @@
 
 import { Request, Response } from "express";
 
-import { FoodService } from "../services/FoodService";
+import { FoodService } from "../services";
 
 import { getPageHeader } from "../entities/BaseEntity";
 import { BaseController } from "./BaseController";

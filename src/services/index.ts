@@ -9,6 +9,8 @@
 import { AuthAppLogoService } from "./AuthAppLogoService";
 import { AuthAppService } from "./AuthAppService";
 import { AuthService } from "./AuthService";
+import { FoodPictureService } from "./FoodPictureService";
+import { FoodService } from "./FoodService";
 import { MealService } from "./MealService";
 import { RecipeService } from "./RecipeService";
 import { UserConnectionService } from "./UserConnectionService";
@@ -19,6 +21,8 @@ export {
     AuthAppLogoService,
     AuthAppService,
     AuthService,
+    FoodPictureService,
+    FoodService,
     MealService,
     RecipeService,
     UserConnectionService,

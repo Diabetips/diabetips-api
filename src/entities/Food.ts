@@ -6,9 +6,12 @@
 ** Created by Alexandre DE BEAUMONT on Mon Sep 02 2019
 */
 
-import { Column, Entity } from "typeorm";
+import { Column, Entity, OneToOne } from "typeorm";
 
 import { BaseEntity, getPageableQuery, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
+
+import { FoodPicture } from "./FoodPicture";
+export { FoodPicture };
 
 @Entity()
 export class Food extends BaseEntity {
@@ -21,6 +24,9 @@ export class Food extends BaseEntity {
 
     @Column()
     public sugar: number;
+
+    @OneToOne((type) => FoodPicture, (pic) => pic.food)
+    public picture: Promise<FoodPicture>;
 
     // Repository functions
 

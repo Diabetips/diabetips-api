@@ -12,9 +12,22 @@ import express = require("express");
 require("express-async-errors"); // Express patch to handle errors correctly while using async handlers
 import { NextFunction, Request, Response } from "express";
 
-import { AuthAppController, AuthAppLogoController, AuthController, FoodController, RecipeController,
-    UserAppController, UserConnectionController, UserController, UserGlucoseController, UserHbA1CController,
-    UserInsulinController, UserMealController, UserPictureController } from "./controllers";
+import {
+    AuthAppController,
+    AuthAppLogoController,
+    AuthController,
+    FoodController,
+    FoodPictureController,
+    RecipeController,
+    UserAppController,
+    UserConnectionController,
+    UserController,
+    UserGlucoseController,
+    UserHbA1CController,
+    UserInsulinController,
+    UserMealController,
+    UserPictureController,
+} from "./controllers";
 import { getDocsSpec } from "./docs";
 import { ApiError } from "./errors";
 import { HttpStatus, Utils } from "./lib";
@@ -52,6 +65,7 @@ app.use("/v1/auth", new AuthController().router);
 app.use("/v1/auth/apps", new AuthAppController().router);
 app.use("/v1/auth/apps", new AuthAppLogoController().router);
 app.use("/v1/food", new FoodController().router);
+app.use("/v1/food", new FoodPictureController().router);
 app.use("/v1/recipes", new RecipeController().router);
 app.use("/v1/users", new UserController().router);
 app.use("/v1/users", new UserAppController().router);

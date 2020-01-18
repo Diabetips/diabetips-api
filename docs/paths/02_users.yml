@@ -142,7 +142,7 @@
       Get the profile picture of the user with the specified UID.
 
 
-      The returned profile picture dimensions will always be 300 by 300 pixels.
+      The returned profile picture's dimensions will always be 300 by 300 pixels.
 
 
       **WARNING: work in progress, documentation may be incomplete or subject to changes**

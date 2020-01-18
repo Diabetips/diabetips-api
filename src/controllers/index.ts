@@ -10,6 +10,7 @@ import { AuthAppController } from "./AuthAppController";
 import { AuthAppLogoController } from "./AuthAppLogoController";
 import { AuthController } from "./AuthController";
 import { FoodController } from "./FoodController";
+import { FoodPictureController } from "./FoodPictureController";
 import { RecipeController } from "./RecipeController";
 import { UserAppController } from "./UserAppController";
 import { UserConnectionController} from "./UserConnectionController";
@@ -25,6 +26,7 @@ export {
     AuthAppLogoController,
     AuthController,
     FoodController,
+    FoodPictureController,
     RecipeController,
     UserAppController,
     UserConnectionController,
