@@ -1,0 +1,6 @@
+HbA1CId:
+  in: "path"
+  name: "hba1c_id"
+  required: true
+  schema:
+    $component: "schemas:hba1c.yml:HbA1CId"

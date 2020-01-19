@@ -13,6 +13,10 @@ Meal:
       type: "string"
       description: "The meal's description"
       example: "Lunch of October 7th 2019"
+    "total_sugar":
+      type: "number"
+      description: "Total quantity of sugar in the meal in grams"
+      example: 15.2
     "recipes":
       type: "array"
       description: "The meal's components' recipes"

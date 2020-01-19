@@ -47,7 +47,7 @@
     - $component: "parameters:uid.yml:UID"
     - in: "path"
       name: "other_uid"
-      description: "The connected user's UID."
+      description: "The connected user's UID"
       required: true
       schema:
         type: "string"

@@ -5,6 +5,10 @@ Ingredient:
       type: "number"
       description: "Quantity of the ingredient in the recipe"
       example: 200
+    "total_sugar":
+      type: "number"
+      description: "Total quantity of sugar in grams based on the quantity of the ingredient"
+      example: 3.4
     "food":
       allOf:
         - $component: "schemas:food.yml:Food"

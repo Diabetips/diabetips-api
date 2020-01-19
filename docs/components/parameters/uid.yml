@@ -1,7 +1,7 @@
 UID:
   in: "path"
   name: "uid"
-  description: "The user's UID or `me` for the currently authenticated user."
+  description: "The user's UID or `me` for the currently authenticated user"
   required: true
   schema:
     type: "string"

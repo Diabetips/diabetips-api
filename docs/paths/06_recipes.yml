@@ -5,9 +5,20 @@
     summary: "Get all food items"
     description: >
       Get a list of all food items available.
+
+
+      Implements [Pagination](#tag/Pagination)
+    parameters:
+      - $component: "queries:name.yml:NameQuery"
+      - $component: "queries:pagination.yml:PageQuery"
+      - $component: "queries:pagination.yml:SizeQuery"
     responses:
       200:
         description: "List of all available food items"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:pagination.yml:PagesHeader"
         content:
           application/json:
             schema:
@@ -48,9 +59,6 @@
 
 
       The returned picture's dimensions will always be fit to 400 pixels.
-
-
-      **WARNING: work in progress, documentation may be incomplete or subject to changes**
     responses:
       200:
         description: "The food item's picture"
@@ -71,9 +79,20 @@
     summary: "Get all recipes"
     description: >
       Get a list of all the recipes available.
+
+
+      Implements [Pagination](#tag/Pagination)
+    parameters:
+      - $component: "queries:name.yml:NameQuery"
+      - $component: "queries:pagination.yml:PageQuery"
+      - $component: "queries:pagination.yml:SizeQuery"
     responses:
       200:
         description: "List of all available recipes"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:pagination.yml:PagesHeader"
         content:
           application/json:
             schema:

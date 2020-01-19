@@ -6,9 +6,19 @@
     description: >
       Get a list of all the users the currently authenticated user has permissions to see (depending on the user's
       account type and their connections).
+
+
+      Implements [Pagination](#tag/Pagination)
+    parameters:
+      - $component: "queries:pagination.yml:PageQuery"
+      - $component: "queries:pagination.yml:SizeQuery"
     responses:
       200:
         description: "List of all visible users"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:pagination.yml:PagesHeader"
         content:
           application/json:
             schema:
@@ -28,8 +38,8 @@
       required: true
       content:
         application/json:
-         schema:
-          $component: "schemas:user.yml:User"
+          schema:
+            $component: "schemas:user.yml:User"
     responses:
       201:
         description: "The user account was created"
@@ -80,8 +90,8 @@
       required: true
       content:
         application/json:
-         schema:
-          $component: "schemas:user.yml:User"
+          schema:
+            $component: "schemas:user.yml:User"
     responses:
       200:
         description: "The updated user's data"
@@ -122,7 +132,7 @@
       *WARNING: This can only be reversed by Diabetips customer support and administrators.*
     responses:
       204:
-        description: "The user account has been deactivated."
+        description: "The user account has been deactivated"
       404:
         description: >
           No user with the specified UID was found or the current authenticated user does not have permission to modify
@@ -143,9 +153,6 @@
 
 
       The returned profile picture's dimensions will always be 300 by 300 pixels.
-
-
-      **WARNING: work in progress, documentation may be incomplete or subject to changes**
     responses:
       200:
         description: "The user's profile picture"
@@ -178,9 +185,6 @@
 
       The maximum file upload size is 5 MB. There are no constraints on the uploaded image's dimensions, but it will be
       resized and cropped to 300 by 300 pixels.
-
-
-      **WARNING: work in progress, documentation may be incomplete or subject to changes**
     requestBody:
       required: true
       content:

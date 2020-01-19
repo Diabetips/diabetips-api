@@ -1,0 +1,19 @@
+HbA1CId:
+  type: "integer"
+  description: "The HbA1C measure point's identifier"
+  example: 2
+HbA1C:
+  type: "object"
+  properties:
+    "id":
+      allOf:
+        - $component: "schemas:hba1c.yml:HbA1CId"
+        - readOnly: true
+    "value":
+      type: "number"
+      description: "Value of the HbA1C measure as a percentage of glycated hemoglobin by total hemoglobin"
+      example: 5.3
+    "timestamp":
+      type: "number"
+      description: "UNIX timestamp of the HbA1C measure (in the UTC timezone)"
+      example: 1576359970

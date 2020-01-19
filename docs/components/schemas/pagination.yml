@@ -1,0 +1,4 @@
+PagesHeader:
+  type: "string"
+  description: "Pagination helper header"
+  example: "previous: 2; next: 4; last: 9"
