@@ -1,6 +1,6 @@
 InsulinId:
   type: "integer"
-  description: "The insulin take's identifier"
+  description: "The insulin injection's identifier"
   example: 2
 Insulin:
   type: "object"
@@ -11,12 +11,12 @@ Insulin:
         - readOnly: true
     "description":
       type: "string"
-      description: "The insulin take's description"
+      description: "The insulin injection's description"
       example: "Slow insulin before bed"
     "quantity":
       type: "number"
-      description: "Quantity of insulin taken"
+      description: "Quantity of insulin injected in milligrams"
     "timestamp":
       type: "number"
-      description: "Timestamp of the insulin take (in UTC format)"
+      description: "UNIX timestamp of the insulin injection (in the UTC timezone)"
       example: 1576359970

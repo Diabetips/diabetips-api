@@ -11,30 +11,26 @@ servers:
 tags:
   - name: "Pagination"
     description: >
-      Multitple routes of this API implement pagination, which you can interact with by using the following queries:  
-        * `size=X` where X is the size you want the pages to be. 
+      Multitple routes of this API implement pagination, which you can interact with by using the following query
+      parameters:
+        - `page` which controls the number of the page to return. (Default: 1, the first page)
+        - `size` which controls the number of items returned in each page. (Default: 20)
 
-        Default: 20
-        * `page=X` where X is the page you want to GET. 
 
-        First page is found at X=1 (and not X=0).
+      Along with the requested data, these routes will produce an additional HTTP header `X-Pages` in the response. This
+      header will contain a semi-colon separated list of the following values:
+        * `previous: X` where X is the previous page number (if one exists).
+        * `next: X` where X is the next page number (if one exists).
+        * `last: X` where X is the last page number.
 
-        Default: 1
 
-      Along with the requested data, the response's header will also contain the key `x-pages` which will hold the
-      following information:
-        * `previous: X` where X is the previous page of the one requested (if one exists).
-        * `next: X` where X is the next page of the one requested (if one exists).
-        * `last: X` where X is the last page that can be requested, based on the requested size.
-
-      Routes that implement pagination: 
-        [Users](https://docs.diabetips.fr/#tag/Users),
-        [Meals](https://docs.diabetips.fr/#tag/Meals),
-        [Recipe](https://docs.diabetips.fr/#tag/Recipe),
-        [Food](https://docs.diabetips.fr/#tag/Recipe),
-        [HbA1C](https://docs.diabetips.fr/#tag/Biometrics),
-        [Insulin](https://docs.diabetips.fr/#tag/Biometrics).
-
+      Routes that implement pagination:
+       - [Users - Get all users](#tag/Users/paths/~1v1~1users/get)
+       - [Meals - Get all meals](#tag/Meals/paths/~1v1~1users~1{uid}~1meals/get)
+       - [Recipe - Get all food items](#tag/Recipes/paths/~1v1~1food/get)
+       - [Recipe - Get all recipes](#tag/Recipes/paths/~1v1~1recipes/get)
+       - [Biometrics - Get all HbA1C measures](#tag/Biometrics/paths/~1v1~1users~1{uid}~1hba1c/get)
+       - [Biometrics - Get all insulin injections](#tag/Biometrics/paths/~1v1~1users~1{uid}~1insulin/get)
   - name: "Authentication"
     description: >
       The Diabetips API uses an OAuth 2.0 based authentication system with JSON Web Tokens. Almost all of this API

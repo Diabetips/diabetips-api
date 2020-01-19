@@ -15,7 +15,7 @@ Meal:
       example: "Lunch of October 7th 2019"
     "total_sugar":
       type: "number"
-      description: "Total quantity of sugar (g) in the meal."
+      description: "Total quantity of sugar in the meal in grams"
       example: 15.2
     "recipes":
       type: "array"

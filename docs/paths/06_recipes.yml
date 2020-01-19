@@ -7,10 +7,18 @@
       Get a list of all food items available.
 
 
-      Implements [Pagination](https://docs.diabetips.fr/#tag/Pagination)
+      Implements [Pagination](#tag/Pagination)
+    parameters:
+      - $component: "queries:name.yml:NameQuery"
+      - $component: "queries:pagination.yml:PageQuery"
+      - $component: "queries:pagination.yml:SizeQuery"
     responses:
       200:
         description: "List of all available food items"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:pagination.yml:PagesHeader"
         content:
           application/json:
             schema:
@@ -20,10 +28,6 @@
 "/v1/food/{food_id}":
   parameters:
     - $component: "parameters:food_id.yml:FoodId"
-    - $component: "queries:name.yml:NameQuery"
-    - $component: "queries:pagination.yml:PageQuery"
-    - $component: "queries:pagination.yml:SizeQuery"
-
   get:
     tags:
       - "Recipes"
@@ -55,9 +59,6 @@
 
 
       The returned picture's dimensions will always be fit to 400 pixels.
-
-
-      **WARNING: work in progress, documentation may be incomplete or subject to changes**
     responses:
       200:
         description: "The food item's picture"
@@ -72,10 +73,6 @@
             schema:
               $component: "schemas:error.yml:ErrorFoodNotFound"
 "/v1/recipes":
-  parameters:
-    - $component: "queries:name.yml:NameQuery"
-    - $component: "queries:pagination.yml:PageQuery"
-    - $component: "queries:pagination.yml:SizeQuery"
   get:
     tags:
       - "Recipes"
@@ -84,10 +81,18 @@
       Get a list of all the recipes available.
 
 
-      Implements [Pagination](https://docs.diabetips.fr/#tag/Pagination)
+      Implements [Pagination](#tag/Pagination)
+    parameters:
+      - $component: "queries:name.yml:NameQuery"
+      - $component: "queries:pagination.yml:PageQuery"
+      - $component: "queries:pagination.yml:SizeQuery"
     responses:
       200:
         description: "List of all available recipes"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:pagination.yml:PagesHeader"
         content:
           application/json:
             schema:

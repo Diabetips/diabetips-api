@@ -16,10 +16,10 @@ Recipe:
     "description":
       type: "string"
       description: "The recipe's description"
-      example: "Lasagnas are an Italian pasta dish with tomato sauce and cheese."
+      example: "Lasagnas are an Italian pasta dish with tomato sauce and cheese"
     "total_sugar":
       type: "number"
-      description: "Total quantity of sugar (g) in the recipe."
+      description: "Total quantity of sugar in the recipe in grams"
       example: 5.3
     "ingredients":
       type: "array"

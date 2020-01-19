@@ -19,5 +19,5 @@ Food:
       example: "g"
     "sugars_100g":
       type: "number"
-      description: "Quantity of sugar (g) per 100g of food"
+      description: "Quantity of sugar per 100g of the food in grams"
       example: 2.5

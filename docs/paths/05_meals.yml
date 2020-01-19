@@ -1,8 +1,6 @@
 "/v1/users/{uid}/meals":
   parameters:
     - $component: "parameters:uid.yml:UID"
-    - $component: "queries:pagination.yml:PageQuery"
-    - $component: "queries:pagination.yml:SizeQuery"
   get:
     tags:
       - "Meals"
@@ -11,10 +9,17 @@
       Get a list of all the meals of the user with the specified UID.
 
 
-      Implements [Pagination](https://docs.diabetips.fr/#tag/Pagination)
+      Implements [Pagination](#tag/Pagination)
+    parameters:
+      - $component: "queries:pagination.yml:PageQuery"
+      - $component: "queries:pagination.yml:SizeQuery"
     responses:
       200:
         description: "The user's meals"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:pagination.yml:PagesHeader"
         content:
           application/json:
             schema:

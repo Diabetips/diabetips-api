@@ -7,7 +7,7 @@ Ingredient:
       example: 200
     "total_sugar":
       type: "number"
-      description: "Total quantity of sugar (g) based on the quantity."
+      description: "Total quantity of sugar in grams based on the quantity of the ingredient"
       example: 3.4
     "food":
       allOf:

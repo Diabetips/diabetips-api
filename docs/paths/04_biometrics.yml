@@ -28,20 +28,25 @@
 "/v1/users/{uid}/hba1c":
   parameters:
     - $component: "parameters:uid.yml:UID"
-    - $component: "queries:pagination.yml:PageQuery"
-    - $component: "queries:pagination.yml:SizeQuery"
   get:
     tags:
       - "Biometrics"
-    summary: "Get all HbA1C"
+    summary: "Get all HbA1C measures"
     description: >
-      Get a list of all the HbA1C of the user with the specified UID
+      Get a list of all the HbA1C measure points of the user with the specified UID.
 
 
-      Implements [Pagination](https://docs.diabetips.fr/#tag/Pagination)
+      Implements [Pagination](#tag/Pagination)
+    parameters:
+      - $component: "queries:pagination.yml:PageQuery"
+      - $component: "queries:pagination.yml:SizeQuery"
     responses:
       200:
-        description: "The user's HbA1C"
+        description: "The user's HbA1C measures"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:pagination.yml:PagesHeader"
         content:
           application/json:
             schema:
@@ -59,12 +64,12 @@
   post:
     tags:
       - "Biometrics"
-    summary: "Add HbA1C"
+    summary: "Add HbA1C measure"
     description: >
-      Add an HbA1C take for the specified user.
+      Add an HbA1C measure for the user with the specified UID.
     responses:
       200:
-        description: "The HbA1C take was added"
+        description: "The HbA1C measure was added"
         content:
           application/json:
             schema:
@@ -84,12 +89,12 @@
   get:
     tags:
       - "Biometrics"
-    summary: "Get specific HbA1C take"
+    summary: "Get HbA1C measure"
     description: >
-      Get a specific HbA1C take for the specified user.
+      Get the HbA1C measure for the user with the specified UID and ID.
     responses:
       200:
-        description: "The HbA1C take"
+        description: "The HbA1C measure"
         content:
           application/json:
             schema:
@@ -99,7 +104,7 @@
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to view
            them
-           * No HbA1C with the specified ID was found"
+           * No HbA1C with the specified ID was found
         content:
           application/json:
             schema:
@@ -107,12 +112,12 @@
   put:
     tags:
       - "Biometrics"
-    summary: "Update an HbA1C take"
+    summary: "Update HbA1C measure"
     description: >
-      Update the HbA1C take of the user with the specified UID and ID.
+      Update the HbA1C measure for the user with the specified UID and ID.
     responses:
       200:
-        description: "The updated HbA1C take's data"
+        description: "The updated HbA1C measure's data"
         content:
           application/json:
             schema:
@@ -122,7 +127,7 @@
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to vie
            modify them
-           * No HbA1C take with the specified ID was found"
+           * No HbA1C measure with the specified ID was found
         content:
           application/json:
             schema:
@@ -130,18 +135,18 @@
   delete:
     tags:
       - "Biometrics"
-    summary: "Remove an HbA1C take"
+    summary: "Remove HbA1C measure"
     description: >
-      Remove the HbA1C take of the user with the specified UID and ID.
+      Remove the HbA1C measure for the user with the specified UID and ID.
     responses:
       204:
-        description: "The HbA1C take was removed"
+        description: "The HbA1C measure was removed"
       404:
         description: >
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to vie
            modify them
-           * No HbA1C take with the specified ID was found"
+           * No HbA1C measure with the specified ID was found"
         content:
           application/json:
             schema:
@@ -150,20 +155,25 @@
 "/v1/users/{uid}/insulin":
   parameters:
     - $component: "parameters:uid.yml:UID"
-    - $component: "queries:pagination.yml:PageQuery"
-    - $component: "queries:pagination.yml:SizeQuery"
   get:
     tags:
       - "Biometrics"
-    summary: "Get all insulin takes"
+    summary: "Get all insulin injections"
     description: >
-      Get a list of all the insulin takes of the user with the specified UID.
+      Get a list of all the insulin injections for the user with the specified UID.
 
 
-      Implements [Pagination](https://docs.diabetips.fr/#tag/Pagination)
+      Implements [Pagination](#tag/Pagination)
+    parameters:
+      - $component: "queries:pagination.yml:PageQuery"
+      - $component: "queries:pagination.yml:SizeQuery"
     responses:
       200:
-        description: "The user's insulin takes"
+        description: "The user's insulin injections"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:pagination.yml:PagesHeader"
         content:
           application/json:
             schema:
@@ -181,12 +191,12 @@
   post:
     tags:
       - "Biometrics"
-    summary: "Add insulin take"
+    summary: "Add insulin injection"
     description: >
-      Add an insulin take for the specified user.
+      Add an insulin injection for the user with the specified UID.
     responses:
       200:
-        description: "The insulin take was added"
+        description: "The insulin injection was added"
         content:
           application/json:
             schema:
@@ -206,12 +216,12 @@
   get:
     tags:
       - "Biometrics"
-    summary: "Get specific insulin take"
+    summary: "Get insulin injection"
     description: >
-      Get a specific insulin take for the specified user.
+      Get the insulin injection for the user with the specified UID and ID.
     responses:
       200:
-        description: "The insulin take"
+        description: "The insulin injection"
         content:
           application/json:
             schema:
@@ -221,7 +231,7 @@
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to view
            them
-           * No Insulin with the specified ID was found"
+           * No insulin injection with the specified ID was found"
         content:
           application/json:
             schema:
@@ -229,12 +239,12 @@
   put:
     tags:
       - "Biometrics"
-    summary: "Update an Insulin take"
+    summary: "Update insulin injection"
     description: >
-      Update the insulin take of the user with the specified UID and ID.
+      Update the insulin injection for the user with the specified UID and ID.
     responses:
       200:
-        description: "The updated insulin take's data"
+        description: "The updated insulin injection's data"
         content:
           application/json:
             schema:
@@ -244,7 +254,7 @@
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to vie
            modify them
-           * No insulin take with the specified ID was found"
+           * No insulin injection with the specified ID was found"
         content:
           application/json:
             schema:
@@ -252,18 +262,18 @@
   delete:
     tags:
       - "Biometrics"
-    summary: "Remove an insulin take"
+    summary: "Remove insulin injection"
     description: >
-      Remove the insulin take of the user with the specified UID and ID.
+      Remove the insulin injection for the user with the specified UID and ID.
     responses:
       204:
-        description: "The insulin take was removed"
+        description: "The insulin injection was removed"
       404:
         description: >
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to vie
            modify them
-           * No insulin take with the specified ID was found"
+           * No insulin injection with the specified ID was found"
         content:
           application/json:
             schema:
