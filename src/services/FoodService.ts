@@ -12,13 +12,6 @@ import { HttpStatus } from "../lib";
 
 import { BaseService } from "./BaseService";
 
-// TODO: remove that too
-export interface ICreateFoodRequest {
-    name: string;
-    unit: string;
-    sugar: number;
-}
-
 export class FoodService extends BaseService {
 
     public static async getAllFood(query: any): Promise<[Promise<Food[]>, Promise<number>]> {
@@ -31,15 +24,5 @@ export class FoodService extends BaseService {
             throw new ApiError(HttpStatus.NOT_FOUND, "food_not_found", `Food ${id} not found`);
         }
         return food;
-    }
-
-    // TODO: this is temporary
-    public static async addFood(req: ICreateFoodRequest): Promise<Food> {
-        const food = new Food();
-
-        food.name = req.name;
-        food.unit = req.unit;
-        food.sugars_100g = req.sugar;
-        return food.save();
     }
 }

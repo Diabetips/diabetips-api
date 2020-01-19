@@ -21,8 +21,6 @@ export class FoodController extends BaseController {
         this.router
             .get("/",    this.getAllFood)
             .get("/:id", this.getFood)
-            // TODO: Remove temporary route
-            .post("/",   this.jsonParser, this.addFood);
     }
 
     private async getAllFood(req: Request, res: Response) {
@@ -37,7 +35,4 @@ export class FoodController extends BaseController {
         res.send(await FoodService.getFood(parseInt(req.params.id, 10)));
     }
 
-    private async addFood(req: Request, res: Response) {
-        res.send(await FoodService.addFood(req.body));
-    }
 }
