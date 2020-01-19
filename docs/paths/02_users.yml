@@ -1,4 +1,7 @@
 "/v1/users":
+  parameters:
+    - $component: "queries:pagination.yml:PageQuery"
+    - $component: "queries:pagination.yml:SizeQuery"
   get:
     tags:
       - "Users"

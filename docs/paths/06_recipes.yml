@@ -20,6 +20,10 @@
 "/v1/food/{food_id}":
   parameters:
     - $component: "parameters:food_id.yml:FoodId"
+    - $component: "queries:name.yml:NameQuery"
+    - $component: "queries:pagination.yml:PageQuery"
+    - $component: "queries:pagination.yml:SizeQuery"
+
   get:
     tags:
       - "Recipes"
@@ -68,6 +72,10 @@
             schema:
               $component: "schemas:error.yml:ErrorFoodNotFound"
 "/v1/recipes":
+  parameters:
+    - $component: "queries:name.yml:NameQuery"
+    - $component: "queries:pagination.yml:PageQuery"
+    - $component: "queries:pagination.yml:SizeQuery"
   get:
     tags:
       - "Recipes"
