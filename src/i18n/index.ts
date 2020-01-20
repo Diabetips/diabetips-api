@@ -50,6 +50,9 @@ type MailAccountRegistration = {
         email_text: string;
         password_text: string;
         password_text2: string;
+        confirm_text: string;
+        confirm_link: string;
+        confirm_button: string;
         outro_text: string[];
     }
 };
@@ -60,7 +63,7 @@ type MailInviteConnection = {
         inviter_text1: string;
         inviter_text2: string;
         join_link: string;
-        join_text: string;
+        join_button: string;
         outro_text: string[];
     }
 };

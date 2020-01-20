@@ -11,7 +11,7 @@ import { Food, FoodPicture, IFoodQueryOptions, IFoodSearchRequest } from "./Food
 import { IIngredientQueryOptions, IIngredientSearchRequest, Ingredient } from "./Ingredient";
 import { IMealQueryOptions, IMealSearchRequest, Meal } from "./Meal";
 import { IRecipeQueryOptions, IRecipeSearchRequest, Recipe } from "./Recipe";
-import { IUserQueryOptions, IUserSearchRequest, User, UserPicture } from "./User";
+import { IUserQueryOptions, IUserSearchRequest, User, UserConfirmation, UserPicture } from "./User";
 
 export {
     AuthApp,
@@ -30,6 +30,7 @@ export {
     IRecipeQueryOptions,
     IRecipeSearchRequest,
     User,
+    UserConfirmation,
     UserPicture,
     IUserQueryOptions,
     IUserSearchRequest,

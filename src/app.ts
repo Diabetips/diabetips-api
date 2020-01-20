@@ -106,12 +106,12 @@ app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction)
                 message: httpError.message,
             });
     } else {
+        logger.error(err.stack || err);
         res
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .type("json")
             .send({
                 error: "Internal server error",
             });
-        logger.error(err.stack || err);
     }
 });

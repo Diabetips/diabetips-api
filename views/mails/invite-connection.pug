@@ -3,13 +3,9 @@ include template-button
 include template-paragraph
 
 block body
-    each paragraph in intro_text
-        +p
-            | #{paragraph}
+    +ps(intro_text)
     +p
         | #{inviter_text1}#{first_name} #{last_name}#{inviter_text2}
     +p
-        +button(join_link, join_text)
-    each paragraph in outro_text
-        +p
-            | #{paragraph}
+        +button(join_link, join_button)
+    +ps(outro_text)

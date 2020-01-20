@@ -17,8 +17,9 @@ import { getPageableQuery, IBaseSearchRequest } from "./BaseEntity";
 import { HbA1C } from "./HbA1C";
 import { Insulin } from "./Insulin";
 
+import { UserConfirmation } from "./UserConfirmation";
 import { UserPicture } from "./UserPicture";
-export { UserPicture };
+export { UserConfirmation, UserPicture };
 
 @Entity()
 export class User extends BaseEntityHiddenId {
@@ -41,6 +42,9 @@ export class User extends BaseEntityHiddenId {
 
     @Column({ length: 100 })
     public last_name: string;
+
+    @OneToOne((type) => UserConfirmation, (confirmation) => confirmation.user)
+    public confirmation: Promise<UserConfirmation>;
 
     @OneToOne((type) => UserPicture, (picture) => picture.user)
     public picture: Promise<UserPicture>;
@@ -128,6 +132,9 @@ export class User extends BaseEntityHiddenId {
         if (optionDefault(options.selectPassword, false)) {
             query = query.addSelect("user.password", "user_password");
         }
+        if (optionDefault(options.selectConfirmation, false)) {
+            query = query.leftJoinAndSelect("user.confirmation", "confirmation");
+        }
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("user.deleted = 0");
         }
@@ -149,6 +156,7 @@ export class User extends BaseEntityHiddenId {
 
 export interface IUserQueryOptions extends IBaseQueryOptions {
     selectPassword?: boolean;
+    selectConfirmation?: boolean;
 }
 
 // tslint:disable-next-line: no-empty-interface

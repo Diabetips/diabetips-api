@@ -13,6 +13,7 @@ import { FoodPictureService } from "./FoodPictureService";
 import { FoodService } from "./FoodService";
 import { MealService } from "./MealService";
 import { RecipeService } from "./RecipeService";
+import { UserConfirmationService } from "./UserConfirmationService";
 import { UserConnectionService } from "./UserConnectionService";
 import { UserPictureService } from "./UserPictureService";
 import { UserService } from "./UserService";
@@ -25,6 +26,7 @@ export {
     FoodService,
     MealService,
     RecipeService,
+    UserConfirmationService,
     UserConnectionService,
     UserPictureService,
     UserService,

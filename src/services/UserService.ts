@@ -15,6 +15,7 @@ import { Context, HttpStatus } from "../lib";
 import { sendMail } from "../mail";
 
 import { BaseService } from "./BaseService";
+import { UserConfirmationService } from "./UserConfirmationService";
 
 export interface CreateUserReq {
     email: string;
@@ -65,7 +66,7 @@ export class UserService extends BaseService {
         //   if current user and current user not admin: throw access denied error
         // * validation
 
-        const user = new User();
+        let user = new User();
 
         user.uid = uuid.v4();
         user.email = req.email;
@@ -79,11 +80,15 @@ export class UserService extends BaseService {
             throw new ApiError(HttpStatus.CONFLICT, "email_conflict", "Email address already used by another account");
         }
 
+        user = await user.save();
+
+        const confirm = await UserConfirmationService.createUserConfirmation(user);
         sendMail("account-registration", user.lang, user.email, {
             email: user.email,
+            code: confirm.code,
         });
 
-        return user.save();
+        return user;
     }
 
     public static async getUser(uid: string, options?: IUserQueryOptions): Promise<User> {
