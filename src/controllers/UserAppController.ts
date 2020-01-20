@@ -28,7 +28,7 @@ export class UserAppController extends BaseController {
     }
 
     private async deauthorizeApp(req: Request, res: Response) {
-        res.send(await AuthAppService.deauthorizeUserApp(req.params.uid, req.params.appid));
+        await AuthAppService.deauthorizeUserApp(req.params.uid, req.params.appid);
         res
             .status(HttpStatus.NO_CONTENT)
             .send();

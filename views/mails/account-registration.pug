@@ -1,16 +1,17 @@
 extends template
+include template-button
 include template-paragraph
 
 block body
-    each paragraph in intro_text
-        +p
-            | #{paragraph}
+    +ps(intro_text)
     +p
         strong #{email_text}&nbsp;
         em #{email}
         br
         strong #{password_text}&nbsp;
         em #{password_text2}
-    each paragraph in outro_text
-        +p
-            | #{paragraph}
+    br
+    +p
+        | #{confirm_text}
+        +button(confirm_link + "?code=" + code, confirm_button)
+    +ps(outro_text)

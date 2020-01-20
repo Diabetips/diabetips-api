@@ -150,7 +150,10 @@ export class AuthService extends BaseService {
             throw new AuthError("invalid_request", "Missing username or password");
         }
 
-        const user = await User.findByEmail(req.username, { selectPassword: true });
+        const user = await User.findByEmail(req.username, {
+            selectPassword: true,
+            selectConfirmation: true,
+        });
 
         // Prevent timing attacks by always comparing password hashes even when the user doesn't exist
         const hash = user !== undefined
@@ -159,6 +162,10 @@ export class AuthService extends BaseService {
 
         if (!await bcrypt.compare(req.password, hash) || user === undefined) {
             throw new AuthError("invalid_grant", "Incorrect email or password");
+        }
+
+        if (!(await user.confirmation).confirmed) {
+            throw new AuthError("registration_incomplete", "User hasn't confirmed their email yet");
         }
 
         return this.generateAccessAndRefreshTokensRes(user.uid);

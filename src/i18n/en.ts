@@ -63,16 +63,19 @@ class English implements Lang {
             ],
         },
         "account-registration": {
-            subject: "Welcome to Diabetips!",
+            subject: "Welcome to Diabetips! Email address confirmation",
             title: "Welcome!",
             intro_text: [
                 "Hi,",
                 "We are happy to welcome you to Diabetips!",
-                "Your account has been account, here is your log in information:",
+                "Your account has been created, here is your log in information:",
             ],
             email_text: "Email address:",
             password_text: "Password:",
             password_text2: "the one you gave while registering",
+            confirm_text: "Please confirm your address email by clicking the following link to finalize your registration and start using Diabetips.",
+            confirm_link: "https://account.diabetips.fr/confirm",
+            confirm_button: "Confirm my account",
             outro_text: [
                 "Cheers!",
                 "The Team at Diabetips",
@@ -87,7 +90,7 @@ class English implements Lang {
             inviter_text1: "",
             inviter_text2: " has invited you to join Diabetips!",
             join_link: "https://account.diabetips.fr/register",
-            join_text: "Join Diabetips",
+            join_button: "Join Diabetips",
             outro_text: [
                 "Cheers!",
                 "The Team at Diabetips",
@@ -98,7 +101,7 @@ class English implements Lang {
         template_baseline: "Diaby, the artificial intelligence for diabetics",
         template_website: "https://diabetips.fr",
         template_website_alt: "Diabetips Website",
-        template_copyright: "© Copyright 2019 Diabetips. All rights reserved.",
+        template_copyright: "© Copyright 2019-2020 Diabetips. All rights reserved.",
         template_contact: "Contact us:",
         template_contact_email: "contact@diabetips.fr",
     };

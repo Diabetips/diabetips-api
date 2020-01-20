@@ -13,7 +13,7 @@ import { config } from "../config";
 import { AuthError } from "../errors";
 import { HttpStatus } from "../lib";
 import { logger } from "../logger";
-import { AuthService, UserService } from "../services";
+import { AuthService, UserConfirmationService, UserService } from "../services";
 
 import { BaseController } from "./BaseController";
 
@@ -26,6 +26,7 @@ export class AuthController extends BaseController {
             .get("/authorize",                        this.authorize,           this.errorHandler)
             .post("/authorize",      this.formParser, this.authorizeInternal)
             .post("/token",          this.formParser, this.token,               this.errorHandler)
+            .post("/confirm",        this.jsonParser, this.confirmAccount)
             .post("/reset-password", this.jsonParser, this.resetPassword);
     }
 
@@ -39,6 +40,13 @@ export class AuthController extends BaseController {
 
     private async token(req: Request, res: Response) {
         res.send(await AuthService.getToken(req.context, req.body));
+    }
+
+    private async confirmAccount(req: Request, res: Response) {
+        await UserConfirmationService.confirmUserAccount(req.body);
+        res
+            .status(HttpStatus.NO_CONTENT)
+            .send();
     }
 
     private async resetPassword(req: Request, res: Response) {
