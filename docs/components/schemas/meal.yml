@@ -17,6 +17,7 @@ Meal:
       type: "number"
       description: "Total quantity of sugar in the meal in grams"
       example: 15.2
+      readOnly: true
     "recipes":
       type: "array"
       description: "The meal's components' recipes"

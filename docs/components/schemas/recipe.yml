@@ -21,6 +21,7 @@ Recipe:
       type: "number"
       description: "Total quantity of sugar in the recipe in grams"
       example: 5.3
+      readOnly: true
     "ingredients":
       type: "array"
       description: "The recipe's ingredients"
