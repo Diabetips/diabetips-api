@@ -47,6 +47,9 @@
             "pattern": "%[[%d] [%p] %c -%] %m [%f{1}:%l]"
         }
     },
+    "mail": {
+        "logger": true
+    },
     "mailDefaults": {
         "from": {
             "name": "Diabetips",
