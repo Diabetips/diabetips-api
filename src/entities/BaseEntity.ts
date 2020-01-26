@@ -86,15 +86,3 @@ export function getPageableQuery<T>(query: SelectQueryBuilder<T>, req: IBaseSear
     }
     return query;
 }
-
-// Use manualPagination if you want pagination in a request with JOINs
-export async function manualPagination<T>(results: Promise<T[]>, req: IBaseSearchRequest): Promise<T[]> {
-    const size = Number(optionDefault(req.size, 20));
-    const page = Number(optionDefault(req.page, 1)) - 1;
-
-    const start: number = page * size;
-    const end: number = start + size;
-
-    // Slice seems to handle [index out of reach] on its own :)
-    return (await results).slice(start, end);
-}

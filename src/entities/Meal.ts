@@ -8,7 +8,7 @@
 
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne } from "typeorm";
 
-import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, manualPagination, optionDefault } from "./BaseEntity";
+import { BaseEntity, getPageableQuery, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
 
 import { Recipe } from "./Recipe";
 import { User } from "./User";
@@ -42,32 +42,38 @@ export class Meal extends BaseEntity {
 
     public static async findAll(uid: string, req: IMealSearchRequest = {}, options: IMealQueryOptions = {}):
                                 Promise<[Meal[], number]> {
-        let query = this
+        let subquery = this
             .createQueryBuilder("meal")
-            .leftJoinAndSelect("meal.recipes", "recipes")
+            .select("meal.id")
             .leftJoin("meal.user", "user")
             .andWhere("user.uid = :uid", { uid });
         if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("user.deleted = 0")
-                            .andWhere("meal.deleted = 0")
-                            .andWhere("recipes.deleted = 0");
+            subquery = subquery.andWhere("user.deleted = 0")
+                               .andWhere("meal.deleted = 0");
         }
 
-        return Promise.all([manualPagination(query.getMany(), req), query.getCount()]);
+        let query = this
+            .createQueryBuilder("meal")
+            .leftJoinAndSelect("meal.recipes", "recipes")
+            .andWhere("meal.id IN (" + getPageableQuery(subquery, req).getQuery() + ")");
+        if (optionDefault(options.hideDeleted, true)) {
+            query = query.andWhere("recipes.deleted = 0");
+        }
+        return Promise.all([query.getMany(), subquery.getCount()]);
     }
 
     public static async findById(uid: string, mealId: number,
                                  options: IMealQueryOptions = {}): Promise<Meal | undefined> {
         let query = this
             .createQueryBuilder("meal")
-            .andWhere("meal.id = :mealId", { mealId })
             .leftJoinAndSelect("meal.recipes", "recipes")
             .leftJoin("meal.user", "user")
-            .andWhere("user.uid = :uid", { uid });
+            .andWhere("user.uid = :uid", { uid })
+            .andWhere("meal.id = :mealId", { mealId });
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("user.deleted = 0")
-                            .andWhere("meal.deleted = 0")
-                            .andWhere("recipes.deleted = 0");
+                         .andWhere("meal.deleted = 0")
+                         .andWhere("recipes.deleted = 0");
         }
         return query.getOne();
     }

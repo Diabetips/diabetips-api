@@ -8,7 +8,7 @@
 
 import { Column, Entity, OneToMany} from "typeorm";
 
-import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, manualPagination, optionDefault } from "./BaseEntity";
+import { BaseEntity, getPageableQuery, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
 
 import { Ingredient } from "./Ingredient";
 
@@ -31,19 +31,24 @@ export class Recipe extends BaseEntity {
 
     public static async findAll(req: IRecipeSearchRequest = {}, options: IRecipeQueryOptions = {}):
                                 Promise<[Recipe[], number]> {
-        let query = this
-        .createQueryBuilder("recipe")
-        .leftJoinAndSelect("recipe.ingredients", "ingredients")
-        .leftJoinAndSelect("ingredients.food", "food");
+        let subquery = this
+            .createQueryBuilder("recipe")
+            .select("recipe.id");
 
         if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("recipe.deleted = 0");
+            subquery = subquery.andWhere("recipe.deleted = 0");
         }
         if (req.name !== undefined) {
-            query = query.andWhere(`recipe.name LIKE :name`, { name: "%" + req.name + "%" });
+            subquery = subquery.andWhere(`recipe.name LIKE :name`, { name: "%" + req.name + "%" });
         }
 
-        return Promise.all([manualPagination(query.getMany(), req), query.getCount()]);
+        const query = this
+            .createQueryBuilder("recipe")
+            .leftJoinAndSelect("recipe.ingredients", "ingredients")
+            .leftJoinAndSelect("ingredients.food", "food")
+            .andWhere("recipe.id IN (" + getPageableQuery(subquery, req).getQuery() + ")");
+
+        return Promise.all([query.getMany(), subquery.getCount()]);
     }
 
     public static async findById(id: number, options: IRecipeQueryOptions = {}): Promise<Recipe | undefined> {

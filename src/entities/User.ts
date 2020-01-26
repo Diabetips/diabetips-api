@@ -102,7 +102,7 @@ export class User extends BaseEntityHiddenId {
 
         query = getPageableQuery(query, req);
 
-        return Promise.all([query.getMany(), query.getCount()]);
+        return query.getManyAndCount();
     }
 
     public static async findByUid(uid: string, options: IUserQueryOptions = {}): Promise<User | undefined> {

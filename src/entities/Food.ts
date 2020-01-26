@@ -38,14 +38,13 @@ export class Food extends BaseEntity {
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("food.deleted = 0");
         }
-
         if (req.name !== undefined) {
             query = query.andWhere(`food.name LIKE :name`, { name: "%" + req.name + "%" });
         }
 
         query = getPageableQuery(query, req);
 
-        return Promise.all([query.getMany(), query.getCount()]);
+        return query.getManyAndCount();
     }
 
     public static async findById(id: number, options: IFoodQueryOptions = {}): Promise<Food | undefined> {

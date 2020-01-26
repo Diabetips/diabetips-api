@@ -8,7 +8,7 @@
 
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
-import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, manualPagination, optionDefault } from "./BaseEntity";
+import { BaseEntity, getPageableQuery, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
 
 import { User } from "./User";
 
@@ -36,10 +36,12 @@ export class Insulin extends BaseEntity {
             .andWhere("user.uid = :patientUid", { patientUid });
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("user.deleted = 0")
-                .andWhere("insulin.deleted = 0");
+                         .andWhere("insulin.deleted = 0");
         }
 
-        return Promise.all([manualPagination(query.getMany(), req), query.getCount()]);
+        query = getPageableQuery(query, req);
+
+        return query.getManyAndCount();
     }
 
     public static async findById(patientUid: string, insulinId: number,
@@ -51,7 +53,7 @@ export class Insulin extends BaseEntity {
             .andWhere("user.uid = :patientUid", { patientUid });
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("user.deleted = 0")
-                .andWhere("insulin.deleted = 0");
+                         .andWhere("insulin.deleted = 0");
         }
         return query.getOne();
     }
