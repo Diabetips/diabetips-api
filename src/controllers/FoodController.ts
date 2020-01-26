@@ -20,15 +20,15 @@ export class FoodController extends BaseController {
 
         this.router
             .get("/",    this.getAllFood)
-            .get("/:id", this.getFood)
+            .get("/:id", this.getFood);
     }
 
     private async getAllFood(req: Request, res: Response) {
         const [food, count] = await FoodService.getAllFood(req.query);
-        const header = getPageHeader(await count, req.query);
+        const header = getPageHeader(count, req.query);
 
         res.setHeader("X-Pages", header);
-        res.send(await food);
+        res.send(food);
     }
 
     private async getFood(req: Request, res: Response) {

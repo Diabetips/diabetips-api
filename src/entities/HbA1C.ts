@@ -23,8 +23,8 @@ export class HbA1C extends BaseEntity {
     @JoinColumn({ name: "user_id" })
     public user: Promise<User>;
 
-    public static async findAll(patientUid: string, req: IHbA1CSearchRequest = {},
-                                options: IHbA1CQueryOptions = {}): Promise<[HbA1C[], Promise<number>]> {
+    public static async findAll(patientUid: string, req: IHbA1CSearchRequest = {}, options: IHbA1CQueryOptions = {}):
+                                Promise<[HbA1C[], number]> {
         let query = this
             .createQueryBuilder("hba1c")
             .leftJoin("hba1c.user", "user")
@@ -34,7 +34,7 @@ export class HbA1C extends BaseEntity {
                 .andWhere("hba1c.deleted = 0");
         }
 
-        return [manualPagination(await query.getMany(), req), query.getCount()];
+        return Promise.all([manualPagination(query.getMany(), req), query.getCount()]);
     }
 
     public static async findById(patientUid: string, hba1cId: number,

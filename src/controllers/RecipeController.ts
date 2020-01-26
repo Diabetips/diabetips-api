@@ -29,7 +29,7 @@ export class RecipeController extends BaseController {
 
     private async getAllRecipes(req: Request, res: Response) {
         const [recipes, count] = await RecipeService.getAllRecipes(req.query);
-        const header = getPageHeader(await count, req.query);
+        const header = getPageHeader(count, req.query);
 
         res.setHeader("X-Pages", header);
         res.send(recipes);

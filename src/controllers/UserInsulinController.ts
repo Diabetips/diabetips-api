@@ -33,7 +33,7 @@ export class UserInsulinController extends BaseController {
 
     private async getAllUserInsulin(req: Request, res: Response) {
         const [insulin, count] = await InsulinService.getAllInsulin(req.params.userUid, req.query);
-        const header = getPageHeader(await count, req.query);
+        const header = getPageHeader(count, req.query);
 
         res.setHeader("X-Pages", header);
         res.send(insulin);

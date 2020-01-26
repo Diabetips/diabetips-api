@@ -29,7 +29,7 @@ export class UserMealController extends BaseController {
 
     private async getAllUserMeals(req: Request, res: Response) {
         const [meals, count] = await MealService.getAllMeals(req.params.userUid, req.query);
-        const header = getPageHeader(await count, req.query);
+        const header = getPageHeader(count, req.query);
 
         res.setHeader("X-Pages", header);
         res.send(meals);

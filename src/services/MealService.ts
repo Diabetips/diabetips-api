@@ -24,8 +24,7 @@ interface IUpdateMealRequest {
 
 export class MealService extends BaseService {
 
-    public static async getAllMeals(patientUid: string, query: IMealSearchRequest):
-    Promise<[Meal[], Promise<number>]> {
+    public static async getAllMeals(patientUid: string, query: IMealSearchRequest): Promise<[Meal[], number]> {
         return Meal.findAll(patientUid, query);
     }
 

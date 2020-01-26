@@ -93,7 +93,7 @@ export class User extends BaseEntityHiddenId {
     // Repository functions
 
     public static async findAll(req: IBaseSearchRequest = {}, options: IUserQueryOptions = {}):
-                                Promise<[Promise<User[]>, Promise<number>]> {
+                                Promise<[User[], number]> {
         let query = this
             .createQueryBuilder("user")
             .select("user");
@@ -103,7 +103,7 @@ export class User extends BaseEntityHiddenId {
 
         query = getPageableQuery(query, req);
 
-        return [query.getMany(), query.getCount()];
+        return Promise.all([query.getMany(), query.getCount()]);
     }
 
     public static async findByUid(uid: string, options: IUserQueryOptions = {}): Promise<User | undefined> {

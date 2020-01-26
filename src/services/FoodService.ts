@@ -14,7 +14,7 @@ import { BaseService } from "./BaseService";
 
 export class FoodService extends BaseService {
 
-    public static async getAllFood(query: any): Promise<[Promise<Food[]>, Promise<number>]> {
+    public static async getAllFood(query: any): Promise<[Food[], number]> {
         return Food.findAll(query);
     }
 

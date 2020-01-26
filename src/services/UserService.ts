@@ -52,7 +52,7 @@ export class UserService extends BaseService {
         return ctx.auth.user;
     }
 
-    public static async getAllUsers(query: any): Promise<[Promise<User[]>, Promise<number>]> {
+    public static async getAllUsers(query: any): Promise<[User[], number]> {
         // TODO
         // * access checks:
         //   if no current user: throw access denied error

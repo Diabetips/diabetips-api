@@ -34,7 +34,7 @@ export class UserHbA1CController extends BaseController {
 
     private async getAllUserHbA1C(req: Request, res: Response) {
         const [hba1c, count] = await Hba1CService.getAllHba1C(req.params.userUid, req.query);
-        const header = getPageHeader(await count, req.query);
+        const header = getPageHeader(count, req.query);
 
         res.setHeader("X-Pages", header);
         res.send(hba1c);

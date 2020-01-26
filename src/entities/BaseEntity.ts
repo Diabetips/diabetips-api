@@ -63,8 +63,8 @@ export function optionDefault(value: any, defaultValue: any): any {
 }
 
 export function getPageHeader(count: number, req: IBaseSearchRequest): string {
-    const size: number = Number(optionDefault(req.size, 20));
-    const page: number = Number(optionDefault(req.page, 1));
+    const size = Number(optionDefault(req.size, 20));
+    const page = Number(optionDefault(req.page, 1));
 
     const last = Math.ceil(count / size);
     const previous = page <= 1 ? 1 : Math.min(page - 1, last);
@@ -77,8 +77,8 @@ export function getPageHeader(count: number, req: IBaseSearchRequest): string {
 }
 
 export function getPageableQuery<T>(query: SelectQueryBuilder<T>, req: IBaseSearchRequest): SelectQueryBuilder<T> {
-    const size: number = Number(optionDefault(req.size, 20));
-    const page: number = Number(optionDefault(req.page, 1)) - 1;
+    const size = Number(optionDefault(req.size, 20));
+    const page = Number(optionDefault(req.page, 1)) - 1;
 
     if (page !== undefined && size !== undefined) {
         query = query.limit(size)
@@ -88,14 +88,13 @@ export function getPageableQuery<T>(query: SelectQueryBuilder<T>, req: IBaseSear
 }
 
 // Use manualPagination if you want pagination in a request with JOINs
-export function manualPagination(results: any[], req: IBaseSearchRequest): any[] {
-    const size: number = Number(optionDefault(req.size, 20));
-    const page: number = Number(optionDefault(req.page, 1)) - 1;
+export async function manualPagination<T>(results: Promise<T[]>, req: IBaseSearchRequest): Promise<T[]> {
+    const size = Number(optionDefault(req.size, 20));
+    const page = Number(optionDefault(req.page, 1)) - 1;
 
     const start: number = page * size;
     const end: number = start + size;
 
     // Slice seems to handle [index out of reach] on its own :)
-    const res = results.slice(start, end);
-    return res;
+    return (await results).slice(start, end);
 }

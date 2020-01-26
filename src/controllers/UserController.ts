@@ -35,10 +35,10 @@ export class UserController extends BaseController {
 
     private async getAllUsers(req: Request, res: Response) {
         const [users, count] = await UserService.getAllUsers(req.query);
-        const header = getPageHeader(await count, req.query);
+        const header = getPageHeader(count, req.query);
 
         res.setHeader("X-Pages", header);
-        res.send(await users);
+        res.send(users);
     }
 
     private async registerUser(req: Request, res: Response) {

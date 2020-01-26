@@ -31,7 +31,7 @@ export class Food extends BaseEntity {
     // Repository functions
 
     public static async findAll(req: IFoodSearchRequest = {}, options: IFoodQueryOptions = {}):
-                                Promise<[Promise<Food[]>, Promise<number>]> {
+                                Promise<[Food[], number]> {
         let query = this
             .createQueryBuilder("food")
             .select("food");
@@ -46,7 +46,7 @@ export class Food extends BaseEntity {
 
         query = getPageableQuery(query, req);
 
-        return [query.getMany(), query.getCount()];
+        return Promise.all([query.getMany(), query.getCount()]);
     }
 
     public static async findById(id: number, options: IFoodQueryOptions = {}): Promise<Food | undefined> {
