@@ -8,14 +8,14 @@
 
 import bcrypt = require("bcrypt");
 
-import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne } from "typeorm";
+import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany, OneToOne } from "typeorm";
 
-import { BaseEntityHiddenId, IBaseQueryOptions, optionDefault } from "./BaseEntityHiddenId";
+import { BaseEntityHiddenId, getPageableQuery, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntityHiddenId";
 
-import { AuthApp, Meal } from ".";
-import { getPageableQuery, IBaseSearchRequest } from "./BaseEntity";
-import { HbA1C } from "./HbA1C";
+import { AuthApp } from "./AuthApp";
+import { Hba1c } from "./Hba1c";
 import { Insulin } from "./Insulin";
+import { Meal } from "./Meal";
 
 import { UserConfirmation } from "./UserConfirmation";
 import { UserPicture } from "./UserPicture";
@@ -79,8 +79,8 @@ export class User extends BaseEntityHiddenId {
     @OneToMany((type) => Insulin, (insulin) => insulin.user)
     public insulin: Promise<Insulin[]>;
 
-    @OneToMany((type) => HbA1C, (hba1c) => hba1c.user)
-    public hba1c: Promise<HbA1C[]>;
+    @OneToMany((type) => Hba1c, (hba1c) => hba1c.user)
+    public hba1c: Promise<Hba1c[]>;
 
     public get password(): string | undefined {
         return this._password;

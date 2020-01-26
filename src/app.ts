@@ -23,7 +23,7 @@ import {
     UserConnectionController,
     UserController,
     UserGlucoseController,
-    UserHbA1CController,
+    UserHba1cController,
     UserInsulinController,
     UserMealController,
     UserPictureController,
@@ -72,7 +72,7 @@ app.use("/v1/users", new UserController().router);
 app.use("/v1/users", new UserAppController().router);
 app.use("/v1/users", new UserConnectionController().router);
 app.use("/v1/users", new UserGlucoseController().router);
-app.use("/v1/users", new UserHbA1CController().router);
+app.use("/v1/users", new UserHba1cController().router);
 app.use("/v1/users", new UserMealController().router);
 app.use("/v1/users", new UserInsulinController().router);
 app.use("/v1/users", new UserPictureController().router);

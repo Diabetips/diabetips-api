@@ -9,6 +9,7 @@
 import { Food, Ingredient, IRecipeSearchRequest, Recipe } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus } from "../lib";
+
 import { BaseService } from "./BaseService";
 
 interface IIngredientRequest {

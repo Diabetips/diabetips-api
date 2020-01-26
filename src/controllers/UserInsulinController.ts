@@ -9,9 +9,9 @@
 import { Request, Response } from "express";
 
 import { HttpStatus } from "../lib";
+import { InsulinService } from "../services";
 
 import { getPageHeader } from "../entities/BaseEntity";
-import { InsulinService } from "../services/InsulinService";
 import { BaseController } from "./BaseController";
 
 export class UserInsulinController extends BaseController {

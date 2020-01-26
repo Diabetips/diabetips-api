@@ -10,7 +10,8 @@ import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne } from "ty
 
 import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, manualPagination, optionDefault } from "./BaseEntity";
 
-import { Recipe, User } from ".";
+import { Recipe } from "./Recipe";
+import { User } from "./User";
 
 @Entity()
 export class Meal extends BaseEntity {

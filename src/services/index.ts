@@ -11,6 +11,8 @@ import { AuthAppService } from "./AuthAppService";
 import { AuthService } from "./AuthService";
 import { FoodPictureService } from "./FoodPictureService";
 import { FoodService } from "./FoodService";
+import { Hba1cService } from "./Hba1cService";
+import { InsulinService } from "./InsulinService";
 import { MealService } from "./MealService";
 import { RecipeService } from "./RecipeService";
 import { UserConfirmationService } from "./UserConfirmationService";
@@ -24,6 +26,8 @@ export {
     AuthService,
     FoodPictureService,
     FoodService,
+    Hba1cService,
+    InsulinService,
     MealService,
     RecipeService,
     UserConfirmationService,

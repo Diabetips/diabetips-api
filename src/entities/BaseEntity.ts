@@ -6,8 +6,8 @@
 ** Created by Arthur MELIN on Thu Aug 29 2019
 */
 
-import { BaseEntity as TypeOrmBaseEntity, Column, CreateDateColumn, PrimaryGeneratedColumn,
-    SelectQueryBuilder, UpdateDateColumn } from "typeorm";
+import { BaseEntity as TypeOrmBaseEntity, Column, CreateDateColumn, PrimaryGeneratedColumn, SelectQueryBuilder,
+    UpdateDateColumn } from "typeorm";
 
 export abstract class BaseEntity extends TypeOrmBaseEntity {
 

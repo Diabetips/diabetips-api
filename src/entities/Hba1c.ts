@@ -6,12 +6,13 @@
 ** Created by Alexandre DE BEAUMONT on Sat Dec 14 2019
 */
 
-import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
-import { User } from ".";
+import { Column, JoinColumn, ManyToOne } from "typeorm";
+
 import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, manualPagination, optionDefault } from "./BaseEntity";
 
-@Entity({ name: "hba1c" })
-export class HbA1C extends BaseEntity {
+import { User } from "./User";
+
+export class Hba1c extends BaseEntity {
 
     @Column({ type: "float" })
     public value: number;
@@ -23,8 +24,8 @@ export class HbA1C extends BaseEntity {
     @JoinColumn({ name: "user_id" })
     public user: Promise<User>;
 
-    public static async findAll(patientUid: string, req: IHbA1CSearchRequest = {}, options: IHbA1CQueryOptions = {}):
-                                Promise<[HbA1C[], number]> {
+    public static async findAll(patientUid: string, req: IHba1cSearchRequest = {}, options: IHba1cQueryOptions = {}):
+                                Promise<[Hba1c[], number]> {
         let query = this
             .createQueryBuilder("hba1c")
             .leftJoin("hba1c.user", "user")
@@ -38,7 +39,7 @@ export class HbA1C extends BaseEntity {
     }
 
     public static async findById(patientUid: string, hba1cId: number,
-                                 options: IHbA1CQueryOptions = {}): Promise<HbA1C | undefined> {
+                                 options: IHba1cQueryOptions = {}): Promise<Hba1c | undefined> {
         let query = this
             .createQueryBuilder("hba1c")
             .andWhere("hba1c.id = :hba1cId", { hba1cId })
@@ -54,9 +55,9 @@ export class HbA1C extends BaseEntity {
 }
 
 // tslint:disable-next-line: no-empty-interface
-export interface IHbA1CQueryOptions extends IBaseQueryOptions {
+export interface IHba1cQueryOptions extends IBaseQueryOptions {
 }
 
 // tslint:disable-next-line: no-empty-interface
-export interface IHbA1CSearchRequest extends IBaseSearchRequest {
+export interface IHba1cSearchRequest extends IBaseSearchRequest {
 }

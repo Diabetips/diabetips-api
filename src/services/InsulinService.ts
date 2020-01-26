@@ -6,10 +6,10 @@
 ** Created by Alexandre DE BEAUMONT on Sat Dec 14 2019
 */
 
-import { User } from "../entities";
-import { IInsulinSearchRequest, Insulin } from "../entities/Insulin";
+import { IInsulinSearchRequest, Insulin, User } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus } from "../lib";
+
 import { BaseService } from "./BaseService";
 
 interface ICreateInsulinRequest {

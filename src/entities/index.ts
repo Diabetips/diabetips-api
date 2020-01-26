@@ -8,7 +8,9 @@
 
 import { AuthApp, AuthAppLogo } from "./AuthApp";
 import { Food, FoodPicture, IFoodQueryOptions, IFoodSearchRequest } from "./Food";
+import { Hba1c, IHba1cQueryOptions, IHba1cSearchRequest } from "./Hba1c";
 import { IIngredientQueryOptions, IIngredientSearchRequest, Ingredient } from "./Ingredient";
+import { IInsulinQueryOptions, IInsulinSearchRequest, Insulin } from "./Insulin";
 import { IMealQueryOptions, IMealSearchRequest, Meal } from "./Meal";
 import { IRecipeQueryOptions, IRecipeSearchRequest, Recipe } from "./Recipe";
 import { IUserQueryOptions, IUserSearchRequest, User, UserConfirmation, UserPicture } from "./User";
@@ -20,9 +22,15 @@ export {
     FoodPicture,
     IFoodQueryOptions,
     IFoodSearchRequest,
+    Hba1c,
+    IHba1cQueryOptions,
+    IHba1cSearchRequest,
     Ingredient,
     IIngredientQueryOptions,
     IIngredientSearchRequest,
+    Insulin,
+    IInsulinQueryOptions,
+    IInsulinSearchRequest,
     Meal,
     IMealQueryOptions,
     IMealSearchRequest,

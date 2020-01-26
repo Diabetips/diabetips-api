@@ -1,4 +1,3 @@
-
 /*!
 ** Copyright 2019 Diabetips
 **
@@ -11,7 +10,7 @@ import { Column, Entity, OneToMany} from "typeorm";
 
 import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, manualPagination, optionDefault } from "./BaseEntity";
 
-import { Ingredient } from ".";
+import { Ingredient } from "./Ingredient";
 
 @Entity()
 export class Recipe extends BaseEntity {

@@ -7,9 +7,10 @@
 */
 
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
-import { User } from ".";
-import { BaseEntity, IBaseSearchRequest, manualPagination, optionDefault } from "./BaseEntity";
-import { IBaseQueryOptions } from "./BaseEntityHiddenId";
+
+import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, manualPagination, optionDefault } from "./BaseEntity";
+
+import { User } from "./User";
 
 @Entity()
 export class Insulin extends BaseEntity {

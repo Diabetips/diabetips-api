@@ -8,10 +8,10 @@
 
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
-import { IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
+import { BaseEntityHiddenId, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntityHiddenId";
 
-import { Food, Recipe } from ".";
-import { BaseEntityHiddenId } from "./BaseEntityHiddenId";
+import { Food } from "./Food";
+import { Recipe } from "./Recipe";
 
 @Entity()
 export class Ingredient extends BaseEntityHiddenId {
