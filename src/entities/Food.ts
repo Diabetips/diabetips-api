@@ -33,8 +33,7 @@ export class Food extends BaseEntity {
     public static async findAll(req: IFoodSearchRequest = {}, options: IFoodQueryOptions = {}):
                                 Promise<[Food[], number]> {
         let query = this
-            .createQueryBuilder("food")
-            .select("food");
+            .createQueryBuilder("food");
 
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("food.deleted = 0");
@@ -52,7 +51,6 @@ export class Food extends BaseEntity {
     public static async findById(id: number, options: IFoodQueryOptions = {}): Promise<Food | undefined> {
         let query = this
             .createQueryBuilder("food")
-            .select("food")
             .where("food.id = :id", { id });
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("food.deleted = 0");

@@ -95,8 +95,7 @@ export class User extends BaseEntityHiddenId {
     public static async findAll(req: IBaseSearchRequest = {}, options: IUserQueryOptions = {}):
                                 Promise<[User[], number]> {
         let query = this
-            .createQueryBuilder("user")
-            .select("user");
+            .createQueryBuilder("user");
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("user.deleted = 0");
         }
@@ -109,7 +108,6 @@ export class User extends BaseEntityHiddenId {
     public static async findByUid(uid: string, options: IUserQueryOptions = {}): Promise<User | undefined> {
         let query = this
             .createQueryBuilder("user")
-            .select("user")
             .where("user.uid = :uid", { uid });
         if (optionDefault(options.selectPassword, false)) {
             query = query.addSelect("user.password", "user_password");
@@ -127,7 +125,6 @@ export class User extends BaseEntityHiddenId {
     public static async findByEmail(email: string, options: IUserQueryOptions = {}): Promise<User | undefined> {
         let query = this
             .createQueryBuilder("user")
-            .select("user")
             .where("lower(user.email) = lower(:email)", { email });
         if (optionDefault(options.selectPassword, false)) {
             query = query.addSelect("user.password", "user_password");
@@ -144,7 +141,6 @@ export class User extends BaseEntityHiddenId {
     public static async countByEmail(email: string, options: IUserQueryOptions = {}): Promise<number> {
         let query = this
             .createQueryBuilder("user")
-            .select()
             .where("lower(user.email) = lower(:email)", { email });
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("user.deleted = 0");

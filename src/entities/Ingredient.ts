@@ -35,9 +35,7 @@ export class Ingredient extends BaseEntityHiddenId {
     public static async findAll(req: IIngredientSearchRequest = {},
                                 options: IIngredientQueryOptions = {}): Promise<Ingredient[]> {
         let query = this
-            .createQueryBuilder("ingredient")
-            .select("ingredient");
-
+            .createQueryBuilder("ingredient");
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("ingredient.deleted = 0");
         }
@@ -48,7 +46,6 @@ export class Ingredient extends BaseEntityHiddenId {
     public static async findById(id: number, options: IIngredientQueryOptions = {}): Promise<Ingredient | undefined> {
         let query = this
             .createQueryBuilder("ingredient")
-            .select("ingredient")
             .andWhere("ingredient.id = :id", { id });
 
         if (optionDefault(options.hideDeleted, true)) {

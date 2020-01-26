@@ -43,8 +43,7 @@ export class AuthApp extends BaseEntityHiddenId {
 
     public static async findAll(options: IBaseQueryOptions = {}): Promise<AuthApp[]> {
         let query = this
-            .createQueryBuilder("auth_app")
-            .select("auth_app");
+            .createQueryBuilder("auth_app");
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("auth_app.deleted = 0");
         }
@@ -54,7 +53,6 @@ export class AuthApp extends BaseEntityHiddenId {
     public static async findByAppid(appid: string, options: IBaseQueryOptions = {}): Promise<AuthApp | undefined> {
         let query = this
             .createQueryBuilder("auth_app")
-            .select("auth_app")
             .where("auth_app.appid = :appid", { appid });
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("auth_app.deleted = 0");
@@ -66,7 +64,6 @@ export class AuthApp extends BaseEntityHiddenId {
         Promise<AuthApp | undefined> {
         let query = this
             .createQueryBuilder("auth_app")
-            .select("auth_app")
             .where("auth_app.client_id = :clientId", { clientId });
         if (optionDefault(options.hideDeleted, true)) {
             query = query.andWhere("auth_app.deleted = 0");

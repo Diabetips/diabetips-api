@@ -6,12 +6,13 @@
 ** Created by Alexandre DE BEAUMONT on Sat Dec 14 2019
 */
 
-import { Column, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
 import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest, manualPagination, optionDefault } from "./BaseEntity";
 
 import { User } from "./User";
 
+@Entity()
 export class Hba1c extends BaseEntity {
 
     @Column({ type: "float" })
