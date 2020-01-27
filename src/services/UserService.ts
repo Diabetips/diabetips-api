@@ -11,7 +11,7 @@ import uuid = require("uuid");
 
 import { IUserQueryOptions, User } from "../entities";
 import { ApiError } from "../errors";
-import { Context, HttpStatus } from "../lib";
+import { Context, HttpStatus, Page, Pageable } from "../lib";
 import { sendMail } from "../mail";
 
 import { BaseService } from "./BaseService";
@@ -52,12 +52,12 @@ export class UserService extends BaseService {
         return ctx.auth.user;
     }
 
-    public static async getAllUsers(query: any): Promise<[User[], number]> {
+    public static async getAllUsers(p: Pageable): Promise<Page<User>> {
         // TODO
         // * access checks:
         //   if no current user: throw access denied error
         // * only return current user if not admin
-        return User.findAll(query);
+        return User.findAll(p);
     }
 
     public static async registerUser(req: CreateUserReq): Promise<User> {
@@ -70,7 +70,7 @@ export class UserService extends BaseService {
 
         user.uid = uuid.v4();
         user.email = req.email;
-        user.password = req.password;  // hashes password
+        user.password = req.password; // hashes password
         user.lang = req.lang;
         user.first_name = req.first_name;
         user.last_name = req.last_name;

@@ -8,7 +8,7 @@
 
 import { Food, Ingredient, IRecipeSearchRequest, Recipe } from "../entities";
 import { ApiError } from "../errors";
-import { HttpStatus } from "../lib";
+import { HttpStatus, Page, Pageable } from "../lib";
 
 import { BaseService } from "./BaseService";
 
@@ -31,8 +31,8 @@ export interface IUpdateRecipeRequest {
 
 export class RecipeService extends BaseService {
 
-    public static async getAllRecipes(query: IRecipeSearchRequest = {}): Promise<[Recipe[], number]> {
-        return Recipe.findAll(query);
+    public static async getAllRecipes(p: Pageable, req: IRecipeSearchRequest): Promise<Page<Recipe>> {
+        return Recipe.findAll(p, req);
     }
 
     public static async getRecipe(id: number): Promise<Recipe> {

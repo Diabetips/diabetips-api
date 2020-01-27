@@ -21,8 +21,6 @@ export interface CreateUserConnectionReq {
 export class UserConnectionService extends BaseService {
 
     public static async getAllUserConnections(uid: string): Promise<User[]> {
-        // TODO
-        // * pagination
         return (await UserService.getUser(uid)).connections;
     }
 

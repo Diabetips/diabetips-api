@@ -8,7 +8,9 @@
 
 import { Column, Entity, OneToMany} from "typeorm";
 
-import { BaseEntity, getPageableQuery, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
+import { Page, Pageable, Utils } from "../lib";
+
+import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest } from "./BaseEntity";
 
 import { Ingredient } from "./Ingredient";
 
@@ -29,39 +31,42 @@ export class Recipe extends BaseEntity {
 
     // Repository functions
 
-    public static async findAll(req: IRecipeSearchRequest = {}, options: IRecipeQueryOptions = {}):
-                                Promise<[Recipe[], number]> {
-        let subquery = this
+    public static async findAll(p: Pageable,
+                                req: IRecipeSearchRequest = {},
+                                options: IRecipeQueryOptions = {}):
+                                Promise<Page<Recipe>> {
+        let subqb = this
             .createQueryBuilder("recipe")
             .select("recipe.id");
 
-        if (optionDefault(options.hideDeleted, true)) {
-            subquery = subquery.andWhere("recipe.deleted = 0");
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            subqb = subqb.andWhere("recipe.deleted = 0");
         }
         if (req.name !== undefined) {
-            subquery = subquery.andWhere(`recipe.name LIKE :name`, { name: "%" + req.name + "%" });
+            subqb = subqb.andWhere(`recipe.name LIKE :name`, { name: "%" + req.name + "%" });
         }
 
-        const query = this
+        const qb = this
             .createQueryBuilder("recipe")
             .leftJoinAndSelect("recipe.ingredients", "ingredients")
             .leftJoinAndSelect("ingredients.food", "food")
-            .andWhere("recipe.id IN (" + getPageableQuery(subquery, req).getQuery() + ")");
+            .where("recipe.id IN (" + p.limit(subqb).getQuery() + ")");
 
-        return Promise.all([query.getMany(), subquery.getCount()]);
+        return p.queryWithCountQuery(qb, subqb);
     }
 
     public static async findById(id: number, options: IRecipeQueryOptions = {}): Promise<Recipe | undefined> {
-        let query = this
+        let qb = this
             .createQueryBuilder("recipe")
             .leftJoinAndSelect("recipe.ingredients", "ingredients")
             .leftJoinAndSelect("ingredients.food", "food")
-            .andWhere("recipe.id = :id", { id });
+            .where("recipe.id = :id", { id });
 
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("recipe.deleted = 0");
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb.andWhere("recipe.deleted = 0");
         }
-        return query.getOne();
+
+        return qb.getOne();
     }
 
 }

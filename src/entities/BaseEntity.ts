@@ -53,36 +53,6 @@ export interface IBaseQueryOptions {
     hideDeleted?: boolean;
 }
 
+// tslint:disable-next-line: no-empty-interface
 export interface IBaseSearchRequest {
-    page?: number;
-    size?: number;
-}
-
-export function optionDefault(value: any, defaultValue: any): any {
-    return value === undefined ? defaultValue : value;
-}
-
-export function getPageHeader(count: number, req: IBaseSearchRequest): string {
-    const size = Number(optionDefault(req.size, 20));
-    const page = Number(optionDefault(req.page, 1));
-
-    const last = Math.ceil(count / size);
-    const previous = page <= 1 ? 1 : Math.min(page - 1, last);
-    const next = Math.min(last, page + 1);
-
-    let str = previous === page ? "" : `previous: ${previous}; `;
-    str += next <= page ? "" : `next: ${next}; `;
-    str += `last: ${last}`;
-    return str;
-}
-
-export function getPageableQuery<T>(query: SelectQueryBuilder<T>, req: IBaseSearchRequest): SelectQueryBuilder<T> {
-    const size = Number(optionDefault(req.size, 20));
-    const page = Number(optionDefault(req.page, 1)) - 1;
-
-    if (page !== undefined && size !== undefined) {
-        query = query.limit(size)
-                     .offset(size * page);
-    }
-    return query;
 }

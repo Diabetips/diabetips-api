@@ -8,7 +8,7 @@
 
 import { IInsulinSearchRequest, Insulin, User } from "../entities";
 import { ApiError } from "../errors";
-import { HttpStatus } from "../lib";
+import { HttpStatus, Page, Pageable } from "../lib";
 
 import { BaseService } from "./BaseService";
 
@@ -25,8 +25,9 @@ interface IUpdateInsulinRequest {
 }
 
 export class InsulinService extends BaseService {
-    public static async getAllInsulin(patientUid: string, query: IInsulinSearchRequest): Promise<[Insulin[], number]> {
-        return Insulin.findAll(patientUid, query);
+
+    public static async getAllInsulin(patientUid: string, p: Pageable): Promise<Page<Insulin>> {
+        return Insulin.findAll(patientUid, p);
     }
 
     public static async getInsulin(params: IInsulinParams): Promise<Insulin> {

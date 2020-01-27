@@ -8,7 +8,9 @@
 
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne } from "typeorm";
 
-import { BaseEntity, getPageableQuery, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
+import { Page, Pageable, Utils } from "../lib";
+
+import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest } from "./BaseEntity";
 
 import { Recipe } from "./Recipe";
 import { User } from "./User";
@@ -40,42 +42,52 @@ export class Meal extends BaseEntity {
 
     // Repository functions
 
-    public static async findAll(uid: string, req: IMealSearchRequest = {}, options: IMealQueryOptions = {}):
-                                Promise<[Meal[], number]> {
-        let subquery = this
+    public static async findAll(uid: string,
+                                p: Pageable,
+                                req: IMealSearchRequest = {},
+                                options: IMealQueryOptions = {}):
+                                Promise<Page<Meal>> {
+        let subqb = this
             .createQueryBuilder("meal")
             .select("meal.id")
             .leftJoin("meal.user", "user")
-            .andWhere("user.uid = :uid", { uid });
-        if (optionDefault(options.hideDeleted, true)) {
-            subquery = subquery.andWhere("user.deleted = 0")
+            .where("user.uid = :uid", { uid });
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            subqb = subqb.andWhere("user.deleted = 0")
                                .andWhere("meal.deleted = 0");
         }
 
-        let query = this
+        let qb = this
             .createQueryBuilder("meal")
             .leftJoinAndSelect("meal.recipes", "recipes")
-            .andWhere("meal.id IN (" + getPageableQuery(subquery, req).getQuery() + ")");
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("recipes.deleted = 0");
+            .where("meal.id IN (" + p.limit(subqb).getQuery() + ")");
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb.andWhere("recipes.deleted = 0");
         }
-        return Promise.all([query.getMany(), subquery.getCount()]);
+
+        return p.queryWithCountQuery(qb, subqb);
     }
 
-    public static async findById(uid: string, mealId: number,
-                                 options: IMealQueryOptions = {}): Promise<Meal | undefined> {
-        let query = this
+    public static findById(uid: string,
+                           mealId: number,
+                           options: IMealQueryOptions = {}):
+                           Promise<Meal | undefined> {
+        let qb = this
             .createQueryBuilder("meal")
             .leftJoinAndSelect("meal.recipes", "recipes")
             .leftJoin("meal.user", "user")
-            .andWhere("user.uid = :uid", { uid })
+            .where("user.uid = :uid", { uid })
             .andWhere("meal.id = :mealId", { mealId });
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("user.deleted = 0")
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb.andWhere("user.deleted = 0")
                          .andWhere("meal.deleted = 0")
                          .andWhere("recipes.deleted = 0");
         }
-        return query.getOne();
+
+        return qb.getOne();
     }
 
 }

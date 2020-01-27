@@ -11,16 +11,26 @@ import yaml = require("yaml");
 
 export class Utils {
     /**
-     * Run a function that might throw an error. Always return a value
+     * Fallback to a default value if the specified function throws an error
      * @param fn  The function to run
-     * @param def The value to return in case an error is thrown
+     * @param defaultValue The value to return if an error is thrown
      */
-    public static guard<T>(fn: () => T, def: T): T {
+    public static guard<T>(fn: () => T, defaultValue: T): T {
         try {
             return fn();
         } catch (err) {
-            return def;
+            return defaultValue;
         }
+    }
+
+    /**
+     * Fallback to a default value if an optional value is undefined
+     * @param value The optional value
+     * @param defaultValue The default value to set if value is `undefined`
+     * @returns `val` if it is not undefined, `def` otherwise
+     */
+    public static optionDefault<T>(value: any, defaultValue: T): T {
+        return value === undefined ? defaultValue : value;
     }
 
     /**

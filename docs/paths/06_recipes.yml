@@ -7,18 +7,18 @@
       Get a list of all food items available.
 
 
-      Implements [Pagination](#tag/Pagination)
+      Implements [Paging](#tag/Paging)
     parameters:
       - $component: "queries:name.yml:NameQuery"
-      - $component: "queries:pagination.yml:PageQuery"
-      - $component: "queries:pagination.yml:SizeQuery"
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
     responses:
       200:
         description: "List of all available food items"
         headers:
           "X-Pages":
             schema:
-              $component: "schemas:pagination.yml:PagesHeader"
+              $component: "schemas:paging.yml:PagesHeader"
         content:
           application/json:
             schema:
@@ -81,18 +81,18 @@
       Get a list of all the recipes available.
 
 
-      Implements [Pagination](#tag/Pagination)
+      Implements [Paging](#tag/Paging)
     parameters:
       - $component: "queries:name.yml:NameQuery"
-      - $component: "queries:pagination.yml:PageQuery"
-      - $component: "queries:pagination.yml:SizeQuery"
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
     responses:
       200:
         description: "List of all available recipes"
         headers:
           "X-Pages":
             schema:
-              $component: "schemas:pagination.yml:PagesHeader"
+              $component: "schemas:paging.yml:PagesHeader"
         content:
           application/json:
             schema:

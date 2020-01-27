@@ -8,7 +8,7 @@
 
 import { IMealSearchRequest, Meal, Recipe, User } from "../entities";
 import { ApiError } from "../errors";
-import { HttpStatus } from "../lib";
+import { HttpStatus, Page, Pageable } from "../lib";
 
 import { BaseService } from "./BaseService";
 
@@ -24,8 +24,8 @@ interface IUpdateMealRequest {
 
 export class MealService extends BaseService {
 
-    public static async getAllMeals(patientUid: string, query: IMealSearchRequest): Promise<[Meal[], number]> {
-        return Meal.findAll(patientUid, query);
+    public static async getAllMeals(patientUid: string, p: Pageable): Promise<Page<Meal>> {
+        return Meal.findAll(patientUid, p);
     }
 
     public static async getMeal(params: IMealParams): Promise<Meal> {

@@ -10,7 +10,9 @@ import bcrypt = require("bcrypt");
 
 import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany, OneToOne } from "typeorm";
 
-import { BaseEntityHiddenId, getPageableQuery, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntityHiddenId";
+import { Page, Pageable, Utils } from "../lib";
+
+import { BaseEntityHiddenId, IBaseQueryOptions, IBaseSearchRequest } from "./BaseEntityHiddenId";
 
 import { AuthApp } from "./AuthApp";
 import { Hba1c } from "./Hba1c";
@@ -92,30 +94,32 @@ export class User extends BaseEntityHiddenId {
 
     // Repository functions
 
-    public static async findAll(req: IBaseSearchRequest = {}, options: IUserQueryOptions = {}):
-                                Promise<[User[], number]> {
-        let query = this
-            .createQueryBuilder("user");
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("user.deleted = 0");
+    public static async findAll(p: Pageable,
+                                req: IBaseSearchRequest = {},
+                                options: IUserQueryOptions = {}):
+                                Promise<Page<User>> {
+        let qb = this.createQueryBuilder("user");
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb.andWhere("user.deleted = 0");
         }
 
-        query = getPageableQuery(query, req);
-
-        return query.getManyAndCount();
+        return p.query(qb);
     }
 
     public static async findByUid(uid: string, options: IUserQueryOptions = {}): Promise<User | undefined> {
-        let query = this
+        let qb = this
             .createQueryBuilder("user")
             .where("user.uid = :uid", { uid });
-        if (optionDefault(options.selectPassword, false)) {
-            query = query.addSelect("user.password", "user_password");
+
+        if (Utils.optionDefault(options.selectPassword, false)) {
+            qb = qb.addSelect("user.password", "user_password");
         }
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("user.deleted = 0");
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb.andWhere("user.deleted = 0");
         }
-        return query.getOne();
+
+        return qb.getOne();
     }
 
     public static async hasUid(uid: string, options: IUserQueryOptions = {}): Promise<boolean> {
@@ -123,29 +127,33 @@ export class User extends BaseEntityHiddenId {
     }
 
     public static async findByEmail(email: string, options: IUserQueryOptions = {}): Promise<User | undefined> {
-        let query = this
+        let qb = this
             .createQueryBuilder("user")
             .where("lower(user.email) = lower(:email)", { email });
-        if (optionDefault(options.selectPassword, false)) {
-            query = query.addSelect("user.password", "user_password");
+
+        if (Utils.optionDefault(options.selectPassword, false)) {
+            qb = qb.addSelect("user.password", "user_password");
         }
-        if (optionDefault(options.selectConfirmation, false)) {
-            query = query.leftJoinAndSelect("user.confirmation", "confirmation");
+        if (Utils.optionDefault(options.selectConfirmation, false)) {
+            qb = qb.leftJoinAndSelect("user.confirmation", "confirmation");
         }
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("user.deleted = 0");
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb.andWhere("user.deleted = 0");
         }
-        return query.getOne();
+
+        return qb.getOne();
     }
 
     public static async countByEmail(email: string, options: IUserQueryOptions = {}): Promise<number> {
-        let query = this
+        let qb = this
             .createQueryBuilder("user")
             .where("lower(user.email) = lower(:email)", { email });
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("user.deleted = 0");
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb.andWhere("user.deleted = 0");
         }
-        return query.getCount();
+
+        return qb.getCount();
     }
 
 }

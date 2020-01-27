@@ -8,7 +8,9 @@
 
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
-import { BaseEntity, getPageableQuery, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
+import { Page, Pageable, Utils } from "../lib";
+
+import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest } from "./BaseEntity";
 
 import { User } from "./User";
 
@@ -25,35 +27,39 @@ export class Hba1c extends BaseEntity {
     @JoinColumn({ name: "user_id" })
     public user: Promise<User>;
 
-    public static async findAll(patientUid: string, req: IHba1cSearchRequest = {}, options: IHba1cQueryOptions = {}):
-                                Promise<[Hba1c[], number]> {
-        let query = this
+    public static async findAll(patientUid: string,
+                                p: Pageable,
+                                options: IHba1cQueryOptions = {}):
+                                Promise<Page<Hba1c>> {
+        let qb = this
             .createQueryBuilder("hba1c")
             .leftJoin("hba1c.user", "user")
-            .andWhere("user.uid = :patientUid", { patientUid });
+            .where("user.uid = :patientUid", { patientUid });
 
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("user.deleted = 0")
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb.andWhere("user.deleted = 0")
                          .andWhere("hba1c.deleted = 0");
         }
 
-        query = getPageableQuery(query, req);
-
-        return query.getManyAndCount();
+        return p.query(qb);
     }
 
-    public static async findById(patientUid: string, hba1cId: number,
-                                 options: IHba1cQueryOptions = {}): Promise<Hba1c | undefined> {
-        let query = this
+    public static async findById(patientUid: string,
+                                 hba1cId: number,
+                                 options: IHba1cQueryOptions = {}):
+                                 Promise<Hba1c | undefined> {
+        let qb = this
             .createQueryBuilder("hba1c")
-            .andWhere("hba1c.id = :hba1cId", { hba1cId })
             .leftJoin("hba1c.user", "user")
+            .where("hba1c.id = :hba1cId", { hba1cId })
             .andWhere("user.uid = :patientUid", { patientUid });
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("user.deleted = 0")
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb.andWhere("user.deleted = 0")
                          .andWhere("hba1c.deleted = 0");
         }
-        return query.getOne();
+
+        return qb.getOne();
     }
 
 }

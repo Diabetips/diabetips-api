@@ -8,10 +8,9 @@
 
 import { Request, Response } from "express";
 
-import { HttpStatus } from "../lib";
+import { HttpStatus, Page, Pageable } from "../lib";
 import { RecipeService } from "../services";
 
-import { getPageHeader } from "../entities/BaseEntity";
 import { BaseController } from "./BaseController";
 
 export class RecipeController extends BaseController {
@@ -28,11 +27,8 @@ export class RecipeController extends BaseController {
     }
 
     private async getAllRecipes(req: Request, res: Response) {
-        const [recipes, count] = await RecipeService.getAllRecipes(req.query);
-        const header = getPageHeader(count, req.query);
-
-        res.setHeader("X-Pages", header);
-        res.send(recipes);
+        const page = await RecipeService.getAllRecipes(new Pageable(req.query), req.query);
+        page.sendAs(res);
     }
 
     private async getRecipe(req: Request, res: Response) {

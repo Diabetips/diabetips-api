@@ -56,5 +56,9 @@
             "address": "account@diabetips.fr"
         },
         "replyTo": "noreply@diabetips.fr"
+    },
+    "paging": {
+        "defaultSize": 20,
+        "maxSize": 100
     }
 }

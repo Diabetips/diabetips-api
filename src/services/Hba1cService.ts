@@ -8,7 +8,7 @@
 
 import { Hba1c, IHba1cSearchRequest, User } from "../entities";
 import { ApiError } from "../errors";
-import { HttpStatus } from "../lib";
+import { HttpStatus, Page, Pageable } from "../lib";
 
 import { BaseService } from "./BaseService";
 
@@ -23,8 +23,9 @@ interface IUpdateHba1cRequest {
 }
 
 export class Hba1cService extends BaseService {
-    public static async getAllHba1c(patientUid: string, query: IHba1cSearchRequest): Promise<[Hba1c[], number]> {
-        return Hba1c.findAll(patientUid, query);
+
+    public static async getAllHba1c(patientUid: string, p: Pageable): Promise<Page<Hba1c>> {
+        return Hba1c.findAll(patientUid, p);
     }
 
     public static async getHba1c(patientUid: string, hba1cId: number): Promise<Hba1c> {

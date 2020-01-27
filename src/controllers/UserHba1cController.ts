@@ -8,10 +8,9 @@
 
 import { Request, Response } from "express";
 
-import { HttpStatus } from "../lib";
+import { HttpStatus, Page, Pageable } from "../lib";
 import { Hba1cService } from "../services";
 
-import { getPageHeader } from "../entities/BaseEntity";
 import { BaseController } from "./BaseController";
 
 export class UserHba1cController extends BaseController {
@@ -28,11 +27,8 @@ export class UserHba1cController extends BaseController {
     }
 
     private async getAllUserHba1c(req: Request, res: Response) {
-        const [hba1c, count] = await Hba1cService.getAllHba1c(req.params.uid, req.query);
-        const header = getPageHeader(count, req.query);
-
-        res.setHeader("X-Pages", header);
-        res.send(hba1c);
+        const page = await Hba1cService.getAllHba1c(req.params.uid, new Pageable(req.query));
+        page.sendAs(res);
     }
 
     private async addUserHba1c(req: Request, res: Response) {

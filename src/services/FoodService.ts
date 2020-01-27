@@ -6,16 +6,16 @@
 ** Created by Alexandre DE BEAUMONT on Sat Sep 07 2019
 */
 
-import { Food } from "../entities";
+import { Food, IFoodSearchRequest } from "../entities";
 import { ApiError } from "../errors";
-import { HttpStatus } from "../lib";
+import { HttpStatus, Page, Pageable } from "../lib";
 
 import { BaseService } from "./BaseService";
 
 export class FoodService extends BaseService {
 
-    public static async getAllFood(query: any): Promise<[Food[], number]> {
-        return Food.findAll(query);
+    public static async getAllFood(p: Pageable, req: IFoodSearchRequest): Promise<Page<Food>> {
+        return Food.findAll(p, req);
     }
 
     public static async getFood(id: number): Promise<Food> {

@@ -8,7 +8,9 @@
 
 import { Column, Entity, OneToOne } from "typeorm";
 
-import { BaseEntityHiddenId, IBaseQueryOptions, optionDefault } from "./BaseEntityHiddenId";
+import { Utils } from "../lib";
+
+import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
 
 import { AuthAppLogo } from "./AuthAppLogo";
 export { AuthAppLogo };
@@ -42,33 +44,38 @@ export class AuthApp extends BaseEntityHiddenId {
     // Repository functions
 
     public static async findAll(options: IBaseQueryOptions = {}): Promise<AuthApp[]> {
-        let query = this
-            .createQueryBuilder("auth_app");
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("auth_app.deleted = 0");
+        let qb = this.createQueryBuilder("auth_app");
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb.andWhere("auth_app.deleted = 0");
         }
-        return query.getMany();
+
+        return qb.getMany();
     }
 
     public static async findByAppid(appid: string, options: IBaseQueryOptions = {}): Promise<AuthApp | undefined> {
-        let query = this
+        let qb = this
             .createQueryBuilder("auth_app")
             .where("auth_app.appid = :appid", { appid });
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("auth_app.deleted = 0");
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb.andWhere("auth_app.deleted = 0");
         }
-        return query.getOne();
+
+        return qb.getOne();
     }
 
     public static async findByClientId(clientId: string, options: IBaseQueryOptions = {}):
-        Promise<AuthApp | undefined> {
-        let query = this
+                                       Promise<AuthApp | undefined> {
+        let qb = this
             .createQueryBuilder("auth_app")
             .where("auth_app.client_id = :clientId", { clientId });
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("auth_app.deleted = 0");
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb.andWhere("auth_app.deleted = 0");
         }
-        return query.getOne();
+
+        return qb.getOne();
     }
 
 }

@@ -31,7 +31,8 @@ export class UserConfirmation extends BaseEntity {
     public static async findByCode(code: string): Promise<UserConfirmation | undefined> {
         const query = this
             .createQueryBuilder("confirmation")
-            .andWhere("confirmation.code = :code", { code });
+            .where("confirmation.code = :code", { code });
+
         return query.getOne();
     }
 

@@ -9,12 +9,12 @@ info:
 servers:
   - url: "https://api.diabetips.fr"
 tags:
-  - name: "Pagination"
+  - name: "Paging"
     description: >
-      Multitple routes of this API implement pagination, which you can interact with by using the following query
+      Multiple routes of this API implement paging, which can be interacted with by using the following query
       parameters:
         - `page` which controls the number of the page to return. (Default: 1, the first page)
-        - `size` which controls the number of items returned in each page. (Default: 20)
+        - `size` which controls the number of items returned in each page. (Default: 20, Maximum: 100)
 
 
       Along with the requested data, these routes will produce an additional HTTP header `X-Pages` in the response. This
@@ -24,7 +24,7 @@ tags:
         * `last: X` where X is the last page number.
 
 
-      Routes that implement pagination:
+      Routes that implement paging:
        - [Users - Get all users](#tag/Users/paths/~1v1~1users/get)
        - [Meals - Get all meals](#tag/Meals/paths/~1v1~1users~1{uid}~1meals/get)
        - [Recipe - Get all food items](#tag/Recipes/paths/~1v1~1food/get)

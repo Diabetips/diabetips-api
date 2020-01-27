@@ -8,10 +8,9 @@
 
 import { Request, Response } from "express";
 
-import { HttpStatus } from "../lib";
+import { HttpStatus, Page, Pageable } from "../lib";
 import { InsulinService } from "../services";
 
-import { getPageHeader } from "../entities/BaseEntity";
 import { BaseController } from "./BaseController";
 
 export class UserInsulinController extends BaseController {
@@ -32,11 +31,8 @@ export class UserInsulinController extends BaseController {
     }
 
     private async getAllUserInsulin(req: Request, res: Response) {
-        const [insulin, count] = await InsulinService.getAllInsulin(req.params.userUid, req.query);
-        const header = getPageHeader(count, req.query);
-
-        res.setHeader("X-Pages", header);
-        res.send(insulin);
+        const page = await InsulinService.getAllInsulin(req.params.userUid, new Pageable(req.query));
+        page.sendAs(res);
     }
 
     private async addUserInsulin(req: Request, res: Response) {

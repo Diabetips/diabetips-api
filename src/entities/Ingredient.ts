@@ -8,7 +8,9 @@
 
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
-import { BaseEntityHiddenId, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntityHiddenId";
+import { Utils } from "../lib";
+
+import { BaseEntityHiddenId, IBaseQueryOptions, IBaseSearchRequest } from "./BaseEntityHiddenId";
 
 import { Food } from "./Food";
 import { Recipe } from "./Recipe";
@@ -34,26 +36,25 @@ export class Ingredient extends BaseEntityHiddenId {
 
     public static async findAll(req: IIngredientSearchRequest = {},
                                 options: IIngredientQueryOptions = {}): Promise<Ingredient[]> {
-        let query = this
-            .createQueryBuilder("ingredient");
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("ingredient.deleted = 0");
+        let qb = this.createQueryBuilder("ingredient");
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb.andWhere("ingredient.deleted = 0");
         }
 
-        return query.getMany();
+        return qb.getMany();
     }
 
     public static async findById(id: number, options: IIngredientQueryOptions = {}): Promise<Ingredient | undefined> {
-        let query = this
+        let qb = this
             .createQueryBuilder("ingredient")
-            .andWhere("ingredient.id = :id", { id });
+            .where("ingredient.id = :id", { id });
 
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("ingredient.deleted = 0");
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb.andWhere("ingredient.deleted = 0");
         }
 
-        return query.getOne();
-
+        return qb.getOne();
     }
 
 }

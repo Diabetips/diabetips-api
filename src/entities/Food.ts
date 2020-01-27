@@ -8,7 +8,9 @@
 
 import { Column, Entity, OneToOne } from "typeorm";
 
-import { BaseEntity, getPageableQuery, IBaseQueryOptions, IBaseSearchRequest, optionDefault } from "./BaseEntity";
+import { Page, Pageable, Utils } from "../lib";
+
+import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest } from "./BaseEntity";
 
 import { FoodPicture } from "./FoodPicture";
 export { FoodPicture };
@@ -30,32 +32,34 @@ export class Food extends BaseEntity {
 
     // Repository functions
 
-    public static async findAll(req: IFoodSearchRequest = {}, options: IFoodQueryOptions = {}):
-                                Promise<[Food[], number]> {
-        let query = this
-            .createQueryBuilder("food");
+    public static async findAll(p: Pageable,
+                                req: IFoodSearchRequest = {},
+                                options: IFoodQueryOptions = {}):
+                                Promise<Page<Food>> {
+        let qb = this.createQueryBuilder("food");
 
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("food.deleted = 0");
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb.andWhere("food.deleted = 0");
         }
         if (req.name !== undefined) {
-            query = query.andWhere(`food.name LIKE :name`, { name: "%" + req.name + "%" });
+            qb = qb.andWhere(`food.name LIKE :name`, { name: "%" + req.name + "%" });
         }
 
-        query = getPageableQuery(query, req);
-
-        return query.getManyAndCount();
+        return p.query(qb);
     }
 
     public static async findById(id: number, options: IFoodQueryOptions = {}): Promise<Food | undefined> {
-        let query = this
+        let qb = this
             .createQueryBuilder("food")
             .where("food.id = :id", { id });
-        if (optionDefault(options.hideDeleted, true)) {
-            query = query.andWhere("food.deleted = 0");
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb.andWhere("food.deleted = 0");
         }
-        return query.getOne();
+
+        return qb.getOne();
     }
+
 }
 
 // tslint:disable-next-line: no-empty-interface

@@ -8,10 +8,9 @@
 
 import { NextFunction, Request, Response } from "express";
 
-import { HttpStatus } from "../lib";
+import { HttpStatus, Page, Pageable } from "../lib";
 import { UserService } from "../services";
 
-import { getPageHeader } from "../entities/BaseEntity";
 import { BaseController } from "./BaseController";
 
 export class UserController extends BaseController {
@@ -34,11 +33,8 @@ export class UserController extends BaseController {
     }
 
     private async getAllUsers(req: Request, res: Response) {
-        const [users, count] = await UserService.getAllUsers(req.query);
-        const header = getPageHeader(count, req.query);
-
-        res.setHeader("X-Pages", header);
-        res.send(users);
+        const page = await UserService.getAllUsers(new Pageable(req.query));
+        page.sendAs(res);
     }
 
     private async registerUser(req: Request, res: Response) {
