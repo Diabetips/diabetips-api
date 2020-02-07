@@ -6,9 +6,10 @@ HbA1C:
   type: "object"
   properties:
     "id":
-      allOf:
-        - $component: "schemas:hba1c.yml:HbA1CId"
-        - readOnly: true
+      type: "number"
+      description: "The HbA1C measure point's identifier"
+      example: 2
+      readOnly: true
     "value":
       type: "number"
       description: "Value of the HbA1C measure as a percentage of glycated hemoglobin by total hemoglobin"
