@@ -27,8 +27,8 @@ export async function sendMail(template: string,
                                options?: pug.Options & pug.LocalsObject): Promise<nodemailer.SentMessageInfo> {
     options = {
         ...options,
-        ...(await getLang(lang)).mail[template],
-        ...(await getLang(lang)).mail_template,
+        ...getLang(lang)?.mail[template],
+        ...getLang(lang)?.mail_template,
     };
 
     return mail.sendMail({

@@ -6,7 +6,17 @@
 ** Created by Arthur MELIN on Sun Dec 15 2019
 */
 
-import fs = require("fs");
+import { lang as en } from "./en";
+import { lang as fr } from "./fr";
+
+// tslint:disable:no-var-requires
+const langs = new Map<string, Lang>();
+langs.set("en", en);
+langs.set("fr", fr);
+
+export const hasLang = (name: string) => langs.has(name);
+export const getLang = (name: string) => langs.get(name);
+export const getLangs = () => Array.from(langs.keys());
 
 type MailBase = {
     [key in string]: {
@@ -68,8 +78,13 @@ type MailInviteConnection = {
     }
 };
 
-type Mail = MailBase & MailAccountDeletion & MailAccountEmailChanged & MailAccountPasswordChanged &
-    MailAccountPasswordReset & MailAccountRegistration & MailInviteConnection;
+type Mail = MailBase
+    & MailAccountDeletion
+    & MailAccountEmailChanged
+    & MailAccountPasswordChanged
+    & MailAccountPasswordReset
+    & MailAccountRegistration
+    & MailInviteConnection;
 
 export interface Lang {
     mail: Mail;
@@ -81,28 +96,4 @@ export interface Lang {
         template_contact: string;
         template_contact_email: string;
     };
-}
-
-const cache = new Map<string, Lang>();
-
-export async function hasLang(name: string): Promise<boolean> {
-    async function exists(path: string): Promise<boolean> {
-        return new Promise<boolean>((resolve) => {
-            fs.access(path, fs.constants.F_OK, (err) => {
-                resolve(err === undefined);
-            });
-        });
-    }
-
-    return exists(`${__dirname}/${name}.ts`) || exists(`${__dirname}/${name}.js`);
-}
-
-export async function getLang(name: string): Promise<Lang> {
-    if (!cache.has(name)) {
-        const lang = (await import(`./${name}`)).lang;
-        cache.set(name, lang);
-        return lang;
-    } else {
-        return cache.get(name) as Lang;
-    }
 }
