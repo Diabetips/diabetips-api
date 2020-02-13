@@ -96,6 +96,12 @@
     summary: "Update meal"
     description: >
       Update the meal of the user with the specified UID and ID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:meal.yml:Meal"
     responses:
       200:
         description: "The updated meal's data"

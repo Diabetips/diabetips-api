@@ -67,6 +67,12 @@
     summary: "Add HbA1C measure"
     description: >
       Add an HbA1C measure for the user with the specified UID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:hba1c.yml:HbA1C"
     responses:
       200:
         description: "The HbA1C measure was added"
@@ -115,6 +121,12 @@
     summary: "Update HbA1C measure"
     description: >
       Update the HbA1C measure for the user with the specified UID and ID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:hba1c.yml:HbA1C"
     responses:
       200:
         description: "The updated HbA1C measure's data"
@@ -194,6 +206,12 @@
     summary: "Add insulin injection"
     description: >
       Add an insulin injection for the user with the specified UID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:insulin.yml:Insulin"
     responses:
       200:
         description: "The insulin injection was added"
@@ -242,6 +260,12 @@
     summary: "Update insulin injection"
     description: >
       Update the insulin injection for the user with the specified UID and ID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:insulin.yml:Insulin"
     responses:
       200:
         description: "The updated insulin injection's data"
