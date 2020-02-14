@@ -35,6 +35,8 @@ import { ApiError } from "./errors";
 import { HttpStatus, Utils } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
 import { AuthService } from "./services";
+import { UserHeightController } from "./controllers/UserHeightController";
+import { UserMassController } from "./controllers/UserMassController";
 
 export const app = express();
 
@@ -78,6 +80,8 @@ app.use("/v1/users", new UserHba1cController().router);
 app.use("/v1/users", new UserMealController().router);
 app.use("/v1/users", new UserInsulinController().router);
 app.use("/v1/users", new UserNoteController().router);
+app.use("/v1/users", new UserHeightController().router);
+app.use("/v1/users", new UserMassController().router);
 app.use("/v1/users", new UserEventController().router);
 app.use("/v1/users", new UserPictureController().router);
 

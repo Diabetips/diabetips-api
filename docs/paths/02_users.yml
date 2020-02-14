@@ -141,6 +141,58 @@
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/mass":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Users"
+    summary: "Get user mass history"
+    description: >
+      Get the mass history of the user with the specified UID.
+    responses:
+      200:
+        description: "The mass history"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:mass.yml:Mass"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/height":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Users"
+    summary: "Get user height history"
+    description: >
+      Get the height history of the user with the specified UID.
+    responses:
+      200:
+        description: "The height history"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:height.yml:Height"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
 "/v1/users/{uid}/picture":
   parameters:
     - $component: "parameters:uid.yml:UID"
