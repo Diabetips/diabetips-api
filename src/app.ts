@@ -33,6 +33,7 @@ import { ApiError } from "./errors";
 import { HttpStatus, Utils } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
 import { AuthService } from "./services";
+import { UserNoteController } from "./controllers/UserNoteController";
 
 export const app = express();
 
@@ -75,6 +76,8 @@ app.use("/v1/users", new UserGlucoseController().router);
 app.use("/v1/users", new UserHba1cController().router);
 app.use("/v1/users", new UserMealController().router);
 app.use("/v1/users", new UserInsulinController().router);
+app.use("/v1/users", new UserNoteController().router);
+// app.use("/v1/users", new UserNoteController().router);
 app.use("/v1/users", new UserPictureController().router);
 
 // 404 handler
