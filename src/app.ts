@@ -28,6 +28,8 @@ import {
     UserMealController,
     UserPictureController,
 } from "./controllers";
+import { UserEventController } from "./controllers/UserEventController";
+import { UserNoteController } from "./controllers/UserNoteController";
 import { getDocsSpec } from "./docs";
 import { ApiError } from "./errors";
 import { HttpStatus, Utils } from "./lib";
@@ -75,6 +77,8 @@ app.use("/v1/users", new UserGlucoseController().router);
 app.use("/v1/users", new UserHba1cController().router);
 app.use("/v1/users", new UserMealController().router);
 app.use("/v1/users", new UserInsulinController().router);
+app.use("/v1/users", new UserNoteController().router);
+app.use("/v1/users", new UserEventController().router);
 app.use("/v1/users", new UserPictureController().router);
 
 // 404 handler

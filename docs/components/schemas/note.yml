@@ -1,0 +1,16 @@
+Note:
+  type: "object"
+  properties:
+    "id":
+      type: "integer"
+      description: "The note's ID"
+      example: 1
+      readOnly: true
+    "description":
+      type: "string"
+      description: "The note's description"
+      example: "I woke up"
+    "timestamp":
+      type: "number"
+      description: "UNIX timestamp of the note (in the UTC timezone)"
+      example: 1576359970
