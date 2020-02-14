@@ -14,6 +14,12 @@ import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest } from "./BaseEntity"
 
 import { User } from "./User";
 
+export enum InsulinType {
+    SLOW = "slow",
+    FAST = "fast",
+    VERY_FAST = "very_fast",
+}
+
 @Entity()
 export class Insulin extends BaseEntity {
 
@@ -22,6 +28,12 @@ export class Insulin extends BaseEntity {
 
     @Column({ type: "float" })
     public quantity: number;
+
+    @Column({
+        type: "simple-enum",
+        enum: InsulinType,
+    })
+    public type: InsulinType;
 
     @Column()
     public description: string;
