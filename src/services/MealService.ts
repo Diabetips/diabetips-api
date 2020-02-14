@@ -65,7 +65,6 @@ export class MealService extends BaseService {
     public static async updateMeal(params: IMealParams, req: IUpdateMealRequest): Promise<Meal> {
         const meal = await Meal.findById(params.userUid, params.mealId);
 
-        // TODO? might have to change the error on that one ?
         if (meal === undefined) {
             throw new ApiError(HttpStatus.NOT_FOUND, "meal_not_found", `Meal (${params.mealId}) or User (${params.userUid}) not found`);
         }
