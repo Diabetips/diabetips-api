@@ -1,0 +1,30 @@
+BloodSugar:
+  type: "object"
+  properties:
+    "start":
+      type: "integer"
+      description: "Timestamp for the first data measure"
+      example: 1581808876
+      writeOnly: true
+    "interval":
+      type: "integer"
+      description: "Interval (in seconds) between each data measure"
+      example: 1581808876
+      writeOnly: true
+    "measures":
+      type: array
+      description: "List of data measures"
+      items:
+        type: "number"
+        example: 56.2
+      writeOnly: true
+    "timestamp":
+      type: "integer"
+      description: "Timestamp of the measure"
+      example: 1581808876
+      readOnly: true
+    "value":
+      type: "number"
+      description: "Value of the measure"
+      example: 56.2
+      readOnly: true
