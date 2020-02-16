@@ -28,6 +28,9 @@ export class Meal extends BaseEntity {
     @Column({ type: "float" })
     public total_sugar: number;
 
+    @Column()
+    public timestamp: number;
+
     @ManyToMany((type) => Recipe)
     @JoinTable({
         name: "meal_recipes",

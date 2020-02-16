@@ -15,11 +15,13 @@ import { BaseService } from "./BaseService";
 interface ICreateMealRequest {
     description: string;
     recipes_ids: number[];
+    timestamp: number;
 }
 
 interface IUpdateMealRequest {
     description?: string;
     recipes_ids?: number[];
+    timestamp?: number;
 }
 
 export class MealService extends BaseService {
@@ -47,6 +49,7 @@ export class MealService extends BaseService {
         // Add meal
         const meal = new Meal();
         meal.description = req.description;
+        meal.timestamp = req.timestamp;
         meal.user = Promise.resolve(user);
         meal.recipes = [];
         meal.total_sugar = 0;
@@ -70,6 +73,7 @@ export class MealService extends BaseService {
         }
 
         if (req.description !== undefined) { meal.description = req.description; }
+        if (req.timestamp !== undefined) { meal.timestamp = req.timestamp; }
         if (req.recipes_ids !== undefined) {
             meal.recipes = [];
             meal.total_sugar = 0;
