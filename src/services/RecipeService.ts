@@ -99,7 +99,10 @@ export class RecipeService extends BaseService {
 
     public static async deleteRecipe(id: number): Promise<void> {
         const recipe = await this.getRecipe(id);
+        if (recipe === undefined) {
+            throw new ApiError(HttpStatus.NOT_FOUND, "recipe_not_found", `Recipe ${id} not found`);
+        }
         recipe.deleted = true;
-        recipe.save();
+        await recipe.save();
     }
 }
