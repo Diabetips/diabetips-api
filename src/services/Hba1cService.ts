@@ -73,6 +73,6 @@ export class Hba1cService extends BaseService {
             throw new ApiError(HttpStatus.NOT_FOUND, "hba1c_not_found", `Hba1c ${hba1cId} or user ${patientUid} not found`);
         }
         hba1c.deleted = true;
-        return hba1c.save();
+        await hba1c.save();
     }
 }

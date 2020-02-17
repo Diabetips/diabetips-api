@@ -85,7 +85,7 @@ export class InsulinService extends BaseService {
         return insulin.save();
     }
 
-    private static getEnumFromString(type: string): InsulinType {
+    public static getEnumFromString(type: string): InsulinType {
         if (type === InsulinType.SLOW) {
             return InsulinType.SLOW;
         } else if (type === InsulinType.FAST) {
