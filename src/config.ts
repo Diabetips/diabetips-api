@@ -6,7 +6,7 @@
 ** Created by Arthur MELIN on Wed Aug 28 2019
 */
 
-import { Utils } from "./lib";
+import { Utils } from "./lib/Utils"; // direct path to avoid cyclic imports in Lib
 
 const env = process.env.DIABETIPS_ENV || "dev";
 

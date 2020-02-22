@@ -6,6 +6,7 @@
 ** Created by Arthur MELIN on Sun Jan 26 2020
 */
 
+import { IsInt, IsPositive, Max } from "class-validator";
 import { SelectQueryBuilder } from "typeorm";
 
 import { config } from "../config";
@@ -13,26 +14,14 @@ import { config } from "../config";
 import { Page } from "./Page";
 
 export class Pageable {
+    @IsInt()
+    @IsPositive()
+    public page: number = 1;
 
-    public size: number;
-    public page: number;
-
-    constructor(query: any) {
-        function convertToNumber(param: any, defaultValue: number) {
-            if (param !== undefined) {
-                if (typeof(param) === "string") {
-                    param = parseInt(param, 10);
-                }
-                if (typeof(param) === "number") {
-                    return Math.max(param, 1);
-                }
-            }
-            return defaultValue;
-        }
-
-        this.size = Math.min(convertToNumber(query.size, config.paging.defaultSize), config.paging.maxSize);
-        this.page = convertToNumber(query.page, 1);
-    }
+    @IsInt()
+    @IsPositive()
+    @Max(config.paging.maxSize)
+    public size: number = config.paging.defaultSize;
 
     /**
      * Add limit and offset parameters on the given query builder for pagination

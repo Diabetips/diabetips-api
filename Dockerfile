@@ -1,6 +1,6 @@
 ARG node_version=13.8
 
-FROM node:${node_version}
+FROM node:${node_version} AS build
 RUN useradd -m diabetips-api
 USER diabetips-api
 WORKDIR /home/diabetips-api
@@ -15,9 +15,9 @@ RUN useradd -m diabetips-api
 USER diabetips-api
 WORKDIR /home/diabetips-api
 COPY package.json ./
-COPY --from=0 /home/diabetips-api/node_modules ./node_modules
+COPY --from=build /home/diabetips-api/node_modules ./node_modules
 COPY config ./config
 COPY data ./data
 COPY docs ./docs
 COPY views ./views
-COPY --from=0 /home/diabetips-api/build ./build
+COPY --from=build /home/diabetips-api/build ./build

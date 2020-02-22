@@ -18,15 +18,12 @@ export interface IControllerOptions {
 
 export class BaseController {
 
-    public router: express.Router;
-
     // Pre-configured middlewares
     protected formParser: express.RequestHandler;
     protected jsonParser: express.RequestHandler;
     protected rawParser: express.RequestHandler;
 
     constructor(options: IControllerOptions = {}) {
-        this.router = express.Router(options.routerOptions);
         this.formParser = bodyParser.urlencoded(options.formParserOptions || {
             extended: true,
         });
