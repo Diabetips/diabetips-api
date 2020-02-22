@@ -1,0 +1,14 @@
+diff --git a/node_modules/typeorm/driver/sqlite-abstract/AbstractSqliteDriver.js b/node_modules/typeorm/driver/sqlite-abstract/AbstractSqliteDriver.js
+index 606ee36..e3297a6 100644
+--- a/node_modules/typeorm/driver/sqlite-abstract/AbstractSqliteDriver.js
++++ b/node_modules/typeorm/driver/sqlite-abstract/AbstractSqliteDriver.js
+@@ -377,6 +377,9 @@ var AbstractSqliteDriver = /** @class */ (function () {
+      */
+     AbstractSqliteDriver.prototype.createFullType = function (column) {
+         var type = column.type;
++        if (column.enum) {
++            return 'varchar'
++        }
+         if (column.length) {
+             type += "(" + column.length + ")";
+         }

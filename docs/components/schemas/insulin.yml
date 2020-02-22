@@ -20,3 +20,11 @@ Insulin:
       type: "number"
       description: "UNIX timestamp of the insulin injection (in the UTC timezone)"
       example: 1576359970
+    "type":
+      type: string
+      example: slow
+      enum:
+        - slow
+        - fast
+        - very_fast
+      nullable: false

@@ -22,12 +22,16 @@ import {
     UserAppController,
     UserConnectionController,
     UserController,
-    UserGlucoseController,
     UserHba1cController,
     UserInsulinController,
     UserMealController,
     UserPictureController,
 } from "./controllers";
+import { UserBloodSugarController } from "./controllers/UserBloodSugar";
+import { UserEventController } from "./controllers/UserEventController";
+import { UserHeightController } from "./controllers/UserHeightController";
+import { UserMassController } from "./controllers/UserMassController";
+import { UserNoteController } from "./controllers/UserNoteController";
 import { getDocsSpec } from "./docs";
 import { ApiError } from "./errors";
 import { HttpStatus, Utils } from "./lib";
@@ -65,17 +69,26 @@ app.get("/openapi.yml", getDocsSpec);
 app.use("/v1/auth", new AuthController().router);
 app.use("/v1/auth/apps", new AuthAppController().router);
 app.use("/v1/auth/apps", new AuthAppLogoController().router);
+
 app.use("/v1/food", new FoodController().router);
 app.use("/v1/food", new FoodPictureController().router);
 app.use("/v1/recipes", new RecipeController().router);
+app.use("/v1/users", new UserMealController().router);
+
 app.use("/v1/users", new UserController().router);
+app.use("/v1/users", new UserPictureController().router);
+app.use("/v1/users", new UserHeightController().router);
+app.use("/v1/users", new UserMassController().router);
+
 app.use("/v1/users", new UserAppController().router);
 app.use("/v1/users", new UserConnectionController().router);
-app.use("/v1/users", new UserGlucoseController().router);
+
+app.use("/v1/users", new UserBloodSugarController().router);
 app.use("/v1/users", new UserHba1cController().router);
-app.use("/v1/users", new UserMealController().router);
 app.use("/v1/users", new UserInsulinController().router);
-app.use("/v1/users", new UserPictureController().router);
+
+app.use("/v1/users", new UserNoteController().router);
+app.use("/v1/users", new UserEventController().router);
 
 // 404 handler
 app.use((req: Request, res: Response, next: NextFunction) => {

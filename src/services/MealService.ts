@@ -15,11 +15,13 @@ import { BaseService } from "./BaseService";
 interface ICreateMealRequest {
     description: string;
     recipes_ids: number[];
+    timestamp: number;
 }
 
 interface IUpdateMealRequest {
     description?: string;
     recipes_ids?: number[];
+    timestamp?: number;
 }
 
 export class MealService extends BaseService {
@@ -47,6 +49,7 @@ export class MealService extends BaseService {
         // Add meal
         const meal = new Meal();
         meal.description = req.description;
+        meal.timestamp = req.timestamp;
         meal.user = Promise.resolve(user);
         meal.recipes = [];
         meal.total_sugar = 0;
@@ -65,12 +68,12 @@ export class MealService extends BaseService {
     public static async updateMeal(params: IMealParams, req: IUpdateMealRequest): Promise<Meal> {
         const meal = await Meal.findById(params.userUid, params.mealId);
 
-        // TODO? might have to change the error on that one ?
         if (meal === undefined) {
             throw new ApiError(HttpStatus.NOT_FOUND, "meal_not_found", `Meal (${params.mealId}) or User (${params.userUid}) not found`);
         }
 
         if (req.description !== undefined) { meal.description = req.description; }
+        if (req.timestamp !== undefined) { meal.timestamp = req.timestamp; }
         if (req.recipes_ids !== undefined) {
             meal.recipes = [];
             meal.total_sugar = 0;

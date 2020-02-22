@@ -42,15 +42,15 @@ export class Recipe extends BaseEntity {
         if (Utils.optionDefault(options.hideDeleted, true)) {
             subqb = subqb.andWhere("recipe.deleted = 0");
         }
-        if (req.name !== undefined) {
-            subqb = subqb.andWhere(`recipe.name LIKE :name`, { name: "%" + req.name + "%" });
-        }
-
-        const qb = this
+        let qb = this
             .createQueryBuilder("recipe")
             .leftJoinAndSelect("recipe.ingredients", "ingredients")
             .leftJoinAndSelect("ingredients.food", "food")
             .where("recipe.id IN (" + p.limit(subqb).getQuery() + ")");
+
+        if (req.name !== undefined) {
+            qb = qb.andWhere(`recipe.name LIKE :name`, { name: "%" + req.name + "%" });
+        }
 
         return p.queryWithCountQuery(qb, subqb);
     }

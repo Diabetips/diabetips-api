@@ -1,0 +1,262 @@
+"/v1/users/{uid}/notes":
+  get:
+    tags:
+      - "Notes"
+    summary: "Get all notes of the specified user"
+    description: >
+      Get a list of all the notes of the user with the specified UID.
+
+
+      Implements [Paging](#tag/Paging)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+    responses:
+      200:
+        description: "List of all user's notes"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:note.yml:Note"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  post:
+    tags:
+      - "Notes"
+    summary: "Create a note"
+    description: >
+      Create a note for the user with the specified UID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:note.yml:Note"
+    responses:
+      201:
+        description: "The note was created"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:note.yml:Note"
+"/v1/users/{uid}/notes/{note_id}":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+    - $component: "parameters:note_id.yml:NoteId"
+  get:
+    tags:
+      - "Notes"
+    summary: "Get user's note"
+    description: >
+      Get the note of the user with the specified UID and ID.
+    responses:
+      200:
+        description: "The note"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:note.yml:Note"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to view
+           them
+           * No note with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  put:
+    tags:
+      - "Notes"
+    summary: "Update note"
+    description: >
+      Update the note of the user with the specified UID and ID.
+
+
+      Not all fields of the request body are required, only the fields that should be updated must be present.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:note.yml:Note"
+    responses:
+      200:
+        description: "The updated note's data"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:note.yml:Note"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to modify
+           them
+           * No note with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  delete:
+    tags:
+      - "Notes"
+    summary: "Remove note"
+    description: >
+      Delete the note of the user with the specified UID and ID.
+    responses:
+      204:
+        description: "The note was removed"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No meal with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/events":
+  get:
+    tags:
+      - "Notes"
+    summary: "Get all events of the specified user"
+    description: >
+      Get a list of all the events of the user with the specified UID.
+
+
+      Implements [Paging](#tag/Paging)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+    responses:
+      200:
+        description: "List of all user's events"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:event.yml:Event"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  post:
+    tags:
+      - "Notes"
+    summary: "Create an event"
+    description: >
+      Create an event for the user with the specified UID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:event.yml:Event"
+    responses:
+      201:
+        description: "The event was created"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:event.yml:Event"
+"/v1/users/{uid}/events/{event_id}":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+    - $component: "parameters:event_id.yml:EventId"
+  get:
+    tags:
+      - "Notes"
+    summary: "Get user's event"
+    description: >
+      Get the event of the user with the specified UID and ID.
+    responses:
+      200:
+        description: "The event"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:event.yml:Event"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to view
+           them
+           * No event with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  put:
+    tags:
+      - "Notes"
+    summary: "Update event"
+    description: >
+      Update the event of the user with the specified UID and ID.
+
+
+      Not all fields of the request body are required, only the fields that should be updated must be present.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:event.yml:Event"
+    responses:
+      200:
+        description: "The updated event's data"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:event.yml:Event"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to modify
+           them
+           * No event with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  delete:
+    tags:
+      - "Notes"
+    summary: "Remove event"
+    description: >
+      Delete the event of the user with the specified UID and ID.
+    responses:
+      204:
+        description: "The event was removed"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No meal with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"

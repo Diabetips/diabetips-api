@@ -1,0 +1,8 @@
+NoteId:
+  in: "path"
+  name: "note_id"
+  description: "The user note's ID"
+  required: true
+  schema:
+    type: "integer"
+    example: 1

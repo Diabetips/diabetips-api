@@ -15,7 +15,6 @@ import { RecipeController } from "./RecipeController";
 import { UserAppController } from "./UserAppController";
 import { UserConnectionController} from "./UserConnectionController";
 import { UserController } from "./UserController";
-import { UserGlucoseController } from "./UserGlucoseController";
 import { UserHba1cController } from "./UserHba1cController";
 import { UserInsulinController } from "./UserInsulinController";
 import { UserMealController } from "./UserMealController";
@@ -30,7 +29,6 @@ export {
     RecipeController,
     UserAppController,
     UserConnectionController,
-    UserGlucoseController,
     UserHba1cController,
     UserInsulinController,
     UserMealController,
