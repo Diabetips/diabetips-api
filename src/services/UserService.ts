@@ -13,29 +13,10 @@ import { IUserQueryOptions, User } from "../entities";
 import { ApiError } from "../errors";
 import { Context, HttpStatus, Page, Pageable } from "../lib";
 import { sendMail } from "../mail";
+import { UserCreateReq, UserResetPasswordReq, UserUpdateReq } from "../requests";
 
 import { BaseService } from "./BaseService";
 import { UserConfirmationService } from "./UserConfirmationService";
-
-export interface CreateUserReq {
-    email: string;
-    password: string;
-    lang: string;
-    first_name: string;
-    last_name: string;
-}
-
-export interface UpdateUserReq {
-    email?: string;
-    password?: string;
-    lang?: string;
-    first_name?: string;
-    last_name?: string;
-}
-
-export interface ResetPasswordReq {
-    email: string;
-}
 
 export class UserService extends BaseService {
 
@@ -60,11 +41,10 @@ export class UserService extends BaseService {
         return User.findAll(p);
     }
 
-    public static async registerUser(req: CreateUserReq): Promise<User> {
+    public static async registerUser(req: UserCreateReq): Promise<User> {
         // TODO
         // * access checks:
         //   if current user and current user not admin: throw access denied error
-        // * validation
 
         let user = new User();
 
@@ -74,7 +54,6 @@ export class UserService extends BaseService {
         user.lang = req.lang;
         user.first_name = req.first_name;
         user.last_name = req.last_name;
-        user.lang = req.lang;
 
         if (await User.countByEmail(user.email) > 0) {
             throw new ApiError(HttpStatus.CONFLICT, "email_conflict", "Email address already used by another account");
@@ -103,17 +82,15 @@ export class UserService extends BaseService {
         return user;
     }
 
-    public static async updateUser(uid: string, req: UpdateUserReq): Promise<User> {
-        // TODO
-        // * validation
+    public static async updateUser(uid: string, req: UserUpdateReq): Promise<User> {
         const user = await this.getUser(uid, { selectPassword: true });
 
-        if (req.lang !== undefined) { user.lang = req.lang; }
-        if (req.first_name !== undefined) { user.first_name = req.first_name; }
-        if (req.last_name !== undefined) { user.last_name = req.last_name; }
-        if (req.lang !== undefined) { user.lang = req.lang; }
+        if (req.lang != null) { user.lang = req.lang; }
+        if (req.first_name != null) { user.first_name = req.first_name; }
+        if (req.last_name != null) { user.last_name = req.last_name; }
+        if (req.lang != null) { user.lang = req.lang; }
 
-        if (req.email !== undefined && req.email !== user.email) {
+        if (req.email != null && req.email !== user.email) {
             if (await User.countByEmail(req.email) > 0) {
                 throw new ApiError(HttpStatus.CONFLICT, "email_conflict", "Email address already used by another account");
             }
@@ -126,7 +103,7 @@ export class UserService extends BaseService {
             user.email = req.email;
         }
 
-        if (req.password !== undefined && !await bcrypt.compare(req.password, user.password as string)) {
+        if (req.password != null && !await bcrypt.compare(req.password, user.password as string)) {
             user.password = req.password; // hashes password
 
             sendMail("account-password-changed", user.lang, user.email);
@@ -143,7 +120,7 @@ export class UserService extends BaseService {
         sendMail("account-deletion", user.lang, user.email);
     }
 
-    public static async resetUserPassword(req: ResetPasswordReq): Promise<void> {
+    public static async resetUserPassword(req: UserResetPasswordReq): Promise<void> {
         // TODO
         // * replace by sending a token in a link to the auth portal
 
