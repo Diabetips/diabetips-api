@@ -5,6 +5,7 @@ RUN useradd -m diabetips-api
 USER diabetips-api
 WORKDIR /home/diabetips-api
 COPY package.json package-lock.json tsconfig.json ./
+COPY patches ./patches
 RUN npm install --production
 COPY src ./src
 RUN npm run build
