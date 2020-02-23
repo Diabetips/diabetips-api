@@ -20,7 +20,7 @@ export class UserConfirmation extends BaseEntity {
     @JoinColumn({ name: "user_id" })
     public user: Promise<User>;
 
-    @Column({ type: "varchar", length: 36, unique: true, nullable: true })
+    @Column({ type: "uuid", nullable: true })
     public code?: string | null;
 
     @Column({ default: false })

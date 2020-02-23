@@ -18,13 +18,13 @@ export { AuthAppLogo };
 @Entity()
 export class AuthApp extends BaseEntityHiddenId {
 
-    @Column({ length: 36, unique: true })
+    @Column({ type: "uuid" })
     public appid: string;
 
     @Column({ length: 200 })
     public name: string;
 
-    @Column({ name: "client_id", length: 36 })
+    @Column({ name: "client_id", type: "uuid" })
     private _clientId: string;
 
     @Column({ name: "client_secret", length: 100 })
@@ -47,7 +47,7 @@ export class AuthApp extends BaseEntityHiddenId {
         let qb = this.createQueryBuilder("auth_app");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("auth_app.deleted = 0");
+            qb = qb.andWhere("auth_app.deleted = false");
         }
 
         return qb.getMany();
@@ -59,7 +59,7 @@ export class AuthApp extends BaseEntityHiddenId {
             .where("auth_app.appid = :appid", { appid });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("auth_app.deleted = 0");
+            qb = qb.andWhere("auth_app.deleted = false");
         }
 
         return qb.getOne();
@@ -72,7 +72,7 @@ export class AuthApp extends BaseEntityHiddenId {
             .where("auth_app.client_id = :clientId", { clientId });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("auth_app.deleted = 0");
+            qb = qb.andWhere("auth_app.deleted = false");
         }
 
         return qb.getOne();

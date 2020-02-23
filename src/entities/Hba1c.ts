@@ -37,8 +37,9 @@ export class Hba1c extends BaseEntity {
             .where("user.uid = :patientUid", { patientUid });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("user.deleted = 0")
-                         .andWhere("hba1c.deleted = 0");
+            qb = qb
+                .andWhere("user.deleted = false")
+                .andWhere("hba1c.deleted = false");
         }
 
         return p.query(qb);
@@ -55,8 +56,9 @@ export class Hba1c extends BaseEntity {
             .andWhere("user.uid = :patientUid", { patientUid });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("user.deleted = 0")
-                         .andWhere("hba1c.deleted = 0");
+            qb = qb
+                .andWhere("user.deleted = false")
+                .andWhere("hba1c.deleted = false");
         }
 
         return qb.getOne();

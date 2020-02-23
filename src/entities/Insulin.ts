@@ -30,7 +30,7 @@ export class Insulin extends BaseEntity {
     public quantity: number;
 
     @Column({
-        type: "simple-enum",
+        type: "enum",
         enum: InsulinType,
     })
     public type: InsulinType;
@@ -55,8 +55,9 @@ export class Insulin extends BaseEntity {
             .where("user.uid = :patientUid", { patientUid });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("user.deleted = 0")
-                         .andWhere("insulin.deleted = 0");
+            qb = qb
+                .andWhere("user.deleted = false")
+                .andWhere("insulin.deleted = false");
         }
 
         return p.query(qb);
@@ -73,8 +74,9 @@ export class Insulin extends BaseEntity {
             .andWhere("user.uid = :patientUid", { patientUid });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("user.deleted = 0")
-                         .andWhere("insulin.deleted = 0");
+            qb = qb
+                .andWhere("user.deleted = false")
+                .andWhere("insulin.deleted = false");
         }
 
         return qb.getOne();

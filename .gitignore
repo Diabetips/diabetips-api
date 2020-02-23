@@ -10,9 +10,6 @@
 # NodeJS modules cache directory
 /node_modules
 
-# Sqlite database files
-*.sqlite
-
 # Secrets
 /ormconfig.json
 /secrets.txt

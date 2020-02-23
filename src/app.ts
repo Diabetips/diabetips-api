@@ -50,7 +50,10 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"],
     exposedHeaders: ["X-Pages"],
 }));
-app.use(log4js.connectLogger(httpLogger, { level: "info" }));
+app.use(log4js.connectLogger(httpLogger, {
+    level: "info",
+    format: ":remote-addr > \":method :url\" > :status :content-lengthB :response-timems",
+}));
 app.use(async (req: Request, res: Response, next: NextFunction) => {
     req.context = {
         auth: await AuthService.decodeAuthorization(req.header("Authorization")),

@@ -22,7 +22,7 @@ export abstract class BaseEntityHiddenId extends TypeOrmBaseEntity {
     @UpdateDateColumn({ name: "updated_at" })
     private _updated_at: Date;
 
-    @Column({ name: "deleted_at", type: "datetime", nullable: true, default: undefined })
+    @Column({ name: "deleted_at", type: "timestamp", nullable: true, default: undefined })
     private _deleted_at: Date | undefined = undefined;
 
     @Column({ name: "deleted", default: false })

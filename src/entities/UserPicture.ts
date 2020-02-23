@@ -20,7 +20,7 @@ export class UserPicture extends BaseEntity {
     @JoinColumn({ name: "user_id" })
     public user: Promise<User>;
 
-    @Column()
+    @Column({ type: "bytea" })
     public blob: Buffer;
 
 }

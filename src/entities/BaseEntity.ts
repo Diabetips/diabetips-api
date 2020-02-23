@@ -6,8 +6,7 @@
 ** Created by Arthur MELIN on Thu Aug 29 2019
 */
 
-import { BaseEntity as TypeOrmBaseEntity, Column, CreateDateColumn, PrimaryGeneratedColumn, SelectQueryBuilder,
-    UpdateDateColumn } from "typeorm";
+import { BaseEntity as TypeOrmBaseEntity, Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export abstract class BaseEntity extends TypeOrmBaseEntity {
 
@@ -20,7 +19,7 @@ export abstract class BaseEntity extends TypeOrmBaseEntity {
     @UpdateDateColumn({ name: "updated_at" })
     private _updated_at: Date;
 
-    @Column({ name: "deleted_at", type: "datetime", nullable: true, default: undefined })
+    @Column({ name: "deleted_at", type: "timestamp", nullable: true, default: undefined })
     private _deleted_at: Date | undefined = undefined;
 
     @Column({ name: "deleted", default: false })

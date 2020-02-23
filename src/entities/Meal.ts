@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Mon Sep 02 2019
 */
 
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, SelectQueryBuilder } from "typeorm";
 
 import { Page, Pageable, Utils } from "../lib";
 
@@ -50,27 +50,31 @@ export class Meal extends BaseEntity {
                                 req: IMealSearchRequest = {},
                                 options: IMealQueryOptions = {}):
                                 Promise<Page<Meal>> {
-        let subqb = this
-            .createQueryBuilder("meal")
-            .select("meal.id")
-            .leftJoin("meal.user", "user")
-            .where("user.uid = :uid", { uid });
+        const subq = (sqb: SelectQueryBuilder<Meal>) => {
+            let subqb = sqb
+                .select("meal.id")
+                .leftJoin("meal.user", "user")
+                .where("user.uid = :uid", { uid });
 
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            subqb = subqb.andWhere("user.deleted = 0")
-                               .andWhere("meal.deleted = 0");
-        }
+            if (Utils.optionDefault(options.hideDeleted, true)) {
+                subqb = subqb
+                .andWhere("user.deleted = false")
+                .andWhere("meal.deleted = false");
+            }
+
+            return subqb;
+        };
 
         let qb = this
             .createQueryBuilder("meal")
             .leftJoinAndSelect("meal.recipes", "recipes")
-            .where("meal.id IN (" + p.limit(subqb).getQuery() + ")");
+            .where((sqb) => "meal.id IN " + p.limit(subq(sqb.subQuery().from("meal", "meal"))).getQuery());
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("recipes.deleted = 0");
+            qb = qb.andWhere("recipes.deleted = false");
         }
 
-        return p.queryWithCountQuery(qb, subqb);
+        return p.queryWithCountQuery(qb, subq(this.createQueryBuilder("meal")));
     }
 
     public static findById(uid: string,
@@ -85,9 +89,10 @@ export class Meal extends BaseEntity {
             .andWhere("meal.id = :mealId", { mealId });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("user.deleted = 0")
-                         .andWhere("meal.deleted = 0")
-                         .andWhere("recipes.deleted = 0");
+            qb = qb
+                .andWhere("user.deleted = false")
+                .andWhere("meal.deleted = false")
+                .andWhere("recipes.deleted = false");
         }
 
         return qb.getOne();

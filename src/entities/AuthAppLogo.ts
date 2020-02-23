@@ -20,7 +20,7 @@ export class AuthAppLogo extends BaseEntity {
     @JoinColumn({ name: "app_id" })
     public app: Promise<AuthApp>;
 
-    @Column()
+    @Column({ type: "bytea" })
     public blob: Buffer;
 
 }

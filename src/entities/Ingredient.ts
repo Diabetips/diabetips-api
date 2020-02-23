@@ -39,7 +39,7 @@ export class Ingredient extends BaseEntityHiddenId {
         let qb = this.createQueryBuilder("ingredient");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("ingredient.deleted = 0");
+            qb = qb.andWhere("ingredient.deleted = false");
         }
 
         return qb.getMany();
@@ -51,7 +51,7 @@ export class Ingredient extends BaseEntityHiddenId {
             .where("ingredient.id = :id", { id });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("ingredient.deleted = 0");
+            qb = qb.andWhere("ingredient.deleted = false");
         }
 
         return qb.getOne();

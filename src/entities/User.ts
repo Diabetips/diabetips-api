@@ -26,7 +26,7 @@ export { UserConfirmation, UserPicture };
 @Entity()
 export class User extends BaseEntityHiddenId {
 
-    @Column({ length: 36, unique: true })
+    @Column({ type: "uuid" })
     public uid: string;
 
     @Column({ length: 200 })
@@ -101,7 +101,7 @@ export class User extends BaseEntityHiddenId {
         let qb = this.createQueryBuilder("user");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("user.deleted = 0");
+            qb = qb.andWhere("user.deleted = false");
         }
 
         return p.query(qb);
@@ -116,7 +116,7 @@ export class User extends BaseEntityHiddenId {
             qb = qb.addSelect("user.password", "user_password");
         }
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("user.deleted = 0");
+            qb = qb.andWhere("user.deleted = false");
         }
 
         return qb.getOne();
@@ -138,7 +138,7 @@ export class User extends BaseEntityHiddenId {
             qb = qb.leftJoinAndSelect("user.confirmation", "confirmation");
         }
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("user.deleted = 0");
+            qb = qb.andWhere("user.deleted = false");
         }
 
         return qb.getOne();
@@ -150,7 +150,7 @@ export class User extends BaseEntityHiddenId {
             .where("lower(user.email) = lower(:email)", { email });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("user.deleted = 0");
+            qb = qb.andWhere("user.deleted = false");
         }
 
         return qb.getCount();

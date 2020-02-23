@@ -20,7 +20,7 @@ export class FoodPicture extends BaseEntity {
     @JoinColumn({ name: "food_id" })
     public food: Promise<Food>;
 
-    @Column()
+    @Column({ type: "bytea" })
     public blob: Buffer;
 
 }

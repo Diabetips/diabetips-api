@@ -1,5 +1,6 @@
 {
     "db": {
+        "type": "postgres",
         "entities": [
             "%{__dirname}/entities/**/*.{js,ts}"
         ]

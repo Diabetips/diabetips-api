@@ -39,8 +39,9 @@ export class Pageable {
      * @param qb The query builder
      */
     public limit<T>(qb: SelectQueryBuilder<T>): SelectQueryBuilder<T> {
-        return qb.limit(this.size)
-                    .offset(this.size * (this.page - 1));
+        return qb
+            .limit(this.size)
+            .offset(this.size * (this.page - 1));
     }
 
     /**

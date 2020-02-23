@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
-import { Column, Entity, OneToMany} from "typeorm";
+import { Column, Entity, OneToMany, SelectQueryBuilder } from "typeorm";
 
 import { Page, Pageable, Utils } from "../lib";
 
@@ -35,24 +35,26 @@ export class Recipe extends BaseEntity {
                                 req: IRecipeSearchRequest = {},
                                 options: IRecipeQueryOptions = {}):
                                 Promise<Page<Recipe>> {
-        let subqb = this
-            .createQueryBuilder("recipe")
-            .select("recipe.id");
+        const subq = (sqb: SelectQueryBuilder<Recipe>) => {
+            let subqb = sqb.select("recipe.id");
 
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            subqb = subqb.andWhere("recipe.deleted = 0");
-        }
-        let qb = this
+            if (Utils.optionDefault(options.hideDeleted, true)) {
+                subqb = subqb.andWhere("recipe.deleted = false");
+            }
+            if (req.name !== undefined) {
+                subqb = subqb.andWhere(`lower(recipe.name) LIKE lower(:name)`, { name: "%" + req.name + "%" });
+            }
+
+            return subqb;
+        };
+
+        const qb = this
             .createQueryBuilder("recipe")
             .leftJoinAndSelect("recipe.ingredients", "ingredients")
             .leftJoinAndSelect("ingredients.food", "food")
-            .where("recipe.id IN (" + p.limit(subqb).getQuery() + ")");
+            .where((sqb) => "recipe.id IN " + p.limit(subq(sqb.subQuery().from("recipe", "recipe"))).getQuery());
 
-        if (req.name !== undefined) {
-            qb = qb.andWhere(`recipe.name LIKE :name`, { name: "%" + req.name + "%" });
-        }
-
-        return p.queryWithCountQuery(qb, subqb);
+        return p.queryWithCountQuery(qb, subq(this.createQueryBuilder("recipe")));
     }
 
     public static async findById(id: number, options: IRecipeQueryOptions = {}): Promise<Recipe | undefined> {
@@ -63,7 +65,7 @@ export class Recipe extends BaseEntity {
             .where("recipe.id = :id", { id });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("recipe.deleted = 0");
+            qb = qb.andWhere("recipe.deleted = false");
         }
 
         return qb.getOne();

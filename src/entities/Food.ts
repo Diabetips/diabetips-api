@@ -39,10 +39,10 @@ export class Food extends BaseEntity {
         let qb = this.createQueryBuilder("food");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("food.deleted = 0");
+            qb = qb.andWhere("food.deleted = false");
         }
         if (req.name !== undefined) {
-            qb = qb.andWhere(`food.name LIKE :name`, { name: "%" + req.name + "%" });
+            qb = qb.andWhere(`lower(food.name) LIKE lower(:name)`, { name: "%" + req.name + "%" });
         }
 
         return p.query(qb);
@@ -54,7 +54,7 @@ export class Food extends BaseEntity {
             .where("food.id = :id", { id });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("food.deleted = 0");
+            qb = qb.andWhere("food.deleted = false");
         }
 
         return qb.getOne();
