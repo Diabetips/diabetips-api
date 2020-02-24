@@ -66,5 +66,7 @@
     "paging": {
         "defaultSize": 20,
         "maxSize": 100
+    },
+    "ws": {
     }
 }

@@ -6,14 +6,16 @@
 ** Created by Arthur MELIN on Tue Aug 27 2019
 */
 
+import "reflect-metadata";
+
 import http = require("http");
 import net = require("net");
-import "reflect-metadata";
 
 import { app } from "./app";
 import { config } from "./config";
 import { connectToDatabase } from "./db";
 import { log4js, logger } from "./logger";
+import { useServer as wsUseServer } from "./ws";
 
 async function main(args: string[]): Promise<void> {
     logger.info(`Starting ${config.pkg.name} ${config.pkg.version} ${config.env}`);
@@ -32,6 +34,8 @@ async function main(args: string[]): Promise<void> {
     await connectToDatabase();
 
     const server = http.createServer(app);
+    wsUseServer(server);
+
     server.listen(config.http, () => {
         const addr = server.address() as net.AddressInfo;
         const isIpV6 = addr.family === "IPv6";
