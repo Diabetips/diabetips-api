@@ -10,7 +10,7 @@ import express = require("express");
 // tslint:disable-next-line:no-var-requires
 require("express-async-errors"); // Express patch to handle errors correctly while using async handlers
 import { NextFunction, Request, Response } from "express";
-import { BadRequestError, useExpressServer } from "routing-controllers";
+import { Action, BadRequestError, useExpressServer } from "routing-controllers";
 
 import { getDocsSpec } from "./docs";
 import { ApiError, ValidationError } from "./errors";
@@ -29,14 +29,15 @@ preapp.use(log4js.connectLogger(httpLogger, {
     level: "info",
     format: ":remote-addr > \":method :url\" > :status :content-lengthB :response-timems",
 }));
-preapp.use(async (req: Request, res: Response, next: NextFunction) => {
-    req.context = {
-        auth: await AuthService.decodeAuthorization(req.header("Authorization")),
-    };
-    next();
-});
 
+// Setup routing-controllers
 export const app = useExpressServer(preapp, {
+    currentUserChecker: (async (action: Action) => {
+        // both set context in req and return to rounting-controllers
+        return action.request.context = {
+            auth: await AuthService.decodeAuthorization(action.request.header("Authorization")),
+        };
+    }),
     controllers: [ `${__dirname}/controllers/**/*.{js,ts}` ],
     cors: {
         methods: ["GET", "POST", "PUT", "DELETE"],
@@ -56,6 +57,7 @@ export const app = useExpressServer(preapp, {
     },
 });
 
+// Static routes
 app.get("/", (req: Request, res: Response) => {
     res.send({
         documentation_url: "https://docs.diabetips.fr/",

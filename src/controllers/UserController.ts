@@ -13,17 +13,15 @@ import { Pageable } from "../lib";
 import { UserCreateReq, UserUpdateReq } from "../requests";
 import { UserService } from "../services";
 
-import { BaseController } from "./BaseController";
-
 @JsonController("/v1/users")
-export class UserController extends BaseController {
+export class UserController {
 
     @All(/\/me(\/.*)?/)
     @UseBefore((req: Request, res: Response, next: NextFunction) => {
         req.url = "/" + UserService.getCurrentUser(req.context).uid + req.url.slice(3);
         next("route");
     })
-    private _() {
+    private meUrlRewrite() {
         throw Error("Unreachable code");
     }
 

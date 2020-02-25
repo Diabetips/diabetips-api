@@ -124,21 +124,18 @@ export class UserService extends BaseService {
         // TODO
         // * replace by sending a token in a link to the auth portal
 
-        // Prevent timing attacks by responding immediatly and doing the actual work in async
-        (async () => {
-            const user = await User.findByEmail(req.email);
-            if (user === undefined) {
-                return;
-            }
+        const user = await User.findByEmail(req.email);
+        if (user === undefined) {
+            return;
+        }
 
-            const password = this.generatePassword();
-            user.password = password; // hashes password
-            user.save();
+        const password = this.generatePassword();
+        user.password = password; // hashes password
+        user.save();
 
-            sendMail("account-password-reset", user.lang, user.email, {
-                password,
-            });
-        })();
+        sendMail("account-password-reset", user.lang, user.email, {
+            password,
+        });
     }
 
     private static generatePassword(): string {

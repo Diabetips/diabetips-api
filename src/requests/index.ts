@@ -6,5 +6,7 @@
 ** Created by Arthur MELIN on Tue Feb 11 2020
 */
 
+export * from "./UserConfirmAccountReq";
 export * from "./UserCreateReq";
 export * from "./UserUpdateReq";
+export * from "./UserResetPasswordReq";
