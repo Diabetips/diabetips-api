@@ -6,25 +6,17 @@
 ** Created by Arthur MELIN on Sat Jan 18 2020
 */
 
-import { Request, Response } from "express";
+import { ContentType, Controller, Get, Param } from "routing-controllers";
 
 import { FoodPictureService } from "../services";
 
-import { BaseController } from "./BaseController";
+@Controller("/v1/food/:id/picture")
+export class FoodPictureController {
 
-export class FoodPictureController extends BaseController {
-
-    constructor() {
-        super();
-
-        this.router
-            .get("/:id/picture", this.getFoodPicture);
-    }
-
-    private async getFoodPicture(req: Request, res: Response) {
-        res
-            .type("jpeg")
-            .send(await FoodPictureService.getFoodPicture(parseInt(req.params.id, 10)));
+    @Get("/")
+    @ContentType("jpeg")
+    private async getFoodPicture(@Param("id") id: number) {
+        return FoodPictureService.getFoodPicture(id);
     }
 
 }

@@ -6,48 +6,41 @@
 ** Created by Alexandre DE BEAUMONT on Fri Nov 15 2019
 */
 
-import { Request, Response } from "express";
+import { Response } from "express";
+import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
 
-import { HttpStatus, Page, Pageable } from "../lib";
+import { Pageable } from "../lib";
+import { Hba1cCreateReq, Hba1cUpdateReq } from "../requests";
 import { Hba1cService } from "../services";
 
-import { BaseController } from "./BaseController";
+@JsonController("/v1/users/:uid/hba1c")
+export class UserHba1cController {
 
-export class UserHba1cController extends BaseController {
-
-    constructor() {
-        super();
-
-        this.router
-            .get("/:uid/hba1c/",                        this.getAllUserHba1c)
-            .post("/:uid/hba1c/",      this.jsonParser, this.addUserHba1c)
-            .get("/:uid/hba1c/:id",                     this.getUserHba1c)
-            .put("/:uid/hba1c/:id",    this.jsonParser, this.updateUserHba1c)
-            .delete("/:uid/hba1c/:id",                  this.deleteUserHba1c);
+    @Get("/")
+    private async getAllUserHba1c(@Param("uid") uid: string, @QueryParams() p: Pageable, @Res() res: Response) {
+        const page = await Hba1cService.getAllHba1c(uid, p);
+        page.send(res);
     }
 
-    private async getAllUserHba1c(req: Request, res: Response) {
-        const page = await Hba1cService.getAllHba1c(req.params.uid, new Pageable(req.query));
-        page.sendAs(res);
+    @Post("/")
+    private async addUserHba1c(@Param("uid") uid: string, @Body() body: Hba1cCreateReq) {
+        return Hba1cService.addHba1c(uid, body);
     }
 
-    private async addUserHba1c(req: Request, res: Response) {
-        res.send(await Hba1cService.addHba1c(req.params.uid, req.body));
+    @Get("/:id")
+    private async getUserHba1c(@Param("uid") uid: string, @Param("id") hba1cId: number) {
+        return Hba1cService.getHba1c(uid, hba1cId);
     }
 
-    private async getUserHba1c(req: Request, res: Response) {
-        res.send(await Hba1cService.getHba1c(req.params.uid, parseInt(req.params.id, 10)));
+    @Put("/:id")
+    private async updateUserHba1c(@Param("uid") uid: string, @Param("id") hba1cId: number,
+                                  @Body() body: Hba1cUpdateReq) {
+        return Hba1cService.updateHba1c(uid, hba1cId, body);
     }
 
-    private async updateUserHba1c(req: Request, res: Response) {
-        res.send(await Hba1cService.updateHba1c(req.params.uid, parseInt(req.params.id, 10), req.body));
-    }
-
-    private async deleteUserHba1c(req: Request, res: Response) {
-        await Hba1cService.deleteHba1c(req.params.uid, parseInt(req.params.id, 10));
-        res
-            .status(HttpStatus.NO_CONTENT)
-            .send();
+    @Delete("/:id")
+    private async deleteUserHba1c(@Param("uid") uid: string, @Param("id") hba1cId: number) {
+        await Hba1cService.deleteHba1c(uid, hba1cId);
     }
 
 }

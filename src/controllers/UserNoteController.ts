@@ -6,47 +6,39 @@
 ** Created by Alexandre DE BEAUMONT on Fri Feb 14 2020
 */
 
-import { Request, Response } from "express";
-import { HttpStatus } from "../lib";
-import { BaseController } from "./BaseController";
+import { Delete, Get, JsonController, Param, Post, Put } from "routing-controllers";
 
-export class UserNoteController extends BaseController {
+@JsonController("/v1/users/:uid/notes")
+export class UserNoteController {
 
-    private static dummy = {
-        description: "this is a note's description",
+    private dummy = {
+        description: "Dummy note description",
         timestamp: 1581693368,
     };
 
-    constructor() {
-        super();
-
-        this.router
-        .get("/:userUid/notes",                         this.getAllNotes)
-        .post("/:userUid/notes",       this.jsonParser, this.createNote)
-        .get("/:userUid/notes/:id",                     this.getNote)
-        .put("/:userUid/notes/:id",    this.jsonParser, this.updateNote)
-        .delete("/:userUid/notes/:id",                  this.deleteNote);
+    @Get("/")
+    private async getAllNotes(@Param("uid") uid: string) {
+        return [this.dummy];
     }
 
-    private async getAllNotes(req: Request, res: Response) {
-        res.send([UserNoteController.dummy]);
+    @Post("/")
+    private async createNote(@Param("uid") uid: string) {
+        return this.dummy;
     }
 
-    private async createNote(req: Request, res: Response) {
-        res.send(UserNoteController.dummy);
+    @Get("/:id")
+    private async getNote(@Param("uid") uid: string, @Param("id") noteId: number) {
+        return this.dummy;
     }
 
-    private async getNote(req: Request, res: Response) {
-        res.send(UserNoteController.dummy);
+    @Put("/:id")
+    private async updateNote(@Param("uid") uid: string, @Param("id") noteId: number) {
+        return this.dummy;
     }
 
-    private async updateNote(req: Request, res: Response) {
-        res.send(UserNoteController.dummy);
+    @Delete("/:id")
+    private async deleteNote(@Param("uid") uid: string, @Param("id") noteId: number) {
+        //
     }
 
-    private async deleteNote(req: Request, res: Response) {
-        res
-            .status(HttpStatus.NO_CONTENT)
-            .send();
-    }
 }

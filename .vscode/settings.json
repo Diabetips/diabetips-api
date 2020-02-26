@@ -22,6 +22,7 @@
         "**/build": true,
         "**/logs": true,
         "**/node_modules/**": true,
-        "bin": true
+        "bin": true,
+        "patches": true
     }
 }

@@ -6,48 +6,34 @@
 ** Created by Alexandre DE BEAUMONT on Fri Feb 14 2020
 */
 
-import { Request, Response } from "express";
-import { HttpStatus } from "../lib";
-import { BaseController } from "./BaseController";
+import { JsonController, Param } from "routing-controllers";
 
-export class UserEventController extends BaseController {
+@JsonController("/v1/users/:uid/events")
+export class UserEventController {
 
-    private static dummy = {
-        description: "this is an event's description",
+    private dummy = {
+        description: "Dummy event description",
         start: 1581693368,
         end: 1581696111,
     };
 
-    constructor() {
-        super();
-
-        this.router
-        .get("/:userUid/events",                         this.getAllEvents)
-        .post("/:userUid/events",       this.jsonParser, this.createEvent)
-        .get("/:userUid/events/:id",                     this.getEvent)
-        .put("/:userUid/events/:id",    this.jsonParser, this.updateEvent)
-        .delete("/:userUid/events/:id",                  this.deleteEvent);
+    private async getAllEvents(@Param("uid") uid: string) {
+        return [this.dummy];
     }
 
-    private async getAllEvents(req: Request, res: Response) {
-        res.send([UserEventController.dummy]);
+    private async createEvent(@Param("uid") uid: string) {
+        return this.dummy;
     }
 
-    private async createEvent(req: Request, res: Response) {
-        res.send(UserEventController.dummy);
+    private async getEvent(@Param("uid") uid: string) {
+        return this.dummy;
     }
 
-    private async getEvent(req: Request, res: Response) {
-        res.send(UserEventController.dummy);
+    private async updateEvent(@Param("uid") uid: string) {
+        return this.dummy;
     }
 
-    private async updateEvent(req: Request, res: Response) {
-        res.send(UserEventController.dummy);
-    }
-
-    private async deleteEvent(req: Request, res: Response) {
-        res
-            .status(HttpStatus.NO_CONTENT)
-            .send();
+    private async deleteEvent(@Param("uid") uid: string) {
+        //
     }
 }

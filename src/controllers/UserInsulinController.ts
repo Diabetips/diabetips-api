@@ -6,65 +6,41 @@
 ** Created by Alexandre DE BEAUMONT on Fri Nov 15 2019
 */
 
-import { Request, Response } from "express";
+import { Response } from "express";
+import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
 
-import { HttpStatus, Page, Pageable } from "../lib";
+import { Pageable } from "../lib";
+import { InsulinCreateReq, InsulinUpdateReq } from "../requests";
 import { InsulinService } from "../services";
 
-import { BaseController } from "./BaseController";
+@JsonController("/v1/users/:uid/insulin")
+export class UserInsulinController {
 
-export class UserInsulinController extends BaseController {
-    public static insulinSample = {
-        timestamp: new Date().getTime(),
-        quantity: 2.5,
-    };
-
-    constructor() {
-        super();
-
-        this.router
-            .get("/:userUid/insulin/",                        this.getAllUserInsulin)
-            .post("/:userUid/insulin/",      this.jsonParser, this.addUserInsulin)
-            .get("/:userUid/insulin/:id",                     this.getUserInsulin)
-            .put("/:userUid/insulin/:id",    this.jsonParser, this.updateUserInsulin)
-            .delete("/:userUid/insulin/:id",                  this.deleteUserInsulin);
+    @Get("/")
+    private async getAllUserInsulin(@Param("uid") uid: string, @QueryParams() p: Pageable, @Res() res: Response) {
+        const page = await InsulinService.getAllInsulin(uid, p);
+        return page.send(res);
     }
 
-    private async getAllUserInsulin(req: Request, res: Response) {
-        const page = await InsulinService.getAllInsulin(req.params.userUid, new Pageable(req.query));
-        page.sendAs(res);
+    @Post("/")
+    private async addUserInsulin(@Param("uid") uid: string, @Body() body: InsulinCreateReq) {
+        return InsulinService.addInsulin(uid, body);
     }
 
-    private async addUserInsulin(req: Request, res: Response) {
-        res.send(await InsulinService.addInsulin(req.params.userUid, req.body));
+    @Get("/:id")
+    private async getUserInsulin(@Param("uid") uid: string, @Param("id") insulinId: number) {
+        return InsulinService.getInsulin(uid, insulinId);
     }
 
-    private async getUserInsulin(req: Request, res: Response) {
-        const params = {
-            userUid: req.params.userUid,
-            insulinId: parseInt(req.params.id, 10),
-        };
-        res.send(await InsulinService.getInsulin(params));
+    @Put("/:id")
+    private async updateUserInsulin(@Param("uid") uid: string, @Param("id") insulinId: number,
+                                    @Body() body: InsulinUpdateReq) {
+        return InsulinService.updateInsulin(uid, insulinId, body);
     }
 
-    private async updateUserInsulin(req: Request, res: Response) {
-        const params = {
-            userUid: req.params.userUid,
-            insulinId: parseInt(req.params.id, 10),
-        };
-        res.send(await InsulinService.updateInsulin(params, req.body));
-    }
-
-    private async deleteUserInsulin(req: Request, res: Response) {
-        const params = {
-            userUid: req.params.userUid,
-            insulinId: parseInt(req.params.id, 10),
-        };
-
-        await InsulinService.deleteInsulin(params);
-        res
-            .status(HttpStatus.NO_CONTENT)
-            .send();
+    @Delete("/:id")
+    private async deleteUserInsulin(@Param("uid") uid: string, @Param("id") insulinId: number) {
+        await InsulinService.deleteInsulin(uid, insulinId);
     }
 
 }

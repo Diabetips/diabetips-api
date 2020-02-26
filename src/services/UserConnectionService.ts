@@ -10,13 +10,10 @@ import { User } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus } from "../lib";
 import { sendMail } from "../mail";
+import { UserConnectionInviteReq } from "../requests";
 
 import { BaseService } from "./BaseService";
 import { UserService } from "./UserService";
-
-export interface CreateUserConnectionReq {
-    email: string;
-}
 
 export class UserConnectionService extends BaseService {
 
@@ -24,7 +21,7 @@ export class UserConnectionService extends BaseService {
         return (await UserService.getUser(uid)).connections;
     }
 
-    public static async createUserConnection(uid: string, req: CreateUserConnectionReq) {
+    public static async createUserConnection(uid: string, req: UserConnectionInviteReq) {
         const user = await UserService.getUser(uid);
         const target = await User.findByEmail(req.email);
         if (target === undefined) {
@@ -32,6 +29,8 @@ export class UserConnectionService extends BaseService {
                 first_name: user.first_name,
                 last_name: user.last_name,
             });
+        } else if (user.uid === target.uid) {
+            throw new ApiError(HttpStatus.UNPROCESSABLE_ENTITY, "forever_alone", "User cannot invite themselves");
         } else {
             await this.addConnection(user, target);
             await this.addConnection(target, user);

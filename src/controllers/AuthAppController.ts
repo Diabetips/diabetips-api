@@ -6,28 +6,21 @@
 ** Created by Arthur MELIN on Mon Oct 14 2019
 */
 
-import { Request, Response } from "express";
+import { Get, JsonController, Param } from "routing-controllers";
 
 import { AuthAppService } from "../services";
 
-import { BaseController } from "./BaseController";
+@JsonController("/v1/auth/apps")
+export class AuthAppController {
 
-export class AuthAppController extends BaseController {
-
-    constructor() {
-        super();
-
-        this.router
-            .get("/",       this.getAllApps)
-            .get("/:appid", this.getApp);
+    @Get("/")
+    private async getAllApps() {
+        return AuthAppService.getAllApps();
     }
 
-    private async getAllApps(req: Request, res: Response) {
-        res.send(await AuthAppService.getAllApps());
-    }
-
-    private async getApp(req: Request, res: Response) {
-        res.send(await AuthAppService.getApp(req.params.appid));
+    @Get("/:appid")
+    private async getApp(@Param("appid") appid: string) {
+        return AuthAppService.getApp(appid);
     }
 
 }

@@ -11,12 +11,9 @@ import uuid = require("uuid");
 import { User, UserConfirmation } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus } from "../lib";
+import { UserConfirmAccountReq } from "../requests";
 
 import { BaseService } from "./BaseService";
-
-interface IUserConfirmationRequest {
-    code: string;
-}
 
 export class UserConfirmationService extends BaseService {
 
@@ -27,7 +24,7 @@ export class UserConfirmationService extends BaseService {
         return confirm.save();
     }
 
-    public static async confirmUserAccount(req: IUserConfirmationRequest) {
+    public static async confirmUserAccount(req: UserConfirmAccountReq) {
         const confirm = await UserConfirmation.findByCode(req.code);
         if (confirm === undefined) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "invalid_code", "Invalid confirmation code");

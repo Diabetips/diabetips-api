@@ -8,8 +8,8 @@
 
 import { BaseEntity as TypeOrmBaseEntity, Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-import { IBaseQueryOptions, IBaseSearchRequest } from "./BaseEntity";
-export { IBaseQueryOptions, IBaseSearchRequest };
+import { IBaseQueryOptions } from "./BaseEntity";
+export { IBaseQueryOptions };
 
 export abstract class BaseEntityHiddenId extends TypeOrmBaseEntity {
 

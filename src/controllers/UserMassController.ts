@@ -6,29 +6,29 @@
 ** Created by Alexandre DE BEAUMONT on Fri Feb 14 2020
 */
 
-import { Request, Response } from "express";
-import { BaseController } from "./BaseController";
+import { Get, JsonController, Param } from "routing-controllers";
 
-export class UserMassController extends BaseController {
+@JsonController("/v1/users/:uid/mass")
+export class UserMassController {
 
-    private static data = {
-        timestamp: 1581716078,
-        mass: 175,
-    };
-    private static dummy = [
-        UserMassController.data,
-        UserMassController.data,
-        UserMassController.data,
+    private dummy = [
+        {
+            timestamp: 1581616078,
+            mass: 73,
+        },
+        {
+            timestamp: 1581716078,
+            mass: 72,
+        },
+        {
+            timestamp: 1581816078,
+            mass: 75,
+        },
     ];
 
-    constructor() {
-        super();
-
-        this.router
-        .get("/:userUid/mass", this.getMassHistory);
+    @Get("/")
+    private async getMassHistory(@Param("uid") uid: string) {
+        return this.dummy;
     }
 
-    private async getMassHistory(req: Request, res: Response) {
-        res.send(UserMassController.dummy);
-    }
 }

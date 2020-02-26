@@ -7,52 +7,48 @@
 */
 
 import { NextFunction, Request, Response } from "express";
+import { All, Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res, UseBefore } from "routing-controllers";
 
-import { HttpStatus, Page, Pageable } from "../lib";
+import { Pageable } from "../lib";
+import { UserCreateReq, UserUpdateReq } from "../requests";
 import { UserService } from "../services";
 
-import { BaseController } from "./BaseController";
+@JsonController("/v1/users")
+export class UserController {
 
-export class UserController extends BaseController {
-
-    constructor() {
-        super();
-
-        this.router
-            .get("/",                            this.getAllUsers)
-            .post("/",          this.jsonParser, this.registerUser)
-            .all(/^\/me(\/.*)?/,                 this.asCurrentUser)
-            .get("/:uid",                        this.getUser)
-            .put("/:uid",       this.jsonParser, this.updateUser)
-            .delete("/:uid",                     this.deleteUser);
-    }
-
-    private asCurrentUser(req: Request, res: Response, next: NextFunction) {
+    @All(/\/me(\/.*)?/)
+    @UseBefore((req: Request, res: Response, next: NextFunction) => {
         req.url = "/" + UserService.getCurrentUser(req.context).uid + req.url.slice(3);
         next("route");
+    })
+    private meUrlRewrite() {
+        throw Error("Unreachable code");
     }
 
-    private async getAllUsers(req: Request, res: Response) {
-        const page = await UserService.getAllUsers(new Pageable(req.query));
-        page.sendAs(res);
+    @Get("/")
+    private async getAllUsers(@QueryParams() p: Pageable, @Res() res: Response) {
+        const page = await UserService.getAllUsers(p);
+        return page.send(res);
     }
 
-    private async registerUser(req: Request, res: Response) {
-        res.send(await UserService.registerUser(req.body));
+    @Post("/")
+    private async registerUser(@Body() req: UserCreateReq) {
+        return UserService.registerUser(req);
     }
 
-    private async getUser(req: Request, res: Response) {
-        res.send(await UserService.getUser(req.params.uid));
+    @Get("/:uid")
+    private async getUser(@Param("uid") uid: string) {
+        return UserService.getUser(uid);
     }
 
-    private async updateUser(req: Request, res: Response) {
-        res.send(await UserService.updateUser(req.params.uid, req.body));
+    @Put("/:uid")
+    private async updateUser(@Param("uid") uid: string, @Body() req: UserUpdateReq) {
+        return UserService.updateUser(uid, req);
     }
 
-    private async deleteUser(req: Request, res: Response) {
-        await UserService.deleteUser(req.params.uid);
-        res
-            .status(HttpStatus.NO_CONTENT)
-            .send();
+    @Delete("/:uid")
+    private async deleteUser(@Param("uid") uid: string) {
+        await UserService.deleteUser(uid);
     }
+
 }

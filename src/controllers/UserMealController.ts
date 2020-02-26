@@ -6,63 +6,40 @@
 ** Created by Alexandre DE BEAUMONT on Mon Sep 02 2019
 */
 
-import { Request, Response } from "express";
+import { Response } from "express";
+import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
 
-import { HttpStatus, Page, Pageable } from "../lib";
+import { Pageable } from "../lib";
+import { MealCreateReq, MealUpdateReq } from "../requests";
 import { MealService } from "../services";
 
-import { BaseController } from "./BaseController";
+@JsonController("/v1/users/:uid/meals")
+export class UserMealController {
 
-export class UserMealController extends BaseController {
-
-    constructor() {
-        super();
-
-        this.router
-            .get("/:userUid/meals/",                        this.getAllUserMeals)
-            .post("/:userUid/meals/",      this.jsonParser, this.addUserMeal)
-            .get("/:userUid/meals/:id",                     this.getUserMeal)
-            .put("/:userUid/meals/:id",    this.jsonParser, this.updateUserMeal)
-            .delete("/:userUid/meals/:id",                  this.deleteUserMeal);
+    @Get("/")
+    private async getAllUserMeals(@Param("uid") uid: string, @QueryParams() p: Pageable, @Res() res: Response) {
+        const page = await MealService.getAllMeals(uid, p);
+        return page.send(res);
     }
 
-    private async getAllUserMeals(req: Request, res: Response) {
-        const page = await MealService.getAllMeals(req.params.userUid, new Pageable(req.query));
-        page.sendAs(res);
+    @Post("/")
+    private async addUserMeal(@Param("uid") uid: string, @Body() body: MealCreateReq) {
+        return MealService.addMeal(uid, body);
     }
 
-    private async getUserMeal(req: Request, res: Response) {
-        const params = {
-            userUid: req.params.userUid,
-            mealId: parseInt(req.params.id, 10),
-        };
-
-        res.send(await MealService.getMeal(params));
+    @Get("/:id")
+    private async getUserMeal(@Param("uid") uid: string, @Param("id") mealId: number) {
+        return MealService.getMeal(uid, mealId);
     }
 
-    private async addUserMeal(req: Request, res: Response) {
-        res.send(await MealService.addMeal(req.params.userUid, req.body));
+    @Put("/:id")
+    private async updateUserMeal(@Param("uid") uid: string, @Param("id") mealId: number, @Body() body: MealUpdateReq) {
+        return MealService.updateMeal(uid, mealId, body);
     }
 
-    private async updateUserMeal(req: Request, res: Response) {
-        const params = {
-            userUid: req.params.userUid,
-            mealId: parseInt(req.params.id, 10),
-        };
-
-        res.send(await MealService.updateMeal(params, req.body));
-    }
-
-    private async deleteUserMeal(req: Request, res: Response) {
-        const params = {
-            userUid: req.params.userUid,
-            mealId: parseInt(req.params.id, 10),
-        };
-
-        await MealService.deleteMeal(params);
-        res
-            .status(HttpStatus.NO_CONTENT)
-            .send();
+    @Delete("/:id")
+    private async deleteUserMeal(@Param("uid") uid: string, @Param("id") mealId: number) {
+        await MealService.deleteMeal(uid, mealId);
     }
 
 }

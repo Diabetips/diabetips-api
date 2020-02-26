@@ -6,30 +6,25 @@
 ** Created by Alexandre DE BEAUMONT on Mon Sep 02 2019
 */
 
-import { Request, Response } from "express";
+import { Response } from "express";
+import { Get, JsonController, Param, QueryParams, Res } from "routing-controllers";
 
 import { Pageable } from "../lib";
+import { FoodSearchReq } from "../requests";
 import { FoodService } from "../services";
 
-import { BaseController } from "./BaseController";
+@JsonController("/v1/food")
+export class FoodController {
 
-export class FoodController extends BaseController {
-
-    constructor() {
-        super();
-
-        this.router
-            .get("/",    this.getAllFood)
-            .get("/:id", this.getFood);
+    @Get("/")
+    private async getAllFood(@QueryParams() p: Pageable, @QueryParams() req: FoodSearchReq, @Res() res: Response) {
+        const page = await FoodService.getAllFood(p, req);
+        return page.send(res);
     }
 
-    private async getAllFood(req: Request, res: Response) {
-        const page = await FoodService.getAllFood(new Pageable(req.query), req.query);
-        page.sendAs(res);
-    }
-
-    private async getFood(req: Request, res: Response) {
-        res.send(await FoodService.getFood(parseInt(req.params.id, 10)));
+    @Get("/:id")
+    private async getFood(@Param("id") id: number) {
+        return FoodService.getFood(id);
     }
 
 }

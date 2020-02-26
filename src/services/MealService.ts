@@ -6,44 +6,33 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
-import { IMealSearchRequest, Meal, Recipe, User } from "../entities";
+import { Meal, Recipe, User } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable } from "../lib";
+import { MealCreateReq, MealUpdateReq } from "../requests";
 
 import { BaseService } from "./BaseService";
 
-interface ICreateMealRequest {
-    description: string;
-    recipes_ids: number[];
-    timestamp: number;
-}
-
-interface IUpdateMealRequest {
-    description?: string;
-    recipes_ids?: number[];
-    timestamp?: number;
-}
-
 export class MealService extends BaseService {
 
-    public static async getAllMeals(patientUid: string, p: Pageable): Promise<Page<Meal>> {
-        return Meal.findAll(patientUid, p);
+    public static async getAllMeals(uid: string, p: Pageable): Promise<Page<Meal>> {
+        return Meal.findAll(uid, p);
     }
 
-    public static async getMeal(params: IMealParams): Promise<Meal> {
-        const meal = await Meal.findById(params.userUid, params.mealId);
+    public static async getMeal(uid: string, mealId: number): Promise<Meal> {
+        const meal = await Meal.findById(uid, mealId);
         if (meal === undefined) {
-            throw new ApiError(HttpStatus.NOT_FOUND, "meal_not_found", `Meal ${params.mealId} not found`);
+            throw new ApiError(HttpStatus.NOT_FOUND, "meal_not_found", `Meal ${mealId} not found`);
         }
         return meal;
     }
 
-    public static async addMeal(patientUid: string, req: ICreateMealRequest): Promise<Meal> {
+    public static async addMeal(uid: string, req: MealCreateReq): Promise<Meal> {
         // Get the user
-        const user = await User.findByUid(patientUid);
+        const user = await User.findByUid(uid);
 
         if (user === undefined) {
-            throw new ApiError(HttpStatus.NOT_FOUND, "user_not_found", `User (${patientUid}) not found`);
+            throw new ApiError(HttpStatus.NOT_FOUND, "user_not_found", `User (${uid}) not found`);
         }
 
         // Add meal
@@ -65,11 +54,12 @@ export class MealService extends BaseService {
 
         return meal.save();
     }
-    public static async updateMeal(params: IMealParams, req: IUpdateMealRequest): Promise<Meal> {
-        const meal = await Meal.findById(params.userUid, params.mealId);
+
+    public static async updateMeal(uid: string, mealId: number, req: MealUpdateReq): Promise<Meal> {
+        const meal = await Meal.findById(uid, mealId);
 
         if (meal === undefined) {
-            throw new ApiError(HttpStatus.NOT_FOUND, "meal_not_found", `Meal (${params.mealId}) or User (${params.userUid}) not found`);
+            throw new ApiError(HttpStatus.NOT_FOUND, "meal_not_found", `Meal (${mealId}) or User (${uid}) not found`);
         }
 
         if (req.description !== undefined) { meal.description = req.description; }
@@ -91,21 +81,16 @@ export class MealService extends BaseService {
         return meal.save();
     }
 
-    public static async deleteMeal(params: IMealParams): Promise<Meal> {
-        const meal = await Meal.findById(params.userUid, params.mealId);
+    public static async deleteMeal(uid: string, mealId: number): Promise<Meal> {
+        const meal = await Meal.findById(uid, mealId);
 
         // TODO? might have to change the error on that one ?
         if (meal === undefined) {
-            throw new ApiError(HttpStatus.NOT_FOUND, "meal_not_found", `Meal (${params.mealId}) or User (${params.userUid}) not found`);
+            throw new ApiError(HttpStatus.NOT_FOUND, "meal_not_found", `Meal (${mealId}) or User (${uid}) not found`);
         }
 
         meal.deleted = true;
         return meal.save();
     }
 
-}
-
-interface IMealParams {
-    userUid: string;
-    mealId: number;
 }

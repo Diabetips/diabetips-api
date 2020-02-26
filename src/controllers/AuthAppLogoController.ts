@@ -6,46 +6,37 @@
 ** Created by Arthur MELIN on Mon Nov 18 2019
 */
 
+import bodyParser = require("body-parser");
 import createHttpError = require("http-errors");
 
-import { Request, Response } from "express";
+import { Body, ContentType, Controller, Get, Param, Post, UseBefore } from "routing-controllers";
 
 import { HttpStatus } from "../lib";
 import { AuthAppLogoService } from "../services";
 
-import { BaseController } from "./BaseController";
+@Controller("/v1/auth/apps/:appid/logo")
+export class AuthAppLogoController {
 
-export class AuthAppLogoController extends BaseController {
+    private static rawParser = bodyParser.raw({
+        limit: "2mb",
+        type: (req) => {
+            if (req.headers["content-type"] !== "image/png") {
+                throw createHttpError(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+            }
+            return true;
+        },
+    });
 
-    constructor() {
-        super({
-            rawParserOptions: {
-                limit: "2mb",
-                type: (req) => {
-                    if (req.headers["content-type"] !== "image/png") {
-                        throw createHttpError(415);
-                    }
-                    return true;
-                },
-            },
-        });
-
-        this.router
-            .get("/:appid/logo",                  this.getAppLogo)
-            .post("/:appid/logo", this.rawParser, this.uploadAppLogo);
+    @Get("/")
+    @ContentType("png")
+    private async getAppLogo(@Param("appid") appid: string) {
+        return AuthAppLogoService.getAppLogo(appid);
     }
 
-    private async getAppLogo(req: Request, res: Response) {
-        res
-            .contentType("png")
-            .send(await AuthAppLogoService.getAppLogo(req.params.appid));
-    }
-
-    private async uploadAppLogo(req: Request, res: Response) {
-        await AuthAppLogoService.setAppLogo(req.params.appid, req.body);
-        res
-            .status(HttpStatus.NO_CONTENT)
-            .send();
+    @Post("/")
+    @UseBefore(AuthAppLogoController.rawParser)
+    private async uploadAppLogo(@Param("appid") appid: string, @Body() body: Buffer) {
+        await AuthAppLogoService.setAppLogo(appid, body);
     }
 
 }

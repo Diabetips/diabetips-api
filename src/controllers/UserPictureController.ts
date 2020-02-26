@@ -6,39 +6,30 @@
 ** Created by Arthur MELIN on Mon Nov 18 2019
 */
 
-import { Request, Response } from "express";
+import bodyParser = require("body-parser");
 
-import { HttpStatus } from "../lib";
+import { Body, ContentType, Controller, Get, Param, Post, UseBefore } from "routing-controllers";
+
 import { UserPictureService } from "../services";
 
-import { BaseController } from "./BaseController";
+@Controller("/v1/users/:uid/picture")
+export class UserPictureController {
 
-export class UserPictureController extends BaseController {
+    private static rawParser = bodyParser.raw({
+        limit: "2mb",
+        type: (req) => true,
+    });
 
-    constructor() {
-        super({
-            rawParserOptions: {
-                limit: "5mb",
-                type: () => true,
-            },
-        });
-
-        this.router
-            .get("/:uid/picture",                  this.getUserPicture)
-            .post("/:uid/picture", this.rawParser, this.setUserPicture);
+    @Get("/")
+    @ContentType("jpeg")
+    private async getUserPicture(@Param("uid") uid: string) {
+        return UserPictureService.getUserPicture(uid);
     }
 
-    private async getUserPicture(req: Request, res: Response) {
-        res
-            .contentType("jpeg")
-            .send(await UserPictureService.getUserPicture(req.params.uid));
-    }
-
-    private async setUserPicture(req: Request, res: Response) {
-        await UserPictureService.setUserPicture(req.params.uid, req.body);
-        res
-            .status(HttpStatus.NO_CONTENT)
-            .send();
+    @Post("/")
+    @UseBefore(UserPictureController.rawParser)
+    private async setUserPicture(@Param("uid") uid: string, @Body() body: Buffer) {
+        await UserPictureService.setUserPicture(uid, body);
     }
 
 }

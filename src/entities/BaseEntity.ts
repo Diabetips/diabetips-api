@@ -51,7 +51,3 @@ export abstract class BaseEntity extends TypeOrmBaseEntity {
 export interface IBaseQueryOptions {
     hideDeleted?: boolean;
 }
-
-// tslint:disable-next-line: no-empty-interface
-export interface IBaseSearchRequest {
-}

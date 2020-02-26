@@ -6,48 +6,40 @@
 ** Created by Alexandre DE BEAUMONT on Mon Sep 02 2019
 */
 
-import { Request, Response } from "express";
+import { Response } from "express";
+import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
 
-import { HttpStatus, Page, Pageable } from "../lib";
+import { Pageable } from "../lib";
+import { RecipeCreateReq, RecipeSearchReq, RecipeUpdateReq } from "../requests";
 import { RecipeService } from "../services";
 
-import { BaseController } from "./BaseController";
+@JsonController("/v1/recipes")
+export class RecipeController {
 
-export class RecipeController extends BaseController {
-
-    constructor() {
-        super();
-
-        this.router
-            .get("/",                        this.getAllRecipes)
-            .post("/",      this.jsonParser, this.createRecipe)
-            .get("/:id",                     this.getRecipe)
-            .put("/:id",    this.jsonParser, this.updateRecipe)
-            .delete("/:id",                  this.deleteRecipe);
+    @Get("/")
+    private async getAllRecipes(@QueryParams() p: Pageable, @QueryParams() req: RecipeSearchReq, @Res() res: Response) {
+        const page = await RecipeService.getAllRecipes(p, req);
+        return page.send(res);
     }
 
-    private async getAllRecipes(req: Request, res: Response) {
-        const page = await RecipeService.getAllRecipes(new Pageable(req.query), req.query);
-        page.sendAs(res);
+    @Post("/")
+    private async createRecipe(@Body() body: RecipeCreateReq) {
+        return RecipeService.createRecipe(body);
     }
 
-    private async getRecipe(req: Request, res: Response) {
-        res.send(await RecipeService.getRecipe(parseInt(req.params.id, 10)));
+    @Get("/:id")
+    private async getRecipe(@Param("id") id: number) {
+        return RecipeService.getRecipe(id);
     }
 
-    private async createRecipe(req: Request, res: Response) {
-        res.send(await RecipeService.createRecipe(req.body));
+    @Put("/:id")
+    private async updateRecipe(@Param("id") id: number, @Body() body: RecipeUpdateReq) {
+        return RecipeService.updateRecipe(id, body);
     }
 
-    private async updateRecipe(req: Request, res: Response) {
-        res.send(await RecipeService.updateRecipe(parseInt(req.params.id, 10), req.body));
-    }
-
-    private async deleteRecipe(req: Request, res: Response) {
-        await RecipeService.deleteRecipe(parseInt(req.params.id, 10));
-        res
-            .status(HttpStatus.NO_CONTENT)
-            .send();
+    @Delete("/:id")
+    private async deleteRecipe(@Param("id") id: number) {
+        await RecipeService.deleteRecipe(id);
     }
 
 }

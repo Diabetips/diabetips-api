@@ -6,57 +6,27 @@
 ** Created by Arthur MELIN on Sat Aug 31 2019
 */
 
-import { NextFunction, Request, Response } from "express";
+import bodyParser = require("body-parser");
 import querystring = require("querystring");
+
+import { NextFunction, Request, Response } from "express";
+import { Body, Ctx, Get, HttpCode, JsonController, Post, Redirect, Req, UseAfter,
+    UseBefore } from "routing-controllers";
 
 import { config } from "../config";
 import { AuthError } from "../errors";
-import { HttpStatus } from "../lib";
+import { Context, HttpStatus } from "../lib";
 import { logger } from "../logger";
+import { UserConfirmAccountReq, UserResetPasswordReq } from "../requests";
 import { AuthService, UserConfirmationService, UserService } from "../services";
 
-import { BaseController } from "./BaseController";
+@JsonController("/v1/auth")
+export class AuthController {
 
-export class AuthController extends BaseController {
+    private static formParser = bodyParser.urlencoded({ extended: true });
 
-    constructor() {
-        super();
-
-        this.router
-            .get("/authorize",                        this.authorize,           this.errorHandler)
-            .post("/authorize",      this.formParser, this.authorizeInternal)
-            .post("/token",          this.formParser, this.token,               this.errorHandler)
-            .post("/confirm",        this.jsonParser, this.confirmAccount)
-            .post("/reset-password", this.jsonParser, this.resetPassword);
-    }
-
-    private authorize(req: Request, res: Response) {
-        res.redirect(config.diabetips.accountUrl + "/oauth/authorize?" + querystring.stringify(req.query));
-    }
-
-    private async authorizeInternal(req: Request, res: Response) {
-        res.send(await AuthService.authorize(req.context, req.body));
-    }
-
-    private async token(req: Request, res: Response) {
-        res.send(await AuthService.getToken(req.context, req.body));
-    }
-
-    private async confirmAccount(req: Request, res: Response) {
-        await UserConfirmationService.confirmUserAccount(req.body);
-        res
-            .status(HttpStatus.NO_CONTENT)
-            .send();
-    }
-
-    private async resetPassword(req: Request, res: Response) {
-        await UserService.resetUserPassword(req.body);
-        res
-            .status(HttpStatus.ACCEPTED)
-            .send({});
-    }
-
-    private errorHandler(err: Error | AuthError, req: Request, res: Response, next: NextFunction) {
+    // OAuth routes specific error response formatting
+    private static errorHandler(err: Error | AuthError, req: Request, res: Response, next: NextFunction) {
         if (err instanceof AuthError) {
             res
                 .status(400)
@@ -73,6 +43,45 @@ export class AuthController extends BaseController {
                     error_description: "Internal server error",
                 });
         }
+    }
+
+    @Get("/authorize")
+    @Redirect(config.diabetips.accountUrl + "/oauth/authorize?:query")
+    private authorizeRedirect(@Req() req: Request) {
+        return {
+            query: querystring.stringify(req.query),
+        };
+    }
+
+    @Post("/authorize")
+    @UseBefore(AuthController.formParser)
+    @UseAfter(AuthController.errorHandler)
+    private async authorize(@Ctx() context: Context, @Body() body: any) {
+        return AuthService.authorize(context, body);
+    }
+
+    @Post("/token")
+    @UseBefore(AuthController.formParser)
+    @UseAfter(AuthController.errorHandler)
+    private async token(@Ctx() context: Context, @Body() body: any) {
+        return AuthService.getToken(context, body);
+    }
+
+    @Post("/confirm")
+    private async confirmAccount(@Body() req: UserConfirmAccountReq) {
+        await UserConfirmationService.confirmUserAccount(req);
+    }
+
+    @Post("/reset-password")
+    @HttpCode(HttpStatus.ACCEPTED)
+    private async resetPassword(@Body() req: UserResetPasswordReq) {
+        // await voluntarly missing in order to prevent timing attacks
+        // Measuring the time this route takes to respond could otherwise be used by an attacker to reveal whether a
+        // given email address is associated to an account.
+        // The async function is queued but not awaited so that it runs in the background while the response is sent
+        // immediately.
+        UserService.resetUserPassword(req);
+        return {};
     }
 
 }

@@ -6,42 +6,33 @@
 ** Created by Alexandre DE BEAUMONT on Sat Dec 14 2019
 */
 
-import { Hba1c, IHba1cSearchRequest, User } from "../entities";
+import { Hba1c, User } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable } from "../lib";
+import { Hba1cCreateReq, Hba1cUpdateReq } from "../requests";
 
 import { BaseService } from "./BaseService";
 
-interface ICreateHba1cRequest {
-    timestamp: number;
-    value: number;
-}
-
-interface IUpdateHba1cRequest {
-    timestamp?: number;
-    value?: number;
-}
-
 export class Hba1cService extends BaseService {
 
-    public static async getAllHba1c(patientUid: string, p: Pageable): Promise<Page<Hba1c>> {
-        return Hba1c.findAll(patientUid, p);
+    public static async getAllHba1c(uid: string, p: Pageable): Promise<Page<Hba1c>> {
+        return Hba1c.findAll(uid, p);
     }
 
-    public static async getHba1c(patientUid: string, hba1cId: number): Promise<Hba1c> {
-        const hba1c = await Hba1c.findById(patientUid, hba1cId);
+    public static async getHba1c(uid: string, hba1cId: number): Promise<Hba1c> {
+        const hba1c = await Hba1c.findById(uid, hba1cId);
         if (hba1c === undefined) {
             throw new ApiError(HttpStatus.NOT_FOUND, "hba1c_not_found", `Hba1c ${hba1cId} not found`);
         }
         return hba1c;
     }
 
-    public static async addHba1c(patientUid: string, req: ICreateHba1cRequest): Promise<Hba1c> {
+    public static async addHba1c(uid: string, req: Hba1cCreateReq): Promise<Hba1c> {
         // Get the user
-        const user = await User.findByUid(patientUid);
+        const user = await User.findByUid(uid);
 
         if (user === undefined) {
-            throw new ApiError(HttpStatus.NOT_FOUND, "user_not_found", `User ${patientUid} not found`);
+            throw new ApiError(HttpStatus.NOT_FOUND, "user_not_found", `User ${uid} not found`);
         }
 
         // Add Hba1c
@@ -53,11 +44,11 @@ export class Hba1cService extends BaseService {
         return hba1c.save();
     }
 
-    public static async updateHba1c(patientUid: string, hba1cId: number, req: IUpdateHba1cRequest): Promise<Hba1c> {
-        const hba1c = await Hba1c.findById(patientUid, hba1cId);
+    public static async updateHba1c(uid: string, hba1cId: number, req: Hba1cUpdateReq): Promise<Hba1c> {
+        const hba1c = await Hba1c.findById(uid, hba1cId);
 
         if (hba1c === undefined) {
-            throw new ApiError(HttpStatus.NOT_FOUND, "hba1c_not_found", `Hba1c ${hba1cId} or user ${patientUid} not found`);
+            throw new ApiError(HttpStatus.NOT_FOUND, "hba1c_not_found", `Hba1c ${hba1cId} or user ${uid} not found`);
         }
 
         if (req.value !== undefined) { hba1c.value = req.value; }
@@ -66,11 +57,11 @@ export class Hba1cService extends BaseService {
         return hba1c.save();
     }
 
-    public static async deleteHba1c(patientUid: string, hba1cId: number) {
-        const hba1c = await Hba1c.findById(patientUid, hba1cId);
+    public static async deleteHba1c(uid: string, hba1cId: number) {
+        const hba1c = await Hba1c.findById(uid, hba1cId);
 
         if (hba1c === undefined) {
-            throw new ApiError(HttpStatus.NOT_FOUND, "hba1c_not_found", `Hba1c ${hba1cId} or user ${patientUid} not found`);
+            throw new ApiError(HttpStatus.NOT_FOUND, "hba1c_not_found", `Hba1c ${hba1cId} or user ${uid} not found`);
         }
         hba1c.deleted = true;
         await hba1c.save();

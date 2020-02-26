@@ -6,40 +6,29 @@
 ** Created by Arthur MELIN on Sun Oct 13 2019
 */
 
-import { Request, Response } from "express";
+import { Body, Delete, Get, HttpCode, JsonController, Param, Post } from "routing-controllers";
 
 import { HttpStatus } from "../lib";
+import { UserConnectionInviteReq } from "../requests";
 import { UserConnectionService } from "../services";
 
-import { BaseController } from "./BaseController";
+@JsonController("/v1/users/:uid/connections")
+export class UserConnectionController {
 
-export class UserConnectionController extends BaseController {
-
-    constructor() {
-        super();
-
-        this.router
-            .get("/:uid/connections",                                this.getAllConnections)
-            .post("/:uid/connections",              this.jsonParser, this.createConnection)
-            .delete("/:uid/connections/:conn_uid",                   this.deleteConnection);
+    @Get("/")
+    private async getAllConnections(@Param("uid") uid: string) {
+        return UserConnectionService.getAllUserConnections(uid);
     }
 
-    private async getAllConnections(req: Request, res: Response) {
-        res.send(await UserConnectionService.getAllUserConnections(req.params.uid));
+    @Post("/")
+    @HttpCode(HttpStatus.ACCEPTED)
+    private async createConnection(@Param("uid") uid: string, @Body() req: UserConnectionInviteReq) {
+        await UserConnectionService.createUserConnection(uid, req);
     }
 
-    private async createConnection(req: Request, res: Response) {
-        await UserConnectionService.createUserConnection(req.params.uid, req.body);
-        res
-            .status(HttpStatus.ACCEPTED)
-            .send();
-    }
-
-    private async deleteConnection(req: Request, res: Response) {
-        await UserConnectionService.deleteUserConnection(req.params.uid, req.params.conn_uid);
-        res
-            .status(HttpStatus.NO_CONTENT)
-            .send();
+    @Delete("/:conn_uid")
+    private async deleteConnection(@Param("uid") uid: string, @Param("conn_uid") connectionUid: string) {
+        await UserConnectionService.deleteUserConnection(uid, connectionUid);
     }
 
 }

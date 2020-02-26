@@ -6,92 +6,64 @@
 ** Created by Arthur MELIN on Tue Aug 27 2019
 */
 
-import cors = require("cors");
 import express = require("express");
 // tslint:disable-next-line:no-var-requires
 require("express-async-errors"); // Express patch to handle errors correctly while using async handlers
 import { NextFunction, Request, Response } from "express";
+import { Action, BadRequestError, useExpressServer } from "routing-controllers";
 
-import {
-    AuthAppController,
-    AuthAppLogoController,
-    AuthController,
-    FoodController,
-    FoodPictureController,
-    RecipeController,
-    UserAppController,
-    UserConnectionController,
-    UserController,
-    UserHba1cController,
-    UserInsulinController,
-    UserMealController,
-    UserPictureController,
-} from "./controllers";
-import { UserBloodSugarController } from "./controllers/UserBloodSugar";
-import { UserEventController } from "./controllers/UserEventController";
-import { UserHeightController } from "./controllers/UserHeightController";
-import { UserMassController } from "./controllers/UserMassController";
-import { UserNoteController } from "./controllers/UserNoteController";
 import { getDocsSpec } from "./docs";
-import { ApiError } from "./errors";
+import { ApiError, ValidationError } from "./errors";
 import { HttpStatus, Utils } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
 import { AuthService } from "./services";
 
-export const app = express();
+const preapp = express();
 
 // Express settings
-app.set("json replacer", Utils.jsonReplacer);
-app.set("x-powered-by", false);
+preapp.set("json replacer", Utils.jsonReplacer);
+preapp.set("x-powered-by", false);
 
 // Middlewares
-app.use(cors({
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    exposedHeaders: ["X-Pages"],
-}));
-app.use(log4js.connectLogger(httpLogger, {
+preapp.use(log4js.connectLogger(httpLogger, {
     level: "info",
     format: ":remote-addr > \":method :url\" > :status :content-lengthB :response-timems",
 }));
-app.use(async (req: Request, res: Response, next: NextFunction) => {
-    req.context = {
-        auth: await AuthService.decodeAuthorization(req.header("Authorization")),
-    };
-    next();
+
+// Setup routing-controllers
+export const app = useExpressServer(preapp, {
+    currentUserChecker: (async (action: Action) => {
+        // both set context in req and return to rounting-controllers
+        return action.request.context = {
+            auth: await AuthService.decodeAuthorization(action.request.header("Authorization")),
+        };
+    }),
+    controllers: [ `${__dirname}/controllers/**/*.{js,ts}` ],
+    cors: {
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+        exposedHeaders: ["X-Pages"],
+    },
+    validation: {
+        validationError: {
+            target: false,
+            value: false,
+        },
+    },
+    classTransformer: true,
+    defaultErrorHandler: false,
+    defaults: {
+        undefinedResultCode: 204,
+    },
 });
 
+// Static routes
 app.get("/", (req: Request, res: Response) => {
     res.send({
         documentation_url: "https://docs.diabetips.fr/",
     });
 });
 app.get("/openapi.yml", getDocsSpec);
-
-// API routes
-app.use("/v1/auth", new AuthController().router);
-app.use("/v1/auth/apps", new AuthAppController().router);
-app.use("/v1/auth/apps", new AuthAppLogoController().router);
-
-app.use("/v1/food", new FoodController().router);
-app.use("/v1/food", new FoodPictureController().router);
-app.use("/v1/recipes", new RecipeController().router);
-app.use("/v1/users", new UserMealController().router);
-
-app.use("/v1/users", new UserController().router);
-app.use("/v1/users", new UserPictureController().router);
-app.use("/v1/users", new UserHeightController().router);
-app.use("/v1/users", new UserMassController().router);
-
-app.use("/v1/users", new UserAppController().router);
-app.use("/v1/users", new UserConnectionController().router);
-
-app.use("/v1/users", new UserBloodSugarController().router);
-app.use("/v1/users", new UserHba1cController().router);
-app.use("/v1/users", new UserInsulinController().router);
-
-app.use("/v1/users", new UserNoteController().router);
-app.use("/v1/users", new UserEventController().router);
 
 // 404 handler
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -102,13 +74,15 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 // Error handler
 app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
+    if (err instanceof BadRequestError) {
+        err = new ValidationError(err);
+    }
     if (err instanceof ApiError) {
         res
             .status(err.status)
             .type("json")
             .send({
-                status: err.status,
-                error: err.error,
+                ...err,
                 message: err.message,
             });
     } else if (err && typeof((err as any).status) === "number") {
@@ -127,7 +101,8 @@ app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction)
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .type("json")
             .send({
-                error: "Internal server error",
+                error: "server_error",
+                message: "Internal server error",
             });
     }
 });

@@ -6,29 +6,29 @@
 ** Created by Alexandre DE BEAUMONT on Fri Feb 14 2020
 */
 
-import { Request, Response } from "express";
-import { BaseController } from "./BaseController";
+import { Get, JsonController } from "routing-controllers";
 
-export class UserHeightController extends BaseController {
+@JsonController("/v1/users/:uid/height")
+export class UserHeightController {
 
-    private static data = {
-        timestamp: 1581716078,
-        height: 175,
-    };
-    private static dummy = [
-        UserHeightController.data,
-        UserHeightController.data,
-        UserHeightController.data,
+    private dummy = [
+        {
+            timestamp: 1581616078,
+            height: 173,
+        },
+        {
+            timestamp: 1581716078,
+            height: 174,
+        },
+        {
+            timestamp: 1581816078,
+            height: 175,
+        },
     ];
 
-    constructor() {
-        super();
-
-        this.router
-        .get("/:userUid/height", this.getHeightHistory);
+    @Get("/")
+    private async getHeightHistory() {
+        return this.dummy;
     }
 
-    private async getHeightHistory(req: Request, res: Response) {
-        res.send(UserHeightController.dummy);
-    }
 }
