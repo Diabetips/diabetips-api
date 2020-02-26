@@ -9,8 +9,9 @@
 import { Column, Entity, OneToOne } from "typeorm";
 
 import { Page, Pageable, Utils } from "../lib";
+import { FoodSearchReq } from "../requests";
 
-import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest } from "./BaseEntity";
+import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
 
 import { FoodPicture } from "./FoodPicture";
 export { FoodPicture };
@@ -33,8 +34,8 @@ export class Food extends BaseEntity {
     // Repository functions
 
     public static async findAll(p: Pageable,
-                                req: IFoodSearchRequest = {},
-                                options: IFoodQueryOptions = {}):
+                                req: FoodSearchReq = {},
+                                options: IBaseQueryOptions = {}):
                                 Promise<Page<Food>> {
         let qb = this.createQueryBuilder("food");
 
@@ -48,7 +49,7 @@ export class Food extends BaseEntity {
         return p.query(qb);
     }
 
-    public static async findById(id: number, options: IFoodQueryOptions = {}): Promise<Food | undefined> {
+    public static async findById(id: number, options: IBaseQueryOptions = {}): Promise<Food | undefined> {
         let qb = this
             .createQueryBuilder("food")
             .where("food.id = :id", { id });
@@ -60,12 +61,4 @@ export class Food extends BaseEntity {
         return qb.getOne();
     }
 
-}
-
-// tslint:disable-next-line: no-empty-interface
-export interface IFoodQueryOptions extends IBaseQueryOptions {
-}
-
-export interface IFoodSearchRequest extends IBaseSearchRequest {
-    name?: string;
 }

@@ -10,7 +10,7 @@ import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, SelectQue
 
 import { Page, Pageable, Utils } from "../lib";
 
-import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest } from "./BaseEntity";
+import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
 
 import { Recipe } from "./Recipe";
 import { User } from "./User";
@@ -47,7 +47,6 @@ export class Meal extends BaseEntity {
 
     public static async findAll(uid: string,
                                 p: Pageable,
-                                req: IMealSearchRequest = {},
                                 options: IMealQueryOptions = {}):
                                 Promise<Page<Meal>> {
         const subq = (sqb: SelectQueryBuilder<Meal>) => {
@@ -102,8 +101,4 @@ export class Meal extends BaseEntity {
 
 // tslint:disable-next-line: no-empty-interface
 export interface IMealQueryOptions extends IBaseQueryOptions {
-}
-
-// tslint:disable-next-line: no-empty-interface
-export interface IMealSearchRequest extends IBaseSearchRequest {
 }

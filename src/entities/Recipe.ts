@@ -9,8 +9,9 @@
 import { Column, Entity, OneToMany, SelectQueryBuilder } from "typeorm";
 
 import { Page, Pageable, Utils } from "../lib";
+import { RecipeSearchReq } from "../requests";
 
-import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest } from "./BaseEntity";
+import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
 
 import { Ingredient } from "./Ingredient";
 
@@ -32,8 +33,8 @@ export class Recipe extends BaseEntity {
     // Repository functions
 
     public static async findAll(p: Pageable,
-                                req: IRecipeSearchRequest = {},
-                                options: IRecipeQueryOptions = {}):
+                                req: RecipeSearchReq = {},
+                                options: IBaseQueryOptions = {}):
                                 Promise<Page<Recipe>> {
         const subq = (sqb: SelectQueryBuilder<Recipe>) => {
             let subqb = sqb.select("recipe.id");
@@ -57,7 +58,7 @@ export class Recipe extends BaseEntity {
         return p.queryWithCountQuery(qb, subq(this.createQueryBuilder("recipe")));
     }
 
-    public static async findById(id: number, options: IRecipeQueryOptions = {}): Promise<Recipe | undefined> {
+    public static async findById(id: number, options: IBaseQueryOptions = {}): Promise<Recipe | undefined> {
         let qb = this
             .createQueryBuilder("recipe")
             .leftJoinAndSelect("recipe.ingredients", "ingredients")
@@ -71,12 +72,4 @@ export class Recipe extends BaseEntity {
         return qb.getOne();
     }
 
-}
-
-// tslint:disable-next-line: no-empty-interface
-export interface IRecipeQueryOptions extends IBaseQueryOptions {
-}
-
-export interface IRecipeSearchRequest extends IBaseSearchRequest {
-    name?: string;
 }

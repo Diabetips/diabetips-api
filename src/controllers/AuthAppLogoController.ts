@@ -14,7 +14,7 @@ import { Body, ContentType, Controller, Get, Param, Post, UseBefore } from "rout
 import { HttpStatus } from "../lib";
 import { AuthAppLogoService } from "../services";
 
-@Controller("/v1/auth/apps")
+@Controller("/v1/auth/apps/:appid/logo")
 export class AuthAppLogoController {
 
     private static rawParser = bodyParser.raw({
@@ -27,13 +27,13 @@ export class AuthAppLogoController {
         },
     });
 
-    @Get("/:appid/logo")
+    @Get("/")
     @ContentType("png")
     private async getAppLogo(@Param("appid") appid: string) {
         return AuthAppLogoService.getAppLogo(appid);
     }
 
-    @Post("/:appid/logo")
+    @Post("/")
     @UseBefore(AuthAppLogoController.rawParser)
     private async uploadAppLogo(@Param("appid") appid: string, @Body() body: Buffer) {
         await AuthAppLogoService.setAppLogo(appid, body);

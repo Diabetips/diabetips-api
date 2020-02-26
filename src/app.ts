@@ -81,7 +81,10 @@ app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction)
         res
             .status(err.status)
             .type("json")
-            .send(err);
+            .send({
+                ...err,
+                message: err.message,
+            });
     } else if (err && typeof((err as any).status) === "number") {
         const httpError = err as any;
         res

@@ -12,7 +12,7 @@ import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany, OneToOne } fro
 
 import { Page, Pageable, Utils } from "../lib";
 
-import { BaseEntityHiddenId, IBaseQueryOptions, IBaseSearchRequest } from "./BaseEntityHiddenId";
+import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
 
 import { AuthApp } from "./AuthApp";
 import { Hba1c } from "./Hba1c";
@@ -94,10 +94,7 @@ export class User extends BaseEntityHiddenId {
 
     // Repository functions
 
-    public static async findAll(p: Pageable,
-                                req: IBaseSearchRequest = {},
-                                options: IUserQueryOptions = {}):
-                                Promise<Page<User>> {
+    public static async findAll(p: Pageable, options: IUserQueryOptions = {}): Promise<Page<User>> {
         let qb = this.createQueryBuilder("user");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
@@ -161,8 +158,4 @@ export class User extends BaseEntityHiddenId {
 export interface IUserQueryOptions extends IBaseQueryOptions {
     selectPassword?: boolean;
     selectConfirmation?: boolean;
-}
-
-// tslint:disable-next-line: no-empty-interface
-export interface IUserSearchRequest extends IBaseSearchRequest {
 }

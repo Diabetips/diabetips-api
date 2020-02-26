@@ -6,32 +6,16 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
-import { Food, Ingredient, IRecipeSearchRequest, Recipe } from "../entities";
+import { Food, Ingredient, Recipe } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable } from "../lib";
+import { RecipeCreateReq, RecipeSearchReq, RecipeUpdateReq } from "../requests";
 
 import { BaseService } from "./BaseService";
 
-interface IIngredientRequest {
-    food_id: number;
-    quantity: number;
-}
-
-export interface ICreateRecipeRequest {
-    name: string;
-    description: string;
-    ingredients: IIngredientRequest[];
-}
-
-export interface IUpdateRecipeRequest {
-    name?: string;
-    description?: string;
-    ingredients?: IIngredientRequest[];
-}
-
 export class RecipeService extends BaseService {
 
-    public static async getAllRecipes(p: Pageable, req: IRecipeSearchRequest): Promise<Page<Recipe>> {
+    public static async getAllRecipes(p: Pageable, req: RecipeSearchReq): Promise<Page<Recipe>> {
         return Recipe.findAll(p, req);
     }
 
@@ -43,7 +27,7 @@ export class RecipeService extends BaseService {
         return recipe;
     }
 
-    public static async createRecipe(req: ICreateRecipeRequest): Promise<Recipe> {
+    public static async createRecipe(req: RecipeCreateReq): Promise<Recipe> {
         const recipe = new Recipe();
 
         recipe.name = req.name;
@@ -66,7 +50,7 @@ export class RecipeService extends BaseService {
         return recipe.save();
     }
 
-    public static async updateRecipe(id: number, req: IUpdateRecipeRequest): Promise<Recipe> {
+    public static async updateRecipe(id: number, req: RecipeUpdateReq): Promise<Recipe> {
         // TODO
         // ? Allow change of name / description ?
         // ? Only allow creator/admin to have the right to update ?

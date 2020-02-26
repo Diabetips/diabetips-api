@@ -10,7 +10,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
 import { Page, Pageable, Utils } from "../lib";
 
-import { BaseEntity, IBaseQueryOptions, IBaseSearchRequest } from "./BaseEntity";
+import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
 
 import { User } from "./User";
 
@@ -46,8 +46,7 @@ export class Insulin extends BaseEntity {
 
     public static async findAll(patientUid: string,
                                 p: Pageable,
-                                req: IInsulinSearchRequest = {},
-                                options: IInsulinQueryOptions = {}):
+                                options: IBaseQueryOptions = {}):
                                 Promise<Page<Insulin>> {
         let qb = this
             .createQueryBuilder("insulin")
@@ -65,7 +64,7 @@ export class Insulin extends BaseEntity {
 
     public static async findById(patientUid: string,
                                  insulinId: number,
-                                 options: IInsulinQueryOptions = {}):
+                                 options: IBaseQueryOptions = {}):
                                  Promise<Insulin | undefined> {
         let qb = this
             .createQueryBuilder("insulin")
@@ -81,12 +80,4 @@ export class Insulin extends BaseEntity {
 
         return qb.getOne();
     }
-}
-
-// tslint:disable-next-line: no-empty-interface
-export interface IInsulinQueryOptions extends IBaseQueryOptions {
-}
-
-// tslint:disable-next-line: no-empty-interface
-export interface IInsulinSearchRequest extends IBaseSearchRequest {
 }

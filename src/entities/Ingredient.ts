@@ -10,7 +10,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
 import { Utils } from "../lib";
 
-import { BaseEntityHiddenId, IBaseQueryOptions, IBaseSearchRequest } from "./BaseEntityHiddenId";
+import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
 
 import { Food } from "./Food";
 import { Recipe } from "./Recipe";
@@ -34,8 +34,7 @@ export class Ingredient extends BaseEntityHiddenId {
 
     // Repository functions
 
-    public static async findAll(req: IIngredientSearchRequest = {},
-                                options: IIngredientQueryOptions = {}): Promise<Ingredient[]> {
+    public static async findAll(options: IBaseQueryOptions = {}): Promise<Ingredient[]> {
         let qb = this.createQueryBuilder("ingredient");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
@@ -45,7 +44,7 @@ export class Ingredient extends BaseEntityHiddenId {
         return qb.getMany();
     }
 
-    public static async findById(id: number, options: IIngredientQueryOptions = {}): Promise<Ingredient | undefined> {
+    public static async findById(id: number, options: IBaseQueryOptions = {}): Promise<Ingredient | undefined> {
         let qb = this
             .createQueryBuilder("ingredient")
             .where("ingredient.id = :id", { id });
@@ -57,12 +56,4 @@ export class Ingredient extends BaseEntityHiddenId {
         return qb.getOne();
     }
 
-}
-
-// tslint:disable-next-line: no-empty-interface
-export interface IIngredientQueryOptions extends IBaseQueryOptions {
-}
-
-// tslint:disable-next-line: no-empty-interface
-export interface IIngredientSearchRequest extends IBaseSearchRequest {
 }
