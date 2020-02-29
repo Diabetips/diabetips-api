@@ -14,7 +14,7 @@ import { Action, BadRequestError, useExpressServer } from "routing-controllers";
 
 import { getDocsSpec } from "./docs";
 import { ApiError, ValidationError } from "./errors";
-import { HttpStatus, Utils } from "./lib";
+import { Context, HttpStatus, Utils } from "./lib";
 import { httpLogger, log4js, logger } from "./logger";
 import { AuthService } from "./services";
 
@@ -32,9 +32,9 @@ preapp.use(log4js.connectLogger(httpLogger, {
 
 // Setup routing-controllers
 export const app = useExpressServer(preapp, {
-    currentUserChecker: (async (action: Action) => {
+    ctxBuilder: (async (action: Action): Promise<Context> => {
         // both set context in req and return to rounting-controllers
-        return action.request.context = {
+        return {
             auth: await AuthService.decodeAuthorization(action.request.header("Authorization")),
         };
     }),

@@ -6,8 +6,8 @@
 ** Created by Arthur MELIN on Fri Aug 30 2019
 */
 
-import { NextFunction, Request, Response } from "express";
-import { All, Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res, UseBefore } from "routing-controllers";
+import { Response } from "express";
+import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res, UseBefore } from "routing-controllers";
 
 import { Pageable } from "../lib";
 import { UserCreateReq, UserUpdateReq } from "../requests";
@@ -15,15 +15,6 @@ import { UserService } from "../services";
 
 @JsonController("/v1/users")
 export class UserController {
-
-    @All(/\/me(\/.*)?/)
-    @UseBefore((req: Request, res: Response, next: NextFunction) => {
-        req.url = "/" + UserService.getCurrentUser(req.context).uid + req.url.slice(3);
-        next("route");
-    })
-    private meUrlRewrite() {
-        throw Error("Unreachable code");
-    }
 
     @Get("/")
     private async getAllUsers(@QueryParams() p: Pageable, @Res() res: Response) {
