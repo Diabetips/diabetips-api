@@ -23,7 +23,7 @@ export class UrlRewriteController {
         const context: Context = {
             auth: await AuthService.decodeAuthorization(req.header("Authorization")),
         };
-        req.url = "/v1/users/" + UserService.getCurrentUser(context).uid + req.params[0];
+        req.url = "/v1/users/" + UserService.getCurrentUser(context).uid + (req.params[0] || "");
         next("route");
     })
     private usersMeRewrite() {
