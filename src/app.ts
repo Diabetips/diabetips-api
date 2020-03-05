@@ -78,6 +78,7 @@ app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction)
         err = new ValidationError(err);
     }
     if (err instanceof ApiError) {
+        logger.warn(err);
         res
             .status(err.status)
             .type("json")

@@ -54,7 +54,7 @@ export class AuthService extends BaseService {
                 }
                 user = tmp;
             } catch (err) {
-                logger.error("Token verification failed:", err.stack || err);
+                logger.warn("Token verification failed:", err.stack || err);
                 throw new ApiError(HttpStatus.BAD_REQUEST, "invalid_auth", "Invalid authorization token");
             }
 
