@@ -13,6 +13,7 @@ export * from "./FoodPictureService";
 export * from "./FoodService";
 export * from "./Hba1cService";
 export * from "./InsulinService";
+export * from "./BloodSugarService";
 export * from "./MealService";
 export * from "./RecipeService";
 export * from "./UserConfirmationService";

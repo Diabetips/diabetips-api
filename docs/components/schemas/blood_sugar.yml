@@ -9,7 +9,7 @@ BloodSugar:
     "interval":
       type: "integer"
       description: "Interval (in seconds) between each data measure"
-      example: 1581808876
+      example: 60
       writeOnly: true
     "measures":
       type: array

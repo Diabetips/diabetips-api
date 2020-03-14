@@ -19,6 +19,7 @@ import { Hba1c } from "./Hba1c";
 import { Insulin } from "./Insulin";
 import { Meal } from "./Meal";
 
+import { BloodSugar } from "./BloodSugar";
 import { UserConfirmation } from "./UserConfirmation";
 import { UserPicture } from "./UserPicture";
 export { UserConfirmation, UserPicture };
@@ -83,6 +84,9 @@ export class User extends BaseEntityHiddenId {
 
     @OneToMany((type) => Hba1c, (hba1c) => hba1c.user)
     public hba1c: Promise<Hba1c[]>;
+
+    @OneToMany((type) => BloodSugar, (blood_sugar) => blood_sugar.user)
+    public blood_sugar: Promise<BloodSugar[]>;
 
     public get password(): string | undefined {
         return this._password;
