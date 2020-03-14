@@ -35,7 +35,7 @@ export class BloodSugar extends BaseEntityHiddenId {
         .createQueryBuilder("blood_sugar")
         .leftJoin("blood_sugar.user", "user")
         .where("user.uid = :uid", { uid })
-        .orderBy("blood_sugar.timestamp", "ASC");
+        .orderBy("blood_sugar.timestamp", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb
