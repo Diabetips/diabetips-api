@@ -32,7 +32,8 @@
       - "Biometrics"
     summary: "Get all blood sugar measures"
     description: >
-      Get a list of all the blood sugar measure points of the user with the specified UID.
+      Get a list of all the blood sugar measure points of the user with the specified UID. 
+      The entries are sorted from most recent to oldest.
 
 
       Implements [Paging](#tag/Paging)
