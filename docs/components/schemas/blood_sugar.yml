@@ -20,7 +20,7 @@ BloodSugar:
       writeOnly: true
     "timestamp":
       type: "integer"
-      description: "UNIX timestamp of the measure(in the UTC timezone)"
+      description: "UNIX timestamp of the measure (in the UTC timezone)"
       example: 1581808876
       readOnly: true
     "value":

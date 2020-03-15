@@ -22,6 +22,7 @@ Insulin:
       example: 1576359970
     "type":
       type: string
+      description: "Type of the injected insulin"
       example: slow
       enum:
         - slow
