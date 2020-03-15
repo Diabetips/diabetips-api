@@ -19,6 +19,8 @@ import { Hba1c } from "./Hba1c";
 import { Insulin } from "./Insulin";
 import { Meal } from "./Meal";
 
+import { Height, Mass } from ".";
+import { Biometric } from "./Biometric";
 import { BloodSugar } from "./BloodSugar";
 import { UserConfirmation } from "./UserConfirmation";
 import { UserPicture } from "./UserPicture";
@@ -51,6 +53,9 @@ export class User extends BaseEntityHiddenId {
 
     @OneToOne((type) => UserPicture, (picture) => picture.user)
     public picture: Promise<UserPicture>;
+
+    @OneToOne((type) => Biometric, (pd) => pd.user)
+    public biometric: Promise<Biometric>;
 
     @ManyToMany((type) => AuthApp)
     @JoinTable({
@@ -87,6 +92,12 @@ export class User extends BaseEntityHiddenId {
 
     @OneToMany((type) => BloodSugar, (blood_sugar) => blood_sugar.user)
     public blood_sugar: Promise<BloodSugar[]>;
+
+    @OneToMany((type) => Height, (h) => h.user)
+    public height_history: Promise<Height[]>;
+
+    @OneToMany((type) => Mass, (h) => h.user)
+    public mass_history: Promise<Mass[]>;
 
     public get password(): string | undefined {
         return this._password;

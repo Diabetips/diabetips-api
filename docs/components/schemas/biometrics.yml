@@ -1,0 +1,28 @@
+Biometrics:
+  type: "object"
+  properties:
+    "date_of_birth":
+      type: string
+      format: date
+      pattern: "YYYY-MM-DD"
+      description: "Date of birth of the user in ISO 8601 format (YYYY-MM-DD)."
+      example: "1984-05-18"
+      nullable: true
+    "mass":
+      type: "number"
+      description: "Mass of the user in kg."
+      example: 73.2
+      nullable: true
+    "height":
+      type: "number"
+      description: "Height of the user in cm."
+      example: 183
+      nullable: true
+    "sex":
+      type: "string"
+      description: "Biological sex of the user."
+      example: female
+      enum:
+        - male
+        - female
+      nullable: true

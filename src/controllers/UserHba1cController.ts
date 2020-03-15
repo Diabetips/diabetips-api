@@ -19,7 +19,7 @@ export class UserHba1cController {
     @Get("/")
     private async getAllUserHba1c(@Param("uid") uid: string, @QueryParams() p: Pageable, @Res() res: Response) {
         const page = await Hba1cService.getAllHba1c(uid, p);
-        page.send(res);
+        return page.send(res);
     }
 
     @Post("/")

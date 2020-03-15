@@ -1,3 +1,118 @@
+"/v1/users/{uid}/biometrics":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Biometrics"
+    summary: "Get general biometric information"
+    description: >
+      Get the general biometric information of the specified user.
+
+
+      Fields may be null.
+    parameters:
+      - $component: "queries:paging.yml:SizeQuery"
+    responses:
+      200:
+        description: "The user's biometric information"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:biometrics.yml:Biometrics"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  put:
+    tags:
+      - "Biometrics"
+    summary: "Update general biometric information"
+    description: >
+      Update the specified user's general biometric information.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:biometrics.yml:Biometrics"
+    responses:
+      200:
+        description: "The biometric information has been updated."
+        content:
+          application/json:
+            schema:
+              $component: "schemas:biometrics.yml:Biometrics"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to
+          modify them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+
+"/v1/users/{uid}/mass":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Biometrics"
+    summary: "Get user mass history"
+    description: >
+      Get the mass history of the user with the specified UID.
+    responses:
+      200:
+        description: "The mass history"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:mass.yml:Mass"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/height":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Biometrics"
+    summary: "Get user height history"
+    description: >
+      Get the height history of the user with the specified UID.
+    responses:
+      200:
+        description: "The height history"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:height.yml:Height"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
 "/v1/users/{uid}/blood_sugar/last":
   parameters:
     - $component: "parameters:uid.yml:UID"
