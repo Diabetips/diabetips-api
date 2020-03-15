@@ -25,7 +25,7 @@ export class Biometric extends BaseEntityHiddenId {
     public dateOfBirth: Date | null;
 
     @Column({ type: "float", nullable: true })
-    public weight: number | null;
+    public mass: number | null;
 
     @Column({ type: "float", nullable: true })
     public height: number | null;
@@ -44,7 +44,7 @@ export class Biometric extends BaseEntityHiddenId {
     constructor() {
         super();
         this.dateOfBirth = null;
-        this.weight = null;
+        this.mass = null;
         this.height = null;
         this.sex = null;
     }

@@ -6,9 +6,11 @@
 ** Created by Alexandre DE BEAUMONT on Sat Mar 14 2020
 */
 
+import { MassService } from ".";
 import { Biometric } from "../entities";
 import { BiometricUpdateReq } from "../requests";
 import { BaseService } from "./BaseService";
+import { HeightService } from "./HeightService";
 import { UserService } from "./UserService";
 
 export class BiometricService extends BaseService {
@@ -26,11 +28,18 @@ export class BiometricService extends BaseService {
 
     public static async updateUserBiometric(uid: string, req: BiometricUpdateReq) {
         const biometric = await this.getUserBiometric(uid);
+        const user = await biometric.user;
 
         if (req.date_of_birth !== undefined) { biometric.dateOfBirth = req.date_of_birth; }
-        if (req.weight !== undefined) { biometric.weight = req.weight; }
-        if (req.height !== undefined) { biometric.height = req.height; }
         if (req.sex !== undefined) { biometric.sex = req.sex; }
+        if (req.mass !== undefined) {
+            biometric.mass = req.mass;
+            MassService.addMassToHistory(user, req.mass);
+        }
+        if (req.height !== undefined) {
+            biometric.height = req.height;
+            HeightService.addHeightToHistory(user, req.height);
+        }
 
         return biometric.save();
     }

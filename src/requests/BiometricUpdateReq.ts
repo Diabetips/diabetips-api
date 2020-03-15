@@ -17,7 +17,7 @@ export class BiometricUpdateReq {
     @IsOptional()
     @IsNumber()
     @IsPositive()
-    public weight?: number;
+    public mass?: number;
 
     @IsOptional()
     @IsNumber()
