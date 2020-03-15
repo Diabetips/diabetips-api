@@ -13,7 +13,7 @@ BloodSugar:
       writeOnly: true
     "measures":
       type: array
-      description: "List of data measures"
+      description: "List of data measures in mg/dL"
       items:
         type: "number"
         example: 56.2
@@ -25,6 +25,6 @@ BloodSugar:
       readOnly: true
     "value":
       type: "number"
-      description: "Value of the measure"
+      description: "Value of the measure in mg/dL"
       example: 56.2
       readOnly: true
