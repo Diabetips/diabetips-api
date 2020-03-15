@@ -6,6 +6,7 @@
 ** Created by Arthur MELIN on Tue Feb 11 2020
 */
 
+export * from "./BiometricUpdateReq";
 export * from "./BloodSugarCreateReq";
 export * from "./BloodSugarDeleteReq";
 export * from "./BloodSugarUpdateReq";

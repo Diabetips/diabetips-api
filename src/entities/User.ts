@@ -19,6 +19,7 @@ import { Hba1c } from "./Hba1c";
 import { Insulin } from "./Insulin";
 import { Meal } from "./Meal";
 
+import { Biometric } from "./Biometric";
 import { BloodSugar } from "./BloodSugar";
 import { UserConfirmation } from "./UserConfirmation";
 import { UserPicture } from "./UserPicture";
@@ -51,6 +52,9 @@ export class User extends BaseEntityHiddenId {
 
     @OneToOne((type) => UserPicture, (picture) => picture.user)
     public picture: Promise<UserPicture>;
+
+    @OneToOne((type) => Biometric, (pd) => pd.user)
+    public biometric: Promise<Biometric>;
 
     @ManyToMany((type) => AuthApp)
     @JoinTable({

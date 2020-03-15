@@ -7,6 +7,8 @@
 */
 
 export * from "./AuthApp";
+export * from "./Biometric";
+export * from "./BloodSugar";
 export * from "./Food";
 export * from "./Hba1c";
 export * from "./Ingredient";
@@ -14,4 +16,3 @@ export * from "./Insulin";
 export * from "./Meal";
 export * from "./Recipe";
 export * from "./User";
-export * from "./BloodSugar";
