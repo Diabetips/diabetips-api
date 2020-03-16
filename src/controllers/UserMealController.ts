@@ -17,28 +17,28 @@ import { MealService } from "../services";
 export class UserMealController {
 
     @Get("/")
-    private async getAllUserMeals(@Param("uid") uid: string, @QueryParams() p: Pageable, @Res() res: Response) {
+    public async getAllUserMeals(@Param("uid") uid: string, @QueryParams() p: Pageable, @Res() res: Response) {
         const page = await MealService.getAllMeals(uid, p);
         return page.send(res);
     }
 
     @Post("/")
-    private async addUserMeal(@Param("uid") uid: string, @Body() body: MealCreateReq) {
+    public async addUserMeal(@Param("uid") uid: string, @Body() body: MealCreateReq) {
         return MealService.addMeal(uid, body);
     }
 
     @Get("/:id")
-    private async getUserMeal(@Param("uid") uid: string, @Param("id") mealId: number) {
+    public async getUserMeal(@Param("uid") uid: string, @Param("id") mealId: number) {
         return MealService.getMeal(uid, mealId);
     }
 
     @Put("/:id")
-    private async updateUserMeal(@Param("uid") uid: string, @Param("id") mealId: number, @Body() body: MealUpdateReq) {
+    public async updateUserMeal(@Param("uid") uid: string, @Param("id") mealId: number, @Body() body: MealUpdateReq) {
         return MealService.updateMeal(uid, mealId, body);
     }
 
     @Delete("/:id")
-    private async deleteUserMeal(@Param("uid") uid: string, @Param("id") mealId: number) {
+    public async deleteUserMeal(@Param("uid") uid: string, @Param("id") mealId: number) {
         await MealService.deleteMeal(uid, mealId);
     }
 

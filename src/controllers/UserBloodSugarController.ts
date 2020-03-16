@@ -31,27 +31,27 @@ export class UserBloodSugarController {
     ];
 
     @Get("/")
-    private async getAllUserBloodSugar(@Param("uid") uid: string) {
+    public async getAllUserBloodSugar(@Param("uid") uid: string) {
         return this.dummy;
     }
 
     @Post("/")
-    private async addUserBloodSugar(@Param("uid") uid: string) {
+    public async addUserBloodSugar(@Param("uid") uid: string) {
         return this.dummy;
     }
 
     @Get("/last")
-    private async getLastUserBloodSugar(@Param("uid") uid: string) {
+    public async getLastUserBloodSugar(@Param("uid") uid: string) {
         return this.dummy[this.dummy.length - 1];
     }
 
     @Put("/")
-    private async updateUserBloodSugar(@Param("uid") uid: string) {
+    public async updateUserBloodSugar(@Param("uid") uid: string) {
         return this.dummy;
     }
 
     @Delete("/")
-    private async deleteUserBloodSugar(@Param("uid") uid: string) {
+    public async deleteUserBloodSugar(@Param("uid") uid: string) {
         //
     }
 

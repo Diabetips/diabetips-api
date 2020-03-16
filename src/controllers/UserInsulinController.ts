@@ -17,29 +17,29 @@ import { InsulinService } from "../services";
 export class UserInsulinController {
 
     @Get("/")
-    private async getAllUserInsulin(@Param("uid") uid: string, @QueryParams() p: Pageable, @Res() res: Response) {
+    public async getAllUserInsulin(@Param("uid") uid: string, @QueryParams() p: Pageable, @Res() res: Response) {
         const page = await InsulinService.getAllInsulin(uid, p);
         return page.send(res);
     }
 
     @Post("/")
-    private async addUserInsulin(@Param("uid") uid: string, @Body() body: InsulinCreateReq) {
+    public async addUserInsulin(@Param("uid") uid: string, @Body() body: InsulinCreateReq) {
         return InsulinService.addInsulin(uid, body);
     }
 
     @Get("/:id")
-    private async getUserInsulin(@Param("uid") uid: string, @Param("id") insulinId: number) {
+    public async getUserInsulin(@Param("uid") uid: string, @Param("id") insulinId: number) {
         return InsulinService.getInsulin(uid, insulinId);
     }
 
     @Put("/:id")
-    private async updateUserInsulin(@Param("uid") uid: string, @Param("id") insulinId: number,
-                                    @Body() body: InsulinUpdateReq) {
+    public async updateUserInsulin(@Param("uid") uid: string, @Param("id") insulinId: number,
+                                   @Body() body: InsulinUpdateReq) {
         return InsulinService.updateInsulin(uid, insulinId, body);
     }
 
     @Delete("/:id")
-    private async deleteUserInsulin(@Param("uid") uid: string, @Param("id") insulinId: number) {
+    public async deleteUserInsulin(@Param("uid") uid: string, @Param("id") insulinId: number) {
         await InsulinService.deleteInsulin(uid, insulinId);
     }
 

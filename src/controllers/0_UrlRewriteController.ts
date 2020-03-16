@@ -26,7 +26,7 @@ export class UrlRewriteController {
         req.url = "/v1/users/" + UserService.getCurrentUser(context).uid + (req.params[0] || "");
         next("route");
     })
-    private usersMeRewrite() {
+    public usersMeRewrite() {
         throw Error("Unreachable code");
     }
 

@@ -14,12 +14,12 @@ import { AuthAppService } from "../services";
 export class UserAppController {
 
     @Get("/")
-    private async getAllUserApps(@Param("uid") uid: string) {
+    public async getAllUserApps(@Param("uid") uid: string) {
         return AuthAppService.getAllUserApps(uid);
     }
 
     @Delete("/:appid")
-    private async deauthorizeApp(@Param("uid") uid: string, @Param("appid") appid: string) {
+    public async deauthorizeApp(@Param("uid") uid: string, @Param("appid") appid: string) {
         await AuthAppService.deauthorizeUserApp(uid, appid);
     }
 

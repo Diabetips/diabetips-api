@@ -17,28 +17,28 @@ import { RecipeService } from "../services";
 export class RecipeController {
 
     @Get("/")
-    private async getAllRecipes(@QueryParams() p: Pageable, @QueryParams() req: RecipeSearchReq, @Res() res: Response) {
+    public async getAllRecipes(@QueryParams() p: Pageable, @QueryParams() req: RecipeSearchReq, @Res() res: Response) {
         const page = await RecipeService.getAllRecipes(p, req);
         return page.send(res);
     }
 
     @Post("/")
-    private async createRecipe(@Body() body: RecipeCreateReq) {
+    public async createRecipe(@Body() body: RecipeCreateReq) {
         return RecipeService.createRecipe(body);
     }
 
     @Get("/:id")
-    private async getRecipe(@Param("id") id: number) {
+    public async getRecipe(@Param("id") id: number) {
         return RecipeService.getRecipe(id);
     }
 
     @Put("/:id")
-    private async updateRecipe(@Param("id") id: number, @Body() body: RecipeUpdateReq) {
+    public async updateRecipe(@Param("id") id: number, @Body() body: RecipeUpdateReq) {
         return RecipeService.updateRecipe(id, body);
     }
 
     @Delete("/:id")
-    private async deleteRecipe(@Param("id") id: number) {
+    public async deleteRecipe(@Param("id") id: number) {
         await RecipeService.deleteRecipe(id);
     }
 

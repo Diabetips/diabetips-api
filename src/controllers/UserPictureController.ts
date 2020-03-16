@@ -16,19 +16,19 @@ import { UserPictureService } from "../services";
 export class UserPictureController {
 
     private static rawParser = bodyParser.raw({
-        limit: "2mb",
+        limit: "5mb",
         type: (req) => true,
     });
 
     @Get("/")
     @ContentType("jpeg")
-    private async getUserPicture(@Param("uid") uid: string) {
+    public async getUserPicture(@Param("uid") uid: string) {
         return UserPictureService.getUserPicture(uid);
     }
 
     @Post("/")
     @UseBefore(UserPictureController.rawParser)
-    private async setUserPicture(@Param("uid") uid: string, @Body() body: Buffer) {
+    public async setUserPicture(@Param("uid") uid: string, @Body() body: Buffer) {
         await UserPictureService.setUserPicture(uid, body);
     }
 

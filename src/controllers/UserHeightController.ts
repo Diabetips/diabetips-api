@@ -27,7 +27,7 @@ export class UserHeightController {
     ];
 
     @Get("/")
-    private async getHeightHistory() {
+    public async getHeightHistory() {
         return this.dummy;
     }
 

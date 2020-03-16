@@ -15,7 +15,7 @@ export class FoodPictureController {
 
     @Get("/")
     @ContentType("jpeg")
-    private async getFoodPicture(@Param("id") id: number) {
+    public async getFoodPicture(@Param("id") id: number) {
         return FoodPictureService.getFoodPicture(id);
     }
 

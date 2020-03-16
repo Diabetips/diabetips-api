@@ -17,29 +17,29 @@ import { Hba1cService } from "../services";
 export class UserHba1cController {
 
     @Get("/")
-    private async getAllUserHba1c(@Param("uid") uid: string, @QueryParams() p: Pageable, @Res() res: Response) {
+    public async getAllUserHba1c(@Param("uid") uid: string, @QueryParams() p: Pageable, @Res() res: Response) {
         const page = await Hba1cService.getAllHba1c(uid, p);
         page.send(res);
     }
 
     @Post("/")
-    private async addUserHba1c(@Param("uid") uid: string, @Body() body: Hba1cCreateReq) {
+    public async addUserHba1c(@Param("uid") uid: string, @Body() body: Hba1cCreateReq) {
         return Hba1cService.addHba1c(uid, body);
     }
 
     @Get("/:id")
-    private async getUserHba1c(@Param("uid") uid: string, @Param("id") hba1cId: number) {
+    public async getUserHba1c(@Param("uid") uid: string, @Param("id") hba1cId: number) {
         return Hba1cService.getHba1c(uid, hba1cId);
     }
 
     @Put("/:id")
-    private async updateUserHba1c(@Param("uid") uid: string, @Param("id") hba1cId: number,
+    public async updateUserHba1c(@Param("uid") uid: string, @Param("id") hba1cId: number,
                                   @Body() body: Hba1cUpdateReq) {
         return Hba1cService.updateHba1c(uid, hba1cId, body);
     }
 
     @Delete("/:id")
-    private async deleteUserHba1c(@Param("uid") uid: string, @Param("id") hba1cId: number) {
+    public async deleteUserHba1c(@Param("uid") uid: string, @Param("id") hba1cId: number) {
         await Hba1cService.deleteHba1c(uid, hba1cId);
     }
 

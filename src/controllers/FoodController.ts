@@ -17,13 +17,13 @@ import { FoodService } from "../services";
 export class FoodController {
 
     @Get("/")
-    private async getAllFood(@QueryParams() p: Pageable, @QueryParams() req: FoodSearchReq, @Res() res: Response) {
+    public async getAllFood(@QueryParams() p: Pageable, @QueryParams() req: FoodSearchReq, @Res() res: Response) {
         const page = await FoodService.getAllFood(p, req);
         return page.send(res);
     }
 
     @Get("/:id")
-    private async getFood(@Param("id") id: number) {
+    public async getFood(@Param("id") id: number) {
         return FoodService.getFood(id);
     }
 

@@ -17,23 +17,23 @@ export class UserEventController {
         end: 1581696111,
     };
 
-    private async getAllEvents(@Param("uid") uid: string) {
+    public async getAllEvents(@Param("uid") uid: string) {
         return [this.dummy];
     }
 
-    private async createEvent(@Param("uid") uid: string) {
+    public async createEvent(@Param("uid") uid: string) {
         return this.dummy;
     }
 
-    private async getEvent(@Param("uid") uid: string) {
+    public async getEvent(@Param("uid") uid: string) {
         return this.dummy;
     }
 
-    private async updateEvent(@Param("uid") uid: string) {
+    public async updateEvent(@Param("uid") uid: string) {
         return this.dummy;
     }
 
-    private async deleteEvent(@Param("uid") uid: string) {
+    public async deleteEvent(@Param("uid") uid: string) {
         //
     }
 }

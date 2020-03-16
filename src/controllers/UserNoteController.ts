@@ -17,27 +17,27 @@ export class UserNoteController {
     };
 
     @Get("/")
-    private async getAllNotes(@Param("uid") uid: string) {
+    public async getAllNotes(@Param("uid") uid: string) {
         return [this.dummy];
     }
 
     @Post("/")
-    private async createNote(@Param("uid") uid: string) {
+    public async createNote(@Param("uid") uid: string) {
         return this.dummy;
     }
 
     @Get("/:id")
-    private async getNote(@Param("uid") uid: string, @Param("id") noteId: number) {
+    public async getNote(@Param("uid") uid: string, @Param("id") noteId: number) {
         return this.dummy;
     }
 
     @Put("/:id")
-    private async updateNote(@Param("uid") uid: string, @Param("id") noteId: number) {
+    public async updateNote(@Param("uid") uid: string, @Param("id") noteId: number) {
         return this.dummy;
     }
 
     @Delete("/:id")
-    private async deleteNote(@Param("uid") uid: string, @Param("id") noteId: number) {
+    public async deleteNote(@Param("uid") uid: string, @Param("id") noteId: number) {
         //
     }
 

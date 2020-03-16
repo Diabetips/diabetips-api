@@ -27,7 +27,7 @@ export class UserMassController {
     ];
 
     @Get("/")
-    private async getMassHistory(@Param("uid") uid: string) {
+    public async getMassHistory(@Param("uid") uid: string) {
         return this.dummy;
     }
 

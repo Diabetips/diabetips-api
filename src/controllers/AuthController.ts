@@ -47,7 +47,7 @@ export class AuthController {
 
     @Get("/authorize")
     @Redirect(config.diabetips.accountUrl + "/oauth/authorize?:query")
-    private authorizeRedirect(@Req() req: Request) {
+    public authorizeRedirect(@Req() req: Request) {
         return {
             query: querystring.stringify(req.query),
         };
@@ -56,25 +56,25 @@ export class AuthController {
     @Post("/authorize")
     @UseBefore(AuthController.formParser)
     @UseAfter(AuthController.errorHandler)
-    private async authorize(@Ctx() context: Context, @Body() body: any) {
+    public async authorize(@Ctx() context: Context, @Body() body: any) {
         return AuthService.authorize(context, body);
     }
 
     @Post("/token")
     @UseBefore(AuthController.formParser)
     @UseAfter(AuthController.errorHandler)
-    private async token(@Ctx() context: Context, @Body() body: any) {
+    public async token(@Ctx() context: Context, @Body() body: any) {
         return AuthService.getToken(context, body);
     }
 
     @Post("/confirm")
-    private async confirmAccount(@Body() req: UserConfirmAccountReq) {
+    public async confirmAccount(@Body() req: UserConfirmAccountReq) {
         await UserConfirmationService.confirmUserAccount(req);
     }
 
     @Post("/reset-password")
     @HttpCode(HttpStatus.ACCEPTED)
-    private async resetPassword(@Body() req: UserResetPasswordReq) {
+    public async resetPassword(@Body() req: UserResetPasswordReq) {
         // await voluntarly missing in order to prevent timing attacks
         // Measuring the time this route takes to respond could otherwise be used by an attacker to reveal whether a
         // given email address is associated to an account.

@@ -16,18 +16,18 @@ import { UserConnectionService } from "../services";
 export class UserConnectionController {
 
     @Get("/")
-    private async getAllConnections(@Param("uid") uid: string) {
+    public async getAllConnections(@Param("uid") uid: string) {
         return UserConnectionService.getAllUserConnections(uid);
     }
 
     @Post("/")
     @HttpCode(HttpStatus.ACCEPTED)
-    private async createConnection(@Param("uid") uid: string, @Body() req: UserConnectionInviteReq) {
+    public async createConnection(@Param("uid") uid: string, @Body() req: UserConnectionInviteReq) {
         await UserConnectionService.createUserConnection(uid, req);
     }
 
     @Delete("/:conn_uid")
-    private async deleteConnection(@Param("uid") uid: string, @Param("conn_uid") connectionUid: string) {
+    public async deleteConnection(@Param("uid") uid: string, @Param("conn_uid") connectionUid: string) {
         await UserConnectionService.deleteUserConnection(uid, connectionUid);
     }
 

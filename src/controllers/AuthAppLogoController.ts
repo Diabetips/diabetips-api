@@ -29,13 +29,13 @@ export class AuthAppLogoController {
 
     @Get("/")
     @ContentType("png")
-    private async getAppLogo(@Param("appid") appid: string) {
+    public async getAppLogo(@Param("appid") appid: string) {
         return AuthAppLogoService.getAppLogo(appid);
     }
 
     @Post("/")
     @UseBefore(AuthAppLogoController.rawParser)
-    private async uploadAppLogo(@Param("appid") appid: string, @Body() body: Buffer) {
+    public async uploadAppLogo(@Param("appid") appid: string, @Body() body: Buffer) {
         await AuthAppLogoService.setAppLogo(appid, body);
     }
 

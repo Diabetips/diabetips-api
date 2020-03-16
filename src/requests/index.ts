@@ -14,6 +14,7 @@ export * from "./InsulinCreateReq";
 export * from "./InsulinUpdateReq";
 export * from "./MealCreateReq";
 export * from "./MealUpdateReq";
+export * from "./PredictionSettingsUpdateReq";
 export * from "./RecipeCreateReq";
 export * from "./RecipeSearchReq";
 export * from "./RecipeUpdateReq";
