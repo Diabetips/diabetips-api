@@ -11,4 +11,5 @@ export * from "./Context";
 export * from "./HttpStatus";
 export * from "./Page";
 export * from "./Pageable";
+export * from "./Timeable";
 export * from "./Utils";

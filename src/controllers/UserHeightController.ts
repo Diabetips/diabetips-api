@@ -6,29 +6,22 @@
 ** Created by Alexandre DE BEAUMONT on Fri Feb 14 2020
 */
 
-import { Get, JsonController } from "routing-controllers";
+import { Response } from "express";
+import { Get, JsonController, Param, QueryParams, Res } from "routing-controllers";
+
+import { Pageable, Timeable } from "../lib";
+import { HeightService } from "../services";
 
 @JsonController("/v1/users/:uid/height")
 export class UserHeightController {
 
-    private dummy = [
-        {
-            timestamp: 1581616078,
-            height: 173,
-        },
-        {
-            timestamp: 1581716078,
-            height: 174,
-        },
-        {
-            timestamp: 1581816078,
-            height: 175,
-        },
-    ];
-
     @Get("/")
-    public async getHeightHistory() {
-        return this.dummy;
+    public async getHeightHistory(@Param("uid") uid: string,
+                                  @QueryParams() p: Pageable,
+                                  @QueryParams() t: Timeable,
+                                  @Res() res: Response) {
+        const page = await HeightService.getHeightHistory(uid, p, t);
+        return page.send(res);
     }
 
 }

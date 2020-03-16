@@ -6,29 +6,22 @@
 ** Created by Alexandre DE BEAUMONT on Fri Feb 14 2020
 */
 
-import { Get, JsonController, Param } from "routing-controllers";
+import { Response } from "express";
+import { Get, JsonController, Param, QueryParams, Res } from "routing-controllers";
+
+import { Pageable, Timeable } from "../lib";
+import { MassService } from "../services";
 
 @JsonController("/v1/users/:uid/mass")
 export class UserMassController {
 
-    private dummy = [
-        {
-            timestamp: 1581616078,
-            mass: 73,
-        },
-        {
-            timestamp: 1581716078,
-            mass: 72,
-        },
-        {
-            timestamp: 1581816078,
-            mass: 75,
-        },
-    ];
-
     @Get("/")
-    public async getMassHistory(@Param("uid") uid: string) {
-        return this.dummy;
+    public async getMassHistory(@Param("uid") uid: string,
+                                @QueryParams() p: Pageable,
+                                @QueryParams() t: Timeable,
+                                @Res() res: Response) {
+        const page = await MassService.getMassHistory(uid, p, t);
+        return page.send(res);
     }
 
 }

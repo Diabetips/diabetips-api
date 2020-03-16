@@ -6,53 +6,46 @@
 ** Created by Alexandre DE BEAUMONT on Fri Feb 14 2020
 */
 
-import { Delete, Get, JsonController, Param, Post, Put } from "routing-controllers";
+import { Response } from "express";
+import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
+
+import { Pageable, Timeable } from "../lib";
+import { BloodSugarCreateReq, BloodSugarDeleteReq, BloodSugarUpdateReq } from "../requests";
+import { BloodSugarService } from "../services";
 
 @JsonController("/v1/users/:uid/blood_sugar")
 export class UserBloodSugarController {
 
-    private dummy = [
-        {
-            timestamp: 1581806120,
-            value: 57.7,
-        },
-        {
-            timestamp: 1581806180,
-            value: 60.8,
-        },
-        {
-            timestamp: 1581806240,
-            value: 61.5,
-        },
-        {
-            timestamp: 1581806300,
-            value: 63.2,
-        },
-    ];
-
     @Get("/")
-    public async getAllUserBloodSugar(@Param("uid") uid: string) {
-        return this.dummy;
+    public async getAllUserBloodSugar(@QueryParams() p: Pageable,
+                                      @QueryParams() t: Timeable,
+                                      @Param("uid") uid: string,
+                                      @Res() res: Response) {
+        const page = await BloodSugarService.getAllBloodSugar(uid, p, t);
+        return page.send(res);
     }
 
     @Post("/")
-    public async addUserBloodSugar(@Param("uid") uid: string) {
-        return this.dummy;
+    public async addUserBloodSugar(@Param("uid") uid: string,
+                                   @Body() body: BloodSugarCreateReq) {
+        return BloodSugarService.addBloodSugar(uid, body);
     }
 
     @Get("/last")
     public async getLastUserBloodSugar(@Param("uid") uid: string) {
-        return this.dummy[this.dummy.length - 1];
+        return BloodSugarService.getLastBloodSugar(uid);
     }
 
     @Put("/")
-    public async updateUserBloodSugar(@Param("uid") uid: string) {
-        return this.dummy;
+    public async updateUserBloodSugar(@Param("uid") uid: string,
+                                      @Body() body: BloodSugarUpdateReq) {
+        return BloodSugarService.updateBloodSugar(uid, body);
     }
 
     @Delete("/")
-    public async deleteUserBloodSugar(@Param("uid") uid: string) {
-        //
+    public async deleteUserBloodSugar(@Param("uid") uid: string,
+                                      @QueryParams() req: BloodSugarDeleteReq) {
+        await BloodSugarService.deleteBloodSugar(uid, req);
     }
 
 }

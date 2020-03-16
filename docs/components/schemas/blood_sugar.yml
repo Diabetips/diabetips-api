@@ -9,22 +9,22 @@ BloodSugar:
     "interval":
       type: "integer"
       description: "Interval (in seconds) between each data measure"
-      example: 1581808876
+      example: 60
       writeOnly: true
     "measures":
       type: array
-      description: "List of data measures"
+      description: "List of data measures in mg/dL"
       items:
         type: "number"
         example: 56.2
       writeOnly: true
     "timestamp":
       type: "integer"
-      description: "Timestamp of the measure"
+      description: "UNIX timestamp of the measure (in the UTC timezone)"
       example: 1581808876
       readOnly: true
     "value":
       type: "number"
-      description: "Value of the measure"
+      description: "Value of the measure in mg/dL"
       example: 56.2
       readOnly: true

@@ -29,6 +29,7 @@ tags:
        - [Meals - Get all meals](#tag/Meals/paths/~1v1~1users~1{uid}~1meals/get)
        - [Recipe - Get all food items](#tag/Recipes/paths/~1v1~1food/get)
        - [Recipe - Get all recipes](#tag/Recipes/paths/~1v1~1recipes/get)
+       - [Biometrics - Get all blood sugar measures](#tag/Biometrics/paths/~1v1~1users~1{uid}~1blood_sugar/get)
        - [Biometrics - Get all HbA1C measures](#tag/Biometrics/paths/~1v1~1users~1{uid}~1hba1c/get)
        - [Biometrics - Get all insulin injections](#tag/Biometrics/paths/~1v1~1users~1{uid}~1insulin/get)
   - name: "Authentication"
