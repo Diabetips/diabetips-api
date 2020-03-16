@@ -13,7 +13,7 @@ import { ContentType, Controller, Delete, Get, Param, Post, UseBefore } from "ro
 
 const DEFAULT_RECIPE_PICTURE = sharp("data/default_recipe_picture.svg").jpeg().toBuffer();
 
-@Controller("/v1/recipe/:id/picture")
+@Controller("/v1/recipes/:id/picture")
 export class RecipePictureController {
 
     private static rawParser = bodyParser.raw({
