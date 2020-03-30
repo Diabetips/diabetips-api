@@ -62,7 +62,9 @@
         content:
           application/json:
             schema:
-              $component: "schemas:error.yml:ErrorUserNotFound"
+              oneOf:
+                - $component: "schemas:error.yml:ErrorUserNotFound"
+                - $component: "schemas:error.yml:ErrorRecipeNotFound"
 "/v1/users/{uid}/meals/{meal_id}":
   parameters:
     - $component: "parameters:uid.yml:UID"
@@ -89,7 +91,7 @@
         content:
           application/json:
             schema:
-              $component: "schemas:error.yml:ErrorUserNotFound"
+              $component: "schemas:error.yml:ErrorMealNotFound"
   put:
     tags:
       - "Meals"
@@ -119,7 +121,9 @@
         content:
           application/json:
             schema:
-              $component: "schemas:error.yml:ErrorUserNotFound"
+              oneOf:
+                - $component: "schemas:error.yml:ErrorMealNotFound"
+                - $component: "schemas:error.yml:ErrorRecipeNotFound"
   delete:
     tags:
       - "Meals"
@@ -138,4 +142,4 @@
         content:
           application/json:
             schema:
-              $component: "schemas:error.yml:ErrorUserNotFound"
+              $component: "schemas:error.yml:ErrorMealNotFound"

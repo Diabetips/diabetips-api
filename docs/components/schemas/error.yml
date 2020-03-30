@@ -40,3 +40,23 @@ ErrorRecipeNotFound:
           example: "recipe_not_found"
         "message":
           example: "Recipe 15 not found"
+ErrorMealNotFound:
+  allOf:
+    - $component: "schemas:error.yml:Error"
+    - properties:
+        "status":
+          example: 404
+        "error":
+          example: "meal_not_found"
+        "message":
+          example: "Meal 7 or User 01234567-89ab-cdef-0123-456789abcdef not found"
+ErrorNotificationNotFound:
+  allOf:
+    - $component: "schemas:error.yml:Error"
+    - properties:
+        "status":
+          example: 404
+        "error":
+          example: "notification_not_found"
+        "message":
+          example: "Notification 01234567-89ab-cdef-0123-456789abcdef not found"

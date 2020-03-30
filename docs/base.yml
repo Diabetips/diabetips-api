@@ -50,8 +50,19 @@ tags:
        * [RFC 6749: OAuth 2.0](https://tools.ietf.org/html/rfc6749)
        * [RFC 7519: JSON Web Token](https://tools.ietf.org/html/rfc7519)
   - name: "Users"
+  - name: "Notifications"
+    description: >
+      **Work in progress, API objects and routes can be subject to changes until the final release.**
+
+
+
+      The Notifications API is available through the usual HTTP REST API but will also have a WebSocket endpoint in the
+      future.
   - name: "Connections"
   - name: "Biometrics"
+  - name: "Predictions"
+    description: >
+      **Work in progress, API objects and routes can be subject to changes until the final release.**
   - name: "Meals"
   - name: "Recipes"
   - name: "Notes"

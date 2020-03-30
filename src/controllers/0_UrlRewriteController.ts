@@ -6,8 +6,8 @@
 ** Created by Arthur MELIN on Sat Feb 29 2020
 */
 
-// Note: weird filename because routing-controllers import files in filename alphabetic order and routes in this need to
-// run before everything else
+// Note: this file has a filename prefix because routing-controllers imports files in this directory in the alphabetic
+// order and routes in this file should run before everything else
 
 import { NextFunction, Request, Response } from "express";
 import { All, Controller, UseBefore } from "routing-controllers";

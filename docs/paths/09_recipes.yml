@@ -189,3 +189,80 @@
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorRecipeNotFound"
+"/v1/recipes/{recipe_id}/picture":
+  parameters:
+    - $component: "parameters:recipe_id.yml:RecipeId"
+  get:
+    tags:
+      - "Recipes"
+    summary: "Get recipe picture"
+    description: >
+      Get the picture of the recipe with the specified ID.
+
+
+      The returned picture's dimensions will always be fit to 400 pixels.
+    responses:
+      200:
+        description: "The recipe's picture"
+        content:
+          image/jpeg:
+            schema:
+              type: "binary"
+      404:
+        description: "No recipe with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorRecipeNotFound"
+  post:
+    tags:
+      - "Recipes"
+    summary: "Update recipe picture"
+    description: >
+      Update the picture of the recipe with the specified ID.
+
+
+      The `Content-Type` header is ignored, the format of the file is auto-detected.
+      The supported image file formats are:
+       - JPEG
+       - PNG
+       - WebP
+       - TIFF
+
+      The maximum file upload size is 2 MB. There are no constraints on the uploaded image's dimensions, but it will be
+      resized and cropped to 400 by 400 pixels.
+    requestBody:
+      required: true
+      content:
+        "*/*":
+          schema:
+            type: "binary"
+    responses:
+      204:
+        description: "The recipe's picture has been updated"
+      404:
+        description: >
+          No recipe with the specified ID was found
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorRecipeNotFound"
+  delete:
+    tags:
+      - "Recipes"
+    summary: "Remove recipe picture"
+    description: >
+      Remove the picture of the recipe with the specified ID.
+
+
+      This action cannot be reverted, the recipe's picture will be reset to the default recipe picture.
+    responses:
+      204:
+        description: "The recipe's picture has been removed"
+      404:
+        description: >
+          No recipe with the specified ID was found
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorRecipeNotFound"
