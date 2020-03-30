@@ -1,4 +1,4 @@
-ARG node_version=13.8
+ARG node_version=13.12
 
 FROM node:${node_version} AS build
 RUN useradd -m diabetips-api
