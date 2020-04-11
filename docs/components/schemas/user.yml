@@ -30,4 +30,3 @@ User:
       type: "string"
       description: "The user's last name"
       example: "Doe"
-      # TODO: add mass, height, sex, DoB
