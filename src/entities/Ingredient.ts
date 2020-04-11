@@ -24,13 +24,13 @@ export class Ingredient extends BaseEntityHiddenId {
     @Column({ type: "float" })
     public total_sugar: number;
 
-    @ManyToOne((type) => Recipe)
-    @JoinColumn({ name: "recipe_id" })
-    public recipe: Recipe;
-
     @ManyToOne((type) => Food)
     @JoinColumn({ name: "food_id" })
     public food: Food;
+
+    @ManyToOne((type) => Recipe)
+    @JoinColumn({ name: "recipe_id" })
+    public recipe: Recipe;
 
     // Repository functions
 
