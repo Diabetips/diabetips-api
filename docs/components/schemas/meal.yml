@@ -24,7 +24,7 @@ Meal:
       readOnly: true
     "recipes":
       type: "array"
-      description: "The meal's components' recipes"
+      description: "The meal's recipes"
       items:
         $component: "schemas:recipe.yml:Recipe"
       readOnly: true
@@ -34,3 +34,8 @@ Meal:
       items:
         $component: "schemas:recipe.yml:RecipeId"
       writeOnly: true
+    "foods":
+      type: "array"
+      description: "The meal's foods"
+      items:
+        $component: "schemas:meal_food.yml:MealFood"
