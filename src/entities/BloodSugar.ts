@@ -98,12 +98,6 @@ export class BloodSugar extends BaseEntityHiddenId {
         .where("blood_sugar.user_id = :id", { id: user.id })
         .andWhere("blood_sugar.timestamp BETWEEN :start AND :end", { start: range.start, end: range.end });
 
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb
-            .andWhere("user.deleted = false")
-            .andWhere("blood_sugar.deleted = false");
-        }
-
         qb.execute();
     }
 }
