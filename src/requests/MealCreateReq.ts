@@ -6,7 +6,7 @@
 ** Created by Arthur MELIN on Tue Feb 25 2020
 */
 
-import { ArrayNotEmpty, IsArray, IsInt, IsPositive, IsString } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsInt, IsOptional, IsPositive, IsString } from "class-validator";
 import { MealFoodReq } from ".";
 
 export class MealCreateReq {
@@ -21,7 +21,8 @@ export class MealCreateReq {
 
     @IsArray()
     @ArrayNotEmpty()
-    public foods: MealFoodReq[];
+    @IsOptional()
+    public foods?: MealFoodReq[];
 
     @IsInt()
     @IsPositive()

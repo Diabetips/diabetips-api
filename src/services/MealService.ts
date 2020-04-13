@@ -44,7 +44,7 @@ export class MealService extends BaseService {
         meal.foods = [];
 
         await meal.addRecipes(req.recipes_ids);
-        await meal.addFoods(req.foods);
+        if (req.foods !== undefined) { await meal.addFoods(req.foods); }
         meal.computeTotalSugar();
 
         return meal.save();
