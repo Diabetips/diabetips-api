@@ -30,7 +30,7 @@ export class BiometricService extends BaseService {
         const biometric = await this.getUserBiometric(uid);
         const user = await biometric.user;
 
-        if (req.date_of_birth !== undefined) { biometric.dateOfBirth = req.date_of_birth; }
+        if (req.date_of_birth !== undefined) { biometric.date_of_birth = req.date_of_birth; }
         if (req.sex !== undefined) { biometric.sex = req.sex; }
         if (req.mass !== undefined) {
             biometric.mass = req.mass;
