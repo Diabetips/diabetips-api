@@ -49,7 +49,7 @@ export class AuthController {
     @Redirect(config.diabetips.accountUrl + "/oauth/authorize?:query")
     public authorizeRedirect(@Req() req: Request) {
         return {
-            query: querystring.stringify(req.query),
+            query: querystring.stringify(req.query as { [key: string]: string }),
         };
     }
 

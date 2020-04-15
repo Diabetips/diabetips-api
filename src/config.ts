@@ -11,17 +11,17 @@ import { Utils } from "./lib/Utils"; // direct path to avoid cyclic imports in L
 const env = process.env.DIABETIPS_ENV || "dev";
 
 const baseConfig = Utils.loadJsonFileSync("config/config.json");
-const profileConfig = Utils.loadJsonFileSync(`config/config.${env}.json`);
 const pkg = Utils.guard(() => Utils.loadJsonFileSync("package.json"), {});
 
-let mergedConfig = Utils.merge(baseConfig, profileConfig);
-if (env === "dev") {
+let workingConfig = baseConfig;
+if (process.env.NODE_ENV !== "production") {
+    const devConfig = Utils.loadJsonFileSync("config/config.dev.json");
     const localConfig = Utils.guard(() => Utils.loadJsonFileSync("config/config.local.json"), {});
-    mergedConfig = Utils.merge(mergedConfig, localConfig);
+    workingConfig = Utils.merge(workingConfig, Utils.merge(devConfig, localConfig));
 }
 
 export const config = {
-    ...mergedConfig,
+    ...workingConfig,
     env,
     pkg,
 };
@@ -49,7 +49,7 @@ function resolveValue(s: string) {
             case "$":
                 let val = process.env[arg];
                 if (val != null) {
-                    val = JSON.parse("\"" + val + "\"");
+                    val = JSON.parse(val);
                 }
                 return val;
             case "%":
@@ -69,7 +69,7 @@ function resolve(obj: any) {
                 obj[key] = resolveValue(obj[key]);
             } else {
                 // Partial resolve (string -> string)
-                obj[key] = obj[key].replace(/[@%$]\{[^}]+\}/,
+                obj[key] = obj[key].replace(/[@%$]\{[^}]+\}/g,
                     (s: string) => resolveValue(s));
             }
         }

@@ -1,6 +1,10 @@
 {
+    "auth": {
+        "token_key": "${DIABETIPS_AUTH_TOKEN_KEY}"
+    },
     "db": {
         "type": "postgres",
+        "url": "${DIABETIPS_DB_URL}",
         "entities": [
             "%{__dirname}/entities/**/*.{js,ts}"
         ]
@@ -9,8 +13,8 @@
         "accountUrl": "https://account.diabetips.fr"
     },
     "http": {
-        "host": "::",
-        "port": 8080
+        "host": "0.0.0.0",
+        "port": "8080"
     },
     "logger": {
         "appenders": {
@@ -19,12 +23,11 @@
                 "layout": "@{logger.layout}"
             },
             "file": {
-                "type": "file",
-                "filename": "logs/@{pkg.name}.log",
+                "type": "dateFile",
+                "filename": "logs/@{pkg.name}.@{env}.log",
                 "layout": "@{logger.layout}",
-                "maxLogSize": 10485760,
-                "backups": 10,
-                "compress": true,
+                "daysToKeep": 30,
+                "alwaysIncludePattern": true,
                 "keepFileExt": true
             }
         },
@@ -49,6 +52,7 @@
         }
     },
     "mail": {
+        "url": "${DIABETIPS_MAIL_URL}",
         "logger": true
     },
     "mailDefaults": {

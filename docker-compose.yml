@@ -2,5 +2,13 @@ version: "3"
 services:
   diabetips-api:
     build: .
-    command: "npm run start"
-    image: "diabetips-api"
+    image: diabetips-api
+    command: npm run start
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - "/var/log/diabetips:/home/diabetips-api/logs"
+networks:
+  default:
+    external:
+      name: diabetips

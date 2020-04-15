@@ -12,4 +12,5 @@
 
 # Secrets
 /ormconfig.json
+/env.txt
 /secrets.txt
