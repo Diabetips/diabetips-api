@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
-import { Meal, Recipe, User } from "../entities";
+import { Meal, User } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable } from "../lib";
 import { MealCreateReq, MealUpdateReq } from "../requests";
@@ -41,16 +41,11 @@ export class MealService extends BaseService {
         meal.timestamp = req.timestamp;
         meal.user = Promise.resolve(user);
         meal.recipes = [];
-        meal.total_sugar = 0;
+        meal.foods = [];
 
-        for (const recipeID of req.recipes_ids) {
-            const r = await Recipe.findById(recipeID);
-            if (r === undefined) {
-                throw new ApiError(HttpStatus.NOT_FOUND, "recipe_not_found", `Recipe (${recipeID}) not found`);
-            }
-            meal.total_sugar += r.total_sugar;
-            meal.recipes.push(r);
-        }
+        await meal.addRecipes(req.recipes_ids);
+        await meal.addFoods(req.foods);
+        meal.computeTotalSugar();
 
         return meal.save();
     }
@@ -66,18 +61,14 @@ export class MealService extends BaseService {
         if (req.timestamp !== undefined) { meal.timestamp = req.timestamp; }
         if (req.recipes_ids !== undefined) {
             meal.recipes = [];
-            meal.total_sugar = 0;
-
-            for (const recipeID of req.recipes_ids) {
-                const r = await Recipe.findById(recipeID);
-                if (r === undefined) {
-                    throw new ApiError(HttpStatus.NOT_FOUND, "recipe_not_found", `Recipe (${recipeID}) not found`);
-                }
-                meal.total_sugar += r.total_sugar;
-                meal.recipes.push(r);
-            }
+            await meal.addRecipes(req.recipes_ids);
+        }
+        if (req.foods !== undefined) {
+            meal.foods = [];
+            await meal.addFoods(req.foods);
         }
 
+        meal.computeTotalSugar();
         return meal.save();
     }
 

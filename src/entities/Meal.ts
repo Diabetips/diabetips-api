@@ -6,12 +6,16 @@
 ** Created by Alexandre DE BEAUMONT on Mon Sep 02 2019
 */
 
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, SelectQueryBuilder } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, SelectQueryBuilder } from "typeorm";
 
-import { Page, Pageable, Utils } from "../lib";
+import { HttpStatus, Page, Pageable, Utils } from "../lib";
 
 import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
 
+import { ApiError } from "../errors";
+import { MealFoodReq } from "../requests";
+import { Food } from "./Food";
+import { MealFood } from "./MealFood";
 import { Recipe } from "./Recipe";
 import { User } from "./User";
 
@@ -43,6 +47,9 @@ export class Meal extends BaseEntity {
     })
     public recipes: Recipe[];
 
+    @OneToMany((type) => MealFood, (food) => food.meal, { cascade: true })
+    public foods: MealFood[];
+
     // Repository functions
 
     public static async findAll(uid: string,
@@ -67,6 +74,8 @@ export class Meal extends BaseEntity {
         let qb = this
             .createQueryBuilder("meal")
             .leftJoinAndSelect("meal.recipes", "recipes")
+            .leftJoinAndSelect("meal.foods", "meal_foods")
+            .leftJoinAndSelect("meal_foods.food", "food")
             .where((sqb) => "meal.id IN " + p.limit(subq(sqb.subQuery().from("meal", "meal"))).getQuery());
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
@@ -95,6 +104,43 @@ export class Meal extends BaseEntity {
         }
 
         return qb.getOne();
+    }
+
+    public async addRecipes(recipes_ids: number[]) {
+        for (const recipeID of recipes_ids) {
+            const r = await Recipe.findById(recipeID);
+            if (r === undefined) {
+                throw new ApiError(HttpStatus.NOT_FOUND, "recipe_not_found", `Recipe (${recipeID}) not found`);
+            }
+            this.recipes.push(r);
+        }
+    }
+
+    public async addFoods(mealFoodReq: MealFoodReq[]) {
+        for (const f of mealFoodReq) {
+            const food = await Food.findById(f.id);
+            if (food === undefined) {
+                throw new ApiError(HttpStatus.NOT_FOUND, "food_not_found", `Food (${f.id}) not found`);
+            }
+            const mealFood = new MealFood();
+
+            mealFood.food = food;
+            mealFood.quantity = f.quantity;
+            mealFood.total_sugar = food.sugars_100g / 100 * mealFood.quantity;
+
+            this.foods.push(mealFood);
+        }
+    }
+
+    public computeTotalSugar() {
+        this.total_sugar = 0;
+
+        for (const recipe of this.recipes) {
+            this.total_sugar += recipe.total_sugar;
+        }
+        for (const food of this.foods) {
+            this.total_sugar += food.total_sugar;
+        }
     }
 
 }

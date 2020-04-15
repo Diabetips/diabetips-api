@@ -7,6 +7,7 @@
 */
 
 import { ArrayNotEmpty, IsArray, IsInt, IsPositive, IsString } from "class-validator";
+import { MealFoodReq } from ".";
 
 export class MealCreateReq {
     @IsString()
@@ -17,6 +18,10 @@ export class MealCreateReq {
     @IsInt({ each: true })
     @IsPositive({ each: true })
     public recipes_ids: number[];
+
+    @IsArray()
+    @ArrayNotEmpty()
+    public foods: MealFoodReq[];
 
     @IsInt()
     @IsPositive()

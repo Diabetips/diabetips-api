@@ -19,10 +19,9 @@ export enum SexEnum {
 export class Biometric extends BaseEntityHiddenId {
     @Column({
         type: "date",
-        name: "date_of_birth",
         nullable: true,
     })
-    public dateOfBirth: Date | null;
+    public date_of_birth: Date | null;
 
     @Column({ type: "float", nullable: true })
     public mass: number | null;
@@ -43,7 +42,7 @@ export class Biometric extends BaseEntityHiddenId {
 
     constructor() {
         super();
-        this.dateOfBirth = null;
+        this.date_of_birth = null;
         this.mass = null;
         this.height = null;
         this.sex = null;
