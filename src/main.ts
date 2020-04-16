@@ -12,7 +12,7 @@ import "reflect-metadata";
 
 import { app } from "./app";
 import { config } from "./config";
-import { getDatabase } from "./db";
+import { connectToDatabase } from "./db";
 import { log4js, logger } from "./logger";
 
 async function main(args: string[]): Promise<void> {
@@ -29,7 +29,7 @@ async function main(args: string[]): Promise<void> {
         });
     });
 
-    await getDatabase();
+    await connectToDatabase();
 
     const server = http.createServer(app);
     server.listen(config.http, () => {

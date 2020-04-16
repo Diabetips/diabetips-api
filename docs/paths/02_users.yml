@@ -202,3 +202,23 @@
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
+  delete:
+    tags:
+      - "Users"
+    summary: "Remove profile picture"
+    description: >
+      Remove the profile picture of the user with the specified UID.
+
+
+      This action cannot be reverted, the user's picture will be reset to the default profile picture.
+    responses:
+      204:
+        description: "The user's picture has been removed"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to modify
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"

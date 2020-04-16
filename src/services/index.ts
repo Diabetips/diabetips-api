@@ -19,6 +19,7 @@ export * from "./InsulinService";
 export * from "./MassService";
 export * from "./MealService";
 export * from "./RecipeService";
+export * from "./RecipePictureService";
 export * from "./UserConfirmationService";
 export * from "./UserConnectionService";
 export * from "./UserPictureService";

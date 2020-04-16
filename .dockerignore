@@ -13,9 +13,6 @@
 # NodeJS modules cache directory
 /node_modules
 
-# Sqlite database files
-*.sqlite
-
 # Misc files
 .dockerignore
 .gitignore

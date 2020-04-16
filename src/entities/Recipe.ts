@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
-import { Column, Entity, OneToMany, SelectQueryBuilder } from "typeorm";
+import { Column, Entity, OneToMany, OneToOne, SelectQueryBuilder } from "typeorm";
 
 import { Page, Pageable, Utils } from "../lib";
 import { RecipeSearchReq } from "../requests";
@@ -14,6 +14,8 @@ import { RecipeSearchReq } from "../requests";
 import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
 
 import { Ingredient } from "./Ingredient";
+import { RecipePicture } from "./RecipePicture";
+export { RecipePicture };
 
 @Entity()
 export class Recipe extends BaseEntity {
@@ -29,6 +31,9 @@ export class Recipe extends BaseEntity {
 
     @OneToMany((type) => Ingredient, (ingredient) => ingredient.recipe, { cascade: true })
     public ingredients: Ingredient[];
+
+    @OneToOne((type) => RecipePicture, (picture) => picture.recipe)
+    public picture: Promise<RecipePicture>;
 
     // Repository functions
 

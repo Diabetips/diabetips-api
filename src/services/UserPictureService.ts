@@ -41,4 +41,13 @@ export class UserPictureService extends BaseService {
         return pic.save();
     }
 
+    public static async removeUserPicture(uid: string) {
+        const user = await UserService.getUser(uid);
+
+        const pic = await user.picture;
+        if (pic != null) {
+            await UserPicture.delete(pic.id);
+        }
+    }
+
 }

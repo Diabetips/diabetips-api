@@ -57,7 +57,7 @@ class TypeOrmBridgeLogger implements Logger {
 
 let database: Connection | undefined;
 
-export async function getDatabase(): Promise<Connection> {
+export async function connectToDatabase(): Promise<Connection> {
     if (database !== undefined) {
         return database;
     }

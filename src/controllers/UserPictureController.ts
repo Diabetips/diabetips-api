@@ -8,7 +8,7 @@
 
 import bodyParser = require("body-parser");
 
-import { Body, ContentType, Controller, Get, Param, Post, UseBefore } from "routing-controllers";
+import { Body, ContentType, Controller, Delete, Get, Param, Post, UseBefore } from "routing-controllers";
 
 import { UserPictureService } from "../services";
 
@@ -30,6 +30,11 @@ export class UserPictureController {
     @UseBefore(UserPictureController.rawParser)
     public async setUserPicture(@Param("uid") uid: string, @Body() body: Buffer) {
         await UserPictureService.setUserPicture(uid, body);
+    }
+
+    @Delete("/")
+    public async removeUserPicture(@Param("uid") uid: string) {
+        await UserPictureService.removeUserPicture(uid);
     }
 
 }

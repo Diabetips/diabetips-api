@@ -7,11 +7,10 @@
 */
 
 import bodyParser = require("body-parser");
-import sharp = require("sharp");
 
-import { ContentType, Controller, Delete, Get, Param, Post, UseBefore } from "routing-controllers";
+import { Body, ContentType, Controller, Delete, Get, Param, Post, UseBefore } from "routing-controllers";
 
-const DEFAULT_RECIPE_PICTURE = sharp("data/default_recipe_picture.svg").jpeg().toBuffer();
+import { RecipePictureService } from "../services";
 
 @Controller("/v1/recipes/:id/picture")
 export class RecipePictureController {
@@ -24,17 +23,17 @@ export class RecipePictureController {
     @Get("/")
     @ContentType("jpeg")
     public async getRecipePicture(@Param("id") id: number) {
-        return DEFAULT_RECIPE_PICTURE;
+        return RecipePictureService.getRecipePicture(id);
     }
 
     @Post("/")
     @UseBefore(RecipePictureController.rawParser)
-    public async setRecipePicture(@Param("id") id: number) {
-        return;
+    public async setRecipePicture(@Param("id") id: number, @Body() body: Buffer) {
+        await RecipePictureService.setRecipePicture(id, body);
     }
 
     @Delete("/")
     public async removeRecipePicture(@Param("id") id: number) {
-        return;
+        await RecipePictureService.removeRecipePicture(id);
     }
 }
