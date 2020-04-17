@@ -49,7 +49,9 @@ type MailAccountPasswordChanged = {
 type MailAccountPasswordReset = {
     [key in "account-password-reset"]: {
         intro_text: string[];
-        password_text: string;
+        reset_text: string;
+        reset_link: string;
+        reset_button: string;
         outro_text: string[];
     }
 };

@@ -6,9 +6,10 @@
 ** Created by Arthur MELIN on Mon Feb 24 2020
 */
 
-import { IsUUID } from "class-validator";
+import { IsString, IsUUID } from "class-validator";
 
 export class UserConfirmAccountReq {
+    @IsString()
     @IsUUID()
     public code: string;
 }

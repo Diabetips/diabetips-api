@@ -28,5 +28,6 @@ export * from "./TimeRangeDeleteReq";
 export * from "./UserConfirmAccountReq";
 export * from "./UserConnectionInviteReq";
 export * from "./UserCreateReq";
-export * from "./UserResetPasswordReq";
+export * from "./UserResetPasswordReq1";
+export * from "./UserResetPasswordReq2";
 export * from "./UserUpdateReq";

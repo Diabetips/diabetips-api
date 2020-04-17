@@ -44,7 +44,7 @@
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to vie
            modify them
-           * No notification with the specified ID was found"
+           * No notification with the specified ID was found
         content:
           application/json:
             schema:

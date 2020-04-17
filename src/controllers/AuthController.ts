@@ -10,15 +10,15 @@ import bodyParser = require("body-parser");
 import querystring = require("querystring");
 
 import { NextFunction, Request, Response } from "express";
-import { Body, Ctx, Get, HttpCode, JsonController, Post, Redirect, Req, UseAfter,
+import { Body, Ctx, Get, HttpCode, JsonController, Post, Put, Redirect, Req, UseAfter,
     UseBefore } from "routing-controllers";
 
 import { config } from "../config";
 import { AuthError } from "../errors";
 import { Context, HttpStatus } from "../lib";
 import { logger } from "../logger";
-import { UserConfirmAccountReq, UserResetPasswordReq } from "../requests";
-import { AuthService, UserConfirmationService, UserService } from "../services";
+import { UserConfirmAccountReq, UserResetPasswordReq1, UserResetPasswordReq2 } from "../requests";
+import { AuthService, UserConfirmationService, UserResetPasswordService } from "../services";
 
 @JsonController("/v1/auth")
 export class AuthController {
@@ -74,14 +74,19 @@ export class AuthController {
 
     @Post("/reset-password")
     @HttpCode(HttpStatus.ACCEPTED)
-    public async resetPassword(@Body() req: UserResetPasswordReq) {
+    public async resetPassword1(@Body() req: UserResetPasswordReq1) {
         // await voluntarly missing in order to prevent timing attacks
         // Measuring the time this route takes to respond could otherwise be used by an attacker to reveal whether a
         // given email address is associated to an account.
         // The async function is queued but not awaited so that it runs in the background while the response is sent
         // immediately.
-        UserService.resetUserPassword(req);
+        UserResetPasswordService.resetPassword1(req);
         return {};
+    }
+
+    @Put("/reset-password")
+    public async resetPassword2(@Body() req: UserResetPasswordReq2) {
+        await UserResetPasswordService.resetPassword2(req);
     }
 
 }

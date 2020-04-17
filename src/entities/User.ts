@@ -23,8 +23,9 @@ import { Height, Mass } from ".";
 import { Biometric } from "./Biometric";
 import { BloodSugar } from "./BloodSugar";
 import { UserConfirmation } from "./UserConfirmation";
+import { UserPasswordReset } from "./UserPasswordReset";
 import { UserPicture } from "./UserPicture";
-export { UserConfirmation, UserPicture };
+export { UserConfirmation, UserPasswordReset, UserPicture };
 
 @Entity()
 export class User extends BaseEntityHiddenId {
@@ -50,6 +51,9 @@ export class User extends BaseEntityHiddenId {
 
     @OneToOne((type) => UserConfirmation, (confirmation) => confirmation.user)
     public confirmation: Promise<UserConfirmation>;
+
+    @OneToMany((type) => UserPasswordReset, (pwdRst) => pwdRst.user)
+    public password_resets: Promise<UserPasswordReset[]>;
 
     @OneToOne((type) => UserPicture, (picture) => picture.user)
     public picture: Promise<UserPicture>;

@@ -13,7 +13,7 @@ import { IUserQueryOptions, User } from "../entities";
 import { ApiError } from "../errors";
 import { Context, HttpStatus, Page, Pageable } from "../lib";
 import { sendMail } from "../mail";
-import { UserCreateReq, UserResetPasswordReq, UserUpdateReq } from "../requests";
+import { UserCreateReq, UserUpdateReq } from "../requests";
 
 import { BaseService } from "./BaseService";
 import { UserConfirmationService } from "./UserConfirmationService";
@@ -118,35 +118,6 @@ export class UserService extends BaseService {
         await user.save();
 
         sendMail("account-deletion", user.lang, user.email);
-    }
-
-    public static async resetUserPassword(req: UserResetPasswordReq): Promise<void> {
-        // TODO
-        // * replace by sending a token in a link to the auth portal
-
-        const user = await User.findByEmail(req.email);
-        if (user === undefined) {
-            return;
-        }
-
-        const password = this.generatePassword();
-        user.password = password; // hashes password
-        user.save();
-
-        sendMail("account-password-reset", user.lang, user.email, {
-            password,
-        });
-    }
-
-    private static generatePassword(): string {
-        const charset = "abcdefghijklmnopqrstuvwxyz"
-            + "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            + "0123456789";
-        let res = "";
-        for (let i = 0; i < 12; ++i) {
-            res += charset[Math.floor(charset.length * Math.random())];
-        }
-        return res;
     }
 
 }

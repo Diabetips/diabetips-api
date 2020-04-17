@@ -22,5 +22,6 @@ export * from "./RecipeService";
 export * from "./RecipePictureService";
 export * from "./UserConfirmationService";
 export * from "./UserConnectionService";
+export * from "./UserPasswordResetService";
 export * from "./UserPictureService";
 export * from "./UserService";
