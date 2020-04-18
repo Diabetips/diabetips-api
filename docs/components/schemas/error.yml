@@ -60,3 +60,13 @@ ErrorNotificationNotFound:
           example: "notification_not_found"
         "message":
           example: "Notification 01234567-89ab-cdef-0123-456789abcdef not found"
+ErrorEmptyMeal:
+  allOf:
+    - $component: "schemas:error.yml:Error"
+    - properties:
+        "status":
+          example: 400
+        "error":
+          example: "empty_meal"
+        "message":
+          example: "A meal must contain at least one recipe or one food"

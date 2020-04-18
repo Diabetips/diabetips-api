@@ -40,6 +40,10 @@
     summary: "Create meal"
     description: >
       Create a meal from the specified information and add it to the meals of the user with the specified UID.
+
+
+      Note: `recipes` and `foods` can both be omitted, but not in the same request. 
+      A meal requires at least one independent food or one recipe in order to be accepted.
     requestBody:
       required: true
       content:
@@ -53,6 +57,13 @@
           application/json:
             schema:
               $component: "schemas:meal.yml:Meal"
+      400:
+        description: >
+          The meal you are trying to create does not contain any food nor recipe.
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorEmptyMeal"
       404:
         description: >
           Either:
@@ -111,6 +122,13 @@
           application/json:
             schema:
               $component: "schemas:meal.yml:Meal"
+      400:
+        description: >
+          The meal you are trying to update would not contain any food nor recipe anymore.
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorEmptyMeal"
       404:
         description: >
           Either:
