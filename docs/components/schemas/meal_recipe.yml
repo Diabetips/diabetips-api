@@ -1,0 +1,24 @@
+MealRecipe:
+  type: "object"
+  properties:
+    "id":
+      allOf:
+        - $component: "schemas:recipe.yml:RecipeId"
+        - writeOnly: true
+    "modifications":
+      type: "array"
+      description: "The recipe's modified ingredients"
+      items:
+        $component: "schemas:ingredient.yml:Ingredient"
+    # Response
+    "total_sugar":
+      type: "number"
+      description: "Total quantity of sugar in the recipe in grams (taking modifications into account)"
+      example: 5.3
+      readOnly: true
+    "recipe":
+      type: "object"
+      description: "The underlying recipe"
+      readOnly: true
+      allOf:
+        - $component: "schemas:recipe.yml:Recipe"

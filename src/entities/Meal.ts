@@ -6,23 +6,20 @@
 ** Created by Alexandre DE BEAUMONT on Mon Sep 02 2019
 */
 
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, SelectQueryBuilder } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, SelectQueryBuilder } from "typeorm";
 
 import { HttpStatus, Page, Pageable, Utils } from "../lib";
 
 import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
 
+import { Food, MealFood, MealRecipe, Recipe, User } from ".";
 import { ApiError } from "../errors";
-import { MealFoodReq } from "../requests";
-import { Food } from "./Food";
-import { MealFood } from "./MealFood";
-import { Recipe } from "./Recipe";
-import { User } from "./User";
+import { MealFoodReq, MealRecipeReq } from "../requests";
 
 @Entity()
 export class Meal extends BaseEntity {
 
-    @ManyToOne((type) => User, (user) => user.meals, { cascade: true })
+    @ManyToOne(() => User, (user) => user.meals, { cascade: true })
     @JoinColumn({ name: "user_id" })
     public user: Promise<User>;
 
@@ -35,19 +32,10 @@ export class Meal extends BaseEntity {
     @Column()
     public timestamp: number;
 
-    @ManyToMany((type) => Recipe)
-    @JoinTable({
-        name: "meal_recipes",
-        joinColumn: {
-            name: "meal_id",
-        },
-        inverseJoinColumn: {
-            name: "recipe_id",
-        },
-    })
-    public recipes: Recipe[];
+    @OneToMany(() => MealRecipe, (recipe) => recipe.meal, { cascade: true })
+    public recipes: MealRecipe[];
 
-    @OneToMany((type) => MealFood, (food) => food.meal, { cascade: true })
+    @OneToMany(() => MealFood, (food) => food.meal, { cascade: true })
     public foods: MealFood[];
 
     // Repository functions
@@ -73,13 +61,11 @@ export class Meal extends BaseEntity {
 
         let qb = this
             .createQueryBuilder("meal")
-            .leftJoinAndSelect("meal.recipes", "recipes")
-            .leftJoinAndSelect("meal.foods", "meal_foods")
-            .leftJoinAndSelect("meal_foods.food", "food")
             .where((sqb) => "meal.id IN " + p.limit(subq(sqb.subQuery().from("meal", "meal"))).getQuery());
 
+        qb = this.getFullMealQuery(qb);
         if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("recipes.deleted = false");
+            qb = qb.andWhere("meal_recipes.deleted = false");
         }
 
         return p.queryWithCountQuery(qb, subq(this.createQueryBuilder("meal")));
@@ -91,28 +77,51 @@ export class Meal extends BaseEntity {
                            Promise<Meal | undefined> {
         let qb = this
             .createQueryBuilder("meal")
-            .leftJoinAndSelect("meal.recipes", "recipes")
-            .leftJoin("meal.user", "user")
             .where("user.uid = :uid", { uid })
             .andWhere("meal.id = :mealId", { mealId });
 
+        qb = this.getFullMealQuery(qb);
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb
                 .andWhere("user.deleted = false")
                 .andWhere("meal.deleted = false")
-                .andWhere("recipes.deleted = false");
+                .andWhere("meal_recipes.deleted = false");
         }
 
         return qb.getOne();
     }
 
-    public async addRecipes(recipes_ids: number[]) {
-        for (const recipeID of recipes_ids) {
-            const r = await Recipe.findById(recipeID);
+    private static getFullMealQuery(query: SelectQueryBuilder<Meal>): SelectQueryBuilder<Meal> {
+        return query
+            // Meal Recipes
+            .leftJoinAndSelect("meal.recipes", "meal_recipes")
+            // Recipe
+            .leftJoinAndSelect("meal_recipes.recipe", "recipe")
+            .leftJoinAndSelect("recipe.ingredients", "ingredient")
+            .leftJoinAndSelect("ingredient.food", "recipe_food")
+            // Modifications
+            .leftJoinAndSelect("meal_recipes.modifications", "modifications")
+            .leftJoinAndSelect("modifications.food", "modified_food")
+            // Foods
+            .leftJoinAndSelect("meal.foods", "meal_foods")
+            .leftJoinAndSelect("meal_foods.food", "independent_food")
+            .leftJoin("meal.user", "user");
+    }
+
+    public async addRecipes(recipes: MealRecipeReq[]) {
+        for (const recipeReq of recipes) {
+            const r = await Recipe.findById(recipeReq.id);
             if (r === undefined) {
-                throw new ApiError(HttpStatus.NOT_FOUND, "recipe_not_found", `Recipe (${recipeID}) not found`);
+                throw new ApiError(HttpStatus.NOT_FOUND, "recipe_not_found", `Recipe (${recipeReq.id}) not found`);
             }
-            this.recipes.push(r);
+            const mealRecipe = new MealRecipe();
+
+            mealRecipe.recipe = r;
+            mealRecipe.modifications = [];
+            if (recipeReq.modifications !== undefined) {
+                await mealRecipe.addModifications(recipeReq.modifications);
+            }
+            this.recipes.push(mealRecipe);
         }
     }
 
@@ -136,11 +145,16 @@ export class Meal extends BaseEntity {
         this.total_sugar = 0;
 
         for (const recipe of this.recipes) {
+            recipe.computeTotalSugar();
             this.total_sugar += recipe.total_sugar;
         }
         for (const food of this.foods) {
             this.total_sugar += food.total_sugar;
         }
+    }
+
+    public isValid(): boolean {
+        return this.recipes.length !== 0 || this.foods.length !== 0;
     }
 
 }

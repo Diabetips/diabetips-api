@@ -6,22 +6,25 @@
 ** Created by Arthur MELIN on Tue Feb 25 2020
 */
 
-import { ArrayNotEmpty, IsArray, IsInt, IsPositive, IsString } from "class-validator";
-import { MealFoodReq } from ".";
+import { Type } from "class-transformer";
+import { IsArray, IsInt, IsOptional, IsPositive, IsString, ValidateNested } from "class-validator";
+import { MealFoodReq, MealRecipeReq } from ".";
 
 export class MealCreateReq {
     @IsString()
     public description: string;
 
     @IsArray()
-    @ArrayNotEmpty()
-    @IsInt({ each: true })
-    @IsPositive({ each: true })
-    public recipes_ids: number[];
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => MealRecipeReq)
+    public recipes?: MealRecipeReq[];
 
     @IsArray()
-    @ArrayNotEmpty()
-    public foods: MealFoodReq[];
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => MealFoodReq)
+    public foods?: MealFoodReq[];
 
     @IsInt()
     @IsPositive()

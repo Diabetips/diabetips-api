@@ -8,12 +8,13 @@
 
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
-import { Utils } from "../lib";
+import { HttpStatus, Utils } from "../lib";
 
 import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
 
-import { Food } from "./Food";
-import { Recipe } from "./Recipe";
+import { Food, MealRecipe, Recipe } from ".";
+import { ApiError } from "../errors";
+import { IngredientCreateReq } from "../requests";
 
 @Entity()
 export class Ingredient extends BaseEntityHiddenId {
@@ -32,7 +33,21 @@ export class Ingredient extends BaseEntityHiddenId {
     @JoinColumn({ name: "recipe_id" })
     public recipe: Recipe;
 
+    @ManyToOne((type) => MealRecipe)
+    @JoinColumn({ name: "meal_recipe_id" })
+    public meal_recipe: MealRecipe;
+
     // Repository functions
+
+    public async init(ingReq: IngredientCreateReq) {
+        const f = await Food.findById(ingReq.food_id);
+        if (f === undefined) {
+            throw new ApiError(HttpStatus.NOT_FOUND, "food_not_found", `Food (${ingReq.food_id}) not found`);
+        }
+        this.quantity = ingReq.quantity;
+        this.food = f;
+        this.total_sugar = this.quantity * f.sugars_100g / 100;
+    }
 
     public static async findAll(options: IBaseQueryOptions = {}): Promise<Ingredient[]> {
         let qb = this.createQueryBuilder("ingredient");
