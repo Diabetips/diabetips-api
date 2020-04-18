@@ -35,14 +35,8 @@ export class RecipeService extends BaseService {
         recipe.ingredients = [];
         recipe.total_sugar = 0;
         for (const ingReq of req.ingredients) {
-            const f = await Food.findById(ingReq.food_id);
-            if (f === undefined) {
-                throw new ApiError(HttpStatus.NOT_FOUND, "food_not_found", `Food (${ingReq.food_id}) not found`);
-            }
             const ing = new Ingredient();
-            ing.quantity = ingReq.quantity;
-            ing.food = f;
-            ing.total_sugar = ing.quantity * f.sugars_100g / 100;
+            await ing.init(ingReq);
             recipe.total_sugar += ing.total_sugar;
             recipe.ingredients.push(ing);
         }

@@ -16,5 +16,7 @@ export * from "./Ingredient";
 export * from "./Insulin";
 export * from "./Mass";
 export * from "./Meal";
+export * from "./MealFood";
+export * from "./MealRecipe";
 export * from "./Recipe";
 export * from "./User";

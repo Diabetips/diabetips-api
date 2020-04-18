@@ -43,8 +43,12 @@ export class MealService extends BaseService {
         meal.recipes = [];
         meal.foods = [];
 
-        await meal.addRecipes(req.recipes_ids);
+        if (req.recipes !== undefined) { await meal.addRecipes(req.recipes); }
         if (req.foods !== undefined) { await meal.addFoods(req.foods); }
+
+        if (!meal.isValid()) {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "empty_meal", `A meal must contain at least one recipe or one food`);
+        }
         meal.computeTotalSugar();
 
         return meal.save();
@@ -59,13 +63,17 @@ export class MealService extends BaseService {
 
         if (req.description !== undefined) { meal.description = req.description; }
         if (req.timestamp !== undefined) { meal.timestamp = req.timestamp; }
-        if (req.recipes_ids !== undefined) {
+        if (req.recipes !== undefined) {
             meal.recipes = [];
-            await meal.addRecipes(req.recipes_ids);
+            await meal.addRecipes(req.recipes);
         }
         if (req.foods !== undefined) {
             meal.foods = [];
             await meal.addFoods(req.foods);
+        }
+
+        if (!meal.isValid()) {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "empty_meal", `A meal must contain at least one recipe or one food`);
         }
 
         meal.computeTotalSugar();
