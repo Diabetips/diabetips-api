@@ -70,6 +70,14 @@
     summary: "Get user mass history"
     description: >
       Get the mass history of the user with the specified UID.
+
+
+      Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
     responses:
       200:
         description: "The mass history"
@@ -96,6 +104,14 @@
     summary: "Get user height history"
     description: >
       Get the height history of the user with the specified UID.
+
+
+      Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
     responses:
       200:
         description: "The height history"
@@ -151,7 +167,7 @@
       The entries are sorted from most recent to oldest.
 
 
-      Implements [Paging](#tag/Paging)
+      Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
     parameters:
       - $component: "queries:paging.yml:PageQuery"
       - $component: "queries:paging.yml:SizeQuery"
@@ -270,10 +286,12 @@
       Get a list of all the HbA1C measure points of the user with the specified UID.
 
 
-      Implements [Paging](#tag/Paging)
+      Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
     parameters:
       - $component: "queries:paging.yml:PageQuery"
       - $component: "queries:paging.yml:SizeQuery"
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
     responses:
       200:
         description: "The user's HbA1C measures"
@@ -409,10 +427,12 @@
       Get a list of all the insulin injections for the user with the specified UID.
 
 
-      Implements [Paging](#tag/Paging)
+      Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
     parameters:
       - $component: "queries:paging.yml:PageQuery"
       - $component: "queries:paging.yml:SizeQuery"
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
     responses:
       200:
         description: "The user's insulin injections"
