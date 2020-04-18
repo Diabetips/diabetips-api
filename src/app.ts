@@ -12,6 +12,7 @@ require("express-async-errors"); // Express patch to handle errors correctly whi
 import { NextFunction, Request, Response } from "express";
 import { Action, BadRequestError, useExpressServer } from "routing-controllers";
 
+import { config } from "./config";
 import { getDocsSpec } from "./docs";
 import { ApiError, ValidationError } from "./errors";
 import { Context, HttpStatus, Utils } from "./lib";
@@ -21,6 +22,7 @@ import { AuthService } from "./services";
 const preapp = express();
 
 // Express settings
+preapp.set("trust proxy", config.http.proxy ? 1 : false);
 preapp.set("json replacer", Utils.jsonReplacer);
 preapp.set("x-powered-by", false);
 

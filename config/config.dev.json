@@ -9,6 +9,9 @@
     "diabetips": {
         "accountUrl": "http://localhost:9080"
     },
+    "http": {
+        "proxy": false
+    },
     "mail": {
         "url": "smtp://eva81@ethereal.email:c2D7zXJHM4G7qYYxch@smtp.ethereal.email"
     }
