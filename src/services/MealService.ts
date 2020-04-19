@@ -8,15 +8,15 @@
 
 import { Meal, User } from "../entities";
 import { ApiError } from "../errors";
-import { HttpStatus, Page, Pageable } from "../lib";
+import { HttpStatus, Page, Pageable, Timeable } from "../lib";
 import { MealCreateReq, MealUpdateReq } from "../requests";
 
 import { BaseService } from "./BaseService";
 
 export class MealService extends BaseService {
 
-    public static async getAllMeals(uid: string, p: Pageable): Promise<Page<Meal>> {
-        return Meal.findAll(uid, p);
+    public static async getAllMeals(uid: string, p: Pageable, t: Timeable): Promise<Page<Meal>> {
+        return Meal.findAll(uid, p, t);
     }
 
     public static async getMeal(uid: string, mealId: number): Promise<Meal> {

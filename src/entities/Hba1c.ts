@@ -8,7 +8,7 @@
 
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
-import { Page, Pageable, Utils } from "../lib";
+import { Page, Pageable, Timeable, Utils } from "../lib";
 
 import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
 
@@ -29,6 +29,7 @@ export class Hba1c extends BaseEntity {
 
     public static async findAll(patientUid: string,
                                 p: Pageable,
+                                t: Timeable,
                                 options: IBaseQueryOptions = {}):
                                 Promise<Page<Hba1c>> {
         let qb = this
@@ -42,7 +43,7 @@ export class Hba1c extends BaseEntity {
                 .andWhere("hba1c.deleted = false");
         }
 
-        return p.query(qb);
+        return p.query(t.applyTimeRange(qb));
     }
 
     public static async findById(patientUid: string,

@@ -9,7 +9,7 @@
 import { Response } from "express";
 import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
 
-import { Pageable } from "../lib";
+import { Pageable, Timeable } from "../lib";
 import { Hba1cCreateReq, Hba1cUpdateReq } from "../requests";
 import { Hba1cService } from "../services";
 
@@ -17,8 +17,11 @@ import { Hba1cService } from "../services";
 export class UserHba1cController {
 
     @Get("/")
-    public async getAllUserHba1c(@Param("uid") uid: string, @QueryParams() p: Pageable, @Res() res: Response) {
-        const page = await Hba1cService.getAllHba1c(uid, p);
+    public async getAllUserHba1c(@Param("uid") uid: string,
+                                 @QueryParams() p: Pageable,
+                                 @QueryParams() t: Timeable,
+                                 @Res() res: Response) {
+        const page = await Hba1cService.getAllHba1c(uid, p, t);
         return page.send(res);
     }
 

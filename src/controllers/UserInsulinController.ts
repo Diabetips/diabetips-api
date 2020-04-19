@@ -9,7 +9,7 @@
 import { Response } from "express";
 import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
 
-import { Pageable } from "../lib";
+import { Pageable, Timeable } from "../lib";
 import { InsulinCreateReq, InsulinUpdateReq } from "../requests";
 import { InsulinService } from "../services";
 
@@ -17,8 +17,11 @@ import { InsulinService } from "../services";
 export class UserInsulinController {
 
     @Get("/")
-    public async getAllUserInsulin(@Param("uid") uid: string, @QueryParams() p: Pageable, @Res() res: Response) {
-        const page = await InsulinService.getAllInsulin(uid, p);
+    public async getAllUserInsulin(@Param("uid") uid: string,
+                                   @QueryParams() p: Pageable,
+                                   @QueryParams() t: Timeable,
+                                   @Res() res: Response) {
+        const page = await InsulinService.getAllInsulin(uid, p, t);
         return page.send(res);
     }
 
