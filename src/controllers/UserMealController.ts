@@ -9,7 +9,7 @@
 import { Response } from "express";
 import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
 
-import { Pageable } from "../lib";
+import { Pageable, Timeable } from "../lib";
 import { MealCreateReq, MealUpdateReq } from "../requests";
 import { MealService } from "../services";
 
@@ -17,8 +17,11 @@ import { MealService } from "../services";
 export class UserMealController {
 
     @Get("/")
-    public async getAllUserMeals(@Param("uid") uid: string, @QueryParams() p: Pageable, @Res() res: Response) {
-        const page = await MealService.getAllMeals(uid, p);
+    public async getAllUserMeals(@Param("uid") uid: string,
+                                 @QueryParams() p: Pageable,
+                                 @QueryParams() t: Timeable,
+                                 @Res() res: Response) {
+        const page = await MealService.getAllMeals(uid, p, t);
         return page.send(res);
     }
 

@@ -8,15 +8,15 @@
 
 import { Hba1c, User } from "../entities";
 import { ApiError } from "../errors";
-import { HttpStatus, Page, Pageable } from "../lib";
+import { HttpStatus, Page, Pageable, Timeable } from "../lib";
 import { Hba1cCreateReq, Hba1cUpdateReq } from "../requests";
 
 import { BaseService } from "./BaseService";
 
 export class Hba1cService extends BaseService {
 
-    public static async getAllHba1c(uid: string, p: Pageable): Promise<Page<Hba1c>> {
-        return Hba1c.findAll(uid, p);
+    public static async getAllHba1c(uid: string, p: Pageable, t: Timeable): Promise<Page<Hba1c>> {
+        return Hba1c.findAll(uid, p, t);
     }
 
     public static async getHba1c(uid: string, hba1cId: number): Promise<Hba1c> {

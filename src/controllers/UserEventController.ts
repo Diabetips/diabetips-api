@@ -6,7 +6,8 @@
 ** Created by Alexandre DE BEAUMONT on Fri Feb 14 2020
 */
 
-import { JsonController, Param } from "routing-controllers";
+import { JsonController, Param, QueryParams } from "routing-controllers";
+import { Timeable } from "../lib";
 
 @JsonController("/v1/users/:uid/events")
 export class UserEventController {
@@ -17,7 +18,7 @@ export class UserEventController {
         end: 1581696111,
     };
 
-    public async getAllEvents(@Param("uid") uid: string) {
+    public async getAllEvents(@Param("uid") uid: string, @QueryParams() t: Timeable) {
         return [this.dummy];
     }
 

@@ -6,7 +6,8 @@
 ** Created by Alexandre DE BEAUMONT on Fri Feb 14 2020
 */
 
-import { Delete, Get, JsonController, Param, Post, Put } from "routing-controllers";
+import { Delete, Get, JsonController, Param, Post, Put, QueryParams } from "routing-controllers";
+import { Timeable } from "../lib";
 
 @JsonController("/v1/users/:uid/notes")
 export class UserNoteController {
@@ -17,7 +18,7 @@ export class UserNoteController {
     };
 
     @Get("/")
-    public async getAllNotes(@Param("uid") uid: string) {
+    public async getAllNotes(@Param("uid") uid: string, @QueryParams() t: Timeable) {
         return [this.dummy];
     }
 

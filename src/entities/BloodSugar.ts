@@ -92,11 +92,11 @@ export class BloodSugar extends BaseEntityHiddenId {
             throw new ApiError(HttpStatus.NOT_FOUND, "user_not_found", `User (${patientUid}) not found`);
         }
 
-        let qb = this
-        .createQueryBuilder("blood_sugar")
-        .delete()
-        .where("blood_sugar.user_id = :id", { id: user.id })
-        .andWhere("blood_sugar.timestamp BETWEEN :start AND :end", { start: range.start, end: range.end });
+        const qb = this
+            .createQueryBuilder("blood_sugar")
+            .delete()
+            .where("blood_sugar.user_id = :id", { id: user.id })
+            .andWhere("blood_sugar.timestamp BETWEEN :start AND :end", { start: range.start, end: range.end });
 
         qb.execute();
     }

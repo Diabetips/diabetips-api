@@ -32,6 +32,25 @@ tags:
        - [Biometrics - Get all blood sugar measures](#tag/Biometrics/paths/~1v1~1users~1{uid}~1blood_sugar/get)
        - [Biometrics - Get all HbA1C measures](#tag/Biometrics/paths/~1v1~1users~1{uid}~1hba1c/get)
        - [Biometrics - Get all insulin injections](#tag/Biometrics/paths/~1v1~1users~1{uid}~1insulin/get)
+  - name: "Timeable"
+    description: >
+      Multiple routes of this API allow the developper to filter the data by period.
+
+
+      This can be done by using the following query parameters:
+        - `start` which represents the beginning of the desired period. (Default: No specific beginning)
+        - `end` which represents the end of the desired period. (Default: Current time of the request)
+
+
+      Routes that implement the timeable query:
+       - [Mass history - Get user's mass history](#tag/Biometrics/paths/~1v1~1users~1{uid}~1mass/get)
+       - [Height history - Get user's height history](#tag/Biometrics/paths/~1v1~1users~1{uid}~1height/get)
+       - [Meals - Get all meals](#tag/Meals/paths/~1v1~1users~1{uid}~1meals/get)
+       - [Biometrics - Get all blood sugar measures](#tag/Biometrics/paths/~1v1~1users~1{uid}~1blood_sugar/get)
+       - [Biometrics - Get all HbA1C measures](#tag/Biometrics/paths/~1v1~1users~1{uid}~1hba1c/get)
+       - [Biometrics - Get all insulin injections](#tag/Biometrics/paths/~1v1~1users~1{uid}~1insulin/get)
+       - [Notes - Get all notes of a user](#tag/Notes/paths/~1v1~1users~1{uid}~1notes/get)
+       - [Notes - Get all events of a user](#tag/Notes/paths/~1v1~1users~1{uid}~1events/get)
   - name: "Authentication"
     description: >
       The Diabetips API uses an OAuth 2.0 based authentication system with JSON Web Tokens. Almost all of this API

@@ -9,10 +9,12 @@
       Get a list of all the meals of the user with the specified UID.
 
 
-      Implements [Paging](#tag/Paging)
+      Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
     parameters:
       - $component: "queries:paging.yml:PageQuery"
       - $component: "queries:paging.yml:SizeQuery"
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
     responses:
       200:
         description: "The user's meals"

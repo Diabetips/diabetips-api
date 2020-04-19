@@ -8,7 +8,7 @@
 
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, SelectQueryBuilder } from "typeorm";
 
-import { HttpStatus, Page, Pageable, Utils } from "../lib";
+import { HttpStatus, Page, Pageable, Timeable, Utils } from "../lib";
 
 import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
 
@@ -42,6 +42,7 @@ export class Meal extends BaseEntity {
 
     public static async findAll(uid: string,
                                 p: Pageable,
+                                t: Timeable,
                                 options: IMealQueryOptions = {}):
                                 Promise<Page<Meal>> {
         const subq = (sqb: SelectQueryBuilder<Meal>) => {
@@ -68,7 +69,7 @@ export class Meal extends BaseEntity {
             qb = qb.andWhere("meal_recipes.deleted = false");
         }
 
-        return p.queryWithCountQuery(qb, subq(this.createQueryBuilder("meal")));
+        return p.queryWithCountQuery(t.applyTimeRange(qb), subq(this.createQueryBuilder("meal")));
     }
 
     public static findById(uid: string,
