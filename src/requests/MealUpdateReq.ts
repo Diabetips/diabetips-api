@@ -21,9 +21,10 @@ export class MealUpdateReq {
     @Type(() => MealRecipeReq)
     public recipes?: MealRecipeReq[];
 
-    @IsOptional()
     @IsArray()
-    @ArrayNotEmpty()
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => MealFoodReq)
     public foods?: MealFoodReq[];
 
     @IsOptional()
