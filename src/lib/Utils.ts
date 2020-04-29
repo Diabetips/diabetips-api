@@ -96,7 +96,7 @@ export class Utils {
      * @param path The path of the file to load
      * @param options The YAML parsing options
      */
-    public static async loadYamlFile(path: string, options?: yaml.ParseOptions | undefined): Promise<any> {
+    public static async loadYamlFile(path: string, options?: yaml.Options | undefined): Promise<any> {
         return yaml.parse(await this.readFile(path), options);
     }
 
@@ -105,7 +105,7 @@ export class Utils {
      * @param path The path of the file to load
      * @param options The YAML parsing options
      */
-    public static loadYamlFileSync(path: string, options?: yaml.ParseOptions | undefined): any {
+    public static loadYamlFileSync(path: string, options?: yaml.Options | undefined): any {
         return yaml.parse(fs.readFileSync(path, { encoding: "utf-8" }), options);
     }
 
