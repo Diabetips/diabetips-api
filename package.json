@@ -16,7 +16,7 @@
         "lint": "tslint -p .",
         "start": "node build/main.js",
         "clean": "rm -rf build",
-        "dev": "ts-node src/main.ts",
+        "dev": "ts-node-dev src/main.ts",
         "test": "mv diabetips-api_dev.sqlite tmp.sqlite ; ts-mocha 'test/**/*.ts' ; mv tmp.sqlite diabetips-api_dev.sqlite"
     },
     "repository": {
