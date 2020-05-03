@@ -15,13 +15,15 @@ import { Page, Pageable, Utils } from "../lib";
 import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
 
 import { AuthApp } from "./AuthApp";
-import { Hba1c } from "./Hba1c";
-import { Insulin } from "./Insulin";
-import { Meal } from "./Meal";
-
-import { Height, Mass } from ".";
 import { Biometric } from "./Biometric";
 import { BloodSugar } from "./BloodSugar";
+import { Hba1c } from "./Hba1c";
+import { Height } from "./Height";
+import { Insulin } from "./Insulin";
+import { Mass } from "./Mass";
+import { Meal } from "./Meal";
+import { Notification } from "./Notification";
+
 import { UserConfirmation } from "./UserConfirmation";
 import { UserPasswordReset } from "./UserPasswordReset";
 import { UserPicture } from "./UserPicture";
@@ -84,6 +86,9 @@ export class User extends BaseEntityHiddenId {
         },
     })
     public connections: Promise<User[]>;
+
+    @OneToMany((type) => Notification, (n) => n.target)
+    public notifications: Promise<Notification[]>;
 
     @OneToMany((type) => Meal, (meal) => meal.user)
     public meals: Promise<Meal[]>;

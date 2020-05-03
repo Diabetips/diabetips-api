@@ -6,29 +6,24 @@
 ** Created by Arthur MELIN on Sun Mar 15 2020
 */
 
-import { Delete, Get, JsonController, Param } from "routing-controllers";
+import { Response } from "express";
+import { Delete, Get, JsonController, Param, QueryParams, Res } from "routing-controllers";
+
+import { Pageable } from "../lib";
+import { NotificationService } from "../services";
 
 @JsonController("/v1/users/:uid/notifications")
 export class UserNotificationController {
 
     @Get("/")
-    public async getAllNotifications(@Param("uid") uid: string) {
-        return [
-            {
-                id: "01234567-89ab-cdef-0123-456789abcdef",
-                time: "2020-03-14T01:23:45Z",
-                read: false,
-                type: "user-invite",
-                data: {
-                    from: "01234567-89ab-cdef-0123-456789abcdef",
-                },
-            },
-        ];
+    public async getAllNotifications(@Param("uid") uid: string, @QueryParams() p: Pageable, @Res() res: Response) {
+        const page = await NotificationService.getAllNotifications(uid, p);
+        return page.send(res);
     }
 
     @Delete("/:id")
-    public async markNotificationsRead(@Param("uid") uid: string, @Param("id") notifId: string) {
-        return;
+    public async markNotificationRead(@Param("uid") uid: string, @Param("id") notifId: string) {
+        await NotificationService.markNotificationRead(uid, notifId);
     }
 
 }

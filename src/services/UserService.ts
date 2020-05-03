@@ -23,14 +23,18 @@ export class UserService extends BaseService {
     /**
      * @warning throws ApiErrors if no user is logged in
      */
-    public static getCurrentUser(ctx: Context): User {
+    public static async getCurrentUser(ctx: Context): Promise<User> {
         if (ctx.auth == null) {
             throw new ApiError(HttpStatus.UNAUTHORIZED, "unauthorized", "Please provide an authorization token");
         }
         if (ctx.auth.type !== "user") {
             throw new ApiError(HttpStatus.FORBIDDEN, "access_denied", "Access denied");
         }
-        return ctx.auth.user;
+        const user = await User.findByUid(ctx.auth.uid);
+        if (user == null) {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "invalid_auth", "Invalid authorization token");
+        }
+        return user;
     }
 
     public static async getAllUsers(p: Pageable): Promise<Page<User>> {

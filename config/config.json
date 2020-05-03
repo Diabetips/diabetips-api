@@ -45,6 +45,10 @@
             "sql": {
                 "appenders": ["console", "file"],
                 "level": "all"
+            },
+            "ws": {
+                "appenders": ["console", "file"],
+                "level": "all"
             }
         },
         "layout": {
@@ -66,5 +70,7 @@
     "paging": {
         "defaultSize": 20,
         "maxSize": 100
+    },
+    "ws": {
     }
 }
