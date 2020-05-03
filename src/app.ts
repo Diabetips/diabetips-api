@@ -8,15 +8,17 @@
 
 import express = require("express");
 // tslint:disable-next-line:no-var-requires
-require("express-async-errors"); // Express patch to handle errors correctly while using async handlers
+require("express-async-errors"); // Patch Express to handle errors in async handlers correctly
 import { NextFunction, Request, Response } from "express";
 import { Action, BadRequestError, useExpressServer } from "routing-controllers";
+import { QueryFailedError } from "typeorm";
 
 import { config } from "./config";
 import { getDocsSpec } from "./docs";
 import { ApiError, ValidationError } from "./errors";
 import { Context, HttpStatus, Utils } from "./lib";
-import { httpLogger, log4js, logger } from "./logger";
+import { WsApp, bindLogger as wsBindLogger } from "./lib/ws";
+import { httpLogger, log4js, logger, wsLogger } from "./logger";
 import { AuthService } from "./services";
 
 const preapp = express();
@@ -74,40 +76,70 @@ app.use((req: Request, res: Response, next: NextFunction) => {
         `${req.method} ${req.originalUrl.split("?", 1)[0]} is not a valid route on this server`);
 });
 
+// Unidentified error to ApiError converter
+function convertError(err: Error): ApiError {
+    if (err instanceof ApiError) {
+        return err;
+    }
+
+    // Convert common errors
+    if (err instanceof BadRequestError) {
+        return new ValidationError(err);
+    }
+    if (err instanceof QueryFailedError && (err as any).routine === "string_to_uuid") {
+        return new ApiError(HttpStatus.BAD_REQUEST, "malformed_uuid", "Malformed UUID")
+    }
+    if (err && typeof((err as any).status) === "number") {
+        const httpError = err as any;
+        return new ApiError(httpError.status, httpError.status === 400 ? "bad_request" : "http", httpError.message);
+    }
+
+    logger.error(err.stack || err);
+    return new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "server_error", "Internal server error");
+}
+
 // Error handler
 app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
-    if (err instanceof BadRequestError) {
-        err = new ValidationError(err);
+    const apiErr = convertError(err);
+
+    if (apiErr.error !== "invalid_route" &&
+        apiErr.error !== "server_error" &&
+        apiErr.error !== "http") {
+        logger.warn(apiErr.name + ":", apiErr.message);
     }
-    if (err instanceof ApiError) {
-        if (err.error !== "invalid_route") {
-            logger.warn(err);
+
+    res
+        .status(apiErr.status)
+        .type("json")
+        .send({
+            ...apiErr,
+            message: apiErr.message,
+        });
+});
+
+// Setup WebSocket app
+export const wsApp = WsApp({
+    handlers: [ `${__dirname}/ws/**/*.{js,ts}` ],
+    logger: wsBindLogger(wsLogger, {
+        level: "info",
+    }),
+    defaultHandler: ((socket, req) => {
+        throw new ApiError(HttpStatus.NOT_FOUND,
+            "invalid_route",
+            `${req.url?.split("?", 1)[0]} is not a valid route on this server`);
+    }),
+    errorHandler: ((socket, req, err) => {
+        const apiErr = convertError(err);
+
+        if (apiErr.error !== "invalid_route" &&
+            apiErr.error !== "server_error") {
+            logger.warn(apiErr.name + ":", apiErr.message);
         }
-        res
-            .status(err.status)
-            .type("json")
-            .send({
-                ...err,
-                message: err.message,
-            });
-    } else if (err && typeof((err as any).status) === "number") {
-        const httpError = err as any;
-        res
-            .status(httpError.status)
-            .type("json")
-            .send({
-                status: httpError.status,
-                error: "http",
-                message: httpError.message,
-            });
-    } else {
-        logger.error(err.stack || err);
-        res
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .type("json")
-            .send({
-                error: "server_error",
-                message: "Internal server error",
-            });
-    }
+
+        socket.send(JSON.stringify({
+            ...apiErr,
+            message: apiErr.message,
+        }));
+        socket.close(apiErr.error !== "server_error" ? 1002 : 1011, apiErr.message);
+    }),
 });

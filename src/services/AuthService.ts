@@ -41,29 +41,26 @@ export class AuthService extends BaseService {
 
         if (header.startsWith("Bearer ")) {
             const token = header.slice(7).trim();
-            let user: User;
-            try {
-                const body = await this.verifyToken(token);
-                if (typeof body !== "object") {
-                    throw new Error("invalid type for token body: " + typeof body);
-                }
-
-                const tmp = await User.findByUid(body.sub);
-                if (tmp == null) {
-                    throw new Error("UID not found");
-                }
-                user = tmp;
-            } catch (err) {
-                logger.warn("Token verification failed:", err.stack || err);
-                throw new ApiError(HttpStatus.BAD_REQUEST, "invalid_auth", "Invalid authorization token");
-            }
-
-            return { type: "user", user };
+            return AuthService.decodeToken(token);
         } else if (header.startsWith("Basic ")) {
             // TODO app auth
-            return undefined;
+            return;
         } else {
-            return undefined;
+            return;
+        }
+    }
+
+    public static async decodeToken(token: string): Promise<AuthInfo> {
+        // handle non-user tokens if they have to exist?
+        try {
+            const body = await this.verifyToken(token);
+            if (typeof body !== "object") {
+                throw new Error("invalid type for token body: " + typeof body);
+            }
+            return { type: "user", uid: body.sub };
+        } catch (err) {
+            logger.warn("Token verification failed:", err.stack || err);
+            throw new ApiError(HttpStatus.BAD_REQUEST, "invalid_auth", "Invalid authorization token");
         }
     }
 
@@ -79,9 +76,9 @@ export class AuthService extends BaseService {
 
         switch (req.response_type) {
             case "code":
-                return this.doAuthCodeFlow1(ctx.auth.user, req);
+                return this.doAuthCodeFlow1(ctx.auth.uid, req);
             case "token":
-                return this.doImplicitFlow(ctx.auth.user, req);
+                return this.doImplicitFlow(ctx.auth.uid, req);
             default:
                 throw new ApiError(HttpStatus.BAD_REQUEST, "invalid_request", "Missing or invalid response_type");
         }
@@ -103,18 +100,18 @@ export class AuthService extends BaseService {
     }
 
     // Generate an authorization code for an application from account portal token
-    private static async doAuthCodeFlow1(user: User, req: any): Promise<AuthCodeRes> {
+    private static async doAuthCodeFlow1(uid: string, req: any): Promise<AuthCodeRes> {
         return {
             code: (await this.generateToken({
-                subject: user.uid,
+                subject: uid,
                 expiresIn: "1h",
             })),
         };
     }
 
     // Generate an access token from account portal token
-    private static async doImplicitFlow(user: User, req: any): Promise<AccessTokenRes> {
-        return this.generateAccessTokenRes(user.uid);
+    private static async doImplicitFlow(uid: string, req: any): Promise<AccessTokenRes> {
+        return this.generateAccessTokenRes(uid);
     }
 
     // Exchange authorization code for tokens

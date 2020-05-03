@@ -15,4 +15,6 @@ log4js.configure(config.logger);
 export const logger = log4js.getLogger("default");
 export const httpLogger = log4js.getLogger("http");
 export const sqlLogger = log4js.getLogger("sql");
+export const wsLogger = log4js.getLogger("ws");
+
 export { log4js };

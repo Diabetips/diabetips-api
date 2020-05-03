@@ -13,6 +13,7 @@ import { sendMail } from "../mail";
 import { UserConnectionInviteReq } from "../requests";
 
 import { BaseService } from "./BaseService";
+import { NotificationService } from "./NotificationService";
 import { UserService } from "./UserService";
 
 export class UserConnectionService extends BaseService {
@@ -34,6 +35,9 @@ export class UserConnectionService extends BaseService {
         } else {
             await this.addConnection(user, target);
             await this.addConnection(target, user);
+            NotificationService.sendNotification(target, "user_invite", {
+                from: user.uid,
+            });
         }
     }
 

@@ -11,11 +11,11 @@ import "reflect-metadata";
 import http = require("http");
 import net = require("net");
 
-import { app } from "./app";
+import { app, wsApp } from "./app";
 import { config } from "./config";
 import { connectToDatabase } from "./db";
 import { log4js, logger } from "./logger";
-import { useServer as wsUseServer } from "./ws";
+import { useServer as wsUseServer } from "./lib/ws";
 
 async function main(args: string[]): Promise<void> {
     logger.info(`Starting ${config.pkg.name} ${config.pkg.version} ${config.env}`);
@@ -34,7 +34,7 @@ async function main(args: string[]): Promise<void> {
     await connectToDatabase();
 
     const server = http.createServer(app);
-    wsUseServer(server);
+    wsUseServer(wsApp, server, config.ws);
 
     server.listen(config.http, () => {
         const addr = server.address() as net.AddressInfo;

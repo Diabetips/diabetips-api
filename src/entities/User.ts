@@ -87,7 +87,7 @@ export class User extends BaseEntityHiddenId {
     })
     public connections: Promise<User[]>;
 
-    @OneToMany((type) => Notification, (n) => n.user)
+    @OneToMany((type) => Notification, (n) => n.target)
     public notifications: Promise<Notification[]>;
 
     @OneToMany((type) => Meal, (meal) => meal.user)

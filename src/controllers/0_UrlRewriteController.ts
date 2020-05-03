@@ -12,7 +12,8 @@
 import { NextFunction, Request, Response } from "express";
 import { All, Controller, UseBefore } from "routing-controllers";
 
-import { Context } from "../lib";
+import { ApiError } from "../errors";
+import { HttpStatus } from "../lib";
 import { AuthService, UserService } from "../services";
 
 @Controller()
@@ -20,10 +21,14 @@ export class UrlRewriteController {
 
     @All(/^\/v1\/users\/me(\/.*)?/)
     @UseBefore(async (req: Request, res: Response, next: NextFunction) => {
-        const context: Context = {
-            auth: await AuthService.decodeAuthorization(req.header("Authorization")),
-        };
-        req.url = "/v1/users/" + UserService.getCurrentUser(context).uid + (req.params[0] || "");
+        const auth = await AuthService.decodeAuthorization(req.header("Authorization"));
+        if (auth == null) {
+            throw new ApiError(HttpStatus.UNAUTHORIZED, "unauthorized", "Please provide an authorization token");
+        }
+        if (auth.type !== "user") {
+            throw new ApiError(HttpStatus.FORBIDDEN, "access_denied", "Access denied");
+        }
+        req.url = "/v1/users/" + auth.uid + (req.params[0] || "");
         next("route");
     })
     public usersMeRewrite() {

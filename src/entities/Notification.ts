@@ -18,21 +18,24 @@ export class Notification extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     public id: string;
 
-    @Column()
+    @Column({ default: () => "now()" })
     public time: Date;
 
-    @Column({ default: true })
+    @Column({ default: false })
     public read: boolean;
 
     @Column()
     public type: string;
 
-    @Column({ type: "text", transformer: { from: JSON.parse, to: JSON.stringify } })
+    @Column({ type: "text", transformer: {
+        from: JSON.parse,
+        to: (obj) => JSON.stringify(obj, Utils.jsonReplacer)
+    }})
     public data: any;
 
     @ManyToOne((type) => User, (user) => user.notifications, { cascade: true })
-    @JoinColumn({ name: "user_id" })
-    public user: Promise<User>;
+    @JoinColumn({ name: "target_id" })
+    public target: Promise<User>;
 
     public static async findAll(uid: string,
                                 p: Pageable,
@@ -40,7 +43,7 @@ export class Notification extends BaseEntity {
                                 Promise<Page<Notification>> {
         let qb = this
             .createQueryBuilder("notification")
-            .leftJoin("notification.user", "user")
+            .leftJoin("notification.target", "user")
             .where("user.uid = :uid", { uid })
             .orderBy("notification.time", "DESC");
 
@@ -56,7 +59,7 @@ export class Notification extends BaseEntity {
                                       Promise<Notification[]> {
         let qb = this
             .createQueryBuilder("notification")
-            .leftJoin("notification.user", "user")
+            .leftJoin("notification.target", "user")
             .where("user.uid = :uid", { uid })
             .andWhere("notification.read = false")
             .orderBy("notification.time", "DESC");
@@ -73,7 +76,7 @@ export class Notification extends BaseEntity {
                                  Promise<Notification | undefined> {
         let qb = this
             .createQueryBuilder("notification")
-            .leftJoin("notification.user", "user")
+            .leftJoin("notification.target", "user")
             .where("notification.id = :notifId", { notifId })
             .andWhere("user.uid = :uid", { uid });
 

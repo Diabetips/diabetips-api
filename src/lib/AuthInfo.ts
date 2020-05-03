@@ -8,14 +8,14 @@
 
 import { User } from "../entities";
 
-interface AppAuthInfo {
+export interface AppAuthInfo {
     type: "app";
     clientId: string;
 }
 
-interface UserAuthInfo {
+export interface UserAuthInfo {
     type: "user";
-    user: User;
+    uid: string;
 }
 
 export type AuthInfo = AppAuthInfo | UserAuthInfo;

@@ -45,6 +45,10 @@
             "sql": {
                 "appenders": ["console", "file"],
                 "level": "all"
+            },
+            "ws": {
+                "appenders": ["console", "file"],
+                "level": "all"
             }
         },
         "layout": {
