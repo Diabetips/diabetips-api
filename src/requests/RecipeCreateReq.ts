@@ -7,7 +7,7 @@
 */
 
 import { Type } from "class-transformer";
-import { ArrayNotEmpty, IsArray, IsNotEmpty, IsString, ValidateNested } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsNotEmpty, IsString, ValidateNested, IsInt, IsPositive } from "class-validator";
 
 import { IngredientCreateReq } from "./IngredientCreateReq";
 
@@ -25,4 +25,8 @@ export class RecipeCreateReq {
     @ValidateNested()
     @Type(() => IngredientCreateReq)
     public ingredients: IngredientCreateReq[];
+
+    @IsInt()
+    @IsPositive()
+    public portions: number;
 }

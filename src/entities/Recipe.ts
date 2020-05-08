@@ -29,6 +29,9 @@ export class Recipe extends BaseEntity {
     @Column({ type: "float" })
     public total_sugar: number;
 
+    @Column()
+    public portions: number;
+
     @OneToMany((type) => Ingredient, (ingredient) => ingredient.recipe, { cascade: true })
     public ingredients: Ingredient[];
 
