@@ -6,11 +6,11 @@
 ** Created by Alexandre DE BEAUMONT on Fri Feb 28 2020
 */
 
-import { IsInt, IsOptional, IsPositive } from "class-validator";
+import { IsInt, IsPositive, Min } from "class-validator";
 
 export class TimeRangeDeleteReq {
     @IsInt()
-    @IsPositive()
+    @Min(0)
     public start: number;
 
     @IsInt()
