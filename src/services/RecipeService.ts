@@ -34,6 +34,7 @@ export class RecipeService extends BaseService {
         recipe.description = req.description;
         recipe.ingredients = [];
         recipe.total_sugar = 0;
+        recipe.portions = req.portions;
         for (const ingReq of req.ingredients) {
             const ing = new Ingredient();
             await ing.init(ingReq);
@@ -56,6 +57,7 @@ export class RecipeService extends BaseService {
 
         if (req.name !== undefined) { recipe.name = req.name; }
         if (req.description !== undefined) { recipe.description = req.description; }
+        if (req.portions !== undefined) { recipe.portions = req.portions; }
         if (req.ingredients !== undefined) {
             recipe.ingredients = [];
             recipe.total_sugar = 0;
