@@ -10,6 +10,10 @@ MealRecipe:
       description: "The recipe's modified ingredients"
       items:
         $component: "schemas:ingredient.yml:Ingredient"
+    "portions_eaten":
+      type: "number"
+      description: "How many portions of the recipe have been eate"
+      example: 1
     # Response
     "total_sugar":
       type: "number"
