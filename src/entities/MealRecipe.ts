@@ -22,6 +22,9 @@ export class MealRecipe extends BaseEntityHiddenId {
     @OneToMany((type) => Ingredient, (modification) => modification.meal_recipe, { cascade: true })
     public modifications: Ingredient[];
 
+    @Column()
+    public portions_eaten: number;
+
     @Column({ type: "float" })
     public total_sugar: number;
 
@@ -38,23 +41,36 @@ export class MealRecipe extends BaseEntityHiddenId {
     }
 
     public computeTotalSugar() {
+        const originalIngredients = this.recipe.ingredients.map(x => Object.assign(new Ingredient(), x));
+        const newIngredients = [];
         this.total_sugar = 0;
 
-        // Add the total sugar of every modification
+        // Apply all the modifications to a tmp ingredient list
         for (const modif of this.modifications) {
-            this.total_sugar += modif.total_sugar;
-        }
-        // For each ingredients, add its sugar unless a modification is found
-        for (const ing of this.recipe.ingredients) {
-            if (!this.isIngredientModified(ing)) {
-                this.total_sugar += ing.total_sugar;
+            if (!this.applyIngredientModification(originalIngredients, modif)) {
+                newIngredients.push(modif);
             }
+        }
+
+        // compute total sugar
+        for (const originalIng of originalIngredients) {
+            this.total_sugar += originalIng.total_sugar;
+        }
+        // compute portions
+        this.total_sugar *= this.portions_eaten / this.recipe.portions;
+
+        // Add new ingredients' total sugar (unaffected by portions)
+        for (const newIng of newIngredients) {
+            this.total_sugar += newIng.total_sugar;
         }
     }
 
-    private isIngredientModified(ingredient: Ingredient): boolean {
-        for (const modif of this.modifications) {
-            if (modif.food.id === ingredient.food.id) {
+
+    private applyIngredientModification(originalIngredients: Ingredient[], modif: Ingredient): boolean {
+        for (const originalIng of originalIngredients) {
+            if (originalIng.food.id === modif.food.id) {
+                originalIng.quantity = modif.quantity;
+                originalIng.computeTotalSugar();
                 return true;
             }
         }
