@@ -20,4 +20,8 @@ export class MealRecipeReq {
     @ValidateNested()
     @Type(() => IngredientCreateReq)
     public modifications?: IngredientCreateReq[];
+
+    @IsInt()
+    @IsPositive()
+    public portions_eaten: number;
 }

@@ -119,6 +119,7 @@ export class Meal extends BaseEntity {
 
             mealRecipe.recipe = r;
             mealRecipe.modifications = [];
+            mealRecipe.portions_eaten = recipeReq.portions_eaten;
             if (recipeReq.modifications !== undefined) {
                 await mealRecipe.addModifications(recipeReq.modifications);
             }

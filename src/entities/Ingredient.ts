@@ -46,7 +46,11 @@ export class Ingredient extends BaseEntityHiddenId {
         }
         this.quantity = ingReq.quantity;
         this.food = f;
-        this.total_sugar = this.quantity * f.sugars_100g / 100;
+        this.computeTotalSugar()
+    }
+
+    public computeTotalSugar() {
+        this.total_sugar = this.quantity * this.food.sugars_100g / 100;
     }
 
     public static async findAll(options: IBaseQueryOptions = {}): Promise<Ingredient[]> {
