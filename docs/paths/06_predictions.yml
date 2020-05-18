@@ -49,7 +49,7 @@
   put:
     tags:
       - "Predictions"
-    summary: "Get prediction settings"
+    summary: "Update prediction settings"
     description: >
       Update the prediction settings for the user with the specified UID.
     requestBody:

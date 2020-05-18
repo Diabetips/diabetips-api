@@ -8,10 +8,17 @@
     description: >
       Get a list of all the notifications of the user with the specified UID.
 
-      May implement [Paging](#tag/Paging) in the future but does not at the moment.
+      Implements [Paging](#tag/Paging)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
     responses:
       200:
         description: "The user's notifications"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
         content:
           application/json:
             schema:
