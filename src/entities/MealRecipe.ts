@@ -22,7 +22,7 @@ export class MealRecipe extends BaseEntityHiddenId {
     @OneToMany((type) => Ingredient, (modification) => modification.meal_recipe, { cascade: true })
     public modifications: Ingredient[];
 
-    @Column()
+    @Column({ type: "float" })
     public portions_eaten: number;
 
     @Column({ type: "float" })
