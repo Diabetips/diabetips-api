@@ -17,17 +17,14 @@ import { PredictionSettingsUpdateReq } from "../requests";
 import { BaseService } from "./BaseService";
 import { UserService } from "./UserService";
 
-const DEFAULT_PREDICTION_SETTINGS = {
-    enabled: true,
-};
-
 export class PredictionService extends BaseService {
 
     public static async getNewPrediction(uid: string): Promise<Prediction> {
         const user = await UserService.getUser(uid);
-        const settings = (await user.prediction_settings) || DEFAULT_PREDICTION_SETTINGS;
+        const settings = await user.prediction_settings || new PredictionSettings();
+
         if (!settings.enabled) {
-            throw new ApiError(HttpStatus.FORBIDDEN, "prediction_unavailable", "Predictions are not enabled for user");
+            throw new ApiError(HttpStatus.FORBIDDEN, "predictions_disabled", "Predictions are not enabled for this user");
         }
 
         const res = await axios.get(config.ai.url + `/models/${uid}/predict`);
@@ -37,6 +34,25 @@ export class PredictionService extends BaseService {
         prediction.insulin = res.data.result;
         prediction.confidence = -1;
         return prediction.save();
+    }
+
+    public static async getPredictionSettings(uid: string): Promise<PredictionSettings> {
+        const user = await UserService.getUser(uid);
+        return (await user.prediction_settings) || new PredictionSettings();
+    }
+
+    public static async updatePredictionSettings(uid: string, req: PredictionSettingsUpdateReq): Promise<PredictionSettings> {
+        const user = await UserService.getUser(uid);
+
+        let settings = await user.prediction_settings;
+        if (settings == null) {
+            settings = new PredictionSettings();
+            settings.user = Promise.resolve(user);
+        }
+
+        if (req.enabled != null) { settings.enabled = req.enabled; }
+
+        return settings.save();
     }
 
 }

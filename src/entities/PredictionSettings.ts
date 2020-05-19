@@ -13,8 +13,8 @@ import { User } from "./User";
 @Entity()
 export class PredictionSettings extends BaseEntity {
 
-    @PrimaryGeneratedColumn()
-    public id: number;
+    @PrimaryGeneratedColumn({ name: "id" })
+    public _id: number;
 
     @OneToOne((type) => User, (user) => user.prediction_settings, { cascade: true })
     @JoinColumn({ name: "user_id" })
@@ -22,5 +22,9 @@ export class PredictionSettings extends BaseEntity {
 
     @Column()
     public enabled: boolean = false;
+
+    public get id(): number {
+        return this._id;
+    }
 
 }

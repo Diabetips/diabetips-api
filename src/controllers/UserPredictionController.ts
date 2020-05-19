@@ -21,16 +21,12 @@ export class UserPredictionController {
 
     @Get("/settings")
     public async getPredictionSettings(@Param("uid") uid: string) {
-        return {
-            enabled: true,
-        };
+        return PredictionService.getPredictionSettings(uid);
     }
 
     @Put("/settings")
-    public async putPredictionSettings(@Param("uid") uid: string, @Body() req: PredictionSettingsUpdateReq) {
-        return {
-            enabled: true,
-        };
+    public async updatePredictionSettings(@Param("uid") uid: string, @Body() req: PredictionSettingsUpdateReq) {
+        return PredictionService.updatePredictionSettings(uid, req);
     }
 
 }

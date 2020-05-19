@@ -14,6 +14,12 @@
           application/json:
             schema:
               $component: "schemas:prediction.yml:Prediction"
+      403:
+        description: "The user with the specified UID does not have access to predictions"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorPredictionsDisabled"
       404:
         description: >
           No user with the specified UID was found or the current authenticated user does not have permission to view
