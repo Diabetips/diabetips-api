@@ -70,3 +70,13 @@ ErrorEmptyMeal:
           example: "empty_meal"
         "message":
           example: "A meal must contain at least one recipe or one food"
+ErrorPredictionsDisabled:
+  allOf:
+    - $component: "schemas:error.yml:Error"
+    - properties:
+        "status":
+          example: 403
+        "error":
+          example: "predictions_disabled"
+        "message":
+          example: "Predictions are not enabled for this user"

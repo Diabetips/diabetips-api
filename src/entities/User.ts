@@ -23,6 +23,8 @@ import { Insulin } from "./Insulin";
 import { Mass } from "./Mass";
 import { Meal } from "./Meal";
 import { Notification } from "./Notification";
+import { Prediction } from "./Prediction";
+import { PredictionSettings } from "./PredictionSettings";
 
 import { UserConfirmation } from "./UserConfirmation";
 import { UserPasswordReset } from "./UserPasswordReset";
@@ -59,9 +61,6 @@ export class User extends BaseEntityHiddenId {
 
     @OneToOne((type) => UserPicture, (picture) => picture.user)
     public picture: Promise<UserPicture>;
-
-    @OneToOne((type) => Biometric, (pd) => pd.user)
-    public biometric: Promise<Biometric>;
 
     @ManyToMany((type) => AuthApp)
     @JoinTable({
@@ -102,11 +101,20 @@ export class User extends BaseEntityHiddenId {
     @OneToMany((type) => BloodSugar, (blood_sugar) => blood_sugar.user)
     public blood_sugar: Promise<BloodSugar[]>;
 
+    @OneToOne((type) => Biometric, (pd) => pd.user)
+    public biometric: Promise<Biometric>;
+
     @OneToMany((type) => Height, (h) => h.user)
     public height_history: Promise<Height[]>;
 
     @OneToMany((type) => Mass, (h) => h.user)
     public mass_history: Promise<Mass[]>;
+
+    @OneToMany((type) => Prediction, (p) => p.user)
+    public prediction_history: Promise<Prediction[]>;
+
+    @OneToOne((type) => PredictionSettings, (ps) => ps.user)
+    public prediction_settings: Promise<PredictionSettings>;
 
     public get password(): string | undefined {
         return this._password;

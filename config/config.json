@@ -1,4 +1,7 @@
 {
+    "ai": {
+        "url": "${DIABETIPS_AI_URL}"
+    },
     "auth": {
         "token_key": "${DIABETIPS_AUTH_TOKEN_KEY}"
     },
