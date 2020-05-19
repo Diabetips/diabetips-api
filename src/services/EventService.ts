@@ -40,6 +40,9 @@ export class EventService extends BaseService {
         event.description = req.description;
         event.user = Promise.resolve(user);
 
+        if (!event.isValid()) {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "invalid_event", `An event cannot end before it started`);
+        }
         return event.save();
     }
 
@@ -54,6 +57,9 @@ export class EventService extends BaseService {
         if (req.start !== undefined) { event.start = req.start; }
         if (req.end !== undefined) { event.end = req.end; }
 
+        if (!event.isValid()) {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "invalid_event", `An event cannot end before it started`);
+        }
         return event.save();
     }
 

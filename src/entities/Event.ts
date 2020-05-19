@@ -63,4 +63,8 @@ export class Event extends BaseEntity {
 
         return qb.getOne();
     }
+
+    public isValid(): boolean {
+        return this.end === null || this.end === undefined || this.start <= this.end;
+    }
 }
