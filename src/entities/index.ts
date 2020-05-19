@@ -18,6 +18,7 @@ export * from "./Mass";
 export * from "./Meal";
 export * from "./MealFood";
 export * from "./MealRecipe";
+export * from "./Note";
 export * from "./Notification";
 export * from "./Recipe";
 export * from "./User";
