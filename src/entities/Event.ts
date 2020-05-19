@@ -17,7 +17,7 @@ export class Event extends BaseEntity {
     @Column()
     public start: number;
 
-    @Column()
+    @Column({ nullable: true })
     public end: number;
 
     @Column({ length: 500 })
