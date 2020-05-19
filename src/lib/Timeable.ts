@@ -21,4 +21,8 @@ export class Timeable {
     public applyTimeRange<T>(qb: SelectQueryBuilder<T>): SelectQueryBuilder<T> {
         return qb.andWhere(qb.alias + ".timestamp BETWEEN :start AND :end", { start: this.start, end: this.end });
     }
+
+    public applyTimeRangeOverPeriod<T>(qb: SelectQueryBuilder<T>): SelectQueryBuilder<T> {
+        return qb.andWhere(qb.alias + ".start BETWEEN :start AND :end", { start: this.start, end: this.end });
+    }
 }

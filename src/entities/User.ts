@@ -14,17 +14,7 @@ import { Page, Pageable, Utils } from "../lib";
 
 import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
 
-import { AuthApp } from "./AuthApp";
-import { Biometric } from "./Biometric";
-import { BloodSugar } from "./BloodSugar";
-import { Hba1c } from "./Hba1c";
-import { Height } from "./Height";
-import { Insulin } from "./Insulin";
-import { Mass } from "./Mass";
-import { Meal } from "./Meal";
-import { Notification } from "./Notification";
-import { Prediction } from "./Prediction";
-import { PredictionSettings } from "./PredictionSettings";
+import { Note, Biometric, AuthApp, Meal, Insulin, Hba1c, BloodSugar, Height, Mass, Notification, Event, Prediction, PredictionSettings } from ".";
 
 import { UserConfirmation } from "./UserConfirmation";
 import { UserPasswordReset } from "./UserPasswordReset";
@@ -109,6 +99,12 @@ export class User extends BaseEntityHiddenId {
 
     @OneToMany((type) => Mass, (h) => h.user)
     public mass_history: Promise<Mass[]>;
+
+    @OneToMany((type) => Note, (note) => note.user)
+    public note: Promise<Note[]>;
+
+    @OneToMany((type) => Event, (event) => event.user)
+    public event: Promise<Event[]>;
 
     @OneToMany((type) => Prediction, (p) => p.user)
     public prediction_history: Promise<Prediction[]>;

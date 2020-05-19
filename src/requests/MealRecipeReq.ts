@@ -7,7 +7,7 @@
 */
 
 import { Type } from "class-transformer";
-import { IsArray, IsInt, IsOptional, IsPositive, ValidateNested } from "class-validator";
+import { IsArray, IsInt, IsOptional, IsPositive, ValidateNested, IsNumber } from "class-validator";
 import { IngredientCreateReq } from ".";
 
 export class MealRecipeReq {
@@ -21,7 +21,7 @@ export class MealRecipeReq {
     @Type(() => IngredientCreateReq)
     public modifications?: IngredientCreateReq[];
 
-    @IsInt()
+    @IsNumber()
     @IsPositive()
     public portions_eaten: number;
 }
