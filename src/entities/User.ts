@@ -14,7 +14,7 @@ import { Page, Pageable, Utils } from "../lib";
 
 import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
 
-import { Note, Biometric, AuthApp, Meal, Insulin, Hba1c, BloodSugar, Height, Mass, Notification } from ".";
+import { Note, Biometric, AuthApp, Meal, Insulin, Hba1c, BloodSugar, Height, Mass, Notification, Event } from ".";
 
 import { UserConfirmation } from "./UserConfirmation";
 import { UserPasswordReset } from "./UserPasswordReset";
@@ -102,6 +102,9 @@ export class User extends BaseEntityHiddenId {
 
     @OneToMany((type) => Note, (note) => note.user)
     public note: Promise<Note[]>;
+
+    @OneToMany((type) => Event, (event) => event.user)
+    public event: Promise<Event[]>;
 
     public get password(): string | undefined {
         return this._password;

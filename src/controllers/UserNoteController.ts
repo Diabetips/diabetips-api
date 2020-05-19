@@ -8,9 +8,9 @@
 
 import { Delete, Get, JsonController, Param, Post, Put, QueryParams, Res, Body } from "routing-controllers";
 import { Timeable, Pageable } from "../lib";
-import { NoteService } from "../services/NoteService";
 import { Response } from "express";
 import { NoteCreateReq, NoteUpdateReq } from "../requests";
+import { NoteService } from "../services";
 
 @JsonController("/v1/users/:uid/notes")
 export class UserNoteController {

@@ -22,3 +22,4 @@ export * from "./Note";
 export * from "./Notification";
 export * from "./Recipe";
 export * from "./User";
+export * from "./Event";
