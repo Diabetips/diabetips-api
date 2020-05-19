@@ -37,6 +37,7 @@
         "@types/sharp": "^0.25.0",
         "@types/uuid": "^7.0.3",
         "@types/ws": "^7.2.4",
+        "axios": "^0.19.2",
         "bcrypt": "^4.0.1",
         "body-parser": "^1.19.0",
         "chai": "^4.2.0",

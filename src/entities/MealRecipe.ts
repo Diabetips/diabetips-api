@@ -52,17 +52,18 @@ export class MealRecipe extends BaseEntityHiddenId {
             }
         }
 
-        // compute total sugar
+        // compute total sugar of recipe after modifications
         for (const originalIng of originalIngredients) {
             this.total_sugar += originalIng.total_sugar;
         }
-        // compute portions
-        this.total_sugar *= this.portions_eaten / this.recipe.portions;
-
-        // Add new ingredients' total sugar (unaffected by portions)
+        // Add new ingredients' total sugar
         for (const newIng of newIngredients) {
             this.total_sugar += newIng.total_sugar;
         }
+
+        // compute portions
+        this.total_sugar *= this.portions_eaten / this.recipe.portions;
+
     }
 
 

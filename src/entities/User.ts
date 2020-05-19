@@ -14,7 +14,7 @@ import { Page, Pageable, Utils } from "../lib";
 
 import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
 
-import { Note, Biometric, AuthApp, Meal, Insulin, Hba1c, BloodSugar, Height, Mass, Notification, Event } from ".";
+import { Note, Biometric, AuthApp, Meal, Insulin, Hba1c, BloodSugar, Height, Mass, Notification, Event, Prediction, PredictionSettings } from ".";
 
 import { UserConfirmation } from "./UserConfirmation";
 import { UserPasswordReset } from "./UserPasswordReset";
@@ -51,9 +51,6 @@ export class User extends BaseEntityHiddenId {
 
     @OneToOne((type) => UserPicture, (picture) => picture.user)
     public picture: Promise<UserPicture>;
-
-    @OneToOne((type) => Biometric, (pd) => pd.user)
-    public biometric: Promise<Biometric>;
 
     @ManyToMany((type) => AuthApp)
     @JoinTable({
@@ -94,6 +91,9 @@ export class User extends BaseEntityHiddenId {
     @OneToMany((type) => BloodSugar, (blood_sugar) => blood_sugar.user)
     public blood_sugar: Promise<BloodSugar[]>;
 
+    @OneToOne((type) => Biometric, (pd) => pd.user)
+    public biometric: Promise<Biometric>;
+
     @OneToMany((type) => Height, (h) => h.user)
     public height_history: Promise<Height[]>;
 
@@ -105,6 +105,12 @@ export class User extends BaseEntityHiddenId {
 
     @OneToMany((type) => Event, (event) => event.user)
     public event: Promise<Event[]>;
+
+    @OneToMany((type) => Prediction, (p) => p.user)
+    public prediction_history: Promise<Prediction[]>;
+
+    @OneToOne((type) => PredictionSettings, (ps) => ps.user)
+    public prediction_settings: Promise<PredictionSettings>;
 
     public get password(): string | undefined {
         return this._password;

@@ -2,10 +2,26 @@ openapi: "3.0.0"
 info:
   title: "Diabetips API"
   description: >
-    This is the documentation for the Diabetips REST API.
+    This is the documentation for the Diabetips API.
+
+
+    Diabetips is a Proof-of-Concept project that aims at creating an application that will help patients manage
+    diabetes. It will keep track of blood sugar levels and with the help of a personalized artificial intelligence,
+    automatically calculate the insulin injection dosages. It will automatically adapts to the patient's eating habits,
+    sport activity and morphology. It will also provides a platform for doctors to manage their patients and monitor
+    their medical situation in real-time.
+
+
+    **DISCLAIMER: Diabetips is currently in development, it has not been approved by medical authorities in any country
+    of the world. Diabetips and its creator do not provide medical advice. Diabetips is not intended to be used by
+    anyone for any purpose. Diabetips is not a substitute for professional medical advice, diagnosis or treatment.**
   version: "0.4.0"
   contact:
+    name: "Contact"
     email: "contact@diabetips.fr"
+  x-logo:
+    url: https://docs.diabetips.fr/logo.png
+    altText: Diabetips Logo
 servers:
   - url: "https://api.diabetips.fr"
 tags:
@@ -26,6 +42,7 @@ tags:
 
       Routes that implement paging:
        - [Users - Get all users](#tag/Users/paths/~1v1~1users/get)
+       - [Notifications - Get all notifications](#tag/Notifications/paths/~1v1~1users~1{uid}~1notifications/get)
        - [Meals - Get all meals](#tag/Meals/paths/~1v1~1users~1{uid}~1meals/get)
        - [Recipe - Get all food items](#tag/Recipes/paths/~1v1~1food/get)
        - [Recipe - Get all recipes](#tag/Recipes/paths/~1v1~1recipes/get)
@@ -71,12 +88,28 @@ tags:
   - name: "Users"
   - name: "Notifications"
     description: >
-      **Work in progress, API objects and routes can be subject to changes until the final release.**
+      The Notifications API is available through the usual HTTP REST API but also have via WebSocket endpoints.
 
 
+      The WebSocket endpoint uses the same URL as the
+      [Notifications - Get all notifications](#tag/Notifications/paths/~1v1~1users~1{uid}~1notifications/get)
+      route except for the scheme which is replaced by `wss://`. Upon connection, the client has 1 minute to
+      authenticate itself to the server by sending a valid user access token in a JSON message:
 
-      The Notifications API is available through the usual HTTP REST API but will also have a WebSocket endpoint in the
-      future.
+      ```json
+        {
+          "token": "xyz"
+        }
+      ```
+
+      If the client does not authenticate itself before the 1 minute limit or sends an invalid token, the server will
+      send a JSON-formatted error similar to the ones used by the REST API then close the socket.
+
+
+      After a successful authentication, the client will receive a JSON-formatted array containing all the unread
+      notifications for the specified user. Then, any new notifications for the specified user will be sent to the
+      client when they are created. However, the client must send ping messages to the server at a regular interval. If
+      no ping is received by the server in 5 minutes, the server will send a timed out error then close the socket.
   - name: "Connections"
   - name: "Biometrics"
   - name: "Predictions"

@@ -21,6 +21,7 @@ export * from "./MassService";
 export * from "./MealService";
 export * from "./NoteService";
 export * from "./NotificationService";
+export * from "./PredictionService";
 export * from "./RecipeService";
 export * from "./RecipePictureService";
 export * from "./UserConfirmationService";

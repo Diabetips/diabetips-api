@@ -20,6 +20,8 @@ export * from "./MealFood";
 export * from "./MealRecipe";
 export * from "./Note";
 export * from "./Notification";
+export * from "./Prediction";
+export * from "./PredictionSettings";
 export * from "./Recipe";
 export * from "./User";
 export * from "./Event";
