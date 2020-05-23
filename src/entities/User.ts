@@ -15,22 +15,23 @@ import { Page, Pageable, Utils } from "../lib";
 import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
 
 import { AuthApp } from "./AuthApp";
-import { Notification } from "./Notification";
-import { Meal } from "./Meal";
-import { Insulin } from "./Insulin";
-import { Hba1c } from "./Hba1c";
-import { BloodSugar } from "./BloodSugar";
 import { Biometric } from "./Biometric";
-import { Height } from "./Height";
-import { Mass } from "./Mass";
-import { Note } from "./Note";
+import { BloodSugar } from "./BloodSugar";
 import { Event } from "./Event";
+import { Hba1c } from "./Hba1c";
+import { Height } from "./Height";
+import { Insulin } from "./Insulin";
+import { Mass } from "./Mass";
+import { Meal } from "./Meal";
+import { Note } from "./Note";
+import { Notification } from "./Notification";
 import { Prediction } from "./Prediction";
 import { PredictionSettings } from "./PredictionSettings";
 
 import { UserConfirmation } from "./UserConfirmation";
 import { UserPasswordReset } from "./UserPasswordReset";
 import { UserPicture } from "./UserPicture";
+
 export { UserConfirmation, UserPasswordReset, UserPicture };
 
 @Entity()
