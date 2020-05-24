@@ -12,7 +12,7 @@ Food:
     "name":
       type: "string"
       description: "The food's name"
-      example: "Tomato sauce"
+      example: "Spaghetti"
     "unit":
       type: "string"
       description: "The food's most common measuring unit"

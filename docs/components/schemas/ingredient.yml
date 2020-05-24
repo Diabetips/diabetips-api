@@ -8,7 +8,7 @@ Ingredient:
     "total_sugar":
       type: "number"
       description: "Total quantity of sugar in grams based on the quantity of the ingredient"
-      example: 3.4
+      example: 2.5
       readOnly: true
     "food":
       allOf:
