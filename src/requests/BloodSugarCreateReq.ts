@@ -19,7 +19,6 @@ export class BloodSugarCreateReq {
 
     @IsArray()
     @ArrayNotEmpty()
-    @IsInt({ each: true })
     @Min(0, { each: true })
     @Max(1000, { each: true })
     public measures: number[];
