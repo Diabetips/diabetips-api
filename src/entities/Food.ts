@@ -28,6 +28,9 @@ export class Food extends BaseEntity {
     @Column({ type: "float" })
     public sugars_100g: number;
 
+    @Column({ name: "datasrc", length: 100, nullable: true, select: false })
+    private _datasrc: string;
+
     @OneToOne((type) => FoodPicture, (pic) => pic.food)
     public picture: Promise<FoodPicture>;
 
