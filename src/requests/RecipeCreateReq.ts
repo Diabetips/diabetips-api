@@ -17,7 +17,6 @@ export class RecipeCreateReq {
     public name: string;
 
     @IsString()
-    @IsNotEmpty()
     public description: string;
 
     @IsArray()

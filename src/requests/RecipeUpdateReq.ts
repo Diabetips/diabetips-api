@@ -19,7 +19,6 @@ export class RecipeUpdateReq {
 
     @IsOptional()
     @IsString()
-    @IsNotEmpty()
     public description?: string;
 
     @IsOptional()
