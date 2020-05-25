@@ -36,7 +36,7 @@ export class Event extends BaseEntity {
             .createQueryBuilder("event")
             .leftJoin("event.user", "user")
             .andWhere("user.uid = :userUid", { userUid })
-            .orderBy("insulin.timestamp", "DESC");
+            .orderBy("event.start", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb
@@ -44,7 +44,7 @@ export class Event extends BaseEntity {
                 .andWhere("event.deleted = false");
     }
 
-        return p.query(t.applyTimeRangeOverPeriod(qb));
+        return p.query(t.applyTimeRange(qb, true));
     }
     public static async findById(userUid: string,
                                  eventId: number,

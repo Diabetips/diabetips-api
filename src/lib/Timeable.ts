@@ -6,23 +6,25 @@
 ** Created by Alexandre DE BEAUMONT on Sat Mar 14 2020
 */
 
-import { IsInt, IsPositive, Min } from "class-validator";
+import { IsInt, IsPositive, Min, IsOptional } from "class-validator";
 import { SelectQueryBuilder } from "typeorm";
 
 export class Timeable {
+    @IsOptional()
     @IsInt()
     @Min(0)
-    public start: number = 0;
+    public start?: number;
 
+    @IsOptional()
     @IsInt()
     @IsPositive()
-    public end: number = Math.round((new Date()).getTime() / 1000);
+    public end?: number;
 
-    public applyTimeRange<T>(qb: SelectQueryBuilder<T>): SelectQueryBuilder<T> {
-        return qb.andWhere(qb.alias + ".timestamp BETWEEN :start AND :end", { start: this.start, end: this.end });
-    }
+    public applyTimeRange<T>(qb: SelectQueryBuilder<T>, isPeriod: boolean = false): SelectQueryBuilder<T> {
+        const val = qb.alias + (isPeriod ? ".start" : ".timestamp")
 
-    public applyTimeRangeOverPeriod<T>(qb: SelectQueryBuilder<T>): SelectQueryBuilder<T> {
-        return qb.andWhere(qb.alias + ".start BETWEEN :start AND :end", { start: this.start, end: this.end });
+        qb = this.start === undefined ? qb : qb.andWhere(`:start <= ${val}`, { start: this.start });
+        qb = this.end === undefined ? qb : qb.andWhere(`${val} <= :end`, { end: this.end });
+        return qb;
     }
 }
