@@ -66,9 +66,7 @@ export class Meal extends BaseEntity {
             .orderBy("meal.timestamp", "DESC");
 
         qb = this.getFullMealQuery(qb);
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("meal_recipes.deleted = false");
-        }
+        if (Utils.optionDefault(options.hideDeleted, true)) {}
 
         return p.queryWithCountQuery(t.applyTimeRange(qb), subq(this.createQueryBuilder("meal")));
     }
@@ -87,7 +85,6 @@ export class Meal extends BaseEntity {
             qb = qb
                 .andWhere("user.deleted = false")
                 .andWhere("meal.deleted = false")
-                .andWhere("meal_recipes.deleted = false");
         }
 
         return qb.getOne();
