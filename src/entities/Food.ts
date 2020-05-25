@@ -28,12 +28,20 @@ export class Food extends BaseEntity {
     @Column({ type: "float" })
     public sugars_100g: number;
 
+    // Information about food data source
+    // For OpenFoodFacts: "openfoodfacts:" + code
     @Column({ name: "datasrc", length: 100, nullable: true, select: false })
     private _datasrc: string;
 
+    // For OpenFoodFacts data: unique_scans_n
     @Index()
     @Column({ name: "datarank", type: "bigint", default: 0, select: false })
     private _datarank: number;
+
+    // Indexed on prod server using GIN, but index types are not supported by TypeORM.
+    // Value = to_tsvector('french', name), not a default because can't reference another column in expr.
+    @Column({ name: "datalex", type: "tsvector", nullable: true, select: false })
+    private _datalex: number;
 
     @OneToOne((type) => FoodPicture, (pic) => pic.food)
     public picture: Promise<FoodPicture>;
@@ -46,13 +54,18 @@ export class Food extends BaseEntity {
                                 Promise<Page<Food>> {
         let qb = this
             .createQueryBuilder("food")
-            .orderBy("food.datarank", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb.andWhere("food.deleted = false");
         }
         if (req.name !== undefined && req.name !== "") {
-            qb = qb.andWhere(`lower(food.name) LIKE lower(:name)`, { name: "%" + req.name + "%" });
+            const ranker = "ts_rank_cd(food.datalex, phraseto_tsquery(:name), 2) * sqrt(food.datarank)";
+            qb = qb
+                .where(ranker + " > 0")
+                .orderBy(ranker, "DESC")
+                .setParameter("name", req.name);
+        } else {
+            qb.orderBy("food.datarank", "DESC");
         }
 
         return p.query(qb);
