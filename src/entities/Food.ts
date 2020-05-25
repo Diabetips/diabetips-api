@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Mon Sep 02 2019
 */
 
-import { Column, Entity, OneToOne } from "typeorm";
+import { Column, Entity, Index, OneToOne } from "typeorm";
 
 import { Page, Pageable, Utils } from "../lib";
 import { FoodSearchReq } from "../requests";
@@ -31,6 +31,10 @@ export class Food extends BaseEntity {
     @Column({ name: "datasrc", length: 100, nullable: true, select: false })
     private _datasrc: string;
 
+    @Index()
+    @Column({ name: "datarank", type: "bigint", default: 0, select: false })
+    private _datarank: number;
+
     @OneToOne((type) => FoodPicture, (pic) => pic.food)
     public picture: Promise<FoodPicture>;
 
@@ -40,7 +44,9 @@ export class Food extends BaseEntity {
                                 req: FoodSearchReq = {},
                                 options: IBaseQueryOptions = {}):
                                 Promise<Page<Food>> {
-        let qb = this.createQueryBuilder("food");
+        let qb = this
+            .createQueryBuilder("food")
+            .orderBy("food.datarank", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb.andWhere("food.deleted = false");
