@@ -51,7 +51,7 @@ export class Food extends BaseEntity {
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb.andWhere("food.deleted = false");
         }
-        if (req.name !== undefined) {
+        if (req.name !== undefined && req.name !== "") {
             qb = qb.andWhere(`lower(food.name) LIKE lower(:name)`, { name: "%" + req.name + "%" });
         }
 
