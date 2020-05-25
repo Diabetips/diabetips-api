@@ -49,7 +49,7 @@ export class Meal extends BaseEntity {
             let subqb = sqb
                 .select("meal.id")
                 .leftJoin("meal.user", "user")
-                .where("user.uid = :uid", { uid });
+                .where("user.uid = :uid", { uid })
 
             if (Utils.optionDefault(options.hideDeleted, true)) {
                 subqb = subqb
@@ -62,7 +62,8 @@ export class Meal extends BaseEntity {
 
         let qb = this
             .createQueryBuilder("meal")
-            .where((sqb) => "meal.id IN " + p.limit(subq(sqb.subQuery().from("meal", "meal"))).getQuery());
+            .where((sqb) => "meal.id IN " + p.limit(subq(sqb.subQuery().from("meal", "meal"))).getQuery())
+            .orderBy("meal.timestamp", "DESC");
 
         qb = this.getFullMealQuery(qb);
         if (Utils.optionDefault(options.hideDeleted, true)) {

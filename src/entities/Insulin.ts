@@ -52,7 +52,8 @@ export class Insulin extends BaseEntity {
         let qb = this
             .createQueryBuilder("insulin")
             .leftJoin("insulin.user", "user")
-            .where("user.uid = :patientUid", { patientUid });
+            .where("user.uid = :patientUid", { patientUid })
+            .orderBy("insulin.timestamp", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb

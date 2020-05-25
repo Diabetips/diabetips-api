@@ -35,7 +35,8 @@ export class Event extends BaseEntity {
         let qb = this
             .createQueryBuilder("event")
             .leftJoin("event.user", "user")
-            .andWhere("user.uid = :userUid", { userUid });
+            .andWhere("user.uid = :userUid", { userUid })
+            .orderBy("insulin.timestamp", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb

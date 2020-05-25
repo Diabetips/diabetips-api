@@ -35,7 +35,8 @@ export class Hba1c extends BaseEntity {
         let qb = this
             .createQueryBuilder("hba1c")
             .leftJoin("hba1c.user", "user")
-            .where("user.uid = :patientUid", { patientUid });
+            .where("user.uid = :patientUid", { patientUid })
+            .orderBy("hba1c.timestamp", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb

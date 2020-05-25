@@ -32,7 +32,8 @@ export class Note extends BaseEntity {
         let qb = this
             .createQueryBuilder("note")
             .leftJoin("note.user", "user")
-            .where("user.uid = :userUid", { userUid });
+            .where("user.uid = :userUid", { userUid })
+            .orderBy("note.timestamp", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb
