@@ -59,7 +59,7 @@ export class Food extends BaseEntity {
             qb = qb.andWhere("food.deleted = false");
         }
         if (req.name !== undefined && req.name !== "") {
-            const ranker = "ts_rank_cd(food.datalex, phraseto_tsquery(:name), 2) * sqrt(food.datarank)";
+            const ranker = "ts_rank_cd(food.datalex, phraseto_tsquery('french', :name), 2) * sqrt(food.datarank)";
             qb = qb
                 .where(ranker + " > 0")
                 .orderBy(ranker, "DESC")
