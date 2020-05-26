@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Mon Sep 02 2019
 */
 
-import { Column, Entity, Index, OneToOne } from "typeorm";
+import { Brackets, Column, Entity, Index, OneToOne } from "typeorm";
 
 import { Page, Pageable, Utils } from "../lib";
 import { FoodSearchReq } from "../requests";
@@ -59,8 +59,13 @@ export class Food extends BaseEntity {
             qb = qb.andWhere("food.deleted = false");
         }
         if (req.name !== undefined && req.name !== "") {
+            const query = req.name;
             qb = qb
-                .where("ts_rank_cd(food.datalex, phraseto_tsquery('french', :name)) > 0")
+                .andWhere(new Brackets((qb) => {
+                    query.split(" ").forEach((keyword) => {
+                        qb = qb.orWhere("food.name ILIKE :keyword", { keyword: `%${keyword}%`});
+                    });
+                }))
                 .orderBy("ts_rank_cd(food.datalex, phraseto_tsquery('french', :name), 2) * sqrt(food.datarank)", "DESC")
                 .setParameter("name", req.name);
         } else {
