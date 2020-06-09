@@ -1,0 +1,28 @@
+NotificationId:
+  type: "string"
+  format: "uuid"
+  description: "The notification's identifier"
+  example: "01234567-89ab-cdef-0123-456789abcdef"
+Notification:
+  type: "object"
+  properties:
+    "id":
+      $component: "schemas:notification.yml:NotificationId"
+    "time":
+      type: "string"
+      format: "date-time"
+      description: "The notification's time"
+      example: "2020-03-14T01:23:45Z"
+    "read":
+      type: "boolean"
+      description: "Flag that indicate if the notification has been marked as read"
+      example: false
+    "type":
+      type: "string"
+      enum:
+        - "user-invite"
+      description: "The notification's type (full list of possible values to be documented)"
+      example: "user-invite"
+    "data":
+      type: "object"
+      description: "Additional data specific to the notification type (to be documented)"

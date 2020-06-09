@@ -1,0 +1,8 @@
+UID:
+  in: "path"
+  name: "uid"
+  description: "The user's UID or `me` for the currently authenticated user"
+  required: true
+  schema:
+    type: "string"
+    example: "01234567-89ab-cdef-0123-456789abcdef"

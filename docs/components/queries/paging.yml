@@ -1,0 +1,16 @@
+PageQuery:
+  in: query
+  name: page
+  description: "Page number"
+  required: false
+  default: 1
+  schema:
+    type: number
+SizeQuery:
+  in: query
+  name: size
+  description: "Amount of elements per page"
+  required: false
+  default: 20
+  schema:
+    type: number

@@ -1,0 +1,8 @@
+EventId:
+  in: "path"
+  name: "event_id"
+  description: "The user event's ID"
+  required: true
+  schema:
+    type: "integer"
+    example: 1

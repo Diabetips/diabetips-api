@@ -1,0 +1,6 @@
+FoodId:
+  in: "path"
+  name: "food_id"
+  required: true
+  schema:
+    $component: "schemas:food.yml:FoodId"

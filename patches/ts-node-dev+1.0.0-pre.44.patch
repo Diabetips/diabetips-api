@@ -1,0 +1,13 @@
+diff --git a/node_modules/ts-node-dev/lib/index.js b/node_modules/ts-node-dev/lib/index.js
+index 3f44013..8268d07 100644
+--- a/node_modules/ts-node-dev/lib/index.js
++++ b/node_modules/ts-node-dev/lib/index.js
+@@ -42,7 +42,7 @@ module.exports = function(script, scriptArgs, nodeArgs, opts) {
+     forcePolling: opts.poll,
+     interval: parseInt(opts.interval),
+     debounce: parseInt(opts.debounce),
+-    recursive: true
++    //recursive: true
+   })
+   var starting = false
+   watcher.on('change', restart)

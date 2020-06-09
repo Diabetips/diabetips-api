@@ -1,0 +1,81 @@
+"/v1/users/{uid}/predictions/predict":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Predictions"
+    summary: "Get new prediction"
+    description: >
+      Get a new insulin injection prediction for the user with the specified UID.
+    responses:
+      200:
+        description: "The prediction"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:prediction.yml:Prediction"
+      403:
+        description: "The user with the specified UID does not have access to predictions"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorPredictionsDisabled"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/predictions/settings":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Predictions"
+    summary: "Get prediction settings"
+    description: >
+      Get the prediction settings for the user with the specified UID.
+    responses:
+      200:
+        description: "The prediction settings"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:prediction.yml:PredictionSettings"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  put:
+    tags:
+      - "Predictions"
+    summary: "Update prediction settings"
+    description: >
+      Update the prediction settings for the user with the specified UID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:prediction.yml:PredictionSettings"
+    responses:
+      200:
+        description: "The updated prediction settings"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:prediction.yml:PredictionSettings"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to modify
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"

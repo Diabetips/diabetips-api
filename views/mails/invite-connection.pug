@@ -1,0 +1,11 @@
+extends template
+include template-button
+include template-paragraph
+
+block body
+    +ps(intro_text)
+    +p
+        | #{inviter_text1}#{first_name} #{last_name}#{inviter_text2}
+    +p
+        +button(join_link, join_button)
+    +ps(outro_text)

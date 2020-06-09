@@ -1,0 +1,12 @@
+Mass:
+  type: "object"
+  properties:
+    "timestamp":
+      type: "integer"
+      description: "The timestamp of when this mass was set to the profile"
+      example: 1581717727
+    "mass":
+      type: "number"
+      format: "double"
+      description: "The mass of the user in kilograms"
+      example: 64.3

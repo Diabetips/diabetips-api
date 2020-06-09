@@ -1,0 +1,36 @@
+MealId:
+  type: "integer"
+  description: "The meal's identifier"
+  example: 7
+Meal:
+  type: "object"
+  properties:
+    "id":
+      allOf:
+        - $component: "schemas:meal.yml:MealId"
+        - readOnly: true
+    "description":
+      type: "string"
+      description: "The meal's description"
+      example: "Lunch of October 7th 2019"
+    "timestamp":
+      type: "integer"
+      description: "Timestamp of the meal"
+      example: 1581907819
+    "total_sugar":
+      type: "number"
+      description: "Total quantity of sugar in the meal in grams"
+      example: 15.2
+      readOnly: true
+    "recipes":
+      type: "array"
+      description: "The meal's recipes"
+      items:
+        $component: "schemas:meal_recipe.yml:MealRecipe"
+      required: false
+    "foods":
+      type: "array"
+      description: "The meal's foods"
+      items:
+        $component: "schemas:meal_food.yml:MealFood"
+      required: false

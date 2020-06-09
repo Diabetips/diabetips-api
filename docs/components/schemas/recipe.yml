@@ -1,0 +1,33 @@
+RecipeId:
+  type: "integer"
+  description: "The recipe's identifier"
+  example: 15
+Recipe:
+  type: "object"
+  properties:
+    "id":
+      allOf:
+        - $component: "schemas:recipe.yml:RecipeId"
+        - readOnly: true
+    "name":
+      type: "string"
+      description: "The recipe's name"
+      example: "Lasagna"
+    "description":
+      type: "string"
+      description: "The recipe's description"
+      example: "Lasagnas are an Italian pasta dish with tomato sauce and cheese"
+    "portions":
+      type: "number"
+      description: "How many portions this recipe provides"
+      example: 6
+    "total_sugar":
+      type: "number"
+      description: "Total quantity of sugar in the recipe in grams"
+      example: 5
+      readOnly: true
+    "ingredients":
+      type: "array"
+      description: "The recipe's ingredients"
+      items:
+        $component: "schemas:ingredient.yml:Ingredient"

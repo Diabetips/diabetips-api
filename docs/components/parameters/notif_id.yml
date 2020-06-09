@@ -1,0 +1,6 @@
+NotificationId:
+  in: "path"
+  name: "notif_id"
+  required: true
+  schema:
+    $component: "schemas:notification.yml:NotificationId"

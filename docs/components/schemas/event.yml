@@ -1,0 +1,21 @@
+Event:
+  type: "object"
+  properties:
+    "id":
+      type: "integer"
+      description: "The event's ID"
+      example: 1
+      readOnly: true
+    "description":
+      type: "string"
+      description: "The event's description"
+      example: "I had the flu"
+    "start":
+      type: "number"
+      description: "UNIX timestamp of the start of the event (in the UTC timezone)"
+      example: 1576359970
+    "end":
+      type: "number"
+      nullable: true
+      description: "UNIX timestamp of the end of the event (in the UTC timezone). It can be omitted if the event's end is undetermined"
+      example: 1576359970

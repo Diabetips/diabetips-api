@@ -1,0 +1,7 @@
+NameQuery:
+  in: query
+  name: name
+  description: "Substring to look for in the name"
+  required: false
+  schema:
+    type: "string"

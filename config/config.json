@@ -1,0 +1,79 @@
+{
+    "ai": {
+        "url": "${DIABETIPS_AI_URL}"
+    },
+    "auth": {
+        "token_key": "${DIABETIPS_AUTH_TOKEN_KEY}"
+    },
+    "db": {
+        "type": "postgres",
+        "url": "${DIABETIPS_DB_URL}",
+        "entities": [
+            "%{__dirname}/entities/**/*.{js,ts}"
+        ]
+    },
+    "diabetips": {
+        "accountUrl": "https://account.diabetips.fr"
+    },
+    "http": {
+        "host": "0.0.0.0",
+        "port": "8080",
+        "proxy": true
+    },
+    "logger": {
+        "appenders": {
+            "console": {
+                "type": "console",
+                "layout": "@{logger.layout}"
+            },
+            "file": {
+                "type": "dateFile",
+                "filename": "logs/@{pkg.name}.@{env}.log",
+                "layout": "@{logger.layout}",
+                "daysToKeep": 30,
+                "alwaysIncludePattern": true,
+                "keepFileExt": true
+            }
+        },
+        "categories": {
+            "default": {
+                "appenders": ["console", "file"],
+                "level": "all",
+                "enableCallStack": true
+            },
+            "http": {
+                "appenders": ["console", "file"],
+                "level": "all"
+            },
+            "sql": {
+                "appenders": ["console", "file"],
+                "level": "all"
+            },
+            "ws": {
+                "appenders": ["console", "file"],
+                "level": "all"
+            }
+        },
+        "layout": {
+            "type": "pattern",
+            "pattern": "%[[%d] [%p] %c -%] %m [%f{1}:%l]"
+        }
+    },
+    "mail": {
+        "url": "${DIABETIPS_MAIL_URL}",
+        "logger": true
+    },
+    "mailDefaults": {
+        "from": {
+            "name": "Diabetips",
+            "address": "account@diabetips.fr"
+        },
+        "replyTo": "noreply@diabetips.fr"
+    },
+    "paging": {
+        "defaultSize": 20,
+        "maxSize": 100
+    },
+    "ws": {
+    }
+}

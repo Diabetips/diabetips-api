@@ -1,0 +1,6 @@
+RecipeId:
+  in: "path"
+  name: "recipe_id"
+  required: true
+  schema:
+    $component: "schemas:recipe.yml:RecipeId"

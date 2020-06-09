@@ -1,0 +1,12 @@
+extends template
+include template-paragraph
+
+block body
+    +ps(intro_text)
+    +p
+        strong #{old_email_text}&nbsp;
+        em #{old_email}
+        br
+        strong #{new_email_text}&nbsp;
+        em #{new_email}
+    +ps(outro_text)

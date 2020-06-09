@@ -1,0 +1,120 @@
+openapi: "3.0.0"
+info:
+  title: "Diabetips API"
+  description: >
+    This is the documentation for the Diabetips API.
+
+
+    Diabetips is a Proof-of-Concept project that aims at creating an application that will help patients manage
+    diabetes. It will keep track of blood sugar levels and with the help of a personalized artificial intelligence,
+    automatically calculate the insulin injection dosages. It will automatically adapts to the patient's eating habits,
+    sport activity and morphology. It will also provides a platform for doctors to manage their patients and monitor
+    their medical situation in real-time.
+
+
+    **DISCLAIMER: Diabetips is currently in development, it has not been approved by medical authorities in any country
+    of the world. Diabetips and its creator do not provide medical advice. Diabetips is not intended to be used by
+    anyone for any purpose. Diabetips is not a substitute for professional medical advice, diagnosis or treatment.**
+  version: "0.4.0"
+  contact:
+    name: "Contact"
+    email: "contact@diabetips.fr"
+  x-logo:
+    url: https://docs.diabetips.fr/logo.png
+    altText: Diabetips Logo
+servers:
+  - url: "https://api.diabetips.fr"
+tags:
+  - name: "Paging"
+    description: >
+      Multiple routes of this API implement paging, which can be interacted with by using the following query
+      parameters:
+        - `page` which controls the number of the page to return. (Default: 1, the first page)
+        - `size` which controls the number of items returned in each page. (Default: 20, Maximum: 100)
+
+
+      Along with the requested data, these routes will produce an additional HTTP header `X-Pages` in the response. This
+      header will contain a semi-colon separated list of the following values:
+        * `previous: X` where X is the previous page number (if one exists).
+        * `next: X` where X is the next page number (if one exists).
+        * `last: X` where X is the last page number.
+
+
+      Routes that implement paging:
+       - [Users - Get all users](#tag/Users/paths/~1v1~1users/get)
+       - [Notifications - Get all notifications](#tag/Notifications/paths/~1v1~1users~1{uid}~1notifications/get)
+       - [Meals - Get all meals](#tag/Meals/paths/~1v1~1users~1{uid}~1meals/get)
+       - [Recipe - Get all food items](#tag/Recipes/paths/~1v1~1food/get)
+       - [Recipe - Get all recipes](#tag/Recipes/paths/~1v1~1recipes/get)
+       - [Biometrics - Get all blood sugar measures](#tag/Biometrics/paths/~1v1~1users~1{uid}~1blood_sugar/get)
+       - [Biometrics - Get all HbA1C measures](#tag/Biometrics/paths/~1v1~1users~1{uid}~1hba1c/get)
+       - [Biometrics - Get all insulin injections](#tag/Biometrics/paths/~1v1~1users~1{uid}~1insulin/get)
+  - name: "Timeable"
+    description: >
+      Multiple routes of this API allow the developper to filter the data by period.
+
+
+      This can be done by using the following query parameters:
+        - `start` which represents the beginning of the desired period. (Default: No specific beginning)
+        - `end` which represents the end of the desired period. (Default: Current time of the request)
+
+
+      Routes that implement the timeable query:
+       - [Mass history - Get user's mass history](#tag/Biometrics/paths/~1v1~1users~1{uid}~1mass/get)
+       - [Height history - Get user's height history](#tag/Biometrics/paths/~1v1~1users~1{uid}~1height/get)
+       - [Meals - Get all meals](#tag/Meals/paths/~1v1~1users~1{uid}~1meals/get)
+       - [Biometrics - Get all blood sugar measures](#tag/Biometrics/paths/~1v1~1users~1{uid}~1blood_sugar/get)
+       - [Biometrics - Get all HbA1C measures](#tag/Biometrics/paths/~1v1~1users~1{uid}~1hba1c/get)
+       - [Biometrics - Get all insulin injections](#tag/Biometrics/paths/~1v1~1users~1{uid}~1insulin/get)
+       - [Notes - Get all notes of a user](#tag/Notes/paths/~1v1~1users~1{uid}~1notes/get)
+       - [Notes - Get all events of a user](#tag/Notes/paths/~1v1~1users~1{uid}~1events/get)
+  - name: "Authentication"
+    description: >
+      The Diabetips API uses an OAuth 2.0 based authentication system with JSON Web Tokens. Almost all of this API
+      routes require a valid authenticated user access token be passed via the `Authorization: Bearer xyz` HTTP header.
+
+
+      Tokens can be obtained via the OAuth flow that is most appropriate for your type of application, this API supports
+      the following flows:
+       * Authorization code
+       * Implicit
+       * Password
+       * Refresh
+
+
+      See also:
+       * [RFC 6749: OAuth 2.0](https://tools.ietf.org/html/rfc6749)
+       * [RFC 7519: JSON Web Token](https://tools.ietf.org/html/rfc7519)
+  - name: "Users"
+  - name: "Notifications"
+    description: >
+      The Notifications API is available through the usual HTTP REST API but also have via WebSocket endpoints.
+
+
+      The WebSocket endpoint uses the same URL as the
+      [Notifications - Get all notifications](#tag/Notifications/paths/~1v1~1users~1{uid}~1notifications/get)
+      route except for the scheme which is replaced by `wss://`. Upon connection, the client has 1 minute to
+      authenticate itself to the server by sending a valid user access token in a JSON message:
+
+      ```json
+        {
+          "token": "xyz"
+        }
+      ```
+
+      If the client does not authenticate itself before the 1 minute limit or sends an invalid token, the server will
+      send a JSON-formatted error similar to the ones used by the REST API then close the socket.
+
+
+      After a successful authentication, the client will receive a JSON-formatted array containing all the unread
+      notifications for the specified user. Then, any new notifications for the specified user will be sent to the
+      client when they are created. However, the client must send ping messages to the server at a regular interval. If
+      no ping is received by the server in 5 minutes, the server will send a timed out error then close the socket.
+  - name: "Connections"
+  - name: "Biometrics"
+  - name: "Predictions"
+    description: >
+      **Work in progress, API objects and routes can be subject to changes until the final release.**
+  - name: "Meals"
+  - name: "Recipes"
+  - name: "Notes"

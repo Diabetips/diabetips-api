@@ -1,0 +1,20 @@
+Ingredient:
+  type: "object"
+  properties:
+    "quantity":
+      type: "number"
+      description: "Quantity of the ingredient in the recipe"
+      example: 200
+    "total_sugar":
+      type: "number"
+      description: "Total quantity of sugar in grams based on the quantity of the ingredient"
+      example: 2.5
+      readOnly: true
+    "food":
+      allOf:
+        - $component: "schemas:food.yml:Food"
+        - readOnly: true
+    "food_id":
+      allOf:
+        - $component: "schemas:food.yml:FoodId"
+        - writeOnly: true

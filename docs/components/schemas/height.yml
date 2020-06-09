@@ -1,0 +1,11 @@
+Height:
+  type: "object"
+  properties:
+    "timestamp":
+      type: "integer"
+      description: "The timestamp of when this height was set to the profile"
+      example: 1581717727
+    "height":
+      type: "number"
+      description: "The height of the user in cm"
+      example: 183

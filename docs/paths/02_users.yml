@@ -1,0 +1,224 @@
+"/v1/users":
+  get:
+    tags:
+      - "Users"
+    summary: "Get all users"
+    description: >
+      Get a list of all the users the currently authenticated user has permissions to see (depending on the user's
+      account type and their connections).
+
+
+      Implements [Paging](#tag/Paging)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+    responses:
+      200:
+        description: "List of all visible users"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:user.yml:User"
+  post:
+    tags:
+      - "Users"
+    summary: "Register user"
+    description: >
+      Register a new user account using the supplied information.
+
+
+      The specified email must not be already used by another active user account.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:user.yml:User"
+    responses:
+      201:
+        description: "The user account was created"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:user.yml:User"
+      409:
+        description: "The specified email address conflicts with another already registered user"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Users"
+    summary: "Get user"
+    description: >
+      Get the user with the specified UID.
+    responses:
+      200:
+        description: "The user"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:user.yml:User"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  put:
+    tags:
+      - "Users"
+    summary: "Update user"
+    description: >
+      Update the user with the specified UID.
+
+
+      Not all fields of the request body are required, only the fields that should be updated must be present.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:user.yml:User"
+    responses:
+      200:
+        description: "The updated user's data"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:user.yml:User"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to modify
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+      409:
+        description: "The specified email address conflicts with another already registered user"
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $component: "schemas:error.yml:Error"
+                - properties:
+                    "status":
+                      example: 409
+                    "error":
+                      example: "email_conflict"
+                    "message":
+                      example: "Email address already used by another account"
+  delete:
+    tags:
+      - "Users"
+    summary: "Deactivate user account"
+    description: >
+      Deactivate the account of the user with the specified UID.
+
+
+      *WARNING: This can only be reversed by Diabetips customer support and administrators.*
+    responses:
+      204:
+        description: "The user account has been deactivated"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to modify
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/picture":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Users"
+    summary: "Get profile picture"
+    description: >
+      Get the profile picture of the user with the specified UID.
+
+
+      The returned profile picture's dimensions will always be 300 by 300 pixels.
+    responses:
+      200:
+        description: "The user's profile picture"
+        content:
+          image/jpeg:
+            schema:
+              type: "binary"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  post:
+    tags:
+      - "Users"
+    summary: "Update profile picture"
+    description: >
+      Update the profile picture of the user with the specified UID.
+
+
+      The `Content-Type` header is ignored, the format of the file is auto-detected.
+      The supported image file formats are:
+       - JPEG
+       - PNG
+       - WebP
+       - TIFF
+
+      The maximum file upload size is 5 MB. There are no constraints on the uploaded image's dimensions, but it will be
+      resized and cropped to 300 by 300 pixels.
+    requestBody:
+      required: true
+      content:
+        "*/*":
+          schema:
+            type: "binary"
+    responses:
+      204:
+        description: "The user's profile picture has been updated"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to modify
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  delete:
+    tags:
+      - "Users"
+    summary: "Remove profile picture"
+    description: >
+      Remove the profile picture of the user with the specified UID.
+
+
+      This action cannot be reverted, the user's picture will be reset to the default profile picture.
+    responses:
+      204:
+        description: "The user's picture has been removed"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to modify
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"

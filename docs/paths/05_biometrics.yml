@@ -1,0 +1,558 @@
+"/v1/users/{uid}/biometrics":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Biometrics"
+    summary: "Get general biometric information"
+    description: >
+      Get the general biometric information of the specified user.
+
+
+      Fields may be null.
+    parameters:
+      - $component: "queries:paging.yml:SizeQuery"
+    responses:
+      200:
+        description: "The user's biometric information"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:biometrics.yml:Biometrics"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  put:
+    tags:
+      - "Biometrics"
+    summary: "Update general biometric information"
+    description: >
+      Update the specified user's general biometric information.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:biometrics.yml:Biometrics"
+    responses:
+      200:
+        description: "The biometric information has been updated."
+        content:
+          application/json:
+            schema:
+              $component: "schemas:biometrics.yml:Biometrics"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to
+          modify them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+
+"/v1/users/{uid}/mass":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Biometrics"
+    summary: "Get user mass history"
+    description: >
+      Get the mass history of the user with the specified UID.
+
+
+      Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+    responses:
+      200:
+        description: "The mass history"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:mass.yml:Mass"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/height":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Biometrics"
+    summary: "Get user height history"
+    description: >
+      Get the height history of the user with the specified UID.
+
+
+      Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+    responses:
+      200:
+        description: "The height history"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:height.yml:Height"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/blood_sugar/last":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Biometrics"
+    summary: "Get last blood sugar measure"
+    description: >
+      Get the last blood sugar measure for the user with the specified UID and ID.
+    responses:
+      200:
+        description: "The last blood sugar measure"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:blood_sugar.yml:BloodSugar"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to view
+           them
+           * The user does not currently have any blood sugar measures saved.
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/blood_sugar":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Biometrics"
+    summary: "Get all blood sugar measures"
+    description: >
+      Get a list of all the blood sugar measure points of the user with the specified UID. 
+      The entries are sorted from most recent to oldest.
+
+
+      Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+    responses:
+      200:
+        description: "The user's blood sugar measures"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:blood_sugar.yml:BloodSugar"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  post:
+    tags:
+      - "Biometrics"
+    summary: "Add blood sugar measure"
+    description: >
+      Add blood sugar measures starting on `start` with intervals of `interval` seconds.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:blood_sugar.yml:BloodSugar"
+    responses:
+      200:
+        description: "The blood sugar measures were added"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:blood_sugar.yml:BloodSugar"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to
+          modify them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  put:
+    tags:
+      - "Biometrics"
+    summary: "Update blood sugar measures"
+    description: >
+      Update the blood sugar measures for the user with the specified UID and ID over the period
+      between `start` and `end`.
+
+      There MUST be a measure whose timestamp corresponds with `start` or no updates will occur.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:blood_sugar.yml:BloodSugar"
+    responses:
+      200:
+        description: "The updated blood sugar measures"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:blood_sugar.yml:BloodSugar"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No blood sugar measure matches with the specified `start` value
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  delete:
+    tags:
+      - "Biometrics"
+    summary: "Remove blood sugar measures"
+    description: >
+      Remove the blood sugar measure for the user with the specified UID over the period
+      between `start` and `end`.
+    parameters:
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+    responses:
+      204:
+        description: "The blood sugar measures was removed"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to vie
+          modify them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+
+"/v1/users/{uid}/hba1c":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Biometrics"
+    summary: "Get all HbA1C measures"
+    description: >
+      Get a list of all the HbA1C measure points of the user with the specified UID.
+
+
+      Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+    responses:
+      200:
+        description: "The user's HbA1C measures"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:hba1c.yml:HbA1C"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  post:
+    tags:
+      - "Biometrics"
+    summary: "Add HbA1C measure"
+    description: >
+      Add an HbA1C measure for the user with the specified UID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:hba1c.yml:HbA1C"
+    responses:
+      200:
+        description: "The HbA1C measure was added"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:hba1c.yml:HbA1C"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to
+          modify them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/hba1c/{id}":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+    - $component: "parameters:hba1c_id.yml:HbA1CId"
+  get:
+    tags:
+      - "Biometrics"
+    summary: "Get HbA1C measure"
+    description: >
+      Get the HbA1C measure for the user with the specified UID and ID.
+    responses:
+      200:
+        description: "The HbA1C measure"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:hba1c.yml:HbA1C"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to view
+           them
+           * No HbA1C with the specified ID was found
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  put:
+    tags:
+      - "Biometrics"
+    summary: "Update HbA1C measure"
+    description: >
+      Update the HbA1C measure for the user with the specified UID and ID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:hba1c.yml:HbA1C"
+    responses:
+      200:
+        description: "The updated HbA1C measure's data"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:hba1c.yml:HbA1C"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No HbA1C measure with the specified ID was found
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  delete:
+    tags:
+      - "Biometrics"
+    summary: "Remove HbA1C measure"
+    description: >
+      Remove the HbA1C measure for the user with the specified UID and ID.
+    responses:
+      204:
+        description: "The HbA1C measure was removed"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No HbA1C measure with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+
+"/v1/users/{uid}/insulin":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Biometrics"
+    summary: "Get all insulin injections"
+    description: >
+      Get a list of all the insulin injections for the user with the specified UID.
+
+
+      Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+    responses:
+      200:
+        description: "The user's insulin injections"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:insulin.yml:Insulin"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  post:
+    tags:
+      - "Biometrics"
+    summary: "Add insulin injection"
+    description: >
+      Add an insulin injection for the user with the specified UID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:insulin.yml:Insulin"
+    responses:
+      200:
+        description: "The insulin injection was added"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:insulin.yml:Insulin"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to
+          modify them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/insulin/{id}":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+    - $component: "parameters:insulin_id.yml:InsulinId"
+  get:
+    tags:
+      - "Biometrics"
+    summary: "Get insulin injection"
+    description: >
+      Get the insulin injection for the user with the specified UID and ID.
+    responses:
+      200:
+        description: "The insulin injection"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:insulin.yml:Insulin"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to view
+           them
+           * No insulin injection with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  put:
+    tags:
+      - "Biometrics"
+    summary: "Update insulin injection"
+    description: >
+      Update the insulin injection for the user with the specified UID and ID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:insulin.yml:Insulin"
+    responses:
+      200:
+        description: "The updated insulin injection's data"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:insulin.yml:Insulin"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No insulin injection with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  delete:
+    tags:
+      - "Biometrics"
+    summary: "Remove insulin injection"
+    description: >
+      Remove the insulin injection for the user with the specified UID and ID.
+    responses:
+      204:
+        description: "The insulin injection was removed"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No insulin injection with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"

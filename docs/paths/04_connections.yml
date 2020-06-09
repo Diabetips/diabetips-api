@@ -1,0 +1,74 @@
+"/v1/users/{uid}/connections":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Connections"
+    summary: "Get all connections"
+    description: >
+      Get a list of all the users connected to the user with the specified UID.
+    responses:
+      200:
+        description: "The user's connections"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:user.yml:User"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  post:
+    tags:
+      - "Connections"
+    summary: "Invite user"
+    description: >
+      Invite the user with the specified email adress to become a connection of the user with the specified UID. If the
+      user doesn't have a Diabetips account, they will receive an email inviting them to join the platform.
+    responses:
+      202:
+        description: "The connection has been created or an invitation email sent"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to modify
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/connections/{other_uid}":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+    - in: "path"
+      name: "other_uid"
+      description: "The connected user's UID"
+      required: true
+      schema:
+        type: "string"
+        format: "uuid"
+        example: "01234567-89ab-cdef-0123-456789abcdef"
+  delete:
+    tags:
+      - "Connections"
+    summary: "Remove a connection"
+    description: >
+      Remove the user with the UID `other_uid` from the connections of the user with the UID `uid`.
+    responses:
+      204:
+        description: "The user connection has been removed"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to
+             modify them.
+           * No connection with the specified UID was found.
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"

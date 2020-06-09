@@ -1,0 +1,60 @@
+"/v1/users/{uid}/notifications":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Notifications"
+    summary: "Get all notifications"
+    description: >
+      Get a list of all the notifications of the user with the specified UID.
+
+      Implements [Paging](#tag/Paging)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+    responses:
+      200:
+        description: "The user's notifications"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:notification.yml:Notification"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/notifications/{notif_id}":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+    - $component: "parameters:notif_id.yml:NotificationId"
+  delete:
+    tags:
+      - "Notifications"
+    summary: "Mark notification as read"
+    description: >
+      Mark the notification with the specified ID as read.
+    responses:
+      204:
+        description: "The notification has been marked as read"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No notification with the specified ID was found
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $component: "schemas:error.yml:ErrorUserNotFound"
+                - $component: "schemas:error.yml:ErrorNotificationNotFound"

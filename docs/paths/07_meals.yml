@@ -1,0 +1,165 @@
+"/v1/users/{uid}/meals":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Meals"
+    summary: "Get all meals"
+    description: >
+      Get a list of all the meals of the user with the specified UID.
+
+
+      Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+    responses:
+      200:
+        description: "The user's meals"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:meal.yml:Meal"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  post:
+    tags:
+      - "Meals"
+    summary: "Create meal"
+    description: >
+      Create a meal from the specified information and add it to the meals of the user with the specified UID.
+
+
+      Note: `recipes` and `foods` can both be omitted, but not in the same request. 
+      A meal requires at least one independent food or one recipe in order to be accepted.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:meal.yml:Meal"
+    responses:
+      200:
+        description: "The meal was created"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:meal.yml:Meal"
+      400:
+        description: >
+          The meal you are trying to create does not contain any food nor recipe.
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorEmptyMeal"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to
+           modify them
+           * No recipe with the specified identifier from the list of meal components was found
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $component: "schemas:error.yml:ErrorUserNotFound"
+                - $component: "schemas:error.yml:ErrorRecipeNotFound"
+"/v1/users/{uid}/meals/{meal_id}":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+    - $component: "parameters:meal_id.yml:MealId"
+  get:
+    tags:
+      - "Meals"
+    summary: "Get meal"
+    description: >
+      Get the meal of the user with the specified UID and ID.
+    responses:
+      200:
+        description: "The meal's data"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:meal.yml:Meal"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to view
+           them
+           * No meal with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorMealNotFound"
+  put:
+    tags:
+      - "Meals"
+    summary: "Update meal"
+    description: >
+      Update the meal of the user with the specified UID and ID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:meal.yml:Meal"
+    responses:
+      200:
+        description: "The updated meal's data"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:meal.yml:Meal"
+      400:
+        description: >
+          The meal you are trying to update would not contain any food nor recipe anymore.
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorEmptyMeal"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No meal with the specified ID was found"
+           * No recipe with the specified identifier from the list of meal components was found
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $component: "schemas:error.yml:ErrorMealNotFound"
+                - $component: "schemas:error.yml:ErrorRecipeNotFound"
+  delete:
+    tags:
+      - "Meals"
+    summary: "Remove meal"
+    description: >
+      Remove the meal of the user with the specified UID and ID.
+    responses:
+      204:
+        description: "The meal was removed"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No meal with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorMealNotFound"

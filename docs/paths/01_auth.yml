@@ -1,0 +1,33 @@
+"/v1/auth/authorize":
+  get:
+    tags:
+      - "Authentication"
+    summary: "OAuth 2.0 authorize endpoint"
+"/v1/auth/token":
+  post:
+    tags:
+      - "Authentication"
+    summary: "OAuth 2.0 token endpoint"
+"/v1/auth/reset-password":
+  post:
+    tags:
+      - "Authentication"
+    summary: "Reset account password"
+    description: >
+      Reset the password of the account with the specified email. A new password will be randomly generated and sent to
+      the user's email.
+
+
+      For privacy reasons, errors **won't** be reported (e.g. if the specified email is not associated with any account).
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              "email":
+                $component: "schemas:user.yml:User/properties/email"
+    responses:
+      202:
+        description: "The password reset request is being processed"
