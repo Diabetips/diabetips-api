@@ -41,7 +41,7 @@ export class Recipe extends BaseEntity {
     // Repository functions
 
     public static async findAll(p: Pageable,
-                                req: RecipeSearchReq = {},
+                                s: RecipeSearchReq = {},
                                 options: IBaseQueryOptions = {}):
                                 Promise<Page<Recipe>> {
         const subq = (sqb: SelectQueryBuilder<Recipe>) => {
@@ -50,8 +50,8 @@ export class Recipe extends BaseEntity {
             if (Utils.optionDefault(options.hideDeleted, true)) {
                 subqb = subqb.andWhere("recipe.deleted = false");
             }
-            if (req.name !== undefined) {
-                subqb = subqb.andWhere(`lower(recipe.name) LIKE lower(:name)`, { name: "%" + req.name + "%" });
+            if (s.name !== undefined) {
+                subqb = subqb.andWhere(`lower(recipe.name) LIKE lower(:name)`, { name: "%" + s.name + "%" });
             }
 
             return subqb;

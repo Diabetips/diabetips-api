@@ -10,7 +10,7 @@ import { Response } from "express";
 import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
 
 import { Pageable, Timeable } from "../lib";
-import { InsulinCreateReq, InsulinUpdateReq } from "../requests";
+import { InsulinCreateReq, InsulinUpdateReq, InsulinSearchReq } from "../requests";
 import { InsulinService } from "../services";
 
 @JsonController("/v1/users/:uid/insulin")
@@ -20,8 +20,9 @@ export class UserInsulinController {
     public async getAllUserInsulin(@Param("uid") uid: string,
                                    @QueryParams() p: Pageable,
                                    @QueryParams() t: Timeable,
+                                   @QueryParams() s: InsulinSearchReq,
                                    @Res() res: Response) {
-        const page = await InsulinService.getAllInsulin(uid, p, t);
+        const page = await InsulinService.getAllInsulin(uid, p, t, s);
         return page.send(res);
     }
 

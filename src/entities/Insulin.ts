@@ -13,6 +13,7 @@ import { Page, Pageable, Timeable, Utils } from "../lib";
 import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
 
 import { User } from "./User";
+import { InsulinSearchReq } from "../requests";
 
 export enum InsulinType {
     SLOW = "slow",
@@ -47,6 +48,7 @@ export class Insulin extends BaseEntity {
     public static async findAll(patientUid: string,
                                 p: Pageable,
                                 t: Timeable,
+                                s: InsulinSearchReq,
                                 options: IBaseQueryOptions = {}):
                                 Promise<Page<Insulin>> {
         let qb = this
@@ -59,6 +61,9 @@ export class Insulin extends BaseEntity {
             qb = qb
                 .andWhere("user.deleted = false")
                 .andWhere("insulin.deleted = false");
+        }
+        if (s.type !== undefined) {
+            qb = qb.andWhere(`insulin.type = :type`, { type: s.type });
         }
 
         return p.query(t.applyTimeRange(qb));

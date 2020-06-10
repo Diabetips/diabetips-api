@@ -17,8 +17,10 @@ import { RecipeService } from "../services";
 export class RecipeController {
 
     @Get("/")
-    public async getAllRecipes(@QueryParams() p: Pageable, @QueryParams() req: RecipeSearchReq, @Res() res: Response) {
-        const page = await RecipeService.getAllRecipes(p, req);
+    public async getAllRecipes(@QueryParams() p: Pageable,
+                               @QueryParams() s: RecipeSearchReq,
+                               @Res() res: Response) {
+        const page = await RecipeService.getAllRecipes(p, s);
         return page.send(res);
     }
 

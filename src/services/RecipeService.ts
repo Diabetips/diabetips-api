@@ -15,8 +15,10 @@ import { BaseService } from "./BaseService";
 
 export class RecipeService extends BaseService {
 
-    public static async getAllRecipes(p: Pageable, req: RecipeSearchReq): Promise<Page<Recipe>> {
-        return Recipe.findAll(p, req);
+    public static async getAllRecipes(p: Pageable,
+                                      s: RecipeSearchReq):
+                                      Promise<Page<Recipe>> {
+        return Recipe.findAll(p, s);
     }
 
     public static async getRecipe(id: number): Promise<Recipe> {
