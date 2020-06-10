@@ -16,8 +16,8 @@ export enum SexEnum {
 }
 
 export enum DiabetesType {
-    TYPE_1 = 1,
-    TYPE_2 = 2,
+    TYPE_1 = "1",
+    TYPE_2 = "2",
 }
 
 @Entity()
