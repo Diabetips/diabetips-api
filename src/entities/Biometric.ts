@@ -15,6 +15,11 @@ export enum SexEnum {
     MALE = "male",
 }
 
+export enum DiabetesType {
+    TYPE_1 = 1,
+    TYPE_2 = 2,
+}
+
 @Entity()
 export class Biometric extends BaseEntityHiddenId {
     @Column({
@@ -35,6 +40,13 @@ export class Biometric extends BaseEntityHiddenId {
         nullable: true,
     })
     public sex: SexEnum | null;
+
+    @Column({
+        type: "enum",
+        enum: DiabetesType,
+        nullable: true,
+    })
+    public diabetes_type: DiabetesType | null;
 
     @OneToOne((type) => User, (user) => user.biometric)
     @JoinColumn({ name: "user_id" })

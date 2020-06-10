@@ -26,3 +26,11 @@ Biometrics:
         - male
         - female
       nullable: true
+    "diabetes_type":
+      type: "number"
+      description: "Diabetes type of the user."
+      example: 1
+      enum:
+        - 1
+        - 2
+      nullable: true
