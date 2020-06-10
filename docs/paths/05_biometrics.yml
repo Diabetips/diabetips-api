@@ -433,6 +433,7 @@
       - $component: "queries:paging.yml:SizeQuery"
       - $component: "queries:period.yml:StartQuery"
       - $component: "queries:period.yml:EndQuery"
+      - $component: "queries:insulin_type.yml:InsulinTypeQuery"
     responses:
       200:
         description: "The user's insulin injections"
