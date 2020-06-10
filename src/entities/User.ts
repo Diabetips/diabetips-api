@@ -27,6 +27,7 @@ import { Note } from "./Note";
 import { Notification } from "./Notification";
 import { Prediction } from "./Prediction";
 import { PredictionSettings } from "./PredictionSettings";
+import { Recipe } from "./Recipe";
 
 import { UserConfirmation } from "./UserConfirmation";
 import { UserPasswordReset } from "./UserPasswordReset";
@@ -91,6 +92,9 @@ export class User extends BaseEntityHiddenId {
 
     @OneToMany((type) => Notification, (n) => n.target)
     public notifications: Promise<Notification[]>;
+
+    @OneToMany((type) => Recipe, (recipe) => recipe.author)
+    public recipes: Promise<Recipe[]>;
 
     @OneToMany((type) => Meal, (meal) => meal.user)
     public meals: Promise<Meal[]>;

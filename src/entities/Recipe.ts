@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
-import { Column, Entity, OneToMany, OneToOne, SelectQueryBuilder } from "typeorm";
+import { Column, Entity, OneToMany, OneToOne, SelectQueryBuilder, ManyToOne, JoinColumn } from "typeorm";
 
 import { Page, Pageable, Utils } from "../lib";
 import { RecipeSearchReq } from "../requests";
@@ -15,6 +15,7 @@ import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
 
 import { Ingredient } from "./Ingredient";
 import { RecipePicture } from "./RecipePicture";
+import { User } from "./User";
 export { RecipePicture };
 
 @Entity()
@@ -38,6 +39,10 @@ export class Recipe extends BaseEntity {
     @OneToOne((type) => RecipePicture, (picture) => picture.recipe)
     public picture: Promise<RecipePicture>;
 
+    @ManyToOne((type) => User, (user) => user.recipes, { cascade: true })
+    @JoinColumn({ name: "user_id" })
+    public author: User | null;
+
     // Repository functions
 
     public static async findAll(p: Pageable,
@@ -59,6 +64,7 @@ export class Recipe extends BaseEntity {
 
         const qb = this
             .createQueryBuilder("recipe")
+            .leftJoinAndSelect("recipe.author", "author")
             .leftJoinAndSelect("recipe.ingredients", "ingredients")
             .leftJoinAndSelect("ingredients.food", "food")
             .where((sqb) => "recipe.id IN " + p.limit(subq(sqb.subQuery().from("recipe", "recipe"))).getQuery());

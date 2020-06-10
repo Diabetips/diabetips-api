@@ -7,9 +7,9 @@
 */
 
 import { Response } from "express";
-import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
+import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res, Ctx } from "routing-controllers";
 
-import { Pageable } from "../lib";
+import { Pageable, Context } from "../lib";
 import { RecipeCreateReq, RecipeSearchReq, RecipeUpdateReq } from "../requests";
 import { RecipeService } from "../services";
 
@@ -25,8 +25,8 @@ export class RecipeController {
     }
 
     @Post("/")
-    public async createRecipe(@Body() body: RecipeCreateReq) {
-        return RecipeService.createRecipe(body);
+    public async createRecipe(@Body() body: RecipeCreateReq, @Ctx() context: Context) {
+        return RecipeService.createRecipe(body, context);
     }
 
     @Get("/:id")
