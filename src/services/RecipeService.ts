@@ -8,10 +8,11 @@
 
 import { Food, Ingredient, Recipe } from "../entities";
 import { ApiError } from "../errors";
-import { HttpStatus, Page, Pageable } from "../lib";
+import { HttpStatus, Page, Pageable, Context } from "../lib";
 import { RecipeCreateReq, RecipeSearchReq, RecipeUpdateReq } from "../requests";
 
 import { BaseService } from "./BaseService";
+import { UserService } from "./UserService";
 
 export class RecipeService extends BaseService {
 
@@ -29,7 +30,14 @@ export class RecipeService extends BaseService {
         return recipe;
     }
 
-    public static async createRecipe(req: RecipeCreateReq): Promise<Recipe> {
+    public static async createRecipe(req: RecipeCreateReq, context: Context): Promise<Recipe> {
+        let author;
+        try {
+            author = await UserService.getCurrentUser(context);
+        } catch {
+            author = null;
+        }
+
         const recipe = new Recipe();
 
         recipe.name = req.name;
@@ -37,6 +45,7 @@ export class RecipeService extends BaseService {
         recipe.ingredients = [];
         recipe.total_sugar = 0;
         recipe.portions = req.portions;
+        recipe.author = author;
         for (const ingReq of req.ingredients) {
             const ing = new Ingredient();
             await ing.init(ingReq);
