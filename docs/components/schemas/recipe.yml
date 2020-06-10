@@ -9,6 +9,10 @@ Recipe:
       allOf:
         - $component: "schemas:recipe.yml:RecipeId"
         - readOnly: true
+    "author":
+      allOf:
+        - $component: "schemas:user.yml:User"
+        - readOnly: true
     "name":
       type: "string"
       description: "The recipe's name"
