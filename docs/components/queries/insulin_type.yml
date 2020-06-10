@@ -1,0 +1,11 @@
+InsulinTypeQuery:
+  in: query
+  name: type
+  description: "Filter all but the specified type"
+  required: false
+  schema:
+    type: "string"
+    enum:
+      - "slow"
+      - "fast"
+      - "very_fast"

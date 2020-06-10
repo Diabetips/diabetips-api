@@ -9,14 +9,18 @@
 import { Insulin, User } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable, Timeable } from "../lib";
-import { InsulinCreateReq, InsulinUpdateReq } from "../requests";
+import { InsulinCreateReq, InsulinUpdateReq, InsulinSearchReq } from "../requests";
 
 import { BaseService } from "./BaseService";
 
 export class InsulinService extends BaseService {
 
-    public static async getAllInsulin(uid: string, p: Pageable, t: Timeable): Promise<Page<Insulin>> {
-        return Insulin.findAll(uid, p, t);
+    public static async getAllInsulin(uid: string,
+                                      p: Pageable,
+                                      t: Timeable,
+                                      s: InsulinSearchReq):
+                                      Promise<Page<Insulin>> {
+        return Insulin.findAll(uid, p, t, s);
     }
 
     public static async getInsulin(uid: string, insulinId: number): Promise<Insulin> {
