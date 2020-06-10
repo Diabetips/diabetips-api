@@ -7,7 +7,7 @@
 */
 
 import { IsEnum, IsISO8601, IsNumber, IsOptional, IsPositive } from "class-validator";
-import { SexEnum } from "../entities";
+import { SexEnum, DiabetesType } from "../entities";
 
 export class BiometricUpdateReq {
     @IsISO8601()
@@ -27,4 +27,8 @@ export class BiometricUpdateReq {
     @IsOptional()
     @IsEnum(SexEnum)
     public sex?: SexEnum;
+
+    @IsOptional()
+    @IsEnum(DiabetesType)
+    public diabetes_type?: DiabetesType;
 }
