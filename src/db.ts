@@ -64,5 +64,6 @@ export async function connectToDatabase(): Promise<Connection> {
     return database = await createConnection({
         ...config.db,
         logger: new TypeOrmBridgeLogger(),
+        synchronize: (config.env === "dev" ? true : undefined),
     } as ConnectionOptions);
 }
