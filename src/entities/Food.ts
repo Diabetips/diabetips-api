@@ -19,6 +19,7 @@ export { FoodPicture };
 @Entity()
 export class Food extends BaseEntity {
 
+    // Indexed on prod server using GIN and gin_trgm_ops, but index types are not supported by TypeORM.
     @Column({ length: 200 })
     public name: string;
 

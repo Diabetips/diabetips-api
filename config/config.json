@@ -13,7 +13,7 @@
         ]
     },
     "diabetips": {
-        "accountUrl": "https://account.diabetips.fr"
+        "accountUrl": "${DIABETIPS_ACCOUNT_URL}"
     },
     "http": {
         "host": "0.0.0.0",
