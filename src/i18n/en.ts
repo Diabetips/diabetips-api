@@ -6,6 +6,8 @@
 ** Created by Arthur MELIN on Sun Dec 15 2019
 */
 
+import { config } from "../config";
+
 import { Lang } from ".";
 
 class English implements Lang {
@@ -55,7 +57,7 @@ class English implements Lang {
                 "You recently requested to reset your Diabetips account password.",
             ],
             reset_text: "You can reset your password by clicking on the following link.",
-            reset_link: "https://account.diabetips.fr/reset-password",
+            reset_link: config.diabetips.accountUrl + "/reset-password",
             reset_button: "Reset my password",
             outro_text: [
                 "If you did not make this request, please contact our support team as soon as possible to cancel it.",
@@ -77,7 +79,7 @@ class English implements Lang {
             password_text: "Password:",
             password_text2: "the one you gave while registering",
             confirm_text: "Please confirm your address email by clicking the following link to finalize your registration and start using Diabetips.",
-            confirm_link: "https://account.diabetips.fr/confirm",
+            confirm_link: config.diabetips.accountUrl + "/confirm",
             confirm_button: "Confirm my account",
             outro_text: [
                 "Cheers!",
@@ -92,7 +94,7 @@ class English implements Lang {
             ],
             inviter_text1: "",
             inviter_text2: " has invited you to join Diabetips!",
-            join_link: "https://account.diabetips.fr/register",
+            join_link: config.diabetips.accountUrl + "/register",
             join_button: "Join Diabetips",
             outro_text: [
                 "Cheers!",
