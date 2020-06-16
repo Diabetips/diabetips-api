@@ -58,5 +58,6 @@ export class Biometric extends BaseEntityHiddenId {
         this.mass = null;
         this.height = null;
         this.sex = null;
+        this.diabetes_type = null;
     }
 }
