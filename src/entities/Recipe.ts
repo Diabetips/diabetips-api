@@ -75,6 +75,7 @@ export class Recipe extends BaseEntity {
     public static async findById(id: number, options: IBaseQueryOptions = {}): Promise<Recipe | undefined> {
         let qb = this
             .createQueryBuilder("recipe")
+            .leftJoinAndSelect("recipe.author", "author")
             .leftJoinAndSelect("recipe.ingredients", "ingredients")
             .leftJoinAndSelect("ingredients.food", "food")
             .where("recipe.id = :id", { id });
