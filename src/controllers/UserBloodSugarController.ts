@@ -10,7 +10,7 @@ import { Response } from "express";
 import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
 
 import { Pageable, Timeable } from "../lib";
-import { BloodSugarCreateReq, BloodSugarDeleteReq, BloodSugarUpdateReq } from "../requests";
+import { BloodSugarCreateReq, BloodSugarUpdateReq, TimeRangeReq } from "../requests";
 import { BloodSugarService } from "../services";
 
 @JsonController("/v1/users/:uid/blood_sugar")
@@ -44,7 +44,7 @@ export class UserBloodSugarController {
 
     @Delete("/")
     public async deleteUserBloodSugar(@Param("uid") uid: string,
-                                      @QueryParams() req: BloodSugarDeleteReq) {
+                                      @QueryParams() req: TimeRangeReq) {
         await BloodSugarService.deleteBloodSugar(uid, req);
     }
 

@@ -9,7 +9,7 @@
 import { BloodSugar, User } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable, Timeable } from "../lib";
-import { BloodSugarCreateReq, BloodSugarUpdateReq, TimeRangeDeleteReq } from "../requests";
+import { BloodSugarCreateReq, BloodSugarUpdateReq, TimeRangeReq } from "../requests";
 import { BaseService } from "./BaseService";
 
 export class BloodSugarService extends BaseService {
@@ -76,7 +76,7 @@ export class BloodSugarService extends BaseService {
         return bsArray;
     }
 
-    public static async deleteBloodSugar(uid: string, range: TimeRangeDeleteReq) {
+    public static async deleteBloodSugar(uid: string, range: TimeRangeReq) {
         BloodSugar.deleteAllRange(uid, range);
     }
 }

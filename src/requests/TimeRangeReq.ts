@@ -8,7 +8,7 @@
 
 import { IsInt, IsPositive, Min } from "class-validator";
 
-export class BloodSugarDeleteReq {
+export class TimeRangeReq {
     @IsInt()
     @Min(0)
     public start: number;

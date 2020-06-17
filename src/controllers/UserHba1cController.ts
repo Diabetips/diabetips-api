@@ -36,8 +36,9 @@ export class UserHba1cController {
     }
 
     @Put("/:id")
-    public async updateUserHba1c(@Param("uid") uid: string, @Param("id") hba1cId: number,
-                                  @Body() body: Hba1cUpdateReq) {
+    public async updateUserHba1c(@Param("uid") uid: string,
+                                 @Param("id") hba1cId: number,
+                                 @Body() body: Hba1cUpdateReq) {
         return Hba1cService.updateHba1c(uid, hba1cId, body);
     }
 

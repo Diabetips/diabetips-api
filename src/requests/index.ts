@@ -8,7 +8,6 @@
 
 export * from "./BiometricUpdateReq";
 export * from "./BloodSugarCreateReq";
-export * from "./BloodSugarDeleteReq";
 export * from "./BloodSugarUpdateReq";
 export * from "./EventCreateReq";
 export * from "./EventUpdateReq";
@@ -30,7 +29,7 @@ export * from "./PredictionSettingsUpdateReq";
 export * from "./RecipeCreateReq";
 export * from "./RecipeSearchReq";
 export * from "./RecipeUpdateReq";
-export * from "./TimeRangeDeleteReq";
+export * from "./TimeRangeReq";
 export * from "./UserConfirmAccountReq";
 export * from "./UserConnectionInviteReq";
 export * from "./UserCreateReq";

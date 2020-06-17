@@ -9,7 +9,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, Unique } from "typeorm";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable, Timeable, Utils } from "../lib";
-import { TimeRangeDeleteReq } from "../requests";
+import { TimeRangeReq } from "../requests";
 import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
 import { User } from "./User";
 
@@ -84,7 +84,7 @@ export class BloodSugar extends BaseEntityHiddenId {
     }
 
     public static async deleteAllRange(patientUid: string,
-                                       range: TimeRangeDeleteReq,
+                                       range: TimeRangeReq,
                                        options: IBaseQueryOptions = {}) {
         const user = await User.findByUid(patientUid);
 
