@@ -25,6 +25,7 @@ export * from "./MealRecipeReq";
 export * from "./MealUpdateReq";
 export * from "./NoteCreateReq";
 export * from "./NoteUpdateReq";
+export * from "./NotificationFcmTokenRegisterReq";
 export * from "./PredictionSettingsUpdateReq";
 export * from "./RecipeCreateReq";
 export * from "./RecipeSearchReq";

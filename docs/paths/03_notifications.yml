@@ -58,3 +58,56 @@
               oneOf:
                 - $component: "schemas:error.yml:ErrorUserNotFound"
                 - $component: "schemas:error.yml:ErrorNotificationNotFound"
+"/v1/users/{uid}/notifications/fcm_token":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  post:
+    tags:
+      - "Notifications"
+    summary: "Register FCM device token"
+    description: >
+      Register a Firebase Cloud Messaging device token to the user with the specified UID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              "token":
+                type: "string"
+                description: "FCM registration token"
+                example: "eHSobDSRaGpupjMK...Vm92AeDRpo8xXOdkP0wmRZP4w2khW"
+    responses:
+      204:
+        description: "The token has been registered"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/notifications/test":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Notifications"
+    summary: "Send a test notification"
+    description: >
+      Send a test notification to the user with the specified UID.
+
+      **TEMPORARY DEBUG ROUTE**
+    responses:
+      204:
+        description: "Notification sent"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"

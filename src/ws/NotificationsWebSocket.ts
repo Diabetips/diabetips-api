@@ -20,12 +20,12 @@ export class NotificationsWebSocket extends AuthenticatedWebSocket {
             this.params.uid = auth.uid;
         }
         // TODO check access rights
-        await NotificationService.registerClient(this.params.uid, this);
+        await NotificationService.registerWsClient(this.params.uid, this);
     }
 
     public async onDisconnect(code: number, reason: string) {
         super.onDisconnect(code, reason);
-        await NotificationService.unregisterClient(this.params.uid, this);
+        await NotificationService.unregisterWsClient(this.params.uid, this);
     }
 
 }

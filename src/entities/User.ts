@@ -25,6 +25,7 @@ import { Mass } from "./Mass";
 import { Meal } from "./Meal";
 import { Note } from "./Note";
 import { Notification } from "./Notification";
+import { NotificationFcmToken } from "./NotificationFcmToken";
 import { Prediction } from "./Prediction";
 import { PredictionSettings } from "./PredictionSettings";
 import { Recipe } from "./Recipe";
@@ -93,6 +94,9 @@ export class User extends BaseEntityHiddenId {
     @OneToMany((type) => Notification, (n) => n.target)
     public notifications: Promise<Notification[]>;
 
+    @OneToMany((type) => NotificationFcmToken, (nt) => nt.user)
+    public notificationFcmTokens: Promise<NotificationFcmToken[]>;
+
     @OneToMany((type) => Recipe, (recipe) => recipe.author)
     public recipes: Promise<Recipe[]>;
 
@@ -157,6 +161,9 @@ export class User extends BaseEntityHiddenId {
         if (Utils.optionDefault(options.selectPassword, false)) {
             qb = qb.addSelect("user.password", "user_password");
         }
+        if (Utils.optionDefault(options.selectNotificationFcmTokens, false)) {
+            qb = qb.leftJoinAndSelect("user.notificationFcmTokens", "notificationFcmToken");
+        }
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb.andWhere("user.deleted = false");
         }
@@ -203,4 +210,5 @@ export class User extends BaseEntityHiddenId {
 export interface IUserQueryOptions extends IBaseQueryOptions {
     selectPassword?: boolean;
     selectConfirmation?: boolean;
+    selectNotificationFcmTokens?: boolean;
 }
