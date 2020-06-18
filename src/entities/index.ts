@@ -20,6 +20,7 @@ export * from "./MealFood";
 export * from "./MealRecipe";
 export * from "./Note";
 export * from "./Notification";
+export * from "./NotificationFcmToken";
 export * from "./Prediction";
 export * from "./PredictionSettings";
 export * from "./Recipe";
