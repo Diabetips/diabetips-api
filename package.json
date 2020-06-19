@@ -51,6 +51,8 @@
         "http-errors": "^1.7.3",
         "jsonwebtoken": "^8.5.1",
         "log4js": "^6.2.1",
+        "moment": "^2.27.0",
+        "moment-timezone": "^0.5.31",
         "nodemailer": "^6.4.6",
         "patch-package": "^6.2.2",
         "path-to-regexp": "^6.1.0",

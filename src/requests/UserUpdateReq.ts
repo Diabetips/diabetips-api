@@ -6,6 +6,8 @@
 ** Created by Arthur MELIN on Tue Feb 11 2020
 */
 
+import moment = require("moment-timezone");
+
 import { IsEmail, IsIn, IsNotEmpty, IsOptional, IsString, Matches, MinLength } from "class-validator";
 
 import { getLangs } from "../i18n";
@@ -28,6 +30,12 @@ export class UserUpdateReq {
     @IsString()
     @IsIn(getLangs())
     public lang?: string;
+
+    @IsOptional()
+    @IsString()
+    @IsIn(moment.tz.names(), { message: "timezone must be a valid timezone name from the IANA database" })
+    public timezone?: string;
+
 
     @IsOptional()
     @IsString()
