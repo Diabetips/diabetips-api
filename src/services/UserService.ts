@@ -56,6 +56,7 @@ export class UserService extends BaseService {
         user.email = req.email;
         user.password = req.password; // hashes password
         user.lang = req.lang;
+        user.timezone = req.timezone;
         user.first_name = req.first_name;
         user.last_name = req.last_name;
 
@@ -93,6 +94,7 @@ export class UserService extends BaseService {
         if (req.first_name != null) { user.first_name = req.first_name; }
         if (req.last_name != null) { user.last_name = req.last_name; }
         if (req.lang != null) { user.lang = req.lang; }
+        if (req.timezone != null) { user.timezone = req.timezone; }
 
         if (req.email != null && req.email !== user.email) {
             if (await User.countByEmail(req.email) > 0) {

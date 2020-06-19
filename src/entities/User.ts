@@ -53,6 +53,9 @@ export class User extends BaseEntityHiddenId {
     public lang: string;
 
     @Column({ length: 100 })
+    public timezone: string;
+
+    @Column({ length: 100 })
     public first_name: string;
 
     @Column({ length: 100 })
