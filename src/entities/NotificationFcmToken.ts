@@ -24,4 +24,13 @@ export class NotificationFcmToken extends BaseEntity {
     @Column({ length: 200 })
     public token: string;
 
+
+    public static async deleteToken(token: string) {
+        const qb = this
+            .createQueryBuilder("notificationFcmToken")
+            .delete()
+            .where("notificationFcmToken.token = :token", { token });
+
+        return qb.execute();
+    }
 }

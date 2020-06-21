@@ -86,6 +86,9 @@ export class NotificationService extends BaseService {
             return;
         }
 
+        // Delete previous registrations of the token to other users.
+        NotificationFcmToken.deleteToken(req.token);
+
         const nt = new NotificationFcmToken();
         nt.user = Promise.resolve(user);
         nt.token = req.token;
