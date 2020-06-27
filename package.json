@@ -1,9 +1,10 @@
 {
     "name": "diabetips-api",
     "version": "0.5.0",
+    "private": true,
     "description": "Diabetips API server",
     "keywords": [],
-    "homepage": "https://gitlab.com/diabeteam",
+    "homepage": "https://docs.diabetips.fr",
     "license": "UNLICENSED",
     "author": "Arthur MELIN <arthur@diabetips.fr>",
     "contributors": [
@@ -21,7 +22,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://gitlab.com/diabeteam/backend/api.git"
+        "url": "https://github.com/Diabetips/diabetips-api.git"
     },
     "dependencies": {
         "@types/bcrypt": "^3.0.0",
