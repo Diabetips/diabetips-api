@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Fri Feb 28 2020
 */
 
-import { BloodSugar, User } from "../entities";
+import { BloodSugar, User, BloodSugarCalculation, BloodSugarCalculationType } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable, Timeable } from "../lib";
 import { BloodSugarCreateReq, BloodSugarUpdateReq, TimeRangeReq } from "../requests";
@@ -14,7 +14,7 @@ import { BaseService } from "./BaseService";
 
 export class BloodSugarService extends BaseService {
     public static async getAllBloodSugar(uid: string, p: Pageable, t: Timeable): Promise<Page<BloodSugar>> {
-        return BloodSugar.findAll(uid, p, t);
+        return BloodSugar.findAllPageable(uid, p, t);
     }
 
     public static async getLastBloodSugar(uid: string): Promise<BloodSugar> {
@@ -78,5 +78,16 @@ export class BloodSugarService extends BaseService {
 
     public static async deleteBloodSugar(uid: string, range: TimeRangeReq) {
         BloodSugar.deleteAllRange(uid, range);
+    }
+
+    // ----- Calculations -----
+
+    public static async getCalculations(uid: string,
+                                        t: TimeRangeReq,
+                                        calcs: BloodSugarCalculationType[]):
+                                        Promise<BloodSugarCalculation> {
+        const res = new BloodSugarCalculation();
+        await res.init(uid, t, calcs);
+        return res;
     }
 }

@@ -8,6 +8,7 @@
 
 import { IsInt, IsPositive, Min, IsOptional } from "class-validator";
 import { SelectQueryBuilder } from "typeorm";
+import { TimeRangeReq } from "../requests";
 
 export class Timeable {
     @IsOptional()
