@@ -12,6 +12,8 @@ import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res }
 import { Pageable, Timeable } from "../lib";
 import { BloodSugarCreateReq, BloodSugarUpdateReq, TimeRangeReq } from "../requests";
 import { BloodSugarService } from "../services";
+import { BloodSugarCalculationReq } from "../requests/BloodSugarCalculationReq";
+import { BloodSugarCalculationType } from "../entities";
 
 @JsonController("/v1/users/:uid/blood_sugar")
 export class UserBloodSugarController {
@@ -48,4 +50,13 @@ export class UserBloodSugarController {
         await BloodSugarService.deleteBloodSugar(uid, req);
     }
 
+    // ----- Calculations -----
+
+    @Get("/calculations")
+    public async getBloodSugarCalculations(@Param("uid") uid: string,
+                                           @QueryParams() t: TimeRangeReq,
+                                           @QueryParams() { calcs }: BloodSugarCalculationReq) {
+        const values: BloodSugarCalculationType[] = Array.isArray(calcs) ? calcs : [calcs] || [ ];
+        return BloodSugarService.getCalculations(uid, t, values);
+    }
 }

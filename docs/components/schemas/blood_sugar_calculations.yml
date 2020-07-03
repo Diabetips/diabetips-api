@@ -1,0 +1,23 @@
+BloodSugarCalculations:
+  type: "object"
+  properties:
+    "start":
+      type: "integer"
+      description: "Timestamp for the first data measure"
+      example: 1581808876
+    "end":
+      type: "integer"
+      description: "Timestamp for the first data measure"
+      example: 1581808876
+    "average":
+      type: "number"
+      description: "Average of the values between the two timestamps"
+      example: 45.9
+    "first":
+      type: "number"
+      description: "First quartile of the values between the two timestamps"
+      example: 20.3
+    "third":
+      type: "number"
+      description: "Third quartile of the values between the two timestamps"
+      example: 60.5

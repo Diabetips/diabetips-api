@@ -7,8 +7,9 @@
 */
 
 import { IsInt, IsPositive, Min } from "class-validator";
+import { Timeable } from "../lib";
 
-export class TimeRangeReq {
+export class TimeRangeReq extends Timeable {
     @IsInt()
     @Min(0)
     public start: number;

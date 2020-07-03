@@ -137,7 +137,7 @@
       - "Biometrics"
     summary: "Get last blood sugar measure"
     description: >
-      Get the last blood sugar measure for the user with the specified UID and ID.
+      Get the last blood sugar measure for the user with the specified UID.
     responses:
       200:
         description: "The last blood sugar measure"
@@ -270,6 +270,42 @@
         description: >
           No user with the specified UID was found or the current authenticated user does not have permission to vie
           modify them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/blood_sugar/calculations":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Biometrics"
+    summary: "Get blood sugar calculations"
+    description: >
+      Get different calculations about the user's blood sugar over a period of time. 
+      Calculations that are not requested will not appear in the resulting response.
+
+
+      If no `calcs` query parameters are provided, then all types of calculations will be returned. 
+      In the case where multiple `calcs` QP are provided, they will be considered as a list and all requested calculations will be returned.
+
+
+      Example: `/calculations?calcs=first&calcs=third&start=...` will return both first and third quartiles, but will omit the average.
+    parameters:
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+      - $component: "queries:blood_sugar_calculations.yml:CalcsQuery"
+    responses:
+      200:
+        description: "The calculations requested"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:blood_sugar_calculations.yml:BloodSugarCalculations"
+      404:
+        description: >
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
         content:
           application/json:
             schema:

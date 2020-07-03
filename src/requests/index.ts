@@ -7,6 +7,7 @@
 */
 
 export * from "./BiometricUpdateReq";
+export * from "./BloodSugarCalculationReq";
 export * from "./BloodSugarCreateReq";
 export * from "./BloodSugarUpdateReq";
 export * from "./EventCreateReq";

@@ -27,10 +27,11 @@ export class BloodSugar extends BaseEntityHiddenId {
     @JoinColumn({ name: "user_id" })
     public user: Promise<User>;
 
-    public static async findAll(uid: string,
-                                p: Pageable,
-                                t: Timeable,
-                                options: IBaseQueryOptions = {}): Promise<Page<BloodSugar>> {
+    public static async findAllPageable(uid: string,
+                                        p: Pageable,
+                                        t: Timeable,
+                                        options: IBaseQueryOptions = {}):
+                                        Promise<Page<BloodSugar>> {
         let qb = this
         .createQueryBuilder("blood_sugar")
         .leftJoin("blood_sugar.user", "user")
@@ -44,6 +45,25 @@ export class BloodSugar extends BaseEntityHiddenId {
         }
 
         return p.query(t.applyTimeRange(qb));
+    }
+
+    public static async findAll(uid: string,
+                                t: Timeable,
+                                options: IBaseQueryOptions = {}):
+                                Promise<BloodSugar[]> {
+        let qb = this
+        .createQueryBuilder("blood_sugar")
+        .leftJoin("blood_sugar.user", "user")
+        .where("user.uid = :uid", { uid })
+        .orderBy("blood_sugar.timestamp", "DESC");
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb
+            .andWhere("user.deleted = false")
+            .andWhere("blood_sugar.deleted = false");
+        }
+
+        return t.applyTimeRange(qb).getMany();
     }
 
     public static async findLast(patientUid: string,

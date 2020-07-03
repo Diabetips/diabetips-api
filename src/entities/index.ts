@@ -9,6 +9,7 @@
 export * from "./AuthApp";
 export * from "./Biometric";
 export * from "./BloodSugar";
+export * from "./BloodSugarCalculation";
 export * from "./Food";
 export * from "./Hba1c";
 export * from "./Height";
