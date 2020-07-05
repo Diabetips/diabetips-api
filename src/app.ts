@@ -15,7 +15,7 @@ import { QueryFailedError } from "typeorm";
 
 import { config } from "./config";
 import { getDocsSpec } from "./docs";
-import { ApiError, ValidationError } from "./errors";
+import { ApiError, AuthError, ValidationError } from "./errors";
 import { Context, HttpStatus, Utils } from "./lib";
 import { WsApp, bindLogger as wsBindLogger } from "./lib/ws";
 import { httpLogger, log4js, logger, wsLogger } from "./logger";
@@ -83,6 +83,9 @@ function convertError(err: Error): ApiError {
     }
 
     // Convert common errors
+    if (err instanceof AuthError) {
+        return new ApiError(HttpStatus.BAD_REQUEST, "invalid_auth", err.message);
+    }
     if (err instanceof BadRequestError) {
         return new ValidationError(err);
     }

@@ -205,7 +205,7 @@ export class AuthService extends BaseService {
     private static generateToken(options: jwt.SignOptions): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             jwt.sign({}, config.auth.token_key, {
-                algorithm: "RS512", // TODO use ES256 instead for faster gen and verif + smaller tokens
+                algorithm: "ES256",
                 ...options,
             }, (err, token) => {
                 if (err != null) {
@@ -220,7 +220,7 @@ export class AuthService extends BaseService {
     private static verifyToken(token: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             jwt.verify(token, config.auth.token_key, {
-                algorithms: [ "RS512" ],
+                algorithms: [ "ES256" ],
             }, (err, decoded) => {
                 if (err != null) {
                     reject(err);
