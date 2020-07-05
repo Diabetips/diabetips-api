@@ -25,7 +25,7 @@ export class AuthApp extends BaseEntityHiddenId {
     public name: string;
 
     @Column({ name: "client_id", type: "uuid" })
-    private _clientId: string;
+    private _clientId?: string;
 
     @Column({ name: "client_secret", length: 100 })
     private _clientSecret?: string;
@@ -39,6 +39,10 @@ export class AuthApp extends BaseEntityHiddenId {
 
     public get clientSecret(): string | undefined {
         return this._clientSecret;
+    }
+
+    public set clientSecret(val: string | undefined) {
+        this._clientSecret = val;
     }
 
     // Repository functions
@@ -65,7 +69,7 @@ export class AuthApp extends BaseEntityHiddenId {
         return qb.getOne();
     }
 
-    public static async findByClientId(clientId: string, options: IBaseQueryOptions = {}):
+    public static async findByClientId(clientId: string, options: IAuthAppQueryOptions = {}):
                                        Promise<AuthApp | undefined> {
         let qb = this
             .createQueryBuilder("auth_app")
@@ -75,7 +79,17 @@ export class AuthApp extends BaseEntityHiddenId {
             qb = qb.andWhere("auth_app.deleted = false");
         }
 
+        if (Utils.optionDefault(options.selectClientCredentials, false)) {
+            qb
+                .addSelect("auth_app.client_id", "auth_app_client_id")
+                .addSelect("auth_app.client_secret", "auth_app_client_secret");
+        }
+
         return qb.getOne();
     }
 
+}
+
+export interface IAuthAppQueryOptions extends IBaseQueryOptions {
+    selectClientCredentials?: boolean;
 }

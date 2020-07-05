@@ -10,7 +10,7 @@ import bcrypt = require("bcrypt");
 import jwt = require("jsonwebtoken");
 
 import { config } from "../config";
-import { User } from "../entities";
+import { AuthApp, User } from "../entities";
 import { ApiError, AuthError } from "../errors";
 import { AuthInfo, Context, HttpStatus } from "../lib";
 import { logger } from "../logger";
@@ -41,17 +41,16 @@ export class AuthService extends BaseService {
 
         if (header.startsWith("Bearer ")) {
             const token = header.slice(7).trim();
-            return AuthService.decodeToken(token);
+            return AuthService.decodeBearerToken(token);
         } else if (header.startsWith("Basic ")) {
-            // TODO app auth
-            return;
+            const creds = header.slice(6).trim();
+            return AuthService.decodeBasicClientCredentials(creds);
         } else {
             return;
         }
     }
 
-    public static async decodeToken(token: string): Promise<AuthInfo> {
-        // handle non-user tokens if they have to exist?
+    public static async decodeBearerToken(token: string): Promise<AuthInfo> {
         try {
             const body = await this.verifyToken(token);
             if (typeof body !== "object") {
@@ -59,8 +58,31 @@ export class AuthService extends BaseService {
             }
             return { type: "user", uid: body.sub };
         } catch (err) {
-            logger.warn("Token verification failed:", err.stack || err);
-            throw new ApiError(HttpStatus.BAD_REQUEST, "invalid_auth", "Invalid authorization token");
+            logger.warn("Token verification failed:", err.message);
+            throw new AuthError("invalid_auth", "Invalid authorization token");
+        }
+    }
+
+    public static async decodeBasicClientCredentials(creds: string): Promise<AuthInfo> {
+        try {
+            const [clientId, clientSecret] = Buffer.from(creds, "base64").toString().split(":", 2);
+
+            const app = await AuthApp.findByClientId(clientId, { selectClientCredentials: true });
+
+            if (app == null) {
+                throw new Error("invalid client id");
+            }
+
+            if (clientSecret !== app.clientSecret) {
+                throw new Error("client secret mismatched");
+            }
+
+            app.clientSecret = undefined;
+
+            return { type: "app", app };
+        } catch (err) {
+            logger.warn("Client credentials verification failed:", err.message);
+            throw new AuthError("invalid_client", "Invalid client credentials");
         }
     }
 
@@ -71,8 +93,8 @@ export class AuthService extends BaseService {
         if (ctx.auth.type !== "user") {
             throw new ApiError(HttpStatus.FORBIDDEN, "access_denied", "Access denied");
         }
-        // TODO check that aud of token is account.diabetips.fr (or scope authorize_app)
-        // TODO generate different kind of code (not a JWT)
+
+        // TODO check ctx for scope authorize_app
 
         switch (req.response_type) {
             case "code":
@@ -85,8 +107,6 @@ export class AuthService extends BaseService {
     }
 
     public static async getToken(ctx: Context, req: any): Promise<AccessAndRefreshTokensRes> {
-        // TODO:
-        // * check client ID and secret from context
         switch (req.grant_type) {
             case "authorization_code":
                 return this.doAuthCodeFlow2(req);
@@ -102,16 +122,13 @@ export class AuthService extends BaseService {
     // Generate an authorization code for an application from account portal token
     private static async doAuthCodeFlow1(uid: string, req: any): Promise<AuthCodeRes> {
         return {
-            code: (await this.generateToken({
-                subject: uid,
-                expiresIn: "1h",
-            })),
+            code: "TODO",
         };
     }
 
     // Generate an access token from account portal token
     private static async doImplicitFlow(uid: string, req: any): Promise<AccessTokenRes> {
-        return this.generateAccessTokenRes(uid);
+        return this.generateAccessToken(uid);
     }
 
     // Exchange authorization code for tokens
@@ -120,24 +137,13 @@ export class AuthService extends BaseService {
             throw new AuthError("invalid_request", "Missing or invalid code");
         }
 
-        let user: User;
         try {
-            const body = await this.verifyToken(req.code);
-            if (typeof body !== "object") {
-                throw new Error("invalid type for code body: " + typeof body);
-            }
-
-            const tmp = await User.findByUid(body.sub);
-            if (tmp == null) {
-                throw new Error("UID not found");
-            }
-            user = tmp;
+            // TODO
+            return this.generateAccessAndRefreshTokens("TODO");
         } catch (err) {
             logger.error("Authorization code verification failed:", err.stack || err);
             throw new AuthError("invalid_grant", "Invalid authorization code");
         }
-
-        return this.generateAccessAndRefreshTokensRes(user.uid);
     }
 
     // Exchange user credentials for tokens
@@ -160,7 +166,7 @@ export class AuthService extends BaseService {
             throw new AuthError("invalid_grant", "Incorrect email or password");
         }
 
-        return this.generateAccessAndRefreshTokensRes(user.uid);
+        return this.generateAccessAndRefreshTokens(user.uid);
     }
 
     // Exchange refresh token for new tokens
@@ -169,37 +175,23 @@ export class AuthService extends BaseService {
             throw new AuthError("invalid_request", "Missing or invalid refresh_token");
         }
 
-        let user: User;
         try {
-            const body = await this.verifyToken(req.refresh_token);
-            if (typeof body !== "object") {
-                throw new Error("invalid type for refresh token body: " + typeof body);
-            }
 
-            const tmp = await User.findByUid(body.sub);
-            if (tmp == null) {
-                throw new Error("UID not found");
-            }
-            user = tmp;
+            return this.generateAccessAndRefreshTokens("TODO");
         } catch (err) {
             logger.error("Refresh token verification failed:", err.stack || err);
             throw new AuthError("invalid_grant", "Invalid refresh token");
         }
-
-        return this.generateAccessAndRefreshTokensRes(user.uid);
     }
 
-    private static async generateAccessAndRefreshTokensRes(subject: string): Promise<AccessAndRefreshTokensRes> {
+    private static async generateAccessAndRefreshTokens(subject: string): Promise<AccessAndRefreshTokensRes> {
         return {
-            ...await this.generateAccessTokenRes(subject),
-            refresh_token: await this.generateToken({
-                subject,
-                expiresIn: "7d",
-            }),
+            ...await this.generateAccessToken(subject),
+            refresh_token: "TODO"
         };
     }
 
-    private static async generateAccessTokenRes(subject: string): Promise<AccessTokenRes> {
+    private static async generateAccessToken(subject: string): Promise<AccessTokenRes> {
         return {
             access_token: await this.generateToken({
                 subject,
@@ -211,11 +203,9 @@ export class AuthService extends BaseService {
     }
 
     private static generateToken(options: jwt.SignOptions): Promise<string> {
-        // TODO only use this for access tokens, other kinds of tokens should not use JWT
-        // also support for multiple keys with kid claim (1 key / server instance)
         return new Promise<string>((resolve, reject) => {
             jwt.sign({}, config.auth.token_key, {
-                algorithm: "RS512",
+                algorithm: "RS512", // TODO use ES256 instead for faster gen and verif + smaller tokens
                 ...options,
             }, (err, token) => {
                 if (err != null) {

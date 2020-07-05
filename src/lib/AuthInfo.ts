@@ -6,11 +6,11 @@
 ** Created by Arthur MELIN on Mon Oct 07 2019
 */
 
-import { User } from "../entities";
+import { AuthApp } from "../entities";
 
 export interface AppAuthInfo {
     type: "app";
-    clientId: string;
+    app: AuthApp;
 }
 
 export interface UserAuthInfo {

@@ -26,7 +26,7 @@ export class AuthController {
     private static formParser = bodyParser.urlencoded({ extended: true });
 
     // OAuth routes specific error response formatting
-    private static errorHandler(err: Error | AuthError, req: Request, res: Response, next: NextFunction) {
+    private static errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
         if (err instanceof AuthError) {
             res
                 .status(400)
@@ -75,13 +75,10 @@ export class AuthController {
     @Post("/reset-password")
     @HttpCode(HttpStatus.ACCEPTED)
     public async resetPassword1(@Body() req: UserResetPasswordReq1) {
-        // await voluntarly missing in order to prevent timing attacks
-        // Measuring the time this route takes to respond could otherwise be used by an attacker to reveal whether a
-        // given email address is associated to an account.
-        // The async function is queued but not awaited so that it runs in the background while the response is sent
-        // immediately.
+        // No await here, the route should respond immediately instead of waiting for the password reset request to be
+        // processed. This prevent time attacks that could leak whether a given email address has been used to register
+        // an account
         UserResetPasswordService.resetPassword1(req);
-        return {};
     }
 
     @Put("/reset-password")
