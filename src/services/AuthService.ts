@@ -8,6 +8,7 @@
 
 import bcrypt = require("bcrypt");
 import jwt = require("jsonwebtoken");
+import uuid = require("uuid");
 
 import { config } from "../config";
 import { AuthApp, User } from "../entities";
@@ -87,7 +88,7 @@ export class AuthService extends BaseService {
                 type: "user",
                 uid: body.sub,
                 clientId: body.client_id,
-                scopes: body.scope.split(" "),
+                scopes: (body.scope || "").split(" "),
             };
         } catch (err) {
             logger.warn("Token verification failed:", err.message);
@@ -127,11 +128,24 @@ export class AuthService extends BaseService {
 
         // TODO register grant in user apps
 
+        const user = User.findByUid(ctx.auth.uid);
+        if (user == null) {
+            throw new AuthError("server_error", "User not found");
+        }
+
+        if (typeof req.client_id !== "string") {
+            throw new AuthError("invalid_request", "Missing or invalid client_id");
+        }
+        const app = AuthApp.findByClientId(req.client_id);
+        if (app == null) {
+            throw new  AuthError("invalid_client", "Invalid client_id");
+        }
+
         switch (req.response_type) {
             case "code":
-                return this.doAuthCodeFlow1(ctx.auth.uid, req);
+                return this.doAuthCodeFlow1(user, app);
             case "token":
-                return this.doImplicitFlow(ctx.auth.uid, req);
+                return this.doImplicitFlow(user, app);
             default:
                 throw new AuthError("invalid_request", "Missing or invalid response_type");
         }
@@ -144,16 +158,17 @@ export class AuthService extends BaseService {
 
         switch (req.grant_type) {
             case "authorization_code":
-                return this.doAuthCodeFlow2(req);
+                return this.doAuthCodeFlow2(req, ctx.auth.app);
             case "password":
-                return this.doPasswordFlow(req);
+                return this.doPasswordFlow(req, ctx.auth.app);
             case "refresh_token":
-                return this.doRefreshFlow(req);
+                return this.doRefreshFlow(req, ctx.auth.app);
             default:
                 throw new AuthError("invalid_request", "Missing or invalid grant_type");
         }
     }
 
+    // RFC 7009: Revoke access tokens and the refresh token associated with them
     public static async revokeToken(ctx: Context, req: any): Promise<void> {
         // Errors should not be reported to the client according to the RFC but we still do for simple errors
         if (ctx.auth == null || ctx.auth.type !== "app") {
@@ -174,43 +189,42 @@ export class AuthService extends BaseService {
                 throw new Error("client_id mismatched");
             }
 
-            // TODO add access token to revoked list
-            // add refresh token id to rti revoked list
-            // revoke refresh token
+            revokedAccessTokens.push({ jti: body.jti, exp: body.exp * 1000 });
+
+            const rti = body.rti;
+            if (typeof rti === "string") {
+                // TODO find and revoke refresh token
+                revokedRefreshTokens.push({ rti, exp: Date.now() + config.auth.token_ttl * 1000 });
+            }
         } catch (err) {
             logger.warn("Token revocation failed:", err.message);
             return;
         }
     }
 
-    // Generate an authorization code for an application from account portal token
-    private static async doAuthCodeFlow1(uid: string, req: any): Promise<AuthCodeRes> {
+    // RFC 6749, section 4.1.1: Generate an authorization code
+    private static async doAuthCodeFlow1(user: User, app: AuthApp): Promise<AuthCodeRes> {
         return {
             code: "TODO",
         };
     }
 
-    // Generate an access token from account portal token
-    private static async doImplicitFlow(uid: string, req: any): Promise<AccessTokenRes> {
-        return this.generateAccessToken(uid);
-    }
-
-    // Exchange authorization code for tokens
-    private static async doAuthCodeFlow2(req: any): Promise<AccessTokenRes & RefreshTokenRes> {
+    // RFC 6749, section 4.1.3: Generate access and refresh token from an authorization code
+    private static async doAuthCodeFlow2(req: any, app: AuthApp): Promise<AccessTokenRes & RefreshTokenRes> {
         if (typeof req.code !== "string") {
             throw new AuthError("invalid_request", "Missing or invalid code");
         }
 
-        try {
-            return null;
-        } catch (err) {
-            logger.error("Authorization code verification failed:", err.stack || err);
-            throw new AuthError("invalid_grant", "Invalid authorization code");
-        }
+        return null;
     }
 
-    // Exchange user credentials for tokens
-    private static async doPasswordFlow(req: any): Promise<AccessTokenRes & RefreshTokenRes> {
+    // RFC 6749, section 4.2.1: Generate an access token
+    private static async doImplicitFlow(user: User, app: AuthApp): Promise<AccessTokenRes> {
+        return this.generateAccessTokenRes(user, app);
+    }
+
+    // RFC 6749, section 4.3.2: Exchange user credentials for access and refresh tokens
+    private static async doPasswordFlow(req: any, app: AuthApp): Promise<AccessTokenRes & RefreshTokenRes> {
         if (typeof req.username !== "string" ||
             typeof req.password !== "string") {
             throw new AuthError("invalid_request", "Missing username or password");
@@ -229,41 +243,52 @@ export class AuthService extends BaseService {
             throw new AuthError("invalid_grant", "Incorrect email or password");
         }
 
-        return null;
+        return this.generateAccessAndRefreshTokensRes(user, app);
     }
 
-    // Exchange refresh token for new tokens
-    private static async doRefreshFlow(req: any): Promise<AccessTokenRes & RefreshTokenRes> {
+    // RFC 6749, section 6: Exchange a refresh token for a new access token
+    private static async doRefreshFlow(req: any, app: AuthApp): Promise<AccessTokenRes & RefreshTokenRes> {
         if (typeof req.refresh_token !== "string") {
             throw new AuthError("invalid_request", "Missing or invalid refresh_token");
         }
 
-        try {
-            // TODO check user and app still exist
-            return null;
-        } catch (err) {
-            logger.error("Refresh token verification failed:", err.stack || err);
-            throw new AuthError("invalid_grant", "Invalid refresh token");
-        }
+        // TODO check refresh token not revoked and valid
+        // TODO check requesting app == refresh token app
+        // TODO check user and app still exist
+        return null;
     }
 
-    private static async generateAccessTokenRes(uid: string): Promise<AccessTokenRes> {
+    private static async generateAccessTokenRes(user: User, app: AuthApp): Promise<AccessTokenRes> {
         return {
-            access_token: await this.generateAccessToken(uid),
+            access_token: await this.generateAccessToken(user, app),
             token_type: "bearer",
             expires_in: config.auth.token_ttl,
         };
     }
 
-    private static async generateAccessToken(uid: string): Promise<AccessToken> {
+    private static async generateAccessAndRefreshTokensRes(user: User, app: AuthApp): Promise<AccessTokenRes & RefreshTokenRes> {
+        const rt = await this.generateRefreshToken(user, app);
+
+        return {
+            access_token: await this.generateAccessToken(user, app, rt.id),
+            token_type: "bearer",
+            expires_in: config.auth.token_ttl,
+            refresh_token: rt.token,
+        };
+    }
+
+    private static async generateAccessToken(user: User, app: AuthApp, rti?: string): Promise<AccessToken> {
         return this.generateJwt({
-            sub: uid
+            jti: uuid.v4(),
+            rti,
+            sub: user.uid,
+            client_id: app.clientId,
         }, {
             expiresIn: config.auth.token_ttl,
         });
     }
 
-    private static async generateRefreshToken(uid: string): Promise<RefreshToken> {
+    private static async generateRefreshToken(user: User, app: AuthApp): Promise<AuthRefreshToken> {
         return {};
     }
 
@@ -297,3 +322,12 @@ export class AuthService extends BaseService {
     }
 
 }
+
+setInterval(() => {
+    function notExpired(val: { exp: number }): boolean {
+        return val.exp > Date.now();
+    }
+
+    revokedAccessTokens = revokedAccessTokens.filter(notExpired);
+    revokedRefreshTokens = revokedRefreshTokens.filter(notExpired);
+}, 60 * 1000)
