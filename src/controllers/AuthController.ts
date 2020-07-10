@@ -67,6 +67,14 @@ export class AuthController {
         return AuthService.getToken(context, body);
     }
 
+    @Post("/revoke")
+    @UseBefore(AuthController.formParser)
+    @UseAfter(AuthController.errorHandler)
+    public async revoke(@Ctx() context: Context, @Body() body: any) {
+        await AuthService.revokeToken(context, body);
+        return {};
+    }
+
     @Post("/confirm")
     public async confirmAccount(@Body() req: UserConfirmAccountReq) {
         await UserConfirmationService.confirmUserAccount(req);
