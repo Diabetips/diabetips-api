@@ -11,7 +11,6 @@ import { ApiError } from "../errors";
 import { HttpStatus } from "../lib";
 
 import { BaseService } from "./BaseService";
-import { UserService } from "./UserService";
 
 export class AuthAppService extends BaseService {
 
@@ -25,28 +24,6 @@ export class AuthAppService extends BaseService {
             throw new ApiError(HttpStatus.NOT_FOUND, "app_not_found", `App ${appid} not found`);
         }
         return app;
-    }
-
-    public static async getAllUserApps(uid: string): Promise<AuthApp[]> {
-        const user = await UserService.getUser(uid)
-        return user.apps;
-    }
-
-    public static async authorizeUserApp(uid: string, appid: string) {
-        const user = await UserService.getUser(uid);
-
-    }
-
-    public static async deauthorizeUserApp(uid: string, appid: string) {
-        const user = await UserService.getUser(uid);
-        const apps = await user.apps;
-
-        if (apps.find((val) => val.appid === appid) == null) {
-            throw new ApiError(HttpStatus.NOT_FOUND, "app_not_found", `App ${appid} not authorized by this user`);
-        }
-        user.apps = Promise.resolve(apps.filter((val) => val.appid !== appid));
-
-        await user.save();
     }
 
 }

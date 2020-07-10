@@ -14,7 +14,6 @@ import { Page, Pageable, Utils } from "../lib";
 
 import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
 
-import { AuthApp } from "./AuthApp";
 import { Biometric } from "./Biometric";
 import { BloodSugar } from "./BloodSugar";
 import { Event } from "./Event";
@@ -64,23 +63,11 @@ export class User extends BaseEntityHiddenId {
     @OneToOne((type) => UserConfirmation, (confirmation) => confirmation.user)
     public confirmation: Promise<UserConfirmation>;
 
-    @OneToMany((type) => UserPasswordReset, (pwdRst) => pwdRst.user)
-    public password_resets: Promise<UserPasswordReset[]>;
-
     @OneToOne((type) => UserPicture, (picture) => picture.user)
     public picture: Promise<UserPicture>;
 
-    @ManyToMany((type) => AuthApp)
-    @JoinTable({
-        name: "user_apps",
-        joinColumn: {
-            name: "user_id",
-        },
-        inverseJoinColumn: {
-            name: "app_id",
-        },
-    })
-    public apps: Promise<AuthApp[]>;
+    @OneToMany((type) => UserPasswordReset, (pwdRst) => pwdRst.user)
+    public password_resets: Promise<UserPasswordReset[]>;
 
     @ManyToMany((type) => User)
     @JoinTable({
@@ -121,7 +108,7 @@ export class User extends BaseEntityHiddenId {
     @OneToMany((type) => Height, (h) => h.user)
     public height_history: Promise<Height[]>;
 
-    @OneToMany((type) => Mass, (h) => h.user)
+    @OneToMany((type) => Mass, (m) => m.user)
     public mass_history: Promise<Mass[]>;
 
     @OneToMany((type) => Note, (note) => note.user)

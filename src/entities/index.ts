@@ -7,10 +7,13 @@
 */
 
 export * from "./AuthApp";
+export * from "./AuthCode";
+export * from "./AuthUserApp";
 export * from "./Biometric";
 export * from "./BloodSugar";
 export * from "./BloodSugarCalculation";
 export * from "./BloodSugarTarget";
+export * from "./Event";
 export * from "./Food";
 export * from "./Hba1c";
 export * from "./Height";
@@ -29,4 +32,3 @@ export * from "./Prediction";
 export * from "./PredictionSettings";
 export * from "./Recipe";
 export * from "./User";
-export * from "./Event";

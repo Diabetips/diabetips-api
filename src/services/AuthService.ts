@@ -11,9 +11,9 @@ import jwt = require("jsonwebtoken");
 import uuid = require("uuid");
 
 import { config } from "../config";
-import { AuthApp, User } from "../entities";
-import { AuthError } from "../errors";
-import { AuthInfo, Context } from "../lib";
+import { AuthApp, User, AuthUserApp } from "../entities";
+import { ApiError, AuthError } from "../errors";
+import { AuthInfo, Context, HttpStatus } from "../lib";
 import { logger } from "../logger";
 
 import { BaseService } from "./BaseService";
@@ -40,9 +40,10 @@ Scopes test:
     User: requested | implicit & (app.scopes | user.scopes)
 */
 
-// keep ids here for 2*access token TTL
-let revokedAccessTokens: { jti: string, exp: number }[] = [];
-let revokedRefreshTokens: { rti: string, exp: number }[] = [];
+type RevokedAuth = { id: string, exp: number };
+let revokedUserApps: RevokedAuth[] = [];
+let revokedAccessTokens: RevokedAuth[] = [];
+let revokedRefreshTokens: RevokedAuth[] = [];
 
 export class AuthService extends BaseService {
 
@@ -71,15 +72,15 @@ export class AuthService extends BaseService {
             }
 
             const jti = body.jti;
-            if (revokedAccessTokens.find((val) => val.jti === jti) != null) {
+            if (revokedAccessTokens.find((val) => val.id === jti) != null) {
                 throw new Error("access token was revoked");
             }
 
             const rti = body.rti;
             if (typeof(rti) === "string") {
-                const revoked = revokedRefreshTokens.find((val) => val.rti === rti);
+                const revoked = revokedRefreshTokens.find((val) => val.id === rti);
                 if (revoked != null) {
-                    revokedAccessTokens.push({ jti, exp: revoked.exp });
+                    revokedAccessTokens.push({ id: jti, exp: revoked.exp });
                     throw new Error("refresh token associated with access token was revoked");
                 }
             }
@@ -128,7 +129,7 @@ export class AuthService extends BaseService {
 
         // TODO register grant in user apps
 
-        const user = User.findByUid(ctx.auth.uid);
+        const user = await User.findByUid(ctx.auth.uid);
         if (user == null) {
             throw new AuthError("server_error", "User not found");
         }
@@ -136,7 +137,7 @@ export class AuthService extends BaseService {
         if (typeof req.client_id !== "string") {
             throw new AuthError("invalid_request", "Missing or invalid client_id");
         }
-        const app = AuthApp.findByClientId(req.client_id);
+        const app = await AuthApp.findByClientId(req.client_id);
         if (app == null) {
             throw new  AuthError("invalid_client", "Invalid client_id");
         }
@@ -189,17 +190,48 @@ export class AuthService extends BaseService {
                 throw new Error("client_id mismatched");
             }
 
-            revokedAccessTokens.push({ jti: body.jti, exp: body.exp * 1000 });
+            revokedAccessTokens.push({ id: body.jti, exp: body.exp * 1000 });
 
             const rti = body.rti;
             if (typeof rti === "string") {
                 // TODO find and revoke refresh token
-                revokedRefreshTokens.push({ rti, exp: Date.now() + config.auth.token_ttl * 1000 });
+                revokedRefreshTokens.push({ id: rti, exp: Date.now() + config.auth.token_ttl * 1000 });
             }
         } catch (err) {
             logger.warn("Token revocation failed:", err.message);
             return;
         }
+    }
+
+    public static async getAllAuthorizedUserApps(uid: string): Promise<AuthUserApp[]> {
+        return AuthUserApp.findAllByUid(uid);
+    }
+
+    private static async authorizeUserApp(user: User, app: AuthApp): Promise<AuthUserApp> {
+        let ua = await AuthUserApp.findByUidAndAppid(user.uid, app.appid);
+        if (ua != null) {
+            // TODO check requested scopes are authorized
+            return ua;
+        }
+
+        ua = new AuthUserApp();
+        ua.user = user;
+        ua.app = app;
+        ua.scopes = []; // TODO get list of scopes and check restricted
+
+        return ua.save();
+    }
+
+    public static async deauthorizeUserApp(uid: string, appid: string): Promise<void> {
+        const ua = await AuthUserApp.findByUidAndAppid(uid, appid);
+        if (ua == null) {
+            throw new ApiError(HttpStatus.NOT_FOUND, "user_app_not_found", "User app not found");
+        }
+
+        revokedUserApps.push({ id: ua.id, exp: Date.now() + config.auth.token_ttl * 1000 });
+        // TODO revoke associated refresh tokens
+
+        await AuthUserApp.delete(ua.id);
     }
 
     // RFC 6749, section 4.1.1: Generate an authorization code
@@ -278,9 +310,12 @@ export class AuthService extends BaseService {
     }
 
     private static async generateAccessToken(user: User, app: AuthApp, rti?: string): Promise<AccessToken> {
+        const aid = rti == null ? (await this.authorizeUserApp(user, app)).id : undefined;
+
         return this.generateJwt({
             jti: uuid.v4(),
             rti,
+            aid,
             sub: user.uid,
             client_id: app.clientId,
         }, {
@@ -289,6 +324,7 @@ export class AuthService extends BaseService {
     }
 
     private static async generateRefreshToken(user: User, app: AuthApp): Promise<AuthRefreshToken> {
+        const auth = await this.authorizeUserApp(user, app);
         return {};
     }
 
@@ -328,6 +364,7 @@ setInterval(() => {
         return val.exp > Date.now();
     }
 
+    revokedUserApps = revokedUserApps.filter(notExpired);
     revokedAccessTokens = revokedAccessTokens.filter(notExpired);
     revokedRefreshTokens = revokedRefreshTokens.filter(notExpired);
 }, 60 * 1000)
