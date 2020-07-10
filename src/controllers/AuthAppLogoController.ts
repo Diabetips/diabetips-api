@@ -33,6 +33,7 @@ export class AuthAppLogoController {
         return AuthAppLogoService.getAppLogo(appid);
     }
 
+    // DEBUG?
     @Post("/")
     @UseBefore(AuthAppLogoController.rawParser)
     public async uploadAppLogo(@Param("appid") appid: string, @Body() body: Buffer) {

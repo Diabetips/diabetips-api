@@ -33,6 +33,12 @@ interface RefreshTokenRes {
     refresh_token: string;
 }
 
+/*
+Scopes test:
+    App: implicit & app.rscopes
+    User: requested | implicit & (app.scopes | user.scopes)
+*/
+
 // keep ids here for 2*access token TTL
 let revokedAccessTokens: { jti: string, exp: number }[] = [];
 let revokedRefreshTokens: { rti: string, exp: number }[] = [];
@@ -81,6 +87,7 @@ export class AuthService extends BaseService {
                 type: "user",
                 uid: body.sub,
                 clientId: body.client_id,
+                scopes: body.scope.split(" "),
             };
         } catch (err) {
             logger.warn("Token verification failed:", err.message);

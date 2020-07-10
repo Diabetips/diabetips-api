@@ -13,6 +13,7 @@ import { AuthAppService } from "../services";
 @JsonController("/v1/auth/apps")
 export class AuthAppController {
 
+    // DEBUG
     @Get("/")
     public async getAllApps() {
         return AuthAppService.getAllApps();

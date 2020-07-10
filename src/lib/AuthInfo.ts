@@ -8,6 +8,8 @@
 
 import { AuthApp } from "../entities";
 
+import { AuthScope } from "./AuthScopes";
+
 export interface AppAuthInfo {
     type: "app";
     app: AuthApp;
@@ -17,6 +19,7 @@ export interface UserAuthInfo {
     type: "user";
     uid: string;
     clientId: string;
+    scopes: AuthScope[];
 }
 
 export type AuthInfo = AppAuthInfo | UserAuthInfo;

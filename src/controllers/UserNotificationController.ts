@@ -24,6 +24,7 @@ export class UserNotificationController {
         return page.send(res);
     }
 
+    // DEBUG
     @Get("/test")
     public async test(@Param("uid") uid: string) {
         const user = await UserService.getUser(uid);

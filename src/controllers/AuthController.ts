@@ -53,6 +53,7 @@ export class AuthController {
         };
     }
 
+    // INTERNAL
     @Post("/authorize")
     @UseBefore(AuthController.formParser)
     @UseAfter(AuthController.errorHandler)
@@ -75,6 +76,7 @@ export class AuthController {
         return {};
     }
 
+    // INTERNAL
     @Post("/confirm")
     public async confirmAccount(@Body() req: UserConfirmAccountReq) {
         await UserConfirmationService.confirmUserAccount(req);
@@ -89,6 +91,7 @@ export class AuthController {
         UserResetPasswordService.resetPassword1(req);
     }
 
+    // INTERNAL
     @Put("/reset-password")
     public async resetPassword2(@Body() req: UserResetPasswordReq2) {
         await UserResetPasswordService.resetPassword2(req);
