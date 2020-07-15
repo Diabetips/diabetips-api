@@ -16,6 +16,7 @@ export * from "./FoodSearchReq";
 export * from "./Hba1cCreateReq";
 export * from "./Hba1cUpdateReq";
 export * from "./IngredientCreateReq";
+export * from "./InsulinCalculationReq";
 export * from "./InsulinCreateReq";
 export * from "./InsulinUpdateReq";
 export * from "./InsulinSearchReq";

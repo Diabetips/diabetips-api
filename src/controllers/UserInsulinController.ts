@@ -10,7 +10,7 @@ import { Response } from "express";
 import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
 
 import { Pageable, Timeable } from "../lib";
-import { InsulinCreateReq, InsulinUpdateReq, InsulinSearchReq } from "../requests";
+import { InsulinCreateReq, InsulinUpdateReq, InsulinSearchReq, TimeRangeReq, InsulinCalculationReq } from "../requests";
 import { InsulinService } from "../services";
 
 @JsonController("/v1/users/:uid/insulin")
@@ -22,6 +22,7 @@ export class UserInsulinController {
                                    @QueryParams() t: Timeable,
                                    @QueryParams() s: InsulinSearchReq,
                                    @Res() res: Response) {
+        s.init();
         const page = await InsulinService.getAllInsulin(uid, p, t, s);
         return page.send(res);
     }
@@ -29,6 +30,17 @@ export class UserInsulinController {
     @Post("/")
     public async addUserInsulin(@Param("uid") uid: string, @Body() body: InsulinCreateReq) {
         return InsulinService.addInsulin(uid, body);
+    }
+
+    @Get("/calculations")
+    public async getInsulinCalculations(@Param("uid") uid: string,
+                                        @QueryParams() t: TimeRangeReq,
+                                        @QueryParams() s: InsulinSearchReq,
+                                        @QueryParams() req: InsulinCalculationReq) {
+        s.init();
+        req.init();
+        req.calcs = Array.isArray(req.calcs) ? req.calcs : [req.calcs] || [ ];
+        return InsulinService.getCalculations(uid, t, s, req);
     }
 
     @Get("/:id")
@@ -46,5 +58,4 @@ export class UserInsulinController {
     public async deleteUserInsulin(@Param("uid") uid: string, @Param("id") insulinId: number) {
         await InsulinService.deleteInsulin(uid, insulinId);
     }
-
 }

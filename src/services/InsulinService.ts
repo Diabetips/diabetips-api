@@ -6,10 +6,10 @@
 ** Created by Alexandre DE BEAUMONT on Sat Dec 14 2019
 */
 
-import { Insulin, User } from "../entities";
+import { Insulin, User, InsulinCalculation } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable, Timeable } from "../lib";
-import { InsulinCreateReq, InsulinUpdateReq, InsulinSearchReq } from "../requests";
+import { InsulinCreateReq, InsulinUpdateReq, InsulinSearchReq, TimeRangeReq, InsulinCalculationReq } from "../requests";
 
 import { BaseService } from "./BaseService";
 
@@ -20,7 +20,7 @@ export class InsulinService extends BaseService {
                                       t: Timeable,
                                       s: InsulinSearchReq):
                                       Promise<Page<Insulin>> {
-        return Insulin.findAll(uid, p, t, s);
+        return Insulin.findAllPageable(uid, p, t, s);
     }
 
     public static async getInsulin(uid: string, insulinId: number): Promise<Insulin> {
@@ -75,4 +75,14 @@ export class InsulinService extends BaseService {
         return insulin.save();
     }
 
+    // ----- Calculations -----
+    public static async getCalculations(uid: string,
+                                        t: TimeRangeReq,
+                                        s: InsulinSearchReq,
+                                        req: InsulinCalculationReq):
+                                        Promise<InsulinCalculation> {
+        const res = new InsulinCalculation();
+        await res.init(uid, t, s, req);
+        return res;
+    }
 }

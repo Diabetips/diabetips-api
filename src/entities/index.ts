@@ -15,6 +15,8 @@ export * from "./Hba1c";
 export * from "./Height";
 export * from "./Ingredient";
 export * from "./Insulin";
+export * from "./InsulinCalculation";
+export * from "./InsulinCalculationItem";
 export * from "./Mass";
 export * from "./Meal";
 export * from "./MealFood";

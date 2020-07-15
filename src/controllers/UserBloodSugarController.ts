@@ -56,6 +56,7 @@ export class UserBloodSugarController {
     public async getBloodSugarCalculations(@Param("uid") uid: string,
                                            @QueryParams() t: TimeRangeReq,
                                            @QueryParams() { calcs }: BloodSugarCalculationReq) {
+        // TODO: Refactor this part to be cleaner like the others
         const values: BloodSugarCalculationType[] = Array.isArray(calcs) ? calcs : [calcs] || [ ];
         return BloodSugarService.getCalculations(uid, t, values);
     }
