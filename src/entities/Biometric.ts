@@ -9,6 +9,8 @@
 import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
 import { User } from ".";
 import { BaseEntityHiddenId } from "./BaseEntityHiddenId";
+import { ApiError } from "../errors";
+import { HttpStatus } from "../lib";
 
 export enum SexEnum {
     FEMALE = "female",
@@ -67,5 +69,18 @@ export class Biometric extends BaseEntityHiddenId {
         this.diabetes_type = null;
         this.hypoglycemia = null;
         this.hyperglycemia = null;
+    }
+
+    public verify() {
+        this.verifyTarget();
+    }
+
+    private verifyTarget() {
+        if (this.hypoglycemia === null || this.hyperglycemia === null) {
+            return;
+        }
+        if (this.hyperglycemia <= this.hypoglycemia) {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "invalid_blood_sugar_target", "Hyperglycemia threshold must be greater than hypoglycemia threshold");
+        }
     }
 }

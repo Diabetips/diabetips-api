@@ -44,6 +44,7 @@ export class BiometricService extends BaseService {
         if (req.hypoglycemia !== undefined) { biometric.hypoglycemia = req.hypoglycemia; }
         if (req.hyperglycemia !== undefined) { biometric.hyperglycemia = req.hyperglycemia; }
 
+        biometric.verify();
         return biometric.save();
     }
 }
