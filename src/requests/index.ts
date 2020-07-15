@@ -10,6 +10,7 @@ export * from "./BiometricUpdateReq";
 export * from "./BloodSugarCalculationReq";
 export * from "./BloodSugarCreateReq";
 export * from "./BloodSugarUpdateReq";
+export * from "./BloodSugarTargetFormatReq";
 export * from "./EventCreateReq";
 export * from "./EventUpdateReq";
 export * from "./FoodSearchReq";

@@ -10,7 +10,7 @@ import { Response } from "express";
 import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
 
 import { Pageable, Timeable } from "../lib";
-import { BloodSugarCreateReq, BloodSugarUpdateReq, TimeRangeReq } from "../requests";
+import { BloodSugarCreateReq, BloodSugarUpdateReq, TimeRangeReq, BloodSugarTargetFormatReq } from "../requests";
 import { BloodSugarService } from "../services";
 import { BloodSugarCalculationReq } from "../requests/BloodSugarCalculationReq";
 import { BloodSugarCalculationType } from "../entities";
@@ -59,5 +59,12 @@ export class UserBloodSugarController {
         // TODO: Refactor this part to be cleaner like the others
         const values: BloodSugarCalculationType[] = Array.isArray(calcs) ? calcs : [calcs] || [ ];
         return BloodSugarService.getCalculations(uid, t, values);
+    }
+
+    @Get("/target")
+    public async getBloodSugarTarget(@Param("uid") uid: string,
+                                     @QueryParams() t: TimeRangeReq,
+                                     @QueryParams() f: BloodSugarTargetFormatReq) {
+        return BloodSugarService.getBloodSugarTarget(uid, t, f);
     }
 }

@@ -6,10 +6,10 @@
 ** Created by Alexandre DE BEAUMONT on Fri Feb 28 2020
 */
 
-import { BloodSugar, User, BloodSugarCalculation, BloodSugarCalculationType } from "../entities";
+import { BloodSugar, User, BloodSugarCalculation, BloodSugarCalculationType, BloodSugarTarget } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable, Timeable } from "../lib";
-import { BloodSugarCreateReq, BloodSugarUpdateReq, TimeRangeReq } from "../requests";
+import { BloodSugarCreateReq, BloodSugarUpdateReq, TimeRangeReq, BloodSugarTargetFormatReq } from "../requests";
 import { BaseService } from "./BaseService";
 
 export class BloodSugarService extends BaseService {
@@ -90,4 +90,13 @@ export class BloodSugarService extends BaseService {
         await res.init(uid, t, calcs);
         return res;
     }
+
+    public static async getBloodSugarTarget(uid: string,
+                                            t: TimeRangeReq,
+                                            f: BloodSugarTargetFormatReq):
+                                            Promise<BloodSugarTarget> {
+            const target = new BloodSugarTarget();
+            await target.init(uid, t, f.format);
+            return target;
+        }
 }

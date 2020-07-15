@@ -7,19 +7,19 @@
 */
 
 import { Body, Get, JsonController, Param, Put } from "routing-controllers";
-import { BiometricUpdateReq } from "../requests";
+import { BiometricUpdateReq} from "../requests";
 import { BiometricService } from "../services";
 
 @JsonController("/v1/users/:uid/biometrics")
 export class BiometricController {
 
     @Get("/")
-    private async getUserBiometric(@Param("uid") uid: string) {
+    public async getUserBiometric(@Param("uid") uid: string) {
         return BiometricService.getUserBiometric(uid);
     }
 
     @Put("/")
-    private async updateUserBiometric(@Param("uid") uid: string, @Body() body: BiometricUpdateReq) {
+    public async updateUserBiometric(@Param("uid") uid: string, @Body() body: BiometricUpdateReq) {
         return BiometricService.updateUserBiometric(uid, body);
     }
 }
