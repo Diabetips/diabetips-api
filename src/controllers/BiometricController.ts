@@ -6,7 +6,6 @@
 ** Created by Alexandre DE BEAUMONT on Sat Mar 14 2020
 */
 
-// tslint:disable-next-line: ordered-imports
 import { Body, Get, JsonController, Param, Put } from "routing-controllers";
 import { BiometricUpdateReq } from "../requests";
 import { BiometricService } from "../services";

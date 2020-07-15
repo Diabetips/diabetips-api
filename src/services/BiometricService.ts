@@ -41,6 +41,8 @@ export class BiometricService extends BaseService {
             biometric.height = req.height;
             HeightService.addHeightToHistory(user, req.height);
         }
+        if (req.hypoglycemia !== undefined) { biometric.hypoglycemia = req.hypoglycemia; }
+        if (req.hyperglycemia !== undefined) { biometric.hyperglycemia = req.hyperglycemia; }
 
         return biometric.save();
     }

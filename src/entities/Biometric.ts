@@ -48,6 +48,12 @@ export class Biometric extends BaseEntityHiddenId {
     })
     public diabetes_type: DiabetesType | null;
 
+    @Column({ type: "float", nullable: true })
+    public hypoglycemia: number | null;
+
+    @Column({ type: "float", nullable: true })
+    public hyperglycemia: number | null;
+
     @OneToOne((type) => User, (user) => user.biometric)
     @JoinColumn({ name: "user_id" })
     public user: Promise<User>;
@@ -59,5 +65,7 @@ export class Biometric extends BaseEntityHiddenId {
         this.height = null;
         this.sex = null;
         this.diabetes_type = null;
+        this.hypoglycemia = null;
+        this.hyperglycemia = null;
     }
 }
