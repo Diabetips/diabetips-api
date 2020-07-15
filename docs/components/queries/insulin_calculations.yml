@@ -1,4 +1,4 @@
-BSCalcsQuery:
+InsulinCalcsQuery:
   in: query
   name: calcs
   description: "Type of calculation requested"
@@ -7,5 +7,4 @@ BSCalcsQuery:
     type: "string"
     enum:
       - "average"
-      - "first"
-      - "third"
+      - "count"
