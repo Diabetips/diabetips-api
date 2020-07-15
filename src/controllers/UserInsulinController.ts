@@ -16,6 +16,17 @@ import { InsulinService } from "../services";
 @JsonController("/v1/users/:uid/insulin")
 export class UserInsulinController {
 
+    @Get("/calculations")
+    public async getInsulinCalculations(@Param("uid") uid: string,
+                                        @QueryParams() t: TimeRangeReq,
+                                        @QueryParams() s: InsulinSearchReq,
+                                        @QueryParams() req: InsulinCalculationReq) {
+        s.init();
+        req.init();
+        req.calcs = Array.isArray(req.calcs) ? req.calcs : [req.calcs] || [ ];
+        return InsulinService.getCalculations(uid, t, s, req);
+    }
+
     @Get("/")
     public async getAllUserInsulin(@Param("uid") uid: string,
                                    @QueryParams() p: Pageable,
@@ -30,17 +41,6 @@ export class UserInsulinController {
     @Post("/")
     public async addUserInsulin(@Param("uid") uid: string, @Body() body: InsulinCreateReq) {
         return InsulinService.addInsulin(uid, body);
-    }
-
-    @Get("/calculations")
-    public async getInsulinCalculations(@Param("uid") uid: string,
-                                        @QueryParams() t: TimeRangeReq,
-                                        @QueryParams() s: InsulinSearchReq,
-                                        @QueryParams() req: InsulinCalculationReq) {
-        s.init();
-        req.init();
-        req.calcs = Array.isArray(req.calcs) ? req.calcs : [req.calcs] || [ ];
-        return InsulinService.getCalculations(uid, t, s, req);
     }
 
     @Get("/:id")

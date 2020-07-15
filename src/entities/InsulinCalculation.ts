@@ -34,14 +34,14 @@ export class InsulinCalculation {
 
         const hourly = this.getHourlyArray(insulins);
         if (req.calcs.includes(InsulinCalculationType.AVERAGE) || req.calcs.length === 0) {
-            this.setAverage(hourly);
+            this.setAverage(hourly, s);
         }
         if (req.calcs.includes(InsulinCalculationType.COUNT) || req.calcs.length === 0) {
-            this.setCount(hourly);
+            this.setCount(hourly, s);
         }
     }
 
-    public setAverage(hourly: Insulin[][]) {
+    public setAverage(hourly: Insulin[][], s: InsulinSearchReq) {
         this.average = new Array<InsulinCalculationItem>(24);
         for (let i = 0; i < hourly.length; i++) {
             this.average[i] = new InsulinCalculationItem();
@@ -67,16 +67,31 @@ export class InsulinCalculation {
                         break;
                 }
             }
-            this.average[i].slow = slow / (slow_count === 0 ? 1 : slow_count);
-            this.average[i].fast = fast / (fast_count === 0 ? 1 : fast_count);
-            this.average[i].very_fast = very_fast / (very_fast_count === 0 ? 1 : very_fast_count);
+            if (s.types?.includes(InsulinType.SLOW) || s.types === undefined) {
+                this.average[i].slow = slow / (slow_count === 0 ? 1 : slow_count);
+            }
+            if (s.types?.includes(InsulinType.FAST) || s.types === undefined) {
+                this.average[i].fast = fast / (fast_count === 0 ? 1 : fast_count);
+            }
+            if (s.types?.includes(InsulinType.VERY_FAST) || s.types === undefined) {
+                this.average[i].very_fast = very_fast / (very_fast_count === 0 ? 1 : very_fast_count);
+            }
         }
     }
 
-    public setCount(hourly: Insulin[][]) {
+    public setCount(hourly: Insulin[][], s: InsulinSearchReq) {
         this.count = new Array<InsulinCalculationItem>(24);
         for (let i = 0; i < hourly.length; i++) {
             this.count[i] = new InsulinCalculationItem();
+            if (s.types?.includes(InsulinType.SLOW) || s.types === undefined) {
+                this.count[i].slow = 0;
+            }
+            if (s.types?.includes(InsulinType.FAST) || s.types === undefined) {
+                this.count[i].fast = 0;
+            }
+            if (s.types?.includes(InsulinType.VERY_FAST) || s.types === undefined) {
+                this.count[i].very_fast = 0;
+            }
             for (const ins of hourly[i]) {
                 switch (ins.type) {
                     case InsulinType.SLOW:

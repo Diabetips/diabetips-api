@@ -7,7 +7,7 @@
 */
 
 export class InsulinCalculationItem {
-    public slow: number = 0;
-    public fast: number = 0;
-    public very_fast: number = 0;
+    public slow: number;
+    public fast: number;
+    public very_fast: number;
 }
