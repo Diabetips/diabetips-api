@@ -1,0 +1,34 @@
+InsulinCalculationsItem:
+  type: "object"
+  properties:
+    "slow":
+      type: "number"
+      example: 2.5
+    "fast":
+      type: "number"
+      example: 1
+    "very_fast":
+      type: "number"
+      example: 5
+
+InsulinCalculations:
+  type: "object"
+  properties:
+    "start":
+      type: "integer"
+      description: "Timestamp for the first data measure"
+      example: 1581808876
+    "end":
+      type: "integer"
+      description: "Timestamp for the first data measure"
+      example: 1581808876
+    "average":
+      type: "array"
+      description: "Average amount of insulin injected"
+      items:
+        $component: "schemas:insulin_calculations.yml:InsulinCalculationsItem"
+    "count":
+      type: "array"
+      description: "Total amount of injections done"
+      items:
+        $component: "schemas:insulin_calculations.yml:InsulinCalculationsItem"

@@ -45,12 +45,12 @@ export class Insulin extends BaseEntity {
 
     // Repository functions
 
-    public static async findAll(patientUid: string,
-                                p: Pageable,
-                                t: Timeable,
-                                s: InsulinSearchReq,
-                                options: IBaseQueryOptions = {}):
-                                Promise<Page<Insulin>> {
+    public static async findAllPageable(patientUid: string,
+                                        p: Pageable,
+                                        t: Timeable,
+                                        s: InsulinSearchReq,
+                                        options: IBaseQueryOptions = {}):
+                                        Promise<Page<Insulin>> {
         let qb = this
             .createQueryBuilder("insulin")
             .leftJoin("insulin.user", "user")
@@ -62,11 +62,32 @@ export class Insulin extends BaseEntity {
                 .andWhere("user.deleted = false")
                 .andWhere("insulin.deleted = false");
         }
-        if (s.type !== undefined) {
-            qb = qb.andWhere(`insulin.type = :type`, { type: s.type });
-        }
+        qb = s.apply(qb);
+        qb = t.applyTimeRange(qb);
 
-        return p.query(t.applyTimeRange(qb));
+        return p.query(qb);
+    }
+
+    public static async findAll(patientUid: string,
+                                t: Timeable,
+                                s: InsulinSearchReq,
+                                options: IBaseQueryOptions = {}):
+                                Promise<Insulin[]> {
+        let qb = this
+            .createQueryBuilder("insulin")
+            .leftJoin("insulin.user", "user")
+            .where("user.uid = :patientUid", { patientUid })
+            .orderBy("insulin.timestamp", "DESC");
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb
+                .andWhere("user.deleted = false")
+                .andWhere("insulin.deleted = false");
+        }
+        qb = s.apply(qb);
+        qb = t.applyTimeRange(qb);
+
+        return qb.getMany();
     }
 
     public static async findById(patientUid: string,
