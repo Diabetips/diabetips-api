@@ -313,6 +313,41 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
 
+"/v1/users/{uid}/blood_sugar/target":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    tags:
+      - "Biometrics"
+    summary: "Get blood sugar target time / percentage"
+    description: >
+      Get the amount of time (as percentage or seconds) spent in the user's glycemia
+      target, hyopglycemia and hyperglycemia
+
+
+      This route will by default send the amount in percentage for each segment.
+    parameters:
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+      - $component: "queries:blood_sugar_target_format.yml:BSTargetFormatQuery"
+    responses:
+      200:
+        description: "The calculations requested"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:blood_sugar_target.yml:BloodSugarTarget"
+      404:
+        description: >
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to view
+           them
+           * The user's hypoglycemia and hyperglycemia thresholds must be set in their biometrics
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+
 "/v1/users/{uid}/hba1c":
   parameters:
     - $component: "parameters:uid.yml:UID"
