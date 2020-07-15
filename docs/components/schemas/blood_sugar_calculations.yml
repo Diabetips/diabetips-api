@@ -3,11 +3,11 @@ BloodSugarCalculations:
   properties:
     "start":
       type: "integer"
-      description: "Timestamp for the first data measure"
+      description: "Timestamp for the start of the period"
       example: 1581808876
     "end":
       type: "integer"
-      description: "Timestamp for the first data measure"
+      description: "Timestamp for the end of the period"
       example: 1581808876
     "average":
       type: "number"

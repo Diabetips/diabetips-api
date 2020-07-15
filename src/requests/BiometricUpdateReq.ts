@@ -31,4 +31,15 @@ export class BiometricUpdateReq {
     @IsOptional()
     @IsEnum(DiabetesType)
     public diabetes_type?: DiabetesType;
+
+    @IsOptional()
+    @IsNumber()
+    @IsPositive()
+    public hypoglycemia?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @IsPositive()
+    public hyperglycemia?: number;
+
 }
