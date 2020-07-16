@@ -1,4 +1,6 @@
 "/v1/users/{uid}/notes":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
   get:
     tags:
       - "Notes"
@@ -132,6 +134,8 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
 "/v1/users/{uid}/events":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
   get:
     tags:
       - "Notes"
