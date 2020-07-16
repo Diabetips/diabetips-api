@@ -11,7 +11,7 @@ import jwt = require("jsonwebtoken");
 import uuid = require("uuid");
 
 import { config } from "../config";
-import { AuthApp, User, AuthUserApp } from "../entities";
+import { AuthApp, AuthRefreshToken, AuthUserApp, User } from "../entities";
 import { ApiError, AuthError } from "../errors";
 import { AuthInfo, Context, HttpStatus } from "../lib";
 import { logger } from "../logger";
@@ -127,8 +127,6 @@ export class AuthService extends BaseService {
 
         // TODO extra info? (type (browser,desktop,mobile), subtype (chrome,firefox,windows,linux,ios,android), ip)
 
-        // TODO register grant in user apps
-
         const user = await User.findByUid(ctx.auth.uid);
         if (user == null) {
             throw new AuthError("server_error", "User not found");
@@ -203,14 +201,23 @@ export class AuthService extends BaseService {
         }
     }
 
-    public static async getAllAuthorizedUserApps(uid: string): Promise<AuthUserApp[]> {
-        return AuthUserApp.findAllByUid(uid);
+    public static async getAllAuthorizedUserApps(uid: string): Promise<object[]> {
+        const uas = await AuthUserApp.findAllByUid(uid);
+        return uas.map((ua) => {
+            return {
+                appid: ua.app.appid,
+                name: ua.app.name,
+                date: ua.date,
+                scopes: ua.scopes,
+            };
+        });
     }
 
     private static async authorizeUserApp(user: User, app: AuthApp): Promise<AuthUserApp> {
         let ua = await AuthUserApp.findByUidAndAppid(user.uid, app.appid);
         if (ua != null) {
-            // TODO check requested scopes are authorized
+            // TODO check if requested restricted scopes are still authorized to user
+            // add other missing scopes to ua
             return ua;
         }
 
@@ -228,10 +235,20 @@ export class AuthService extends BaseService {
             throw new ApiError(HttpStatus.NOT_FOUND, "user_app_not_found", "User app not found");
         }
 
-        revokedUserApps.push({ id: ua.id, exp: Date.now() + config.auth.token_ttl * 1000 });
-        // TODO revoke associated refresh tokens
+        const exp = Date.now() + config.auth.token_ttl * 1000;
+        revokedUserApps.push({ id: ua.id, exp });
+        ua.refresh_tokens.forEach((rt) => {
+            revokedRefreshTokens.push({ id: rt.id, exp });
+        });
 
-        await AuthUserApp.delete(ua.id);
+
+        ua.revoked = true;
+        await ua.save();
+
+        await Promise.all(ua.refresh_tokens.map((rt) => {
+            rt.revoked = true;
+            return rt.save()
+        }));
     }
 
     // RFC 6749, section 4.1.1: Generate an authorization code
@@ -284,10 +301,12 @@ export class AuthService extends BaseService {
             throw new AuthError("invalid_request", "Missing or invalid refresh_token");
         }
 
-        // TODO check refresh token not revoked and valid
-        // TODO check requesting app == refresh token app
-        // TODO check user and app still exist
-        return null;
+        const rt = await AuthRefreshToken.findByToken(req.refresh_token);
+        if (rt == null || rt.revoked || rt.auth.app.id !== app.id) {
+            throw new AuthError("invalid_grant", "Invalid refresh token");
+        }
+
+        return this.generateAccessAndRefreshTokensRes(rt.auth.user, rt.auth.app, rt);
     }
 
     private static async generateAccessTokenRes(user: User, app: AuthApp): Promise<AccessTokenRes> {
@@ -298,8 +317,10 @@ export class AuthService extends BaseService {
         };
     }
 
-    private static async generateAccessAndRefreshTokensRes(user: User, app: AuthApp): Promise<AccessTokenRes & RefreshTokenRes> {
-        const rt = await this.generateRefreshToken(user, app);
+    private static async generateAccessAndRefreshTokensRes(user: User, app: AuthApp, rt?: AuthRefreshToken): Promise<AccessTokenRes & RefreshTokenRes> {
+        if (rt == null) {
+            rt = await this.generateRefreshToken(user, app);
+        }
 
         return {
             access_token: await this.generateAccessToken(user, app, rt.id),
@@ -325,7 +346,13 @@ export class AuthService extends BaseService {
 
     private static async generateRefreshToken(user: User, app: AuthApp): Promise<AuthRefreshToken> {
         const auth = await this.authorizeUserApp(user, app);
-        return {};
+
+        const rt = new AuthRefreshToken();
+        rt.token = uuid.v4();
+        rt.scopes = [];
+        rt.auth = auth;
+
+        return rt.save();
     }
 
     private static async generateJwt(body: object, options: jwt.SignOptions): Promise<string> {

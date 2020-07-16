@@ -48,6 +48,9 @@ export class User extends BaseEntityHiddenId {
     @Column({ name: "password", length: 100, select: false })
     private _password?: string;
 
+    @Column({ name: "extra_scopes", type: "simple-array", select: false, default: "" })
+    private _extra_scopes: string[];
+
     @Column({ length: 10 })
     public lang: string;
 
@@ -129,6 +132,10 @@ export class User extends BaseEntityHiddenId {
 
     public set password(password: string | undefined) {
         this._password = password === undefined ? undefined : bcrypt.hashSync(password, 12);
+    }
+
+    public get extra_scopes(): string[] {
+        return this._extra_scopes;
     }
 
     // Repository functions

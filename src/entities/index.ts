@@ -8,6 +8,7 @@
 
 export * from "./AuthApp";
 export * from "./AuthCode";
+export * from "./AuthRefreshToken";
 export * from "./AuthUserApp";
 export * from "./Biometric";
 export * from "./BloodSugar";
