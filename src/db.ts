@@ -16,7 +16,11 @@ class TypeOrmBridgeLogger implements Logger {
     public logQuery(query: string,
                     parameters?: any[] | undefined,
                     queryRunner?: QueryRunner | undefined) {
-        sqlLogger.trace(`Running query: "${query}"`);
+        if (config.env === "dev" && parameters != null) {
+            sqlLogger.trace(`Running query: "${query}" (params: ${parameters})`);
+        } else {
+            sqlLogger.trace(`Running query: "${query}"`);
+        }
     }
 
     public logQueryError(error: string,
