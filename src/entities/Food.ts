@@ -63,8 +63,10 @@ export class Food extends BaseEntity {
             const query = req.name;
             qb = qb
                 .andWhere(new Brackets((qb) => {
-                    query.split(" ").forEach((keyword) => {
-                        qb = qb.orWhere("food.name ILIKE :keyword", { keyword: `%${keyword}%`});
+                    query.split(" ").forEach((keyword, index) => {
+                        const param: { [key: string]: any } = {};
+                        param[`keyword${index}`] = `%${keyword}%`;
+                        qb = qb.orWhere(`food.name ILIKE :keyword${index}`, param);
                     });
                 }))
                 .orderBy("ts_rank_cd(food.datalex, phraseto_tsquery('french', :name), 2) * sqrt(food.datarank)", "DESC")
