@@ -58,7 +58,7 @@ export class AuthService extends BaseService {
         }
     }
 
-    private static async decodeBearerToken(token: string): Promise<AuthInfo> {
+    public static async decodeBearerToken(token: string): Promise<AuthInfo> {
         try {
             const body = await this.verifyJwt(token);
             if (typeof body !== "object") {
@@ -122,8 +122,6 @@ export class AuthService extends BaseService {
         if (ctx.auth == null || ctx.auth.type !== "user") {
             throw new AuthError("access_denied", "Access denied");
         }
-
-        // TODO check that app has auth:authorize scope
 
         const user = await User.findByUid(ctx.auth.uid);
         if (user == null) {

@@ -15,7 +15,7 @@ import { Body, Ctx, Get, HttpCode, JsonController, Post, Put, Redirect, Req, Use
 
 import { config } from "../config";
 import { AuthError } from "../errors";
-import { Context, HttpStatus } from "../lib";
+import { Authorized, Context, HttpStatus } from "../lib";
 import { logger } from "../logger";
 import { UserConfirmAccountReq, UserResetPasswordReq1, UserResetPasswordReq2 } from "../requests";
 import { AuthService, UserConfirmationService, UserResetPasswordService } from "../services";
@@ -57,6 +57,7 @@ export class AuthController {
     @Post("/authorize")
     @UseBefore(AuthController.formParser)
     @UseAfter(AuthController.errorHandler)
+    @Authorized("auth:authorize")
     public async authorize(@Ctx() context: Context, @Body() body: any) {
         return AuthService.authorize(context, body);
     }
@@ -78,12 +79,14 @@ export class AuthController {
 
     // INTERNAL
     @Post("/confirm")
+    @Authorized("auth:confirm")
     public async confirmAccount(@Body() req: UserConfirmAccountReq) {
         await UserConfirmationService.confirmUserAccount(req);
     }
 
     @Post("/reset-password")
     @HttpCode(HttpStatus.ACCEPTED)
+    @Authorized("auth:reset")
     public async resetPassword1(@Body() req: UserResetPasswordReq1) {
         // No await here, the route should respond immediately instead of waiting for the password reset request to be
         // processed. This prevent time attacks that could leak whether a given email address has been used to register
@@ -93,6 +96,7 @@ export class AuthController {
 
     // INTERNAL
     @Put("/reset-password")
+    @Authorized("auth:reset2")
     public async resetPassword2(@Body() req: UserResetPasswordReq2) {
         await UserResetPasswordService.resetPassword2(req);
     }

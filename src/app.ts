@@ -16,7 +16,7 @@ import { QueryFailedError } from "typeorm";
 import { config } from "./config";
 import { getDocsSpec } from "./docs";
 import { ApiError, AuthError, ValidationError } from "./errors";
-import { Context, HttpStatus, Utils } from "./lib";
+import { AuthScope, Context, HttpStatus, Utils } from "./lib";
 import { WsApp, bindLogger as wsBindLogger } from "./lib/ws";
 import { httpLogger, log4js, logger, wsLogger } from "./logger";
 import { AuthService } from "./services";
@@ -36,6 +36,12 @@ preapp.use(log4js.connectLogger(httpLogger, {
 
 // Setup routing-controllers
 export const app = useExpressServer(preapp, {
+    authorizationChecker: (async (action: Action, scopes: AuthScope[]): Promise<boolean> => {
+        if (config.env === "dev") {
+            return true;
+        }
+        return true;
+    }),
     ctxBuilder: (async (action: Action): Promise<Context> => {
         // both set context in req and return to rounting-controllers
         return {

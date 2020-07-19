@@ -6,15 +6,18 @@
 ** Created by Alexandre DE BEAUMONT on Fri Feb 14 2020
 */
 
-import { JsonController, Param, QueryParams, Get, Post, Res, Body, Put, Delete } from "routing-controllers";
-import { Timeable, Pageable } from "../lib";
 import { Response } from "express";
+import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res  } from "routing-controllers";
+
+import { Authorized, Pageable, Timeable } from "../lib";
 import { EventService } from "../services";
 import { EventCreateReq, EventUpdateReq } from "../requests";
 
 @JsonController("/v1/users/:uid/events")
 export class UserEventController {
+
     @Get("/")
+    @Authorized("user.notes:read")
     public async getAllEvents(@Param("uid") uid: string,
                               @QueryParams() p: Pageable,
                               @QueryParams() t: Timeable,
@@ -24,16 +27,19 @@ export class UserEventController {
     }
 
     @Post("/")
+    @Authorized("user.notes:write")
     public async createEvent(@Param("uid") uid: string, @Body() body: EventCreateReq) {
         return EventService.addEvent(uid, body);
     }
 
     @Get("/:id")
+    @Authorized("user.notes:read")
     public async getEvent(@Param("uid") uid: string, @Param("id") eventId: number) {
         return EventService.getEvent(uid, eventId);
     }
 
     @Put("/:id")
+    @Authorized("user.notes:write")
     public async updateEvent(@Param("uid") uid: string,
                              @Param("id") eventId: number,
                              @Body() body: EventUpdateReq) {
@@ -41,6 +47,7 @@ export class UserEventController {
     }
 
     @Delete("/:id")
+    @Authorized("user.notes:write")
     public async deleteEvent(@Param("uid") uid: string, @Param("id") eventId: number) {
         await EventService.deleteEvent(uid, eventId);
     }

@@ -19,7 +19,7 @@ export class NotificationsWebSocket extends AuthenticatedWebSocket {
         if (auth.type === "user" && this.params.uid === "me") {
             this.params.uid = auth.uid;
         }
-        // TODO check access rights
+        // TODO check authorized
         await NotificationService.registerWsClient(this.params.uid, this);
     }
 

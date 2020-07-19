@@ -11,7 +11,7 @@ import createHttpError = require("http-errors");
 
 import { Body, ContentType, Controller, Get, Param, Post, UseBefore } from "routing-controllers";
 
-import { HttpStatus } from "../lib";
+import { Authorized, HttpStatus } from "../lib";
 import { AuthAppLogoService } from "../services";
 
 @Controller("/v1/auth/apps/:appid/logo")
@@ -29,6 +29,7 @@ export class AuthAppLogoController {
 
     @Get("/")
     @ContentType("png")
+    @Authorized("app:read")
     public async getAppLogo(@Param("appid") appid: string) {
         return AuthAppLogoService.getAppLogo(appid);
     }
@@ -36,6 +37,7 @@ export class AuthAppLogoController {
     // DEBUG?
     @Post("/")
     @UseBefore(AuthAppLogoController.rawParser)
+    @Authorized("app:write")
     public async uploadAppLogo(@Param("appid") appid: string, @Body() body: Buffer) {
         await AuthAppLogoService.setAppLogo(appid, body);
     }

@@ -38,18 +38,10 @@ export class UserService extends BaseService {
     }
 
     public static async getAllUsers(p: Pageable): Promise<Page<User>> {
-        // TODO
-        // * access checks:
-        //   if no current user: throw access denied error
-        // * only return current user if not admin
         return User.findAll(p);
     }
 
     public static async registerUser(req: UserCreateReq): Promise<User> {
-        // TODO
-        // * access checks:
-        //   if current user and current user not admin: throw access denied error
-
         let user = new User();
 
         user.uid = uuid.v4();
@@ -76,10 +68,6 @@ export class UserService extends BaseService {
     }
 
     public static async getUser(uid: string, options?: IUserQueryOptions): Promise<User> {
-        // TODO
-        // * access checks:
-        //   if no current user: throw access denied error
-        //   if current user uid != uid or current user not admin: throw not found
         const user = await User.findByUid(uid, options);
         if (user === undefined) {
             throw new ApiError(HttpStatus.NOT_FOUND, "user_not_found", `User ${uid} not found`);
