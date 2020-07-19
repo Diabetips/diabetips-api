@@ -8,7 +8,7 @@
 
 import { Column, Entity, OneToOne } from "typeorm";
 
-import { Utils } from "../lib";
+import { AuthScope, Utils } from "../lib";
 
 import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
 
@@ -29,6 +29,12 @@ export class AuthApp extends BaseEntityHiddenId {
 
     @Column({ name: "client_secret", length: 100, select: false })
     private _clientSecret?: string;
+
+    @Column()
+    public redirect_uri: string;
+
+    @Column({ type: "simple-array", default: ""})
+    public extra_scopes: AuthScope[];
 
     @OneToOne((type) => AuthAppLogo, (logo) => logo.app)
     public logo: Promise<AuthAppLogo>;

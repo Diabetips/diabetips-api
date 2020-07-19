@@ -8,6 +8,8 @@
 
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 
+import { AuthScope, Utils } from "../lib";
+
 import { AuthApp } from "./AuthApp";
 import { AuthCode } from "./AuthCode";
 import { AuthRefreshToken } from "./AuthRefreshToken";
@@ -26,7 +28,7 @@ export class AuthUserApp extends BaseEntity {
     public date: Date;
 
     @Column({ type: "simple-array" })
-    public scopes: string[]
+    public scopes: AuthScope[]
 
     @ManyToOne((type) => User)
     @JoinColumn({ name: "user_id" })
@@ -67,18 +69,26 @@ export class AuthUserApp extends BaseEntity {
         return qb.getMany();
     }
 
-    public static async findByUidAndAppid(uid: string, appid: string): Promise<AuthUserApp | undefined> {
-        const qb = this
+    public static async findByUidAndAppid(uid: string, appid: string, options: IAuthUserAppQueryOptions = {}): Promise<AuthUserApp | undefined> {
+        let qb = this
             .createQueryBuilder("user_app")
             .leftJoinAndSelect("user_app.app", "app")
-            .leftJoinAndSelect("user_app.auth_codes", "auth_code", "auth_code.used = false")
-            .leftJoinAndSelect("user_app.refresh_tokens", "refresh_token", "refresh_token.revoked = false")
             .leftJoin("user_app.user", "user")
             .where("user.uid = :uid", { uid })
             .andWhere("app.appid = :appid", { appid })
             .andWhere("user_app.revoked = false");
 
+        if (Utils.optionDefault(options.selectAuthCodesAndRefreshTokens, false)) {
+            qb = qb
+                .leftJoinAndSelect("user_app.auth_codes", "auth_code", "auth_code.used = false")
+                .leftJoinAndSelect("user_app.refresh_tokens", "refresh_token", "refresh_token.revoked = false");
+        }
+
         return qb.getOne();
     }
 
+}
+
+export interface IAuthUserAppQueryOptions {
+    selectAuthCodesAndRefreshTokens?: boolean;
 }

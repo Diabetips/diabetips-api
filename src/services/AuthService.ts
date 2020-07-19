@@ -13,7 +13,7 @@ import uuid = require("uuid");
 import { config } from "../config";
 import { AuthApp, AuthCode, AuthRefreshToken, AuthUserApp, User } from "../entities";
 import { ApiError, AuthError } from "../errors";
-import { AuthInfo, Context, HttpStatus } from "../lib";
+import { AuthInfo, AuthScope, AuthScopes, Context, HttpStatus } from "../lib";
 import { logger } from "../logger";
 
 import { BaseService } from "./BaseService";
@@ -33,12 +33,6 @@ interface AccessTokenRes {
 interface RefreshTokenRes {
     refresh_token: string;
 }
-
-/*
-Scopes test:
-    App: implicit & app.rscopes
-    User: requested | implicit & (app.scopes | user.scopes)
-*/
 
 type RevokedAuth = { id: string, exp: number };
 let revokedUserApps: RevokedAuth[] = [];
@@ -131,8 +125,6 @@ export class AuthService extends BaseService {
 
         // TODO check that app has auth:authorize scope
 
-        // TODO extra info? (type (browser,desktop,mobile), subtype (chrome,firefox,windows,linux,ios,android), ip)
-
         const user = await User.findByUid(ctx.auth.uid);
         if (user == null) {
             throw new AuthError("server_error", "User not found");
@@ -146,11 +138,16 @@ export class AuthService extends BaseService {
             throw new  AuthError("invalid_client", "Invalid client_id");
         }
 
+        const scope = req.scope || "";
+        if (typeof scope !== "string") {
+            throw new AuthError("invalid_scope", "Malformed scope");
+        }
+
         switch (req.response_type) {
             case "code":
-                return this.doAuthCodeFlow1(user, app);
+                return this.doAuthCodeFlow1(user, app, scope);
             case "token":
-                return this.doImplicitFlow(user, app);
+                return this.doImplicitFlow(user, app, scope);
             default:
                 throw new AuthError("invalid_request", "Missing or invalid response_type");
         }
@@ -222,24 +219,44 @@ export class AuthService extends BaseService {
         });
     }
 
-    public static async authorizeUserApp(user: User, app: AuthApp): Promise<AuthUserApp> {
+    public static async authorizeUserApp(user: User, app: AuthApp, scope: string): Promise<[AuthUserApp, AuthScope[]]> {
+        const scopes = scope.split(" ")
+            .filter((s) => s !== "")
+            .map((s) => {
+                if (!AuthScopes.hasOwnProperty(s)) {
+                    throw new AuthError("invalid_scope", `Invalid scope name '${s}'`);
+                }
+                return s as AuthScope;
+            })
+            .filter((s) => {
+                const si = AuthScopes[s as AuthScope];
+                if (si.target !== "user") {
+                    throw new AuthError("invalid_scope", `Scope '${s}' is not available to users`);
+                }
+
+                if (si.restricted && !user.extra_scopes.includes(s)) {
+                    throw new AuthError("invalid_scope", `Scope '${s}' is not available to the current user`);
+                }
+
+                return !si.implicit;
+            });
+
         let ua = await AuthUserApp.findByUidAndAppid(user.uid, app.appid);
         if (ua != null) {
-            // TODO check if requested restricted scopes are still authorized to user
-            // add other missing scopes to ua
-            return ua;
+            ua.scopes = ua.scopes.concat(scopes.filter((s) => !ua!.scopes.includes(s)));
+            return [await ua.save(), ua.scopes];
         }
 
         ua = new AuthUserApp();
         ua.user = user;
         ua.app = app;
-        ua.scopes = []; // TODO get list of scopes and check restricted
+        ua.scopes = scopes;
 
-        return ua.save();
+        return [await ua.save(), scopes];
     }
 
     public static async deauthorizeUserApp(uid: string, appid: string): Promise<void> {
-        const ua = await AuthUserApp.findByUidAndAppid(uid, appid);
+        const ua = await AuthUserApp.findByUidAndAppid(uid, appid, { selectAuthCodesAndRefreshTokens: true });
         if (ua == null) {
             throw new ApiError(HttpStatus.NOT_FOUND, "user_app_not_found", "User app not found");
         }
@@ -247,8 +264,8 @@ export class AuthService extends BaseService {
     }
 
     // RFC 6749, section 4.1.1: Generate an authorization code
-    private static async doAuthCodeFlow1(user: User, app: AuthApp): Promise<AuthCodeRes> {
-        const code = await this.generateAuthCode(user, app);
+    private static async doAuthCodeFlow1(user: User, app: AuthApp, scope: string): Promise<AuthCodeRes> {
+        const code = await this.generateAuthCode(user, app, scope);
         return {
             code: code.code,
         };
@@ -263,8 +280,9 @@ export class AuthService extends BaseService {
         if (typeof req.redirect_uri !== "string") {
             throw new AuthError("invalid_request", "Missing or invalid redirect_uri");
         }
-
-        // TODO add check for app redirect_uri
+        if (req.redirect_uri !== app.redirect_uri) {
+            throw new AuthError("invalid_grant", "Mismatched redirect URI");
+        }
 
         const code = await AuthCode.findByCode(req.code);
         if (code == null || code.used || code.auth.app.id !== app.id) {
@@ -279,7 +297,7 @@ export class AuthService extends BaseService {
             throw new AuthError("invalid_grant", "Invalid authorization code");
         }
 
-        const rt = await this.generateRefreshToken(code.auth.user, code.auth.app);
+        const rt = await this.generateRefreshToken(code.auth.user, code.auth.app, code.scopes.join(" "));
 
         code.used = true;
         code.refresh_token = rt;
@@ -289,8 +307,8 @@ export class AuthService extends BaseService {
     }
 
     // RFC 6749, section 4.2.1: Generate an access token
-    private static async doImplicitFlow(user: User, app: AuthApp): Promise<AccessTokenRes> {
-        return this.generateAccessTokenRes(user, app);
+    private static async doImplicitFlow(user: User, app: AuthApp, scope: string): Promise<AccessTokenRes> {
+        return this.generateAccessTokenRes(user, app, scope);
     }
 
     // RFC 6749, section 4.3.2: Exchange user credentials for access and refresh tokens
@@ -298,6 +316,11 @@ export class AuthService extends BaseService {
         if (typeof req.username !== "string" ||
             typeof req.password !== "string") {
             throw new AuthError("invalid_request", "Missing username or password");
+        }
+
+        const scope = req.scope || "";
+        if (typeof scope !== "string") {
+            throw new AuthError("invalid_scope", "Malformed scope");
         }
 
         const user = await User.findByEmail(req.username, {
@@ -313,7 +336,7 @@ export class AuthService extends BaseService {
             throw new AuthError("invalid_grant", "Incorrect email or password");
         }
 
-        return this.generateAccessAndRefreshTokensRes(user, app);
+        return this.generateAccessAndRefreshTokensRes(user, app, scope);
     }
 
     // RFC 6749, section 6: Exchange a refresh token for a new access token
@@ -330,40 +353,44 @@ export class AuthService extends BaseService {
         return this.generateAccessAndRefreshTokensRes(rt.auth.user, rt.auth.app, rt);
     }
 
-    private static async generateAccessTokenRes(user: User, app: AuthApp): Promise<AccessTokenRes> {
+    private static async generateAccessTokenRes(user: User, app: AuthApp, scope: string): Promise<AccessTokenRes> {
         return {
-            access_token: await this.generateAccessToken(user, app),
+            access_token: await this.generateAccessToken(user, app, scope),
             token_type: "bearer",
             expires_in: config.auth.token_ttl,
         };
     }
 
-    private static async generateAccessAndRefreshTokensRes(user: User, app: AuthApp, rt?: AuthRefreshToken): Promise<AccessTokenRes & RefreshTokenRes> {
-        if (rt == null) {
-            rt = await this.generateRefreshToken(user, app);
-        }
+    private static async generateAccessAndRefreshTokensRes(user: User, app: AuthApp, scopeOrRt: string | AuthRefreshToken): Promise<AccessTokenRes & RefreshTokenRes> {
+        const rt = typeof scopeOrRt === "string" ? await this.generateRefreshToken(user, app, scopeOrRt) : scopeOrRt;
+        const scope = rt.scopes.join(" ");
 
         return {
-            access_token: await this.generateAccessToken(user, app, rt.id),
+            access_token: await this.generateAccessToken(user, app, scope, rt.id),
             token_type: "bearer",
             expires_in: config.auth.token_ttl,
             refresh_token: rt.token,
         };
     }
 
-    private static async generateAuthCode(user: User, app: AuthApp): Promise<AuthCode> {
-        const auth = await this.authorizeUserApp(user, app);
+    private static async generateAuthCode(user: User, app: AuthApp, scope: string): Promise<AuthCode> {
+        const [auth, scopes] = await this.authorizeUserApp(user, app, scope);
 
         const code = new AuthCode();
         code.code = uuid.v4();
-        code.scopes = [];
+        code.scopes = scopes;
         code.auth = auth;
 
         return code.save();
     }
 
-    private static async generateAccessToken(user: User, app: AuthApp, rti?: string): Promise<AccessToken> {
-        const aid = rti == null ? (await this.authorizeUserApp(user, app)).id : undefined;
+    private static async generateAccessToken(user: User, app: AuthApp, scope: string, rti?: string): Promise<AccessToken> {
+        let aid: string | undefined;
+        if (rti == null) {
+            const [auth, scopes] = await this.authorizeUserApp(user, app, scope);
+            scope = scopes.join(" ");
+            aid = auth.id;
+        }
 
         return this.generateJwt({
             jti: uuid.v4(),
@@ -371,17 +398,18 @@ export class AuthService extends BaseService {
             aid,
             sub: user.uid,
             appid: app.appid,
+            scope
         }, {
             expiresIn: config.auth.token_ttl,
         });
     }
 
-    private static async generateRefreshToken(user: User, app: AuthApp): Promise<AuthRefreshToken> {
-        const auth = await this.authorizeUserApp(user, app);
+    private static async generateRefreshToken(user: User, app: AuthApp, scope: string): Promise<AuthRefreshToken> {
+        const [auth, scopes] = await this.authorizeUserApp(user, app, scope);
 
         const rt = new AuthRefreshToken();
         rt.token = uuid.v4();
-        rt.scopes = [];
+        rt.scopes = scopes;
         rt.auth = auth;
 
         return rt.save();
