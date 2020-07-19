@@ -34,11 +34,12 @@ export class AuthRefreshToken extends BaseEntity {
     public static async findByToken(token: string): Promise<AuthRefreshToken | undefined> {
         const query = this
             .createQueryBuilder("refresh_token")
-            .leftJoin("refresh_token.auth", "auth")
+            .leftJoinAndSelect("refresh_token.auth", "auth")
             .leftJoinAndSelect("auth.user", "user")
             .leftJoinAndSelect("auth.app", "app")
             .where("refresh_token.token = :token", { token })
             .andWhere("refresh_token.revoked = false")
+            .andWhere("auth.revoked = false")
             .andWhere("user.deleted = false")
             .andWhere("app.deleted = false");
 

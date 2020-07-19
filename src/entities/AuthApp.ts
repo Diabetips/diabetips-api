@@ -24,10 +24,10 @@ export class AuthApp extends BaseEntityHiddenId {
     @Column({ length: 200 })
     public name: string;
 
-    @Column({ name: "client_id", type: "uuid" })
+    @Column({ name: "client_id", length: 100, select: false })
     private _clientId?: string;
 
-    @Column({ name: "client_secret", length: 100 })
+    @Column({ name: "client_secret", length: 100, select: false })
     private _clientSecret?: string;
 
     @OneToOne((type) => AuthAppLogo, (logo) => logo.app)

@@ -18,7 +18,7 @@ export interface AppAuthInfo {
 export interface UserAuthInfo {
     type: "user";
     uid: string;
-    clientId: string;
+    appid: string;
     scopes: AuthScope[];
 }
 

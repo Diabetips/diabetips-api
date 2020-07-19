@@ -3,6 +3,7 @@
         "url": "${DIABETIPS_AI_URL}"
     },
     "auth": {
+        "code_ttl": "00:10:00",
         "token_key": "${DIABETIPS_AUTH_TOKEN_KEY}",
         "token_ttl": 3600
     },

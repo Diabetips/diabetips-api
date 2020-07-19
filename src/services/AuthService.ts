@@ -11,7 +11,7 @@ import jwt = require("jsonwebtoken");
 import uuid = require("uuid");
 
 import { config } from "../config";
-import { AuthApp, AuthRefreshToken, AuthUserApp, User } from "../entities";
+import { AuthApp, AuthCode, AuthRefreshToken, AuthUserApp, User } from "../entities";
 import { ApiError, AuthError } from "../errors";
 import { AuthInfo, Context, HttpStatus } from "../lib";
 import { logger } from "../logger";
@@ -76,19 +76,23 @@ export class AuthService extends BaseService {
                 throw new Error("access token was revoked");
             }
 
-            const rti = body.rti;
-            if (typeof(rti) === "string") {
-                const revoked = revokedRefreshTokens.find((val) => val.id === rti);
-                if (revoked != null) {
-                    revokedAccessTokens.push({ id: jti, exp: revoked.exp });
-                    throw new Error("refresh token associated with access token was revoked");
+            function checkRevokedList(id: any, list: RevokedAuth[], type: string): void {
+                if (typeof(id) === "string") {
+                    const revoked = list.find((val) => val.id === id);
+                    if (revoked != null) {
+                        revokedAccessTokens.push({ id: jti, exp: revoked.exp });
+                        throw new Error(`${type} associated with access token was revoked`);
+                    }
                 }
             }
+
+            checkRevokedList(body.rti, revokedRefreshTokens, "refresh token");
+            checkRevokedList(body.aid, revokedUserApps, "user app authorization");
 
             return {
                 type: "user",
                 uid: body.sub,
-                clientId: body.client_id,
+                appid: body.appid,
                 scopes: (body.scope || "").split(" "),
             };
         } catch (err) {
@@ -102,12 +106,13 @@ export class AuthService extends BaseService {
             const [clientId, clientSecret] = Buffer.from(creds, "base64").toString().split(":", 2);
 
             const app = await AuthApp.findByClientId(clientId, { selectClientCredentials: true });
-            if (app == null) {
-                throw new Error("invalid client id");
-            }
 
-            if (clientSecret !== app.clientSecret) {
-                throw new Error("client secret mismatched");
+            const hash = app != null
+                    ? app.clientSecret!
+                    : "$2b$06$xpEzSJMAWy90BQoBd.pttOLu0iaNe8EqQ1A/5WSKRtcvTwAsgBOEy"; // hash of ""
+
+            if (!await bcrypt.compare(clientSecret, hash) || app == null) {
+                throw new Error(app == null ? "client id not found" : "invalid client secret");
             }
             app.clientSecret = undefined; // erase client secret from object
 
@@ -118,6 +123,7 @@ export class AuthService extends BaseService {
         }
     }
 
+    // RFC 6749, section 3.1: Authorization endpoint (for internal use by account portal)
     public static async authorize(ctx: Context, req: any): Promise<AuthCodeRes | AccessTokenRes> {
         if (ctx.auth == null || ctx.auth.type !== "user") {
             throw new AuthError("access_denied", "Access denied");
@@ -150,6 +156,7 @@ export class AuthService extends BaseService {
         }
     }
 
+    // RFC 6749, section 3.2: Token endpoint
     public static async getToken(ctx: Context, req: any): Promise<AccessTokenRes & RefreshTokenRes> {
         if (ctx.auth == null || ctx.auth.type !== "app") {
             throw new AuthError("invalid_client", "Missing client credentials");
@@ -184,7 +191,7 @@ export class AuthService extends BaseService {
                 throw new Error("invalid type for token body: " + typeof body);
             }
 
-            if (ctx.auth.app.clientId !== body.client_id) {
+            if (ctx.auth.app.appid !== body.appid) {
                 throw new Error("client_id mismatched");
             }
 
@@ -192,8 +199,10 @@ export class AuthService extends BaseService {
 
             const rti = body.rti;
             if (typeof rti === "string") {
-                // TODO find and revoke refresh token
-                revokedRefreshTokens.push({ id: rti, exp: Date.now() + config.auth.token_ttl * 1000 });
+                const rt = await AuthRefreshToken.findOne(rti);
+                if (rt != null) {
+                    this.revokeRefreshToken(rt);
+                }
             }
         } catch (err) {
             logger.warn("Token revocation failed:", err.message);
@@ -213,7 +222,7 @@ export class AuthService extends BaseService {
         });
     }
 
-    private static async authorizeUserApp(user: User, app: AuthApp): Promise<AuthUserApp> {
+    public static async authorizeUserApp(user: User, app: AuthApp): Promise<AuthUserApp> {
         let ua = await AuthUserApp.findByUidAndAppid(user.uid, app.appid);
         if (ua != null) {
             // TODO check if requested restricted scopes are still authorized to user
@@ -234,27 +243,14 @@ export class AuthService extends BaseService {
         if (ua == null) {
             throw new ApiError(HttpStatus.NOT_FOUND, "user_app_not_found", "User app not found");
         }
-
-        const exp = Date.now() + config.auth.token_ttl * 1000;
-        revokedUserApps.push({ id: ua.id, exp });
-        ua.refresh_tokens.forEach((rt) => {
-            revokedRefreshTokens.push({ id: rt.id, exp });
-        });
-
-
-        ua.revoked = true;
-        await ua.save();
-
-        await Promise.all(ua.refresh_tokens.map((rt) => {
-            rt.revoked = true;
-            return rt.save()
-        }));
+        return this.revokeUserApp(ua);
     }
 
     // RFC 6749, section 4.1.1: Generate an authorization code
     private static async doAuthCodeFlow1(user: User, app: AuthApp): Promise<AuthCodeRes> {
+        const code = await this.generateAuthCode(user, app);
         return {
-            code: "TODO",
+            code: code.code,
         };
     }
 
@@ -264,7 +260,32 @@ export class AuthService extends BaseService {
             throw new AuthError("invalid_request", "Missing or invalid code");
         }
 
-        return null;
+        if (typeof req.redirect_uri !== "string") {
+            throw new AuthError("invalid_request", "Missing or invalid redirect_uri");
+        }
+
+        // TODO add check for app redirect_uri
+
+        const code = await AuthCode.findByCode(req.code);
+        if (code == null || code.used || code.auth.app.id !== app.id) {
+            if (code?.used) {
+                logger.warn("Authorization code re-use! Revoking refresh token");
+                this.revokeRefreshToken(code.refresh_token!);
+            }
+            if (code != null && code.auth.app.id !== app.id) {
+                logger.warn("Authorization code leaked!");
+            }
+
+            throw new AuthError("invalid_grant", "Invalid authorization code");
+        }
+
+        const rt = await this.generateRefreshToken(code.auth.user, code.auth.app);
+
+        code.used = true;
+        code.refresh_token = rt;
+        await code.save();
+
+        return this.generateAccessAndRefreshTokensRes(code.auth.user, code.auth.app, rt);
     }
 
     // RFC 6749, section 4.2.1: Generate an access token
@@ -284,11 +305,11 @@ export class AuthService extends BaseService {
         });
 
         // Prevent timing attacks by always comparing password hashes even when the user doesn't exist
-        const hash = user !== undefined
-                    ? user.password as string
+        const hash = user != null
+                    ? user.password!
                     : "$2b$12$xpEzSJMAWy90BQoBd.pttOLu0iaNe8EqQ1A/5WSKRtcvTwAsgBOEy"; // hash of ""
 
-        if (!await bcrypt.compare(req.password, hash) || user === undefined) {
+        if (!await bcrypt.compare(req.password, hash) || user == null) {
             throw new AuthError("invalid_grant", "Incorrect email or password");
         }
 
@@ -330,6 +351,17 @@ export class AuthService extends BaseService {
         };
     }
 
+    private static async generateAuthCode(user: User, app: AuthApp): Promise<AuthCode> {
+        const auth = await this.authorizeUserApp(user, app);
+
+        const code = new AuthCode();
+        code.code = uuid.v4();
+        code.scopes = [];
+        code.auth = auth;
+
+        return code.save();
+    }
+
     private static async generateAccessToken(user: User, app: AuthApp, rti?: string): Promise<AccessToken> {
         const aid = rti == null ? (await this.authorizeUserApp(user, app)).id : undefined;
 
@@ -338,7 +370,7 @@ export class AuthService extends BaseService {
             rti,
             aid,
             sub: user.uid,
-            client_id: app.clientId,
+            appid: app.appid,
         }, {
             expiresIn: config.auth.token_ttl,
         });
@@ -384,6 +416,20 @@ export class AuthService extends BaseService {
         });
     }
 
+    private static async revokeRefreshToken(rt: AuthRefreshToken): Promise<void> {
+        revokedRefreshTokens.push({ id: rt.id, exp: Date.now() + config.auth.token_ttl * 1000 });
+
+        rt.revoked = true;
+        await rt.save();
+    }
+
+    private static async revokeUserApp(ua: AuthUserApp): Promise<void> {
+        revokedUserApps.push({ id: ua.id, exp: Date.now() + config.auth.token_ttl * 1000 });
+        ua.revoked = true;
+        await ua.save();
+
+        await Promise.all(ua.refresh_tokens.map(this.revokeRefreshToken));
+    }
 }
 
 setInterval(() => {

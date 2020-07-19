@@ -64,7 +64,7 @@ export const app = useExpressServer(preapp, {
 // Static routes
 app.get("/", (req: Request, res: Response) => {
     res.send({
-        documentation_url: "https://docs.diabetips.fr/",
+        documentation_url: `https://docs.${config.env === "dev" ? "dev." : ""}diabetips.fr/`,
     });
 });
 app.get("/openapi.yml", getDocsSpec);

@@ -9,6 +9,7 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 
 import { AuthApp } from "./AuthApp";
+import { AuthCode } from "./AuthCode";
 import { AuthRefreshToken } from "./AuthRefreshToken";
 import { User } from "./User";
 
@@ -34,6 +35,9 @@ export class AuthUserApp extends BaseEntity {
     @ManyToOne((type) => AuthApp)
     @JoinColumn({ name: "app_id" })
     public app: AuthApp;
+
+    @OneToMany((type) => AuthCode, (code) => code.auth)
+    public auth_codes: AuthCode[];
 
     @OneToMany((type) => AuthRefreshToken, (rt) => rt.auth)
     public refresh_tokens: AuthRefreshToken[];
@@ -67,12 +71,12 @@ export class AuthUserApp extends BaseEntity {
         const qb = this
             .createQueryBuilder("user_app")
             .leftJoinAndSelect("user_app.app", "app")
-            .leftJoinAndSelect("user_app.refresh_tokens", "refresh_token")
+            .leftJoinAndSelect("user_app.auth_codes", "auth_code", "auth_code.used = false")
+            .leftJoinAndSelect("user_app.refresh_tokens", "refresh_token", "refresh_token.revoked = false")
             .leftJoin("user_app.user", "user")
             .where("user.uid = :uid", { uid })
             .andWhere("app.appid = :appid", { appid })
-            .andWhere("user_app.revoked = false")
-            .andWhere("refresh_token.revoked = false");
+            .andWhere("user_app.revoked = false");
 
         return qb.getOne();
     }
