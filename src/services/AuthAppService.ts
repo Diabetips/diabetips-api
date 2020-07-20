@@ -18,12 +18,32 @@ export class AuthAppService extends BaseService {
         return AuthApp.findAll();
     }
 
-    public static async getApp(appid: string): Promise<AuthApp> {
-        const app = await AuthApp.findByAppid(appid);
-        if (app === undefined) {
+    public static async getApp(appid: string): Promise<object> {
+        const app = await AuthApp.findByAppid(appid, {
+            selectClientCredentials: true,
+        });
+        if (app == null) {
             throw new ApiError(HttpStatus.NOT_FOUND, "app_not_found", `App ${appid} not found`);
         }
-        return app;
+        return {
+            ...app,
+            redirect_uri: app.redirectUri,
+            client_id: app.clientId,
+        }
+    }
+
+    public static async getClientManifest(clientId: string): Promise<object> {
+        const app = await AuthApp.findByClientId(clientId, {
+            selectInternal: true,
+            selectClientCredentials: true,
+        });
+        if (app == null) {
+            throw new ApiError(HttpStatus.NOT_FOUND, "app_not_found", "App not found");
+        }
+        return {
+            ...app,
+            redirect_uri: app.redirectUri,
+        };
     }
 
 }

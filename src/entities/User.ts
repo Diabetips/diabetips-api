@@ -6,8 +6,6 @@
 ** Created by Arthur MELIN on Wed Aug 28 2019
 */
 
-import bcrypt = require("bcrypt");
-
 import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany, OneToOne } from "typeorm";
 
 import { Page, Pageable, Utils } from "../lib";
@@ -131,7 +129,7 @@ export class User extends BaseEntityHiddenId {
     }
 
     public set password(password: string | undefined) {
-        this._password = password === undefined ? undefined : bcrypt.hashSync(password, 12);
+        this._password = password;
     }
 
     public get extra_scopes(): string[] {

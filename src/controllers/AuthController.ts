@@ -10,15 +10,14 @@ import bodyParser = require("body-parser");
 import querystring = require("querystring");
 
 import { NextFunction, Request, Response } from "express";
-import { Body, Ctx, Get, HttpCode, JsonController, Post, Put, Redirect, Req, UseAfter,
-    UseBefore } from "routing-controllers";
+import { Body, Ctx, Get, HttpCode, JsonController, Param, Post, Put, Redirect, Req, UseAfter, UseBefore } from "routing-controllers";
 
 import { config } from "../config";
 import { AuthError } from "../errors";
 import { Authorized, Context, HttpStatus } from "../lib";
 import { logger } from "../logger";
 import { UserConfirmAccountReq, UserResetPasswordReq1, UserResetPasswordReq2 } from "../requests";
-import { AuthService, UserConfirmationService, UserResetPasswordService } from "../services";
+import { AuthService, AuthAppService, UserConfirmationService, UserResetPasswordService } from "../services";
 
 @JsonController("/v1/auth")
 export class AuthController {
@@ -75,6 +74,13 @@ export class AuthController {
     public async revoke(@Ctx() context: Context, @Body() body: any) {
         await AuthService.revokeToken(context, body);
         return {};
+    }
+
+    // INTERNAL
+    @Get("/client/:client_id")
+    @Authorized("auth:authorize")
+    public async getClientManifest(@Param("client_id") clientId: string) {
+        return AuthAppService.getClientManifest(clientId);
     }
 
     // INTERNAL

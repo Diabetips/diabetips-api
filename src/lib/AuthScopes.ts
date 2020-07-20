@@ -45,8 +45,8 @@ type AuthScopeInfo = {
 };
 
 export const AuthScopes: { [key in AuthScope]: AuthScopeInfo } = {
-    "app:read":                  { target: "app" },
-    "app:write":                 { target: "user", restricted: true }, // extend = (p == app.owner)
+    "app:read":                  { target: "user", restricted: true }, // checker = (p == app.owner)
+    "app:write":                 { target: "user", restricted: true }, // checker = (p == app.owner)
     "auth:authorize":            { target: "app", restricted: true },
     "auth:confirm":              { target: "app", restricted: true },
     "auth:reset":                { target: "app" },
@@ -58,18 +58,18 @@ export const AuthScopes: { [key in AuthScope]: AuthScopeInfo } = {
     "user:delete":               { target: "user" },
     "user.apps:read":            { target: "user", restricted: true },
     "user.apps:write":           { target: "user", restricted: true },
-    "user.biometrics:read":      { target: "user" }, // extend = (user in p.connections)
-    "user.biometrics:write":     { target: "user" }, // extend = (user in p.connections)
+    "user.biometrics:read":      { target: "user" }, // checker = (user == p || user in p.connections)
+    "user.biometrics:write":     { target: "user" }, // checker = (user == p || user in p.connections)
     "user.connections:read":     { target: "user" },
     "user.connections:write":    { target: "user" },
-    "user.meals:read":           { target: "user" }, // extend = (user in p.connections)
+    "user.meals:read":           { target: "user" }, // checker = (user == p || user in p.connections)
     "user.meals:write":          { target: "user" },
     "user.notes:read":           { target: "user" },
     "user.notes:write":          { target: "user" },
     "user.notifications":        { target: "user" },
     "user.predictions:new":      { target: "user" },
-    "user.predictions:settings": { target: "user", restricted: true }, // extend = (user in p.connections)
-    "user.profile:read":         { target: "user", implicit: true }, // extend = (user in p.connections)
+    "user.predictions:settings": { target: "user", restricted: true }, // checker = (user == p || user in p.connections)
+    "user.profile:read":         { target: "user", implicit: true }, // checker = (user == p || user in p.connections)
     "user.profile:write":        { target: "user" },
     "special:admin":             { target: "user", implicit: true, restricted: true },
     "special:support":           { target: "user", implicit: true, restricted: true },

@@ -17,6 +17,7 @@ import { AuthInfo, AuthScope, AuthScopes, Context, HttpStatus, Utils } from "../
 import { logger } from "../logger";
 
 import { BaseService } from "./BaseService";
+import { UserService } from "./UserService";
 
 type AccessToken = string;
 
@@ -105,7 +106,7 @@ export class AuthService extends BaseService {
                     ? app.clientSecret!
                     : "$2b$06$xpEzSJMAWy90BQoBd.pttOLu0iaNe8EqQ1A/5WSKRtcvTwAsgBOEy"; // hash of ""
 
-            if (!await bcrypt.compare(clientSecret, hash) || app == null) {
+            if (!(await bcrypt.compare(clientSecret, hash) && app != null)) {
                 throw new Error(app == null ? "client id not found" : "invalid client secret");
             }
             app.clientSecret = undefined; // erase client secret from object
@@ -173,14 +174,7 @@ export class AuthService extends BaseService {
 
     // RFC 6749, section 3.1: Authorization endpoint (for internal use by account portal)
     public static async authorize(ctx: Context, req: any): Promise<AuthCodeRes | AccessTokenRes> {
-        if (ctx.auth == null || ctx.auth.type !== "user") {
-            throw new AuthError("access_denied", "Access denied");
-        }
-
-        const user = await User.findByUid(ctx.auth.uid);
-        if (user == null) {
-            throw new AuthError("server_error", "User not found");
-        }
+        const user = await UserService.getCurrentUser(ctx);
 
         if (typeof req.client_id !== "string") {
             throw new AuthError("invalid_request", "Missing or invalid client_id");
@@ -265,6 +259,7 @@ export class AuthService extends BaseService {
             return {
                 appid: ua.app.appid,
                 name: ua.app.name,
+                description: ua.app.description,
                 date: ua.date,
                 scopes: ua.scopes,
             };
@@ -332,7 +327,7 @@ export class AuthService extends BaseService {
         if (typeof req.redirect_uri !== "string") {
             throw new AuthError("invalid_request", "Missing or invalid redirect_uri");
         }
-        if (req.redirect_uri !== app.redirect_uri) {
+        if (req.redirect_uri !== app.redirectUri) {
             throw new AuthError("invalid_grant", "Mismatched redirect URI");
         }
 
@@ -343,6 +338,7 @@ export class AuthService extends BaseService {
                 this.revokeRefreshToken(code.refresh_token!);
             }
             if (code != null && code.auth.app.id !== app.id) {
+                await this.revokeAuthCode(code);
                 logger.warn("Authorization code leaked!");
             }
 
@@ -381,14 +377,14 @@ export class AuthService extends BaseService {
 
         // Prevent timing attacks by always comparing password hashes even when the user doesn't exist
         const hash = user != null
-                    ? user.password!
-                    : "$2b$12$xpEzSJMAWy90BQoBd.pttOLu0iaNe8EqQ1A/5WSKRtcvTwAsgBOEy"; // hash of ""
+            ? user.password!
+            : "$2b$12$xpEzSJMAWy90BQoBd.pttOLu0iaNe8EqQ1A/5WSKRtcvTwAsgBOEy"; // hash of ""
 
-        if (!await bcrypt.compare(req.password, hash) || user == null) {
+        if (!(await bcrypt.compare(req.password, hash) && user != null)) {
             throw new AuthError("invalid_grant", "Incorrect email or password");
         }
 
-        return this.generateAccessAndRefreshTokensRes(user, app, scope);
+        return this.generateAccessAndRefreshTokensRes(user!, app, scope);
     }
 
     // RFC 6749, section 6: Exchange a refresh token for a new access token
@@ -397,12 +393,34 @@ export class AuthService extends BaseService {
             throw new AuthError("invalid_request", "Missing or invalid refresh_token");
         }
 
-        const rt = await AuthRefreshToken.findByToken(req.refresh_token);
-        if (rt == null || rt.revoked || rt.auth.app.id !== app.id) {
+        try {
+            const decoded = Buffer.from(req.refresh_token, "base64").toString().split(":");
+            if (decoded.length !== 2) {
+                throw new Error("Invalid decoded field count");
+            }
+            const [rti, secret] = decoded;
+
+            const rt = await AuthRefreshToken.findById(rti);
+            const hash = rt != null
+                ? rt.secret
+                : "$2b$06$xpEzSJMAWy90BQoBd.pttOLu0iaNe8EqQ1A/5WSKRtcvTwAsgBOEy" // hash of ""
+
+            if (!(await bcrypt.compare(secret, hash) && rt != null)) {
+                throw new Error(rt == null ? "refresh token not found" : "bad secret");
+            }
+            if (rt.auth.app.id !== app.id) {
+                await this.revokeRefreshToken(rt);
+                throw new Error("refresh token leaked!");
+            }
+
+            rt.token = req.refresh_token;
+
+            return this.generateAccessAndRefreshTokensRes(rt.auth.user, rt.auth.app, rt);
+        } catch (err) {
+            logger.error("Refresh token verification failed:", err.stack || err);
             throw new AuthError("invalid_grant", "Invalid refresh token");
         }
 
-        return this.generateAccessAndRefreshTokensRes(rt.auth.user, rt.auth.app, rt);
     }
 
     private static async generateAccessTokenRes(user: User, app: AuthApp, scope: string): Promise<AccessTokenRes> {
@@ -421,7 +439,7 @@ export class AuthService extends BaseService {
             access_token: await this.generateAccessToken(user, app, scope, rt.id),
             token_type: "bearer",
             expires_in: config.auth.token_ttl,
-            refresh_token: rt.token,
+            refresh_token: rt.token!,
         };
     }
 
@@ -459,12 +477,16 @@ export class AuthService extends BaseService {
     private static async generateRefreshToken(user: User, app: AuthApp, scope: string): Promise<AuthRefreshToken> {
         const [auth, scopes] = await this.authorizeUserApp(user, app, scope);
 
-        const rt = new AuthRefreshToken();
-        rt.token = uuid.v4();
+        const secret = uuid.v4();
+
+        let rt = new AuthRefreshToken();
+        rt.secret = bcrypt.hashSync(secret, 6);
         rt.scopes = scopes;
         rt.auth = auth;
 
-        return rt.save();
+        rt = await rt.save();
+        rt.token = Buffer.from(rt.id + ":" + secret).toString("base64");
+        return rt;
     }
 
     private static async generateJwt(body: object, options: jwt.SignOptions): Promise<string> {
@@ -494,6 +516,11 @@ export class AuthService extends BaseService {
                 }
             });
         });
+    }
+
+    private static async revokeAuthCode(code: AuthCode): Promise<void> {
+        code.used = true;
+        await code.save();
     }
 
     private static async revokeRefreshToken(rt: AuthRefreshToken): Promise<void> {
