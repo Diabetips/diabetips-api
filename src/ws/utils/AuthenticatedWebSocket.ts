@@ -7,14 +7,14 @@
 */
 
 import { ApiError } from "../../errors";
-import { AuthInfo, HttpStatus } from "../../lib";
+import { AuthInfo, AuthScope, HttpStatus } from "../../lib";
 import { AuthService } from "../../services";
 
 import { JsonWebSocket } from "./JsonWebSocket";
 
 export class AuthenticatedWebSocket extends JsonWebSocket {
 
-    private _authenticated = false;
+    protected auth?: AuthInfo;
     private _authTimeout: NodeJS.Timeout;
 
     constructor() {
@@ -30,26 +30,29 @@ export class AuthenticatedWebSocket extends JsonWebSocket {
                 throw new ApiError(HttpStatus.BAD_REQUEST, "bad_request", "Invalid authentication message");
             }
 
-            const auth = await AuthService.decodeBearerToken(msg.token);
+            this.auth = await AuthService.decodeBearerToken(msg.token);
 
-            this._authenticated = true;
             clearTimeout(this._authTimeout);
             delete this._authTimeout;
             this.onJsonMessage = onJsonMessage;
 
-            return this.onAuthenticated(auth);
+            return this.onAuthenticated();
         };
     }
 
-    public async onAuthenticated(auth: AuthInfo) {
+    public async onAuthenticated() {
         //
     }
 
     public async onDisconnect(code: number, reason: string) {
         super.onDisconnect(code, reason);
-        if (!this._authenticated) {
+        if (this.auth == null) {
             clearTimeout(this._authTimeout);
         }
+    }
+
+    protected async checkAuthorized(...scopes: AuthScope[]): Promise<void> {
+        return AuthService.checkScopesAuthorized(this.auth, this.params, scopes);
     }
 
 }

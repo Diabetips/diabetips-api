@@ -6,6 +6,8 @@
 ** Created by Arthur MELIN on Thu Jul 09 2020
 */
 
+import { AuthInfo } from "./AuthInfo";
+
 export type AuthScope = "app:read"
     | "app:write"
     | "auth:authorize"
@@ -37,6 +39,7 @@ export type AuthScope = "app:read"
 
 type AuthScopeInfo = {
     target: "app" | "user";
+    checker?: (auth: AuthInfo | undefined, params: { [key: string]: string }) => Promise<void>;
     implicit?: boolean;
     restricted?: boolean;
 };

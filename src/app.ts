@@ -34,19 +34,25 @@ preapp.use(log4js.connectLogger(httpLogger, {
     format: ":remote-addr > \":method :url\" > :status :content-lengthB :response-timems",
 }));
 
+async function buildContext(action: Action): Promise<Context> {
+    return {
+        auth: await AuthService.decodeAuthorization(action.request.header("Authorization")),
+    };
+}
+
 // Setup routing-controllers
 export const app = useExpressServer(preapp, {
     authorizationChecker: (async (action: Action, scopes: AuthScope[]): Promise<boolean> => {
-        if (config.env === "dev") {
-            return true;
-        }
+        const ctx = await buildContext(action);
+        action.context = ctx; // cache our context for ctxBuilder
+        await AuthService.checkScopesAuthorized(ctx.auth, action.request.params || {}, scopes);
         return true;
     }),
     ctxBuilder: (async (action: Action): Promise<Context> => {
-        // both set context in req and return to rounting-controllers
-        return {
-            auth: await AuthService.decodeAuthorization(action.request.header("Authorization")),
-        };
+        if (action.context !== undefined) {
+            return action.context;
+        }
+        return buildContext(action);
     }),
     controllers: [ `${__dirname}/controllers/**/*.{js,ts}` ],
     cors: {

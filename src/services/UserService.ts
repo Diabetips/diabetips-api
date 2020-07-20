@@ -76,7 +76,7 @@ export class UserService extends BaseService {
     }
 
     public static async updateUser(uid: string, req: UserUpdateReq): Promise<User> {
-        const user = await this.getUser(uid, { selectPassword: true });
+        const user = await this.getUser(uid, { selectPassword: req.password != null });
 
         if (req.lang != null) { user.lang = req.lang; }
         if (req.first_name != null) { user.first_name = req.first_name; }

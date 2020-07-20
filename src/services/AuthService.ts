@@ -13,7 +13,7 @@ import uuid = require("uuid");
 import { config } from "../config";
 import { AuthApp, AuthCode, AuthRefreshToken, AuthUserApp, User } from "../entities";
 import { ApiError, AuthError } from "../errors";
-import { AuthInfo, AuthScope, AuthScopes, Context, HttpStatus } from "../lib";
+import { AuthInfo, AuthScope, AuthScopes, Context, HttpStatus, Utils } from "../lib";
 import { logger } from "../logger";
 
 import { BaseService } from "./BaseService";
@@ -95,7 +95,7 @@ export class AuthService extends BaseService {
         }
     }
 
-    private static async decodeBasicClientCredentials(creds: string): Promise<AuthInfo> {
+    public static async decodeBasicClientCredentials(creds: string): Promise<AuthInfo> {
         try {
             const [clientId, clientSecret] = Buffer.from(creds, "base64").toString().split(":", 2);
 
@@ -114,6 +114,60 @@ export class AuthService extends BaseService {
         } catch (err) {
             logger.warn("Client credentials verification failed:", err.message);
             throw new AuthError("invalid_client", "Invalid client credentials");
+        }
+    }
+
+    public static async checkScopesAuthorized(auth: AuthInfo | undefined, params: { [key: string]: string }, scopes: AuthScope[]): Promise<void> {
+        try {
+            await Promise.all(scopes.map(async (scope) => {
+                if (!AuthScopes.hasOwnProperty(scope)) {
+                    throw new Error(`Invalid scope name '${scope}'`);
+                }
+
+                if (auth == null) {
+                    throw new ApiError(HttpStatus.UNAUTHORIZED, "unauthorized", "Please provide authorization");
+                }
+
+                const si = AuthScopes[scope];
+                if (si.target === "app" && si.restricted) {
+                    const app = auth.type === "app" ? auth.app : await AuthApp.findByAppid(auth.appid);
+                    if (app == null) {
+                        throw new Error("App not found");
+                    }
+                    if (!app.extra_scopes.includes(scope)) {
+                        logger.warn(`App ${app.appid} doesn't have restricted scope ${scope}`);
+                        throw new ApiError(HttpStatus.FORBIDDEN, "access_denied", "Access denied");
+                    }
+                } else if (si.target === "user") {
+                    if (auth.type !== "user") {
+                        throw new ApiError(HttpStatus.UNAUTHORIZED, "unauthorized", "Please provide user authorization");
+                    }
+                    if (!si.implicit && !auth.scopes.includes(scope)) {
+                        logger.warn(`Scope '${scope}' is not authorized`);
+                        throw new ApiError(HttpStatus.FORBIDDEN, "access_denied", "Access denied");
+                    }
+                    if (si.implicit && si.restricted) {
+                        const user = await User.findByUid(auth.uid);
+                        if (user == null) {
+                            throw new Error("User not found");
+                        }
+                        if (!user.extra_scopes.includes(scope)) {
+                            logger.warn(`User ${user.uid} doesn't have restricted scope '${scope}'`);
+                            throw new ApiError(HttpStatus.FORBIDDEN, "access_denied", "Access denied");
+                        }
+                    }
+                }
+
+                if (si.checker != null) {
+                    await si.checker(auth, params);
+                }
+            }));
+        } catch (err) {
+            if (!(Utils.optionDefault(config.auth.ignore_unauthorized_scope, false) && err instanceof ApiError)) {
+                throw err;
+            } else {
+                logger.warn("Ignoring unauthorized error:", err.message);
+            }
         }
     }
 
@@ -232,7 +286,7 @@ export class AuthService extends BaseService {
                     throw new AuthError("invalid_scope", `Scope '${s}' is not available to users`);
                 }
 
-                if (si.restricted && !user.extra_scopes.includes(s)) {
+                if (si.restricted && !user.extra_scopes.includes(s) && !app.extra_scopes.includes(s)) {
                     throw new AuthError("invalid_scope", `Scope '${s}' is not available to the current user`);
                 }
 
