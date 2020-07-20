@@ -17,7 +17,7 @@ import { MealService } from "../services";
 export class UserMealController {
 
     @Get("/")
-    @Authorized("user.meals:read")
+    @Authorized("meals:read")
     public async getAllUserMeals(@Param("uid") uid: string,
                                  @QueryParams() p: Pageable,
                                  @QueryParams() t: Timeable,
@@ -27,25 +27,25 @@ export class UserMealController {
     }
 
     @Post("/")
-    @Authorized("user.meals:write")
+    @Authorized("meals:write")
     public async addUserMeal(@Param("uid") uid: string, @Body() body: MealCreateReq) {
         return MealService.addMeal(uid, body);
     }
 
     @Get("/:id")
-    @Authorized("user.meals:read")
+    @Authorized("meals:read")
     public async getUserMeal(@Param("uid") uid: string, @Param("id") mealId: number) {
         return MealService.getMeal(uid, mealId);
     }
 
     @Put("/:id")
-    @Authorized("user.meals:write")
+    @Authorized("meals:write")
     public async updateUserMeal(@Param("uid") uid: string, @Param("id") mealId: number, @Body() body: MealUpdateReq) {
         return MealService.updateMeal(uid, mealId, body);
     }
 
     @Delete("/:id")
-    @Authorized("user.meals:write")
+    @Authorized("meals:write")
     public async deleteUserMeal(@Param("uid") uid: string, @Param("id") mealId: number) {
         await MealService.deleteMeal(uid, mealId);
     }

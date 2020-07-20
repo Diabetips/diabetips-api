@@ -16,7 +16,7 @@ import { MassService } from "../services";
 export class UserMassController {
 
     @Get("/")
-    @Authorized("user.biometrics:read")
+    @Authorized("biometrics:read")
     public async getMassHistory(@Param("uid") uid: string,
                                 @QueryParams() p: Pageable,
                                 @QueryParams() t: Timeable,

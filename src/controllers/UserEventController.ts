@@ -17,7 +17,7 @@ import { EventCreateReq, EventUpdateReq } from "../requests";
 export class UserEventController {
 
     @Get("/")
-    @Authorized("user.notes:read")
+    @Authorized("notes:read")
     public async getAllEvents(@Param("uid") uid: string,
                               @QueryParams() p: Pageable,
                               @QueryParams() t: Timeable,
@@ -27,19 +27,19 @@ export class UserEventController {
     }
 
     @Post("/")
-    @Authorized("user.notes:write")
+    @Authorized("notes:write")
     public async createEvent(@Param("uid") uid: string, @Body() body: EventCreateReq) {
         return EventService.addEvent(uid, body);
     }
 
     @Get("/:id")
-    @Authorized("user.notes:read")
+    @Authorized("notes:read")
     public async getEvent(@Param("uid") uid: string, @Param("id") eventId: number) {
         return EventService.getEvent(uid, eventId);
     }
 
     @Put("/:id")
-    @Authorized("user.notes:write")
+    @Authorized("notes:write")
     public async updateEvent(@Param("uid") uid: string,
                              @Param("id") eventId: number,
                              @Body() body: EventUpdateReq) {
@@ -47,7 +47,7 @@ export class UserEventController {
     }
 
     @Delete("/:id")
-    @Authorized("user.notes:write")
+    @Authorized("notes:write")
     public async deleteEvent(@Param("uid") uid: string, @Param("id") eventId: number) {
         await EventService.deleteEvent(uid, eventId);
     }

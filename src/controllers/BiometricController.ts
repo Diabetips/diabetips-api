@@ -16,13 +16,13 @@ import { BiometricService } from "../services";
 export class BiometricController {
 
     @Get("/")
-    @Authorized("user.biometrics:read")
+    @Authorized("biometrics:read")
     public async getUserBiometric(@Param("uid") uid: string) {
         return BiometricService.getUserBiometric(uid);
     }
 
     @Put("/")
-    @Authorized("user.biometrics:write")
+    @Authorized("biometrics:write")
     public async updateUserBiometric(@Param("uid") uid: string, @Body() body: BiometricUpdateReq) {
         return BiometricService.updateUserBiometric(uid, body);
     }

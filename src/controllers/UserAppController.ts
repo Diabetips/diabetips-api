@@ -16,14 +16,14 @@ export class UserAppController {
 
     // INTERNAL
     @Get("/")
-    @Authorized("user.apps:read")
+    @Authorized("apps:read")
     public async getAllUserApps(@Param("uid") uid: string) {
         return AuthService.getAllAuthorizedUserApps(uid);
     }
 
     // INTERNAL
     @Delete("/:appid")
-    @Authorized("user.apps:write")
+    @Authorized("apps:write")
     public async deauthorizeApp(@Param("uid") uid: string, @Param("appid") appid: string) {
         await AuthService.deauthorizeUserApp(uid, appid);
     }

@@ -23,20 +23,20 @@ export class UserPictureController {
 
     @Get("/")
     @ContentType("jpeg")
-    @Authorized("user.profile:read")
+    @Authorized("profile:read")
     public async getUserPicture(@Param("uid") uid: string) {
         return UserPictureService.getUserPicture(uid);
     }
 
     @Post("/")
     @UseBefore(UserPictureController.rawParser)
-    @Authorized("user.profile:write")
+    @Authorized("profile:write")
     public async setUserPicture(@Param("uid") uid: string, @Body() body: Buffer) {
         await UserPictureService.setUserPicture(uid, body);
     }
 
     @Delete("/")
-    @Authorized("user.profile:write")
+    @Authorized("profile:write")
     public async removeUserPicture(@Param("uid") uid: string) {
         await UserPictureService.removeUserPicture(uid);
     }

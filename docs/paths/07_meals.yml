@@ -2,12 +2,14 @@
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "meals:read"
     tags:
       - "Meals"
     summary: "Get all meals"
-    description: >
+    description: |
       Get a list of all the meals of the user with the specified UID.
-
 
       Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
     parameters:
@@ -29,7 +31,7 @@
               items:
                 $component: "schemas:meal.yml:Meal"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
@@ -37,14 +39,16 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   post:
+    security:
+      - OAuth2:
+        - "meals:write"
     tags:
       - "Meals"
     summary: "Create meal"
-    description: >
+    description: |
       Create a meal from the specified information and add it to the meals of the user with the specified UID.
 
-
-      Note: `recipes` and `foods` can both be omitted, but not in the same request. 
+      Note: `recipes` and `foods` can both be omitted, but not in the same request.
       A meal requires at least one independent food or one recipe in order to be accepted.
     requestBody:
       required: true
@@ -60,14 +64,14 @@
             schema:
               $component: "schemas:meal.yml:Meal"
       400:
-        description: >
+        description: |
           The meal you are trying to create does not contain any food nor recipe.
         content:
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorEmptyMeal"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to
            modify them
@@ -83,10 +87,13 @@
     - $component: "parameters:uid.yml:UID"
     - $component: "parameters:meal_id.yml:MealId"
   get:
+    security:
+      - OAuth2:
+        - "meals:read"
     tags:
       - "Meals"
     summary: "Get meal"
-    description: >
+    description: |
       Get the meal of the user with the specified UID and ID.
     responses:
       200:
@@ -96,7 +103,7 @@
             schema:
               $component: "schemas:meal.yml:Meal"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to view
            them
@@ -106,10 +113,13 @@
             schema:
               $component: "schemas:error.yml:ErrorMealNotFound"
   put:
+    security:
+      - OAuth2:
+        - "meals:write"
     tags:
       - "Meals"
     summary: "Update meal"
-    description: >
+    description: |
       Update the meal of the user with the specified UID and ID.
     requestBody:
       required: true
@@ -125,14 +135,14 @@
             schema:
               $component: "schemas:meal.yml:Meal"
       400:
-        description: >
+        description: |
           The meal you are trying to update would not contain any food nor recipe anymore.
         content:
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorEmptyMeal"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to vie
            modify them
@@ -145,16 +155,19 @@
                 - $component: "schemas:error.yml:ErrorMealNotFound"
                 - $component: "schemas:error.yml:ErrorRecipeNotFound"
   delete:
+    security:
+      - OAuth2:
+        - "meals:write"
     tags:
       - "Meals"
     summary: "Remove meal"
-    description: >
+    description: |
       Remove the meal of the user with the specified UID and ID.
     responses:
       204:
         description: "The meal was removed"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to vie
            modify them

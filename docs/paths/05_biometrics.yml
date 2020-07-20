@@ -2,12 +2,14 @@
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get general biometric information"
-    description: >
+    description: |
       Get the general biometric information of the specified user.
-
 
       Fields may be null.
     parameters:
@@ -26,7 +28,7 @@
               items:
                 $component: "schemas:biometrics.yml:Biometrics"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
@@ -34,10 +36,13 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   put:
+    security:
+      - OAuth2:
+        - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Update general biometric information"
-    description: >
+    description: |
       Update the specified user's general biometric information.
     requestBody:
       required: true
@@ -53,24 +58,25 @@
             schema:
               $component: "schemas:biometrics.yml:Biometrics"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to
           modify them
         content:
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
-
 "/v1/users/{uid}/mass":
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get user mass history"
-    description: >
+    description: |
       Get the mass history of the user with the specified UID.
-
 
       Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
     parameters:
@@ -88,7 +94,7 @@
               items:
                 $component: "schemas:mass.yml:Mass"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
@@ -99,12 +105,14 @@
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get user height history"
-    description: >
+    description: |
       Get the height history of the user with the specified UID.
-
 
       Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
     parameters:
@@ -122,21 +130,25 @@
               items:
                 $component: "schemas:height.yml:Height"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
+
 "/v1/users/{uid}/blood_sugar/last":
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get last blood sugar measure"
-    description: >
+    description: |
       Get the last blood sugar measure for the user with the specified UID.
     responses:
       200:
@@ -146,7 +158,7 @@
             schema:
               $component: "schemas:blood_sugar.yml:BloodSugar"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to view
            them
@@ -159,13 +171,15 @@
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get all blood sugar measures"
-    description: >
-      Get a list of all the blood sugar measure points of the user with the specified UID. 
+    description: |
+      Get a list of all the blood sugar measure points of the user with the specified UID.
       The entries are sorted from most recent to oldest.
-
 
       Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
     parameters:
@@ -187,7 +201,7 @@
               items:
                 $component: "schemas:blood_sugar.yml:BloodSugar"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
@@ -195,10 +209,13 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   post:
+    security:
+      - OAuth2:
+        - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Add blood sugar measure"
-    description: >
+    description: |
       Add blood sugar measures starting on `start` with intervals of `interval` seconds.
     requestBody:
       required: true
@@ -214,7 +231,7 @@
             schema:
               $component: "schemas:blood_sugar.yml:BloodSugar"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to
           modify them
         content:
@@ -222,10 +239,13 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   put:
+    security:
+      - OAuth2:
+        - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Update blood sugar measures"
-    description: >
+    description: |
       Update the blood sugar measures for the user with the specified UID and ID over the period
       between `start` and `end`.
 
@@ -244,7 +264,7 @@
             schema:
               $component: "schemas:blood_sugar.yml:BloodSugar"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to vie
            modify them
@@ -254,10 +274,13 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   delete:
+    security:
+      - OAuth2:
+        - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Remove blood sugar measures"
-    description: >
+    description: |
       Remove the blood sugar measure for the user with the specified UID over the period
       between `start` and `end`.
     parameters:
@@ -267,7 +290,7 @@
       204:
         description: "The blood sugar measures was removed"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to vie
           modify them
         content:
@@ -278,19 +301,19 @@
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get blood sugar calculations"
-    description: >
-      Get different calculations about the user's blood sugar over a period of time. 
+    description: |
+      Get different calculations about the user's blood sugar over a period of time.
       Calculations that are not requested will not appear in the resulting response.
 
-
-      If no `calcs` query parameters are provided, then all types of calculations will be returned. 
-
+      If no `calcs` query parameters are provided, then all types of calculations will be returned.
 
       In the case where multiple `calcs` QP are provided, they will be considered as a list and all requested calculations will be returned.
-
 
       Example: `/calculations?calcs=first&calcs=third&start=...` will return both first and third quartiles, but will omit the average.
     parameters:
@@ -305,25 +328,26 @@
             schema:
               $component: "schemas:blood_sugar_calculations.yml:BloodSugarCalculations"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
-
 "/v1/users/{uid}/blood_sugar/target":
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get blood sugar target time / percentage"
-    description: >
+    description: |
       Get the amount of time (as percentage or seconds) spent in the user's glycemia
       target, hyopglycemia and hyperglycemia
-
 
       This route will by default send the amount in percentage for each segment.
     parameters:
@@ -338,7 +362,7 @@
             schema:
               $component: "schemas:blood_sugar_target.yml:BloodSugarTarget"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to view
            them
@@ -352,12 +376,14 @@
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get all HbA1C measures"
-    description: >
+    description: |
       Get a list of all the HbA1C measure points of the user with the specified UID.
-
 
       Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
     parameters:
@@ -379,7 +405,7 @@
               items:
                 $component: "schemas:hba1c.yml:HbA1C"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
@@ -387,10 +413,13 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   post:
+    security:
+      - OAuth2:
+        - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Add HbA1C measure"
-    description: >
+    description: |
       Add an HbA1C measure for the user with the specified UID.
     requestBody:
       required: true
@@ -406,22 +435,25 @@
             schema:
               $component: "schemas:hba1c.yml:HbA1C"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to
           modify them
         content:
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
-"/v1/users/{uid}/hba1c/{id}":
+"/v1/users/{uid}/hba1c/{hba1c_id}":
   parameters:
     - $component: "parameters:uid.yml:UID"
     - $component: "parameters:hba1c_id.yml:HbA1CId"
   get:
+    security:
+      - OAuth2:
+        - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get HbA1C measure"
-    description: >
+    description: |
       Get the HbA1C measure for the user with the specified UID and ID.
     responses:
       200:
@@ -431,7 +463,7 @@
             schema:
               $component: "schemas:hba1c.yml:HbA1C"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to view
            them
@@ -441,10 +473,13 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   put:
+    security:
+      - OAuth2:
+        - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Update HbA1C measure"
-    description: >
+    description: |
       Update the HbA1C measure for the user with the specified UID and ID.
     requestBody:
       required: true
@@ -460,7 +495,7 @@
             schema:
               $component: "schemas:hba1c.yml:HbA1C"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to vie
            modify them
@@ -470,16 +505,19 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   delete:
+    security:
+      - OAuth2:
+        - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Remove HbA1C measure"
-    description: >
+    description: |
       Remove the HbA1C measure for the user with the specified UID and ID.
     responses:
       204:
         description: "The HbA1C measure was removed"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to vie
            modify them
@@ -493,12 +531,14 @@
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get all insulin injections"
-    description: >
+    description: |
       Get a list of all the insulin injections for the user with the specified UID.
-
 
       Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
     parameters:
@@ -521,7 +561,7 @@
               items:
                 $component: "schemas:insulin.yml:Insulin"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
@@ -529,10 +569,13 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   post:
+    security:
+      - OAuth2:
+        - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Add insulin injection"
-    description: >
+    description: |
       Add an insulin injection for the user with the specified UID.
     requestBody:
       required: true
@@ -548,22 +591,25 @@
             schema:
               $component: "schemas:insulin.yml:Insulin"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to
           modify them
         content:
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
-"/v1/users/{uid}/insulin/{id}":
+"/v1/users/{uid}/insulin/{insulin_id}":
   parameters:
     - $component: "parameters:uid.yml:UID"
     - $component: "parameters:insulin_id.yml:InsulinId"
   get:
+    security:
+      - OAuth2:
+        - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get insulin injection"
-    description: >
+    description: |
       Get the insulin injection for the user with the specified UID and ID.
     responses:
       200:
@@ -573,7 +619,7 @@
             schema:
               $component: "schemas:insulin.yml:Insulin"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to view
            them
@@ -583,10 +629,13 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   put:
+    security:
+      - OAuth2:
+        - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Update insulin injection"
-    description: >
+    description: |
       Update the insulin injection for the user with the specified UID and ID.
     requestBody:
       required: true
@@ -602,7 +651,7 @@
             schema:
               $component: "schemas:insulin.yml:Insulin"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to vie
            modify them
@@ -612,16 +661,19 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   delete:
+    security:
+      - OAuth2:
+        - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Remove insulin injection"
-    description: >
+    description: |
       Remove the insulin injection for the user with the specified UID and ID.
     responses:
       204:
         description: "The insulin injection was removed"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to vie
            modify them
@@ -634,39 +686,34 @@
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get insulin calculations"
-    description: >
-      Get different calculations about the user's insulin over a period of time. 
+    description: |
+      Get different calculations about the user's insulin over a period of time.
       Calculations that are not requested will not appear in the resulting response.
 
-
-      This route will disregard the hours provided in the time range, and will instead include both full days 
-      in it. For example : `start=2020-15-02T05:02:56` will become `2020-15-02T00:00:00` and 
+      This route will disregard the hours provided in the time range, and will instead include both full days
+      in it. For example : `start=2020-15-02T05:02:56` will become `2020-15-02T00:00:00` and
       `end=2020-15-19T13:27:42` will become `2020-15-19T23:59:59`
-
 
       The calculations are each represented by an array of 24 objects, each representing a 1 hour period,
       starting from 00h00 to 00:59 at index 0.
 
-
-      The `average` calculation will compute the average quantity of insulin injected per 1 hour period, per type, over 
+      The `average` calculation will compute the average quantity of insulin injected per 1 hour period, per type, over
       the given time range.
 
-
-      The `count` calculation will compute the total amount of injections per 1 hour period, per type, over 
+      The `count` calculation will compute the total amount of injections per 1 hour period, per type, over
       the given time range.
 
+      If no `calcs` query parameters are provided, then all types of calculations will be returned.
 
-      If no `calcs` query parameters are provided, then all types of calculations will be returned. 
-
-
-      If no `types` query parameters are provided, then all types of insulin will be included. 
-
+      If no `types` query parameters are provided, then all types of insulin will be included.
 
       In the case where multiple `calcs` or `types` QP are provided, they will be considered as a list and all requested calculations will be returned, or insulin types included.
-
 
       Example: `/calculations?types=slow&types=fast&start=...` will include both slow and fast calculations, but will omit very_fast injections.
     parameters:
@@ -682,7 +729,7 @@
             schema:
               $component: "schemas:insulin_calculations.yml:InsulinCalculations"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:

@@ -57,7 +57,7 @@ async function generateDocsSpec() {
                 if (m == null) {
                     throw new Error("Invalid component import string");
                 }
-                const type = m[1];
+                let type = m[1];
                 const file = m[2];
                 const component = m[3];
                 const subcomponent = m[4] || "";
@@ -73,6 +73,7 @@ async function generateDocsSpec() {
                 if (!componentCache.has(componentPath)) {
                     throw new Error(`Imported file "${path}" does not contain requested component ${componentPath}`);
                 }
+                if (type === "queries") { type = "parameters"; }
                 if (componentSpecs[type] === undefined) {
                     componentSpecs[type] = {};
                 }
@@ -113,6 +114,7 @@ async function generateDocsSpec() {
             ...pathSpecs,
         },
         components: {
+            ...baseSpec.components,
             ...componentSpecs,
         },
     };

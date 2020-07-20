@@ -2,10 +2,13 @@
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "predictions:new"
     tags:
       - "Predictions"
     summary: "Get new prediction"
-    description: >
+    description: |
       Get a new insulin injection prediction for the user with the specified UID.
     responses:
       200:
@@ -21,7 +24,7 @@
             schema:
               $component: "schemas:error.yml:ErrorPredictionsDisabled"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
@@ -32,10 +35,13 @@
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "predictions:new"
     tags:
       - "Predictions"
     summary: "Get prediction settings"
-    description: >
+    description: |
       Get the prediction settings for the user with the specified UID.
     responses:
       200:
@@ -45,7 +51,7 @@
             schema:
               $component: "schemas:prediction.yml:PredictionSettings"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
@@ -53,10 +59,13 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   put:
+    security:
+      - OAuth2:
+        - "predictions:settings"
     tags:
       - "Predictions"
     summary: "Update prediction settings"
-    description: >
+    description: |
       Update the prediction settings for the user with the specified UID.
     requestBody:
       required: true
@@ -72,7 +81,7 @@
             schema:
               $component: "schemas:prediction.yml:PredictionSettings"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to modify
           them
         content:

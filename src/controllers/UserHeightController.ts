@@ -16,7 +16,7 @@ import { HeightService } from "../services";
 export class UserHeightController {
 
     @Get("/")
-    @Authorized("user.biometrics:read")
+    @Authorized("biometrics:read")
     public async getHeightHistory(@Param("uid") uid: string,
                                   @QueryParams() p: Pageable,
                                   @QueryParams() t: Timeable,

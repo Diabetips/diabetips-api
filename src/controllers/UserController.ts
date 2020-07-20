@@ -30,13 +30,13 @@ export class UserController {
     }
 
     @Get("/:uid")
-    @Authorized("user.profile:read")
+    @Authorized("profile:read")
     public async getUser(@Param("uid") uid: string) {
         return UserService.getUser(uid);
     }
 
     @Put("/:uid")
-    @Authorized("user.profile:write")
+    @Authorized("profile:write")
     public async updateUser(@Param("uid") uid: string, @Body() req: UserUpdateReq) {
         return UserService.updateUser(uid, req);
     }

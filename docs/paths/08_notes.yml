@@ -2,12 +2,14 @@
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "notes:read"
     tags:
       - "Notes"
     summary: "Get all notes of the specified user"
-    description: >
+    description: |
       Get a list of all the notes of the user with the specified UID.
-
 
       Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
     parameters:
@@ -29,7 +31,7 @@
               items:
                 $component: "schemas:note.yml:Note"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
@@ -37,10 +39,13 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   post:
+    security:
+      - OAuth2:
+        - "notes:write"
     tags:
       - "Notes"
     summary: "Create a note"
-    description: >
+    description: |
       Create a note for the user with the specified UID.
     requestBody:
       required: true
@@ -60,10 +65,13 @@
     - $component: "parameters:uid.yml:UID"
     - $component: "parameters:note_id.yml:NoteId"
   get:
+    security:
+      - OAuth2:
+        - "notes:read"
     tags:
       - "Notes"
     summary: "Get user's note"
-    description: >
+    description: |
       Get the note of the user with the specified UID and ID.
     responses:
       200:
@@ -73,7 +81,7 @@
             schema:
               $component: "schemas:note.yml:Note"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to view
            them
@@ -83,12 +91,14 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   put:
+    security:
+      - OAuth2:
+        - "notes:write"
     tags:
       - "Notes"
     summary: "Update note"
-    description: >
+    description: |
       Update the note of the user with the specified UID and ID.
-
 
       Not all fields of the request body are required, only the fields that should be updated must be present.
     requestBody:
@@ -105,7 +115,7 @@
             schema:
               $component: "schemas:note.yml:Note"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to modify
            them
@@ -115,16 +125,19 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   delete:
+    security:
+      - OAuth2:
+        - "notes:write"
     tags:
       - "Notes"
     summary: "Remove note"
-    description: >
+    description: |
       Delete the note of the user with the specified UID and ID.
     responses:
       204:
         description: "The note was removed"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to vie
            modify them
@@ -137,12 +150,14 @@
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "notes:read"
     tags:
       - "Notes"
     summary: "Get all events of the specified user"
-    description: >
+    description: |
       Get a list of all the events of the user with the specified UID.
-
 
       Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
     parameters:
@@ -164,7 +179,7 @@
               items:
                 $component: "schemas:event.yml:Event"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
@@ -172,10 +187,13 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   post:
+    security:
+      - OAuth2:
+        - "notes:write"
     tags:
       - "Notes"
     summary: "Create an event"
-    description: >
+    description: |
       Create an event for the user with the specified UID.
     requestBody:
       required: true
@@ -195,10 +213,13 @@
     - $component: "parameters:uid.yml:UID"
     - $component: "parameters:event_id.yml:EventId"
   get:
+    security:
+      - OAuth2:
+        - "notes:read"
     tags:
       - "Notes"
     summary: "Get user's event"
-    description: >
+    description: |
       Get the event of the user with the specified UID and ID.
     responses:
       200:
@@ -208,7 +229,7 @@
             schema:
               $component: "schemas:event.yml:Event"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to view
            them
@@ -218,12 +239,14 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   put:
+    security:
+      - OAuth2:
+        - "notes:write"
     tags:
       - "Notes"
     summary: "Update event"
-    description: >
+    description: |
       Update the event of the user with the specified UID and ID.
-
 
       Not all fields of the request body are required, only the fields that should be updated must be present.
     requestBody:
@@ -240,7 +263,7 @@
             schema:
               $component: "schemas:event.yml:Event"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to modify
            them
@@ -250,16 +273,19 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   delete:
+    security:
+      - OAuth2:
+        - "notes:write"
     tags:
       - "Notes"
     summary: "Remove event"
-    description: >
+    description: |
       Delete the event of the user with the specified UID and ID.
     responses:
       204:
         description: "The event was removed"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to vie
            modify them

@@ -13,32 +13,32 @@ import { HttpStatus } from "./HttpStatus";
 import { Utils } from "./Utils";
 import { User } from "../entities";
 
-export type AuthScope = "app:read"
-    | "app:write"
-    | "auth:authorize"
+export type AuthScope = "auth:authorize"
     | "auth:confirm"
     | "auth:reset"
     | "auth:reset2"
-    | "food:read"
+    | "apps:read"
+    | "apps:write"
+    | "biometrics:read"
+    | "biometrics:write"
+    | "connections:read"
+    | "connections:write"
+    | "dev_apps:read"
+    | "dev_apps:write"
+    | "food"
+    | "meals:read"
+    | "meals:write"
+    | "notes:read"
+    | "notes:write"
+    | "notifications"
+    | "predictions:new"
+    | "predictions:settings"
+    | "profile:read"
+    | "profile:write"
     | "recipe:read"
     | "recipe:write"
     | "user:create"
     | "user:delete"
-    | "user.apps:read"
-    | "user.apps:write"
-    | "user.biometrics:read"
-    | "user.biometrics:write"
-    | "user.connections:read"
-    | "user.connections:write"
-    | "user.meals:read"
-    | "user.meals:write"
-    | "user.notes:read"
-    | "user.notes:write"
-    | "user.notifications"
-    | "user.predictions:new"
-    | "user.predictions:settings"
-    | "user.profile:read"
-    | "user.profile:write"
     | "special:admin"
     | "special:diaby"
     | "special:support";
@@ -87,32 +87,32 @@ function userChecker(options: UserCheckerOptions = {}): AuthChecker {
 }
 
 export const AuthScopes: { [key in AuthScope]: AuthScopeInfo } = {
-    "app:read":                  { target: "user", restricted: true }, // checker = (p == app.owner)
-    "app:write":                 { target: "user", restricted: true }, // checker = (p == app.owner)
     "auth:authorize":            { target: "app", restricted: true },
     "auth:confirm":              { target: "app", restricted: true },
     "auth:reset":                { target: "app" },
     "auth:reset2":               { target: "app", restricted: true },
-    "food:read":                 { target: "app" },
+    "apps:read":                 { target: "user", restricted: true, checker: userChecker() },
+    "apps:write":                { target: "user", restricted: true, checker: userChecker() },
+    "biometrics:read":           { target: "user", checker: userChecker({ extendToConnections: true }) },
+    "biometrics:write":          { target: "user", checker: userChecker({ extendToConnections: true }) },
+    "connections:read":          { target: "user", checker: userChecker() },
+    "connections:write":         { target: "user", restricted: true, checker: userChecker() },
+    "dev_apps:read":             { target: "user", restricted: true }, // checker = (p == app.owner)
+    "dev_apps:write":            { target: "user", restricted: true }, // checker = (p == app.owner)
+    "food":                      { target: "app" },
+    "meals:read":                { target: "user", checker: userChecker({ extendToConnections: true }) },
+    "meals:write":               { target: "user", checker: userChecker() },
+    "notes:read":                { target: "user", checker: userChecker() },
+    "notes:write":               { target: "user", checker: userChecker() },
+    "notifications":             { target: "user", checker: userChecker() },
+    "predictions:new":           { target: "user", checker: userChecker() },
+    "predictions:settings":      { target: "user", restricted: true, checker: userChecker({ direct: false, extendToConnections: true }) },
+    "profile:read":              { target: "user", implicit: true, checker: userChecker({ extendToConnections: true }) },
+    "profile:write":             { target: "user", checker: userChecker() },
     "recipe:read":               { target: "user" },
     "recipe:write":              { target: "user" },
     "user:create":               { target: "app" },
     "user:delete":               { target: "user", checker: userChecker() },
-    "user.apps:read":            { target: "user", restricted: true, checker: userChecker() },
-    "user.apps:write":           { target: "user", restricted: true, checker: userChecker() },
-    "user.biometrics:read":      { target: "user", checker: userChecker({ extendToConnections: true }) },
-    "user.biometrics:write":     { target: "user", checker: userChecker({ extendToConnections: true }) },
-    "user.connections:read":     { target: "user", checker: userChecker() },
-    "user.connections:write":    { target: "user", checker: userChecker() },
-    "user.meals:read":           { target: "user", checker: userChecker({ extendToConnections: true }) },
-    "user.meals:write":          { target: "user", checker: userChecker() },
-    "user.notes:read":           { target: "user", checker: userChecker() },
-    "user.notes:write":          { target: "user", checker: userChecker() },
-    "user.notifications":        { target: "user", checker: userChecker() },
-    "user.predictions:new":      { target: "user", checker: userChecker() },
-    "user.predictions:settings": { target: "user", restricted: true, checker: userChecker({ direct: false, extendToConnections: true }) },
-    "user.profile:read":         { target: "user", implicit: true, checker: userChecker({ extendToConnections: true }) },
-    "user.profile:write":        { target: "user", checker: userChecker() },
     "special:admin":             { target: "user", implicit: true, restricted: true },
     "special:diaby":             { target: "app", restricted: true },
     "special:support":           { target: "user", implicit: true, restricted: true },

@@ -19,7 +19,7 @@ import { UserService } from "../services";
 export class UserNotificationController {
 
     @Get("/")
-    @Authorized("user.notifications")
+    @Authorized("notifications")
     public async getAllNotifications(@Param("uid") uid: string, @QueryParams() p: Pageable, @Res() res: Response) {
         const page = await NotificationService.getAllNotifications(uid, p);
         return page.send(res);
@@ -36,13 +36,13 @@ export class UserNotificationController {
     }
 
     @Post("/fcm_token")
-    @Authorized("user.notifications")
+    @Authorized("notifications")
     public async registerFcmToken(@Param("uid") uid: string, @Body() req: NotificationFcmTokenRegisterReq) {
         await NotificationService.registerFcmToken(uid, req);
     }
 
     @Delete("/:id")
-    @Authorized("user.notifications")
+    @Authorized("notifications")
     public async markNotificationRead(@Param("uid") uid: string, @Param("id") notifId: string) {
         await NotificationService.markNotificationRead(uid, notifId);
     }

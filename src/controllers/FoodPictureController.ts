@@ -16,7 +16,7 @@ export class FoodPictureController {
 
     @Get("/")
     @ContentType("jpeg")
-    @Authorized("food:read")
+    @Authorized("food")
     public async getFoodPicture(@Param("id") id: number) {
         return FoodPictureService.getFoodPicture(id);
     }

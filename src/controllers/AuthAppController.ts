@@ -15,13 +15,13 @@ import { AuthAppService } from "../services";
 export class AuthAppController {
 
     @Get("/")
-    @Authorized("app:read")
+    @Authorized("dev_apps:read")
     public async getAllApps() {
         return AuthAppService.getAllApps();
     }
 
     @Get("/:appid")
-    @Authorized("app:read")
+    @Authorized("dev_apps:read")
     public async getApp(@Param("appid") appid: string) {
         return AuthAppService.getApp(appid);
     }
