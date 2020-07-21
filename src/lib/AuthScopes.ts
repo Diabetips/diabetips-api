@@ -87,10 +87,10 @@ function userChecker(options: UserCheckerOptions = {}): AuthChecker {
 }
 
 export const AuthScopes: { [key in AuthScope]: AuthScopeInfo } = {
-    "auth:authorize":            { target: "app", restricted: true },
-    "auth:confirm":              { target: "app", restricted: true },
+    "auth:authorize":            { target: "app",  restricted: true },
+    "auth:confirm":              { target: "app",  restricted: true },
     "auth:reset":                { target: "app" },
-    "auth:reset2":               { target: "app", restricted: true },
+    "auth:reset2":               { target: "app",  restricted: true },
     "apps:read":                 { target: "user", restricted: true, checker: userChecker() },
     "apps:write":                { target: "user", restricted: true, checker: userChecker() },
     "biometrics:read":           { target: "user", checker: userChecker({ extendToConnections: true }) },
@@ -111,9 +111,9 @@ export const AuthScopes: { [key in AuthScope]: AuthScopeInfo } = {
     "profile:write":             { target: "user", checker: userChecker() },
     "recipe:read":               { target: "user" },
     "recipe:write":              { target: "user" },
-    "user:create":               { target: "app" },
-    "user:delete":               { target: "user", checker: userChecker() },
+    "user:create":               { target: "app",  restricted: true },
+    "user:delete":               { target: "user", restricted: true, checker: userChecker() },
     "special:admin":             { target: "user", implicit: true, restricted: true },
-    "special:diaby":             { target: "app", restricted: true },
+    "special:diaby":             { target: "app",  restricted: true },
     "special:support":           { target: "user", implicit: true, restricted: true },
 };

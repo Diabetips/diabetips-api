@@ -91,17 +91,17 @@ tags:
       | profile:write             | Edit user profile               | user   | ✘        | ✘         |
       | recipe:read               | Access recipe data              | user   | ✘        | ✘         |
       | recipe:write              | Edit recipe data                | user   | ✘        | ✘         |
-      | user:create               | Register user account           | app    | ✔        | ✘         |
-      | user:delete               | Deactivate user account         | user   | ✘        | ✘         |
+      | user:create               | Register user account           | app    | ✔        | ✔         |
+      | user:delete               | Deactivate user account         | user   | ✘        | ✔         |
 
        * Target indicates whether the scope requires authorization through client credentials (app) or an user access
          token (user).
        * Implicit scopes are automatically granted and can be omitted in authorization requests.
        * Restricted scopes can only be granted to approved applications and/or users.
 
-      Client credentials (client ID and secret) are issued when registering an application (3rd party application
-      registration is not available at the moment). They can be used as username and password with a `Authorization:
-      Basic ...` header to authorize requests.
+      Client credentials (client ID and secret) are issued when registering an application, please note that 3rd party
+      application registration is not open at the moment. They can be used as username and password with a standard
+      `Authorization: Basic ...` header to authorize requests.
 
       Access tokens can be obtained via the OAuth flow that is most appropriate for your type of application. This API
       supports the following OAuth 2 grants:
