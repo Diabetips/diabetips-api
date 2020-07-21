@@ -46,7 +46,7 @@ export class User extends BaseEntityHiddenId {
     @Column({ name: "password", length: 100, select: false })
     private _password?: string;
 
-    @Column({ name: "extra_scopes", type: "simple-array", select: false, default: "" })
+    @Column({ name: "extra_scopes", type: "simple-array", default: "" })
     private _extra_scopes: string[];
 
     @Column({ length: 10 })
