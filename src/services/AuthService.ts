@@ -120,6 +120,11 @@ export class AuthService extends BaseService {
 
     public static async checkScopesAuthorized(auth: AuthInfo | undefined, params: { [key: string]: string }, scopes: AuthScope[]): Promise<void> {
         try {
+            if (auth != null && (
+                (auth.type === "user" && auth.scopes.includes("special:admin")) ||
+                (auth.type === "app" && auth.app.extra_scopes.includes("special:diaby")))) {
+                return;
+            }
             await Promise.all(scopes.map(async (scope) => {
                 if (!AuthScopes.hasOwnProperty(scope)) {
                     throw new Error(`Invalid scope name '${scope}'`);

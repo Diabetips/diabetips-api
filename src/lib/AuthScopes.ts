@@ -113,7 +113,7 @@ export const AuthScopes: Record<AuthScope, AuthScopeInfo> = {
     "recipe:write":              { target: "user" },
     "user:create":               { target: "app",  restricted: true },
     "user:delete":               { target: "user", restricted: true, checker: userChecker() },
-    "special:admin":             { target: "user", implicit: true, restricted: true },
+    "special:admin":             { target: "user", restricted: true },
+    "special:support":           { target: "user", restricted: true },
     "special:diaby":             { target: "app",  restricted: true },
-    "special:support":           { target: "user", implicit: true, restricted: true },
 };
