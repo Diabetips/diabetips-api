@@ -7,6 +7,8 @@
 */
 
 import { Body, Get, JsonController, Param, Put } from "routing-controllers";
+
+import { Authorized } from "../lib";
 import { BiometricUpdateReq} from "../requests";
 import { BiometricService } from "../services";
 
@@ -14,11 +16,13 @@ import { BiometricService } from "../services";
 export class BiometricController {
 
     @Get("/")
+    @Authorized("biometrics:read")
     public async getUserBiometric(@Param("uid") uid: string) {
         return BiometricService.getUserBiometric(uid);
     }
 
     @Put("/")
+    @Authorized("biometrics:write")
     public async updateUserBiometric(@Param("uid") uid: string, @Body() body: BiometricUpdateReq) {
         return BiometricService.updateUserBiometric(uid, body);
     }

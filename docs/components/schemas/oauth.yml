@@ -1,0 +1,49 @@
+OAuth2GrantType:
+  type: "string"
+  enum: ["authorization_code", "password", "refresh_token"]
+  description: "Type of grant needed"
+OAuth2AuthCodeGrant:
+  type: "object"
+  required:
+    - grant_type
+  properties:
+    grant_type:
+      $component: "schemas:oauth.yml:OAuth2GrantType"
+    code:
+      type: "string"
+      description: "Authorization code obtained via the authorization endpoint"
+      example: "1a673907-94ed-43d8-9fa8-52008687ec1d"
+    redirect_uri:
+      type: "string"
+      description: "URI callback from the authorization request"
+      example: "https://client.example.com/cb"
+OAuth2PasswordGrant:
+  type: "object"
+  required:
+    - grant_type
+  properties:
+    grant_type:
+      $component: "schemas:oauth.yml:OAuth2GrantType"
+    username:
+      type: "string"
+      description: "The user's email address"
+      example: "user@example.com"
+    password:
+      type: "string"
+      description: "The user's password"
+      example: "************"
+    scope:
+      type: "string"
+      description: "List of scopes to authorize, separated with spaces"
+      example: "profile:write notifications"
+OAuth2Refresh:
+  type: "object"
+  required:
+    - grant_type
+  properties:
+    grant_type:
+      $component: "schemas:oauth.yml:OAuth2GrantType"
+    refresh_token:
+      type: "string"
+      description: "A valid refresh token"
+      example: "NzEzYjNjMjItY2...hYTE3LTE4ZTMyYjE1MzU4Mg=="

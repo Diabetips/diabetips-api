@@ -15,8 +15,8 @@ import { QueryFailedError } from "typeorm";
 
 import { config } from "./config";
 import { getDocsSpec } from "./docs";
-import { ApiError, ValidationError } from "./errors";
-import { Context, HttpStatus, Utils } from "./lib";
+import { ApiError, AuthError, ValidationError } from "./errors";
+import { AuthScope, Context, HttpStatus, Utils } from "./lib";
 import { WsApp, bindLogger as wsBindLogger } from "./lib/ws";
 import { httpLogger, log4js, logger, wsLogger } from "./logger";
 import { AuthService } from "./services";
@@ -34,13 +34,25 @@ preapp.use(log4js.connectLogger(httpLogger, {
     format: ":remote-addr > \":method :url\" > :status :content-lengthB :response-timems",
 }));
 
+async function buildContext(action: Action): Promise<Context> {
+    return {
+        auth: await AuthService.decodeAuthorization(action.request.header("Authorization")),
+    };
+}
+
 // Setup routing-controllers
 export const app = useExpressServer(preapp, {
+    authorizationChecker: (async (action: Action, scopes: AuthScope[]): Promise<boolean> => {
+        const ctx = await buildContext(action);
+        action.context = ctx; // cache our context for ctxBuilder
+        await AuthService.checkScopesAuthorized(ctx.auth, action.request.params || {}, scopes);
+        return true;
+    }),
     ctxBuilder: (async (action: Action): Promise<Context> => {
-        // both set context in req and return to rounting-controllers
-        return {
-            auth: await AuthService.decodeAuthorization(action.request.header("Authorization")),
-        };
+        if (action.context !== undefined) {
+            return action.context;
+        }
+        return buildContext(action);
     }),
     controllers: [ `${__dirname}/controllers/**/*.{js,ts}` ],
     cors: {
@@ -64,7 +76,7 @@ export const app = useExpressServer(preapp, {
 // Static routes
 app.get("/", (req: Request, res: Response) => {
     res.send({
-        documentation_url: "https://docs.diabetips.fr/",
+        documentation_url: `https://docs.${config.env === "dev" ? "dev." : ""}diabetips.fr/`,
     });
 });
 app.get("/openapi.yml", getDocsSpec);
@@ -83,6 +95,9 @@ function convertError(err: Error): ApiError {
     }
 
     // Convert common errors
+    if (err instanceof AuthError) {
+        return new ApiError(HttpStatus.BAD_REQUEST, "invalid_auth", err.message);
+    }
     if (err instanceof BadRequestError) {
         return new ValidationError(err);
     }

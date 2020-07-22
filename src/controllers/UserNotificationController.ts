@@ -9,7 +9,7 @@
 import { Response } from "express";
 import { Delete, Get, JsonController, Param, QueryParams, Res, Post, Body } from "routing-controllers";
 
-import { Pageable } from "../lib";
+import { Authorized, Pageable } from "../lib";
 import { NotificationFcmTokenRegisterReq } from "../requests";
 import { NotificationService } from "../services";
 
@@ -19,11 +19,13 @@ import { UserService } from "../services";
 export class UserNotificationController {
 
     @Get("/")
+    @Authorized("notifications")
     public async getAllNotifications(@Param("uid") uid: string, @QueryParams() p: Pageable, @Res() res: Response) {
         const page = await NotificationService.getAllNotifications(uid, p);
         return page.send(res);
     }
 
+    // DEBUG
     @Get("/test")
     public async test(@Param("uid") uid: string) {
         const user = await UserService.getUser(uid);
@@ -34,11 +36,13 @@ export class UserNotificationController {
     }
 
     @Post("/fcm_token")
+    @Authorized("notifications")
     public async registerFcmToken(@Param("uid") uid: string, @Body() req: NotificationFcmTokenRegisterReq) {
         await NotificationService.registerFcmToken(uid, req);
     }
 
     @Delete("/:id")
+    @Authorized("notifications")
     public async markNotificationRead(@Param("uid") uid: string, @Param("id") notifId: string) {
         await NotificationService.markNotificationRead(uid, notifId);
     }

@@ -8,17 +8,20 @@
 
 import { Get, JsonController, Param } from "routing-controllers";
 
+import { Authorized } from "../lib";
 import { AuthAppService } from "../services";
 
 @JsonController("/v1/auth/apps")
 export class AuthAppController {
 
     @Get("/")
+    @Authorized("dev_apps:read")
     public async getAllApps() {
         return AuthAppService.getAllApps();
     }
 
     @Get("/:appid")
+    @Authorized("dev_apps:read")
     public async getApp(@Param("appid") appid: string) {
         return AuthAppService.getApp(appid);
     }

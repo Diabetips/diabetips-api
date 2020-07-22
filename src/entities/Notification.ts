@@ -27,10 +27,7 @@ export class Notification extends BaseEntity {
     @Column()
     public type: string;
 
-    @Column({ type: "text", transformer: {
-        from: JSON.parse,
-        to: (obj) => JSON.stringify(obj, Utils.jsonReplacer)
-    }})
+    @Column({ type: "simple-json" })
     public data: any;
 
     @ManyToOne((type) => User, (user) => user.notifications, { cascade: true })

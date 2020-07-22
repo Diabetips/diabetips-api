@@ -9,16 +9,16 @@
 import { Response } from "express";
 import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
 
-import { Pageable, Timeable } from "../lib";
-import { BloodSugarCreateReq, BloodSugarUpdateReq, TimeRangeReq, BloodSugarTargetFormatReq } from "../requests";
-import { BloodSugarService } from "../services";
-import { BloodSugarCalculationReq } from "../requests/BloodSugarCalculationReq";
 import { BloodSugarCalculationType } from "../entities";
+import { Authorized, Pageable, Timeable } from "../lib";
+import { BloodSugarCalculationReq, BloodSugarCreateReq, BloodSugarTargetFormatReq, BloodSugarUpdateReq, TimeRangeReq } from "../requests";
+import { BloodSugarService } from "../services";
 
 @JsonController("/v1/users/:uid/blood_sugar")
 export class UserBloodSugarController {
 
     @Get("/")
+    @Authorized("biometrics:read")
     public async getAllUserBloodSugar(@QueryParams() p: Pageable,
                                       @QueryParams() t: Timeable,
                                       @Param("uid") uid: string,
@@ -28,23 +28,27 @@ export class UserBloodSugarController {
     }
 
     @Post("/")
+    @Authorized("biometrics:write")
     public async addUserBloodSugar(@Param("uid") uid: string,
                                    @Body() body: BloodSugarCreateReq) {
         return BloodSugarService.addBloodSugar(uid, body);
     }
 
     @Get("/last")
+    @Authorized("biometrics:read")
     public async getLastUserBloodSugar(@Param("uid") uid: string) {
         return BloodSugarService.getLastBloodSugar(uid);
     }
 
     @Put("/")
+    @Authorized("biometrics:write")
     public async updateUserBloodSugar(@Param("uid") uid: string,
                                       @Body() body: BloodSugarUpdateReq) {
         return BloodSugarService.updateBloodSugar(uid, body);
     }
 
     @Delete("/")
+    @Authorized("biometrics:write")
     public async deleteUserBloodSugar(@Param("uid") uid: string,
                                       @QueryParams() req: TimeRangeReq) {
         await BloodSugarService.deleteBloodSugar(uid, req);
@@ -53,6 +57,7 @@ export class UserBloodSugarController {
     // ----- Calculations -----
 
     @Get("/calculations")
+    @Authorized("biometrics:read")
     public async getBloodSugarCalculations(@Param("uid") uid: string,
                                            @QueryParams() t: TimeRangeReq,
                                            @QueryParams() { calcs }: BloodSugarCalculationReq) {
@@ -62,6 +67,7 @@ export class UserBloodSugarController {
     }
 
     @Get("/target")
+    @Authorized("biometrics:read")
     public async getBloodSugarTarget(@Param("uid") uid: string,
                                      @QueryParams() t: TimeRangeReq,
                                      @QueryParams() f: BloodSugarTargetFormatReq) {

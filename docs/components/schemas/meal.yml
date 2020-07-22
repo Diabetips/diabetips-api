@@ -27,10 +27,8 @@ Meal:
       description: "The meal's recipes"
       items:
         $component: "schemas:meal_recipe.yml:MealRecipe"
-      required: false
     "foods":
       type: "array"
       description: "The meal's foods"
       items:
         $component: "schemas:meal_food.yml:MealFood"
-      required: false

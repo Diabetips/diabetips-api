@@ -6,7 +6,6 @@
 ** Created by Arthur MELIN on Sun Feb 23 2020
 */
 
-import { AuthInfo } from "../lib";
 import { WSHandler } from "../lib/ws";
 import { NotificationService } from "../services";
 
@@ -15,11 +14,12 @@ import { AuthenticatedWebSocket } from "./utils/AuthenticatedWebSocket";
 @WSHandler("/v1/users/:uid/notifications")
 export class NotificationsWebSocket extends AuthenticatedWebSocket {
 
-    public async onAuthenticated(auth: AuthInfo) {
-        if (auth.type === "user" && this.params.uid === "me") {
+    public async onAuthenticated() {
+        const auth = this.auth!;
+        if (auth!.type === "user" && this.params.uid === "me") {
             this.params.uid = auth.uid;
         }
-        // TODO check access rights
+        await this.checkAuthorized("user.notifications");
         await NotificationService.registerWsClient(this.params.uid, this);
     }
 
