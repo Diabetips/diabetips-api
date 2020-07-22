@@ -19,7 +19,7 @@ export class NotificationsWebSocket extends AuthenticatedWebSocket {
         if (auth!.type === "user" && this.params.uid === "me") {
             this.params.uid = auth.uid;
         }
-        await this.checkAuthorized("user.notifications");
+        await this.checkAuthorized("notifications");
         await NotificationService.registerWsClient(this.params.uid, this);
     }
 

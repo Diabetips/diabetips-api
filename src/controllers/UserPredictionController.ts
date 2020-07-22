@@ -16,19 +16,19 @@ import { PredictionSettingsUpdateReq } from "../requests";
 export class UserPredictionController {
 
     @Get("/predict")
-    @Authorized("user.predictions:new")
+    @Authorized("predictions:new")
     public async getNewPrediction(@Param("uid") uid: string) {
         return PredictionService.getNewPrediction(uid);
     }
 
     @Get("/settings")
-    @Authorized("user.predictions:new")
+    @Authorized("predictions:new")
     public async getPredictionSettings(@Param("uid") uid: string) {
         return PredictionService.getPredictionSettings(uid);
     }
 
     @Put("/settings")
-    @Authorized("user.predictions:settings")
+    @Authorized("predictions:settings")
     public async updatePredictionSettings(@Param("uid") uid: string, @Body() req: PredictionSettingsUpdateReq) {
         return PredictionService.updatePredictionSettings(uid, req);
     }

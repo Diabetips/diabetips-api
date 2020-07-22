@@ -86,7 +86,7 @@ function userChecker(options: UserCheckerOptions = {}): AuthChecker {
     };
 }
 
-export const AuthScopes: { [key in AuthScope]: AuthScopeInfo } = {
+export const AuthScopes: Record<AuthScope, AuthScopeInfo> = {
     "auth:authorize":            { target: "app",  restricted: true },
     "auth:confirm":              { target: "app",  restricted: true },
     "auth:reset":                { target: "app" },
