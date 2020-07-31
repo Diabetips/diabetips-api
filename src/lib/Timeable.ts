@@ -11,11 +11,13 @@ import { IsDate, ValidateIf } from "class-validator";
 import { SelectQueryBuilder } from "typeorm";
 
 export class Timeable {
+    // conditional IsOptional
     @ValidateIf((t) => t.start !== undefined  || t.constructor !== Timeable)
     @IsDate()
     @Type(() => Date)
     public start?: Date;
 
+    // conditional IsOptional
     @ValidateIf((t) => t.end !== undefined  || t.constructor !== Timeable)
     @IsDate()
     @Type(() => Date)
