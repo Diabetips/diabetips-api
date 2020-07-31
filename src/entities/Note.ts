@@ -6,16 +6,17 @@
 ** Created by Alexandre DE BEAUMONT on Mon May 18 2020
 */
 
-import { Column, ManyToOne, JoinColumn, Entity } from "typeorm";
+import { Column, Entity, ManyToOne, JoinColumn } from "typeorm";
+
+import { Page, Pageable, Timeable, Utils } from "../lib";
+
+import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
 import { User } from ".";
-import { Pageable, Timeable, Page, Utils } from "../lib";
-import { IBaseQueryOptions } from "./BaseEntityHiddenId";
-import { BaseEntity } from "./BaseEntity";
 
 @Entity()
 export class Note extends BaseEntity {
     @Column()
-    public timestamp: number;
+    public time: Date;
 
     @Column({ length: 500 })
     public description: string;
@@ -33,7 +34,7 @@ export class Note extends BaseEntity {
             .createQueryBuilder("note")
             .leftJoin("note.user", "user")
             .where("user.uid = :userUid", { userUid })
-            .orderBy("note.timestamp", "DESC");
+            .orderBy("note.time", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb

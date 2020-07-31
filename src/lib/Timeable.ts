@@ -22,7 +22,7 @@ export class Timeable {
     public end?: number;
 
     public applyTimeRange<T>(qb: SelectQueryBuilder<T>, isPeriod: boolean = false): SelectQueryBuilder<T> {
-        const val = qb.alias + (isPeriod ? ".start" : ".timestamp")
+        const val = qb.alias + (isPeriod ? ".start" : ".time")
 
         qb = this.start === undefined ? qb : qb.andWhere(`:start <= ${val}`, { start: this.start });
         qb = this.end === undefined ? qb : qb.andWhere(`${val} <= :end`, { end: this.end });
