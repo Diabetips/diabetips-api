@@ -34,11 +34,12 @@ export class BloodSugarService extends BaseService {
         }
 
         const bsBuilders = req.measures.map(async (m, idx) => {
-            let bs = await BloodSugar.findByTime(uid, req.start);
+            const time = new Date(req.start.getTime() + idx * req.interval * 1000);
+            let bs = await BloodSugar.findByTime(uid, time);
             if (bs == null) {
                 bs = new BloodSugar();
             }
-            bs.time = new Date(req.start.getTime() + idx * req.interval);
+            bs.time = time;
             bs.value = m;
             bs.user = Promise.resolve(user);
 
@@ -56,10 +57,11 @@ export class BloodSugarService extends BaseService {
         }
 
         const bsBuilders = req.measures.map(async (m, idx) => {
-            let bs = await BloodSugar.findByTime(uid, req.start);
+            const time = new Date(req.start.getTime() + idx * req.interval * 1000);
+            let bs = await BloodSugar.findByTime(uid, time);
             if (bs == null) {
                 bs = new BloodSugar();
-                bs.time = new Date(req.start.getTime() + idx * req.interval);
+                bs.time = time;
                 bs.user = Promise.resolve(user);
             }
 

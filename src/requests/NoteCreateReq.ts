@@ -6,11 +6,12 @@
 ** Created by Alexandre DE BEAUMONT on Mon May 18 2020
 */
 
-import { IsISO8601, IsString, Length } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDate, IsString, Length } from "class-validator";
 
 export class NoteCreateReq {
-    @IsString()
-    @IsISO8601()
+    @IsDate()
+    @Type(() => Date)
     public time: Date;
 
     @IsString()

@@ -6,12 +6,13 @@
 ** Created by Alexandre DE BEAUMONT on Mon May 18 2020
 */
 
-import { IsISO8601, IsString, IsOptional, Length } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDate, IsString, IsOptional, Length } from "class-validator";
 
 export class NoteUpdateReq {
-    @IsString()
-    @IsISO8601()
+    @IsDate()
     @IsOptional()
+    @Type(() => Date)
     public time?: Date;
 
     @IsString()

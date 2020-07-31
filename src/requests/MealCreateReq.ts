@@ -7,7 +7,7 @@
 */
 
 import { Type } from "class-transformer";
-import { IsArray, IsISO8601, IsOptional, IsString, ValidateNested } from "class-validator";
+import { IsArray, IsDate, IsOptional, IsString, ValidateNested } from "class-validator";
 
 import { MealFoodReq, MealRecipeReq } from ".";
 
@@ -27,7 +27,7 @@ export class MealCreateReq {
     @Type(() => MealFoodReq)
     public foods?: MealFoodReq[];
 
-    @IsString()
-    @IsISO8601()
+    @IsDate()
+    @Type(() => Date)
     public time: Date;
 }

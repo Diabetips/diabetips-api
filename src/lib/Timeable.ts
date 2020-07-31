@@ -6,19 +6,19 @@
 ** Created by Alexandre DE BEAUMONT on Sat Mar 14 2020
 */
 
-import { IsString, Min, IsOptional, IsISO8601 } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDate, IsOptional } from "class-validator";
 import { SelectQueryBuilder } from "typeorm";
-import { TimeRangeReq } from "../requests";
 
 export class Timeable {
     @IsOptional()
-    @IsString()
-    @IsISO8601()
+    @IsDate()
+    @Type(() => Date)
     public start?: Date;
 
     @IsOptional()
-    @IsString()
-    @IsISO8601()
+    @IsDate()
+    @Type(() => Date)
     public end?: Date;
 
     public applyTimeRange<T>(qb: SelectQueryBuilder<T>, isPeriod: boolean = false): SelectQueryBuilder<T> {

@@ -6,14 +6,15 @@
 ** Created by Arthur MELIN on Wed Feb 26 2020
 */
 
-import { IsEnum, IsISO8601, IsNumber, IsOptional, IsPositive, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsEnum, IsDate, IsNumber, IsOptional, IsPositive, IsString } from "class-validator";
 
 import { InsulinType } from "../entities";
 
 export class InsulinUpdateReq {
     @IsOptional()
-    @IsString()
-    @IsISO8601()
+    @IsDate()
+    @Type(() => Date)
     public time?: Date;
 
     @IsOptional()

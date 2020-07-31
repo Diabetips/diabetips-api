@@ -6,11 +6,12 @@
 ** Created by Alexandre DE BEAUMONT on Fri Feb 28 2020
 */
 
-import { ArrayNotEmpty, IsArray, IsInt, IsISO8601, IsPositive, IsString, Max, Min } from "class-validator";
+import { Type } from "class-transformer";
+import { ArrayNotEmpty, IsArray, IsInt, IsDate, IsPositive, Max, Min } from "class-validator";
 
 export class BloodSugarUpdateReq {
-    @IsString()
-    @IsISO8601()
+    @IsDate()
+    @Type(() => Date)
     public start: Date;
 
     @IsInt()

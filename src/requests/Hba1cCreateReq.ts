@@ -6,11 +6,12 @@
 ** Created by Arthur MELIN on Tue Feb 25 2020
 */
 
-import { IsISO8601, IsNumber, IsString, Max, Min } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDate, IsNumber, Max, Min } from "class-validator";
 
 export class Hba1cCreateReq {
-    @IsString()
-    @IsISO8601()
+    @IsDate()
+    @Type(() => Date)
     public time: Date;
 
     @IsNumber()

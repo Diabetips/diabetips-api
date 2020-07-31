@@ -6,16 +6,17 @@
 ** Created by Alexandre DE BEAUMONT on Mon May 18 2020
 */
 
-import { IsISO8601, IsOptional, IsString, Length } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDate, IsOptional, IsString, Length } from "class-validator";
 
 export class EventCreateReq {
-    @IsString()
-    @IsISO8601()
+    @IsDate()
+    @Type(() => Date)
     public start: Date;
 
-    @IsString()
-    @IsISO8601()
+    @IsDate()
     @IsOptional()
+    @Type(() => Date)
     public end?: Date;
 
     @IsString()

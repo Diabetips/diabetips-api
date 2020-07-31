@@ -6,12 +6,15 @@
 ** Created by Alexandre DE BEAUMONT on Sat Mar 14 2020
 */
 
-import { IsEnum, IsISO8601, IsNumber, IsOptional, IsPositive } from "class-validator";
-import { SexEnum, DiabetesType } from "../entities";
+import { Type } from "class-transformer";
+import { IsDate, IsEnum, IsNumber, IsOptional, IsPositive } from "class-validator";
+
+import { DiabetesType, SexEnum } from "../entities";
 
 export class BiometricUpdateReq {
-    @IsISO8601()
+    @IsDate()
     @IsOptional()
+    @Type(() => Date)
     public date_of_birth?: Date;
 
     @IsOptional()
