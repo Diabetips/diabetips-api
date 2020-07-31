@@ -6,14 +6,14 @@
 ** Created by Arthur MELIN on Wed Feb 26 2020
 */
 
-import { IsEnum, IsInt, IsNumber, IsPositive, IsString } from "class-validator";
+import { IsEnum, IsISO8601, IsNumber, IsPositive, IsString } from "class-validator";
 
 import { InsulinType } from "../entities";
 
 export class InsulinCreateReq {
-    @IsInt()
-    @IsPositive()
-    public timestamp: number;
+    @IsString()
+    @IsISO8601()
+    public time: Date;
 
     @IsNumber()
     @IsPositive()

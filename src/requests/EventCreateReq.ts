@@ -6,17 +6,17 @@
 ** Created by Alexandre DE BEAUMONT on Mon May 18 2020
 */
 
-import { IsInt, IsPositive, IsOptional, IsString, Length } from "class-validator";
+import { IsISO8601, IsOptional, IsString, Length } from "class-validator";
 
 export class EventCreateReq {
-    @IsInt()
-    @IsPositive()
-    public start: number;
+    @IsString()
+    @IsISO8601()
+    public start: Date;
 
-    @IsInt()
-    @IsPositive()
+    @IsString()
+    @IsISO8601()
     @IsOptional()
-    public end?: number;
+    public end?: Date;
 
     @IsString()
     @Length(0, 500)

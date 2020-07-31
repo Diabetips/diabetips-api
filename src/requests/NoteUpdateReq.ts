@@ -6,13 +6,13 @@
 ** Created by Alexandre DE BEAUMONT on Mon May 18 2020
 */
 
-import { IsInt, IsPositive, IsString, Length, IsOptional } from "class-validator";
+import { IsISO8601, IsString, IsOptional, Length } from "class-validator";
 
 export class NoteUpdateReq {
-    @IsInt()
-    @IsPositive()
+    @IsString()
+    @IsISO8601()
     @IsOptional()
-    public timestamp?: number;
+    public time?: Date;
 
     @IsString()
     @Length(0, 500)

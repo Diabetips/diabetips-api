@@ -6,12 +6,12 @@
 ** Created by Alexandre DE BEAUMONT on Fri Feb 28 2020
 */
 
-import { ArrayNotEmpty, IsArray, IsInt, IsPositive, Max, Min } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsInt, IsISO8601, IsPositive, IsString, Max, Min } from "class-validator";
 
 export class BloodSugarUpdateReq {
-    @IsInt()
-    @IsPositive()
-    public start: number;
+    @IsString()
+    @IsISO8601()
+    public start: Date;
 
     @IsInt()
     @IsPositive()
