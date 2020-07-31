@@ -9,9 +9,8 @@
 import { Type } from "class-transformer";
 import { IsDate } from "class-validator";
 
-import { Timeable } from "../lib";
-
-export class TimeRangeReq extends Timeable {
+// technically should extend Timeable but because validation decorator are inherited, including the IsOptional ones, we can't :]
+export class TimeRangeReq {
     @IsDate()
     @Type(() => Date)
     public start: Date;
