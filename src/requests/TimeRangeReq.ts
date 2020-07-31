@@ -6,15 +6,16 @@
 ** Created by Alexandre DE BEAUMONT on Fri Feb 28 2020
 */
 
-import { IsInt, IsPositive, Min } from "class-validator";
+import { IsISO8601, IsString, Min } from "class-validator";
+
 import { Timeable } from "../lib";
 
 export class TimeRangeReq extends Timeable {
-    @IsInt()
-    @Min(0)
-    public start: number;
+    @IsString()
+    @IsISO8601()
+    public start: Date;
 
-    @IsInt()
-    @IsPositive()
-    public end: number;
+    @IsString()
+    @IsISO8601()
+    public end: Date;
 }

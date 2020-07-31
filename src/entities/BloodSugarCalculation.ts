@@ -6,9 +6,10 @@
 ** Created by Alexandre DE BEAUMONT on Wed Jun 17 2020
 */
 
-import { TimeRangeReq } from "../requests";
-import { BloodSugar } from "./BloodSugar";
 import { MathUtils } from "../lib";
+import { TimeRangeReq } from "../requests";
+
+import { BloodSugar } from "./BloodSugar";
 
 export enum BloodSugarCalculationType {
     AVERAGE = "average",
@@ -17,8 +18,8 @@ export enum BloodSugarCalculationType {
 }
 
 export class BloodSugarCalculation {
-    public start: number;
-    public end: number;
+    public start: Date;
+    public end: Date;
     public average: number;
     public first: number;
     public third: number;

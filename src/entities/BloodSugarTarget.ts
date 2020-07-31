@@ -6,13 +6,15 @@
 ** Created by Alexandre DE BEAUMONT on Wed Jul 15 2020
 */
 
-import { TimeRangeReq } from "../requests";
-import { BloodSugar } from ".";
-import { Biometric } from "./Biometric";
-import { BiometricService } from "../services";
-import { ApiError } from "../errors";
-import { HttpStatus } from "../lib";
 import { Exclude } from "class-transformer";
+
+import { ApiError } from "../errors";
+import { TimeRangeReq } from "../requests";
+import { HttpStatus } from "../lib";
+import { BiometricService } from "../services";
+
+import { BloodSugar } from "./BloodSugar";
+import { Biometric } from "./Biometric";
 
 export enum BloodSugarTargetFormat {
     PERCENTAGE = "percentage",
@@ -26,8 +28,8 @@ enum GlycemiaState {
 }
 
 export class BloodSugarTarget {
-    public start: number;
-    public end: number;
+    public start: Date;
+    public end: Date;
     public format: string;
 
     public hypoglycemia: number = 0;
@@ -93,7 +95,7 @@ export class BloodSugarTarget {
     }
 
     private changeState(new_state: GlycemiaState, end: BloodSugar) {
-        const diff = this.start_bs.timestamp - end.timestamp;
+        const diff = this.start_bs.time.getTime() - end.time.getTime();
         switch (this.current_state) {
             case GlycemiaState.HYPOGLYCEMIA:
                 this.total_hypo += diff;
