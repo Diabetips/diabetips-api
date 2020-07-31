@@ -7,16 +7,16 @@
 */
 
 import { Type } from "class-transformer";
-import { IsDate, IsOptional } from "class-validator";
+import { IsDate, ValidateIf } from "class-validator";
 import { SelectQueryBuilder } from "typeorm";
 
 export class Timeable {
-    @IsOptional()
+    @ValidateIf((t) => t.start !== undefined  || t.constructor !== Timeable)
     @IsDate()
     @Type(() => Date)
     public start?: Date;
 
-    @IsOptional()
+    @ValidateIf((t) => t.end !== undefined  || t.constructor !== Timeable)
     @IsDate()
     @Type(() => Date)
     public end?: Date;
