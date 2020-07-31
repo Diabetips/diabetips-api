@@ -13,10 +13,11 @@ Meal:
       type: "string"
       description: "The meal's description"
       example: "Lunch of October 7th 2019"
-    "timestamp":
-      type: "integer"
-      description: "Timestamp of the meal"
-      example: 1581907819
+    "time":
+      type: "string"
+      format: "date-time"
+      description: "Time of the meal"
+      example: "2020-07-31T12:28:29.949Z"
     "total_sugar":
       type: "number"
       description: "Total quantity of sugar in the meal in grams"

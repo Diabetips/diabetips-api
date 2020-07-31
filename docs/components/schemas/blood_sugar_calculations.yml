@@ -2,13 +2,15 @@ BloodSugarCalculations:
   type: "object"
   properties:
     "start":
-      type: "integer"
-      description: "Timestamp for the start of the period"
-      example: 1581808876
+      type: string
+      format: date-time
+      description: "Start of the period"
+      example: "2020-07-31T00:00:00.000Z"
     "end":
-      type: "integer"
-      description: "Timestamp for the end of the period"
-      example: 1581808876
+      type: string
+      format: date-time
+      description: "End of the period"
+      example: "2020-07-31T23:59:59.999Z"
     "average":
       type: "number"
       description: "Average of the values between the two timestamps"

@@ -16,10 +16,11 @@ Insulin:
     "quantity":
       type: "number"
       description: "Quantity of insulin injected in milligrams"
-    "timestamp":
-      type: "number"
-      description: "UNIX timestamp of the insulin injection (in the UTC timezone)"
-      example: 1576359970
+    "time":
+      type: "string"
+      format: "date-time"
+      description: "Time of the insulin injection"
+      example: "2020-07-31T14:28:29.949Z"
     "type":
       type: string
       description: "Type of the injected insulin"

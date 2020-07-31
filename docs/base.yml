@@ -54,6 +54,7 @@ tags:
       This can be done by using the following query parameters:
         - `start` which represents the beginning of the desired period. (Default: No specific beginning)
         - `end` which represents the end of the desired period. (Default: Current time of the request)
+      These parameters use the ISO8601 date format.
 
       Routes that implement the timeable query:
        - [Mass history - Get user's mass history](#tag/Biometrics/paths/~1v1~1users~1{uid}~1mass/get)

@@ -10,7 +10,8 @@ Note:
       type: "string"
       description: "The note's description"
       example: "I woke up"
-    "timestamp":
-      type: "number"
-      description: "UNIX timestamp of the note (in the UTC timezone)"
-      example: 1576359970
+    "time":
+      type: "string"
+      format: "date-time"
+      description: "Time of the note"
+      example: "2020-07-31T12:28:29.949Z"

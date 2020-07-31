@@ -2,9 +2,10 @@ BloodSugar:
   type: "object"
   properties:
     "start":
-      type: "integer"
-      description: "Timestamp for the first data measure"
-      example: 1581808876
+      type: string
+      format: date-time
+      description: "Time for the first data measure"
+      example: "2020-07-31T14:28:29.949Z"
       writeOnly: true
     "interval":
       type: "integer"
@@ -18,10 +19,11 @@ BloodSugar:
         type: "number"
         example: 56.2
       writeOnly: true
-    "timestamp":
-      type: "integer"
-      description: "UNIX timestamp of the measure (in the UTC timezone)"
-      example: 1581808876
+    "time":
+      type: string
+      format: date-time
+      description: "Time of the measure"
+      example: "2020-07-31T14:28:29.949Z"
       readOnly: true
     "value":
       type: "number"
