@@ -6,12 +6,13 @@
 ** Created by Arthur MELIN on Tue Feb 25 2020
 */
 
-import { IsInt, IsNumber, IsPositive, Max, Min } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDate, IsNumber, Max, Min } from "class-validator";
 
 export class Hba1cCreateReq {
-    @IsInt()
-    @IsPositive()
-    public timestamp: number;
+    @IsDate()
+    @Type(() => Date)
+    public time: Date;
 
     @IsNumber()
     @Min(0)

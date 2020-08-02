@@ -33,22 +33,20 @@ export class BloodSugarService extends BaseService {
             throw new ApiError(HttpStatus.NOT_FOUND, "user_not_found", `User (${uid}) not found`);
         }
 
-        const bsArray: BloodSugar[] = [];
-        let offset = 0;
-        for (const m of req.measures) {
-            let bs = await BloodSugar.findByTimestamp(uid, req.start + offset);
-            if (bs === undefined) {
+        const bsBuilders = req.measures.map(async (m, idx) => {
+            const time = new Date(req.start.getTime() + idx * req.interval * 1000);
+            let bs = await BloodSugar.findByTime(uid, time);
+            if (bs == null) {
                 bs = new BloodSugar();
             }
-            bs.timestamp = req.start + offset;
+            bs.time = time;
             bs.value = m;
             bs.user = Promise.resolve(user);
 
-            await bs.save();
-            bsArray.push(bs);
-            offset += req.interval;
-        }
-        return bsArray;
+            return bs.save();
+        });
+
+        return Promise.all(bsBuilders);
     }
 
     public static async updateBloodSugar(uid: string, req: BloodSugarUpdateReq): Promise<BloodSugar[]> {
@@ -58,22 +56,21 @@ export class BloodSugarService extends BaseService {
             throw new ApiError(HttpStatus.NOT_FOUND, "user_not_found", `User (${uid}) not found`);
         }
 
-        const bsArray: BloodSugar[] = [];
-        let offset = 0;
-        for (const m of req.measures) {
-            let bs = await BloodSugar.findByTimestamp(uid, req.start + offset);
-            if (bs === undefined) {
+        const bsBuilders = req.measures.map(async (m, idx) => {
+            const time = new Date(req.start.getTime() + idx * req.interval * 1000);
+            let bs = await BloodSugar.findByTime(uid, time);
+            if (bs == null) {
                 bs = new BloodSugar();
-                bs.timestamp = req.start + offset;
+                bs.time = time;
                 bs.user = Promise.resolve(user);
             }
+
             bs.value = m;
 
-            await bs.save();
-            bsArray.push(bs);
-            offset += req.interval;
-        }
-        return bsArray;
+            return bs.save();
+        });
+
+        return Promise.all(bsBuilders);
     }
 
     public static async deleteBloodSugar(uid: string, range: TimeRangeReq) {

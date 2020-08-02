@@ -11,7 +11,7 @@ Notification:
     "time":
       type: "string"
       format: "date-time"
-      description: "The notification's time"
+      description: "Time of the notification"
       example: "2020-03-14T01:23:45Z"
     "read":
       type: "boolean"

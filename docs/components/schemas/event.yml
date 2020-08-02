@@ -11,11 +11,13 @@ Event:
       description: "The event's description"
       example: "I had the flu"
     "start":
-      type: "number"
-      description: "UNIX timestamp of the start of the event (in the UTC timezone)"
-      example: 1576359970
+      type: "string"
+      format: "date-time"
+      description: "Start of the event"
+      example: "2020-07-31T00:00:00.000Z"
     "end":
-      type: "number"
+      type: "string"
       nullable: true
-      description: "UNIX timestamp of the end of the event (in the UTC timezone). It can be omitted if the event's end is undetermined"
-      example: 1576359970
+      format: "date-time"
+      description: "End of the event"
+      example: "2020-07-31T23:59:59.999Z"

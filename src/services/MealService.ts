@@ -38,7 +38,7 @@ export class MealService extends BaseService {
         // Add meal
         const meal = new Meal();
         meal.description = req.description;
-        meal.timestamp = req.timestamp;
+        meal.time = req.time;
         meal.user = Promise.resolve(user);
         meal.recipes = [];
         meal.foods = [];
@@ -62,7 +62,7 @@ export class MealService extends BaseService {
         }
 
         if (req.description !== undefined) { meal.description = req.description; }
-        if (req.timestamp !== undefined) { meal.timestamp = req.timestamp; }
+        if (req.time !== undefined) { meal.time = req.time; }
         if (req.recipes !== undefined) {
             meal.recipes = [];
             await meal.addRecipes(req.recipes);

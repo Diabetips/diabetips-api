@@ -15,10 +15,10 @@ import { BaseEntity } from "./BaseEntity";
 @Entity()
 export class Event extends BaseEntity {
     @Column()
-    public start: number;
+    public start: Date;
 
     @Column({ nullable: true })
-    public end: number;
+    public end: Date;
 
     @Column({ length: 500 })
     public description: string;

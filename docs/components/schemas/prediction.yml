@@ -8,7 +8,7 @@ Prediction:
     "time":
       type: "string"
       format: "date-time"
-      description: "The prediction's time"
+      description: "Time of the prediction"
       example: "2020-03-14T01:23:45Z"
     "insulin":
       type: "number"

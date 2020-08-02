@@ -37,7 +37,7 @@ export class Hba1cService extends BaseService {
 
         // Add Hba1c
         const hba1c = new Hba1c();
-        hba1c.timestamp = req.timestamp;
+        hba1c.time = req.time;
         hba1c.value = req.value;
         hba1c.user = Promise.resolve(user);
 
@@ -52,7 +52,7 @@ export class Hba1cService extends BaseService {
         }
 
         if (req.value !== undefined) { hba1c.value = req.value; }
-        if (req.timestamp !== undefined) { hba1c.timestamp = req.timestamp; }
+        if (req.time !== undefined) { hba1c.time = req.time; }
 
         return hba1c.save();
     }

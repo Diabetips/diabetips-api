@@ -6,12 +6,13 @@
 ** Created by Alexandre DE BEAUMONT on Mon May 18 2020
 */
 
-import { IsInt, IsPositive, IsString, Length } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDate, IsString, Length } from "class-validator";
 
 export class NoteCreateReq {
-    @IsInt()
-    @IsPositive()
-    public timestamp: number;
+    @IsDate()
+    @Type(() => Date)
+    public time: Date;
 
     @IsString()
     @Length(0, 500)

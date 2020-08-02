@@ -6,19 +6,22 @@
 ** Created by Alexandre DE BEAUMONT on Mon May 18 2020
 */
 
-import { IsInt, IsPositive, IsOptional, IsString, Length } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDate, IsOptional, IsString, Length } from "class-validator";
 
 export class EventUpdateReq {
-    @IsInt()
-    @IsPositive()
-    public start?: number;
-
-    @IsInt()
-    @IsPositive()
+    @IsDate()
     @IsOptional()
-    public end?: number;
+    @Type(() => Date)
+    public start?: Date;
+    
+    @IsDate()
+    @IsOptional()
+    @Type(() => Date)
+    public end?: Date;
 
     @IsString()
     @Length(0, 500)
+    @IsOptional()
     public description?: string;
 }

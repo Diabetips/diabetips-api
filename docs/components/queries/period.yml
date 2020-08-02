@@ -1,14 +1,16 @@
 StartQuery:
   in: query
   name: start
-  description: "Start of the period as a UNIX timestamp (in the UTC timezone)"
+  description: "Start of the period"
   required: false
   schema:
-    type: number
+    type: string
+    format: date-time
 EndQuery:
   in: query
   name: end
-  description: "End of the period as a UNIX timestamp (in the UTC timezone)"
+  description: "End of the period"
   required: false
   schema:
-    type: number
+    type: string
+    format: date-time

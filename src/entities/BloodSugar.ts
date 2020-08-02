@@ -7,18 +7,20 @@
 */
 
 import { Column, Entity, JoinColumn, ManyToOne, Unique } from "typeorm";
+
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable, Timeable, Utils } from "../lib";
 import { TimeRangeReq } from "../requests";
+
 import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
 import { User } from "./User";
 
 @Entity({ name: "blood_sugar" })
-@Unique(["timestamp", "user"])
+@Unique(["time", "user"])
 export class BloodSugar extends BaseEntityHiddenId {
 
-    @Column({ name: "timestamp"})
-    public timestamp: number;
+    @Column()
+    public time: Date;
 
     @Column({type: "float"})
     public value: number;
@@ -36,7 +38,7 @@ export class BloodSugar extends BaseEntityHiddenId {
         .createQueryBuilder("blood_sugar")
         .leftJoin("blood_sugar.user", "user")
         .where("user.uid = :uid", { uid })
-        .orderBy("blood_sugar.timestamp", "DESC");
+        .orderBy("blood_sugar.time", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb
@@ -55,7 +57,7 @@ export class BloodSugar extends BaseEntityHiddenId {
         .createQueryBuilder("blood_sugar")
         .leftJoin("blood_sugar.user", "user")
         .where("user.uid = :uid", { uid })
-        .orderBy("blood_sugar.timestamp", "DESC");
+        .orderBy("blood_sugar.time", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb
@@ -73,7 +75,7 @@ export class BloodSugar extends BaseEntityHiddenId {
         .createQueryBuilder("blood_sugar")
         .leftJoin("blood_sugar.user", "user")
         .andWhere("user.uid = :patientUid", { patientUid })
-        .orderBy("blood_sugar.timestamp", "DESC");
+        .orderBy("blood_sugar.time", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb
@@ -83,15 +85,15 @@ export class BloodSugar extends BaseEntityHiddenId {
         return qb.getOne();
     }
 
-    public static async findByTimestamp(patientUid: string,
-                                        timestamp: number,
-                                        options: IBaseQueryOptions = {}):
-                                        Promise<BloodSugar | undefined> {
+    public static async findByTime(patientUid: string,
+                                   time: Date,
+                                   options: IBaseQueryOptions = {}):
+                                   Promise<BloodSugar | undefined> {
         let qb = this
         .createQueryBuilder("blood_sugar")
         .leftJoin("blood_sugar.user", "user")
         .where("user.uid = :patientUid", { patientUid })
-        .andWhere("blood_sugar.timestamp = :timestamp", { timestamp })
+        .andWhere("blood_sugar.time = :time", { time })
         .andWhere("user.uid = :patientUid", { patientUid });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
@@ -116,7 +118,7 @@ export class BloodSugar extends BaseEntityHiddenId {
             .createQueryBuilder("blood_sugar")
             .delete()
             .where("blood_sugar.user_id = :id", { id: user.id })
-            .andWhere("blood_sugar.timestamp BETWEEN :start AND :end", { start: range.start, end: range.end });
+            .andWhere("blood_sugar.time BETWEEN :start AND :end", { start: range.start, end: range.end });
 
         qb.execute();
     }
