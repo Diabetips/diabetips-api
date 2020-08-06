@@ -67,7 +67,8 @@ export class Recipe extends BaseEntity {
             .leftJoinAndSelect("recipe.author", "author")
             .leftJoinAndSelect("recipe.ingredients", "ingredients")
             .leftJoinAndSelect("ingredients.food", "food")
-            .where((sqb) => "recipe.id IN " + p.limit(subq(sqb.subQuery().from("recipe", "recipe"))).getQuery());
+            .andWhere(`author.uid = :author`, { author: s.author })
+            .andWhere((sqb) => "recipe.id IN " + p.limit(subq(sqb.subQuery().from("recipe", "recipe"))).getQuery());
 
         return p.queryWithCountQuery(qb, subq(this.createQueryBuilder("recipe")));
     }

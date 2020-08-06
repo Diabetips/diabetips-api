@@ -12,4 +12,8 @@ export class RecipeSearchReq {
     @IsOptional()
     @IsString()
     public name?: string;
+
+    @IsOptional()
+    @IsString()
+    public author?: string;
 }

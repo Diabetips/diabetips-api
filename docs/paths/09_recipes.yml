@@ -2,7 +2,7 @@
   get:
     security:
       - OAuth2:
-        - "food"
+          - "food"
     tags:
       - "Recipes"
     summary: "Get all food items"
@@ -33,7 +33,7 @@
   get:
     security:
       - OAuth2:
-        - "food"
+          - "food"
     tags:
       - "Recipes"
     summary: "Get food item"
@@ -58,7 +58,7 @@
   get:
     security:
       - OAuth2:
-        - "food"
+          - "food"
     tags:
       - "Recipes"
     summary: "Get food picture"
@@ -84,7 +84,7 @@
   get:
     security:
       - OAuth2:
-        - "recipe:read"
+          - "recipe:read"
     tags:
       - "Recipes"
     summary: "Get all recipes"
@@ -94,6 +94,7 @@
       Implements [Paging](#tag/Paging)
     parameters:
       - $component: "queries:name.yml:NameQuery"
+      - $component: "queries:author.yml:AuthorQuery"
       - $component: "queries:paging.yml:PageQuery"
       - $component: "queries:paging.yml:SizeQuery"
     responses:
@@ -112,7 +113,7 @@
   post:
     security:
       - OAuth2:
-        - "recipe:write"
+          - "recipe:write"
     tags:
       - "Recipes"
     summary: "Create recipe"
@@ -143,7 +144,7 @@
   get:
     security:
       - OAuth2:
-        - "recipe:read"
+          - "recipe:read"
     tags:
       - "Recipes"
     summary: "Get recipe"
@@ -165,7 +166,7 @@
   put:
     security:
       - OAuth2:
-        - "recipe:write"
+          - "recipe:write"
     tags:
       - "Recipes"
     summary: "Update recipe"
@@ -196,7 +197,7 @@
   delete:
     security:
       - OAuth2:
-        - "recipe:write"
+          - "recipe:write"
     tags:
       - "Recipes"
     summary: "Remove recipe"
@@ -217,7 +218,7 @@
   get:
     security:
       - OAuth2:
-        - "recipe:read"
+          - "recipe:read"
     tags:
       - "Recipes"
     summary: "Get recipe picture"
@@ -242,7 +243,7 @@
   post:
     security:
       - OAuth2:
-        - "recipe:write"
+          - "recipe:write"
     tags:
       - "Recipes"
     summary: "Update recipe picture"
@@ -278,7 +279,7 @@
   delete:
     security:
       - OAuth2:
-        - "recipe:write"
+          - "recipe:write"
     tags:
       - "Recipes"
     summary: "Remove recipe picture"
@@ -296,3 +297,42 @@
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorRecipeNotFound"
+"/v1/users/{uid}/recipes":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    security:
+      - OAuth2:
+          - "recipe:read"
+    tags:
+      - "Recipes"
+    summary: "Get User's recipes"
+    description: |
+      Get a list of all the recipes created by the specified user.
+
+      Implements [Paging](#tag/Paging)
+    parameters:
+      - $component: "queries:name.yml:NameQuery"
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+    responses:
+      200:
+        description: "List of all available recipes"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:recipe.yml:Recipe"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
