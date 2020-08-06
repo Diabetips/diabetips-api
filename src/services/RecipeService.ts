@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
-import { Food, Ingredient, Recipe } from "../entities";
+import { Food, Ingredient, Recipe, User } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable, Context } from "../lib";
 import { RecipeCreateReq, RecipeSearchReq, RecipeUpdateReq } from "../requests";
@@ -95,5 +95,33 @@ export class RecipeService extends BaseService {
         }
         recipe.deleted = true;
         await recipe.save();
+    }
+
+    // Favorite recipes
+
+    public static async getFavoriteRecipes(uid: string, p: Pageable): Promise<Recipe[]> {
+        const user = await UserService.getUser(uid);
+        return user.favoriteRecipes;
+    }
+
+    public static async addFavoriteRecipe(uid: string, id: number) {
+        const user = await UserService.getUser(uid);
+        const newFavorite = await this.getRecipe(id);
+        const favorites = await user.favoriteRecipes;
+
+        if (favorites.find((recipe) => recipe.id === id) !== undefined) {
+            return;
+        }
+
+        user.favoriteRecipes = Promise.resolve(favorites.concat(newFavorite));
+        await user.save();
+    }
+
+    public static async removeFavoriteRecipe(uid: string, id: number) {
+        const user = await UserService.getUser(uid);
+        const favorites = await user.favoriteRecipes;
+
+        user.favoriteRecipes = Promise.resolve(favorites.filter((recipe) => recipe.id !== id));
+        await user.save();
     }
 }
