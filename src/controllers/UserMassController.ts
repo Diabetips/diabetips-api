@@ -9,13 +9,14 @@
 import { Response } from "express";
 import { Get, JsonController, Param, QueryParams, Res } from "routing-controllers";
 
-import { Pageable, Timeable } from "../lib";
+import { Authorized, Pageable, Timeable } from "../lib";
 import { MassService } from "../services";
 
 @JsonController("/v1/users/:uid/mass")
 export class UserMassController {
 
     @Get("/")
+    @Authorized("biometrics:read")
     public async getMassHistory(@Param("uid") uid: string,
                                 @QueryParams() p: Pageable,
                                 @QueryParams() t: Timeable,

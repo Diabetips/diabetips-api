@@ -6,15 +6,12 @@
 ** Created by Arthur MELIN on Wed Aug 28 2019
 */
 
-import bcrypt = require("bcrypt");
-
 import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany, OneToOne } from "typeorm";
 
 import { Page, Pageable, Utils } from "../lib";
 
 import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
 
-import { AuthApp } from "./AuthApp";
 import { Biometric } from "./Biometric";
 import { BloodSugar } from "./BloodSugar";
 import { Event } from "./Event";
@@ -49,6 +46,9 @@ export class User extends BaseEntityHiddenId {
     @Column({ name: "password", length: 100, select: false })
     private _password?: string;
 
+    @Column({ name: "extra_scopes", type: "simple-array", default: "" })
+    private _extra_scopes: string[];
+
     @Column({ length: 10 })
     public lang: string;
 
@@ -64,23 +64,11 @@ export class User extends BaseEntityHiddenId {
     @OneToOne((type) => UserConfirmation, (confirmation) => confirmation.user)
     public confirmation: Promise<UserConfirmation>;
 
-    @OneToMany((type) => UserPasswordReset, (pwdRst) => pwdRst.user)
-    public password_resets: Promise<UserPasswordReset[]>;
-
     @OneToOne((type) => UserPicture, (picture) => picture.user)
     public picture: Promise<UserPicture>;
 
-    @ManyToMany((type) => AuthApp)
-    @JoinTable({
-        name: "user_apps",
-        joinColumn: {
-            name: "user_id",
-        },
-        inverseJoinColumn: {
-            name: "app_id",
-        },
-    })
-    public apps: Promise<AuthApp[]>;
+    @OneToMany((type) => UserPasswordReset, (pwdRst) => pwdRst.user)
+    public password_resets: Promise<UserPasswordReset[]>;
 
     @ManyToMany((type) => User)
     @JoinTable({
@@ -121,7 +109,7 @@ export class User extends BaseEntityHiddenId {
     @OneToMany((type) => Height, (h) => h.user)
     public height_history: Promise<Height[]>;
 
-    @OneToMany((type) => Mass, (h) => h.user)
+    @OneToMany((type) => Mass, (m) => m.user)
     public mass_history: Promise<Mass[]>;
 
     @OneToMany((type) => Note, (note) => note.user)
@@ -141,7 +129,11 @@ export class User extends BaseEntityHiddenId {
     }
 
     public set password(password: string | undefined) {
-        this._password = password === undefined ? undefined : bcrypt.hashSync(password, 12);
+        this._password = password;
+    }
+
+    public get extra_scopes(): string[] {
+        return this._extra_scopes;
     }
 
     // Repository functions

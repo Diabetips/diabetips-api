@@ -26,7 +26,7 @@ export class UrlRewriteController {
             throw new ApiError(HttpStatus.UNAUTHORIZED, "unauthorized", "Please provide an authorization token");
         }
         if (auth.type !== "user") {
-            throw new ApiError(HttpStatus.FORBIDDEN, "access_denied", "Access denied");
+            throw new ApiError(HttpStatus.BAD_REQUEST, "bad_request", "This route is only available with a user authorization token");
         }
         req.url = "/v1/users/" + auth.uid + (req.params[0] || "");
         next("route");

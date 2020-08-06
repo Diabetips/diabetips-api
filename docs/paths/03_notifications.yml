@@ -2,10 +2,13 @@
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "notifications"
     tags:
       - "Notifications"
     summary: "Get all notifications"
-    description: >
+    description: |
       Get a list of all the notifications of the user with the specified UID.
 
       Implements [Paging](#tag/Paging)
@@ -26,7 +29,7 @@
               items:
                 $component: "schemas:notification.yml:Notification"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
@@ -38,16 +41,19 @@
     - $component: "parameters:uid.yml:UID"
     - $component: "parameters:notif_id.yml:NotificationId"
   delete:
+    security:
+      - OAuth2:
+        - "notifications"
     tags:
       - "Notifications"
     summary: "Mark notification as read"
-    description: >
+    description: |
       Mark the notification with the specified ID as read.
     responses:
       204:
         description: "The notification has been marked as read"
       404:
-        description: >
+        description: |
           Either:
            * No user with the specified UID was found or the current authenticated user does not have permission to vie
            modify them
@@ -62,10 +68,13 @@
   parameters:
     - $component: "parameters:uid.yml:UID"
   post:
+    security:
+      - OAuth2:
+        - "notifications"
     tags:
       - "Notifications"
     summary: "Register FCM device token"
-    description: >
+    description: |
       Register a Firebase Cloud Messaging device token to the user with the specified UID.
     requestBody:
       required: true
@@ -82,7 +91,7 @@
       204:
         description: "The token has been registered"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
@@ -96,7 +105,7 @@
     tags:
       - "Notifications"
     summary: "Send a test notification"
-    description: >
+    description: |
       Send a test notification to the user with the specified UID.
 
       **TEMPORARY DEBUG ROUTE**
@@ -104,7 +113,7 @@
       204:
         description: "Notification sent"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:

@@ -9,7 +9,7 @@
 import { Response } from "express";
 import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
 
-import { Pageable, Timeable } from "../lib";
+import { Authorized, Pageable, Timeable } from "../lib";
 import { InsulinCreateReq, InsulinUpdateReq, InsulinSearchReq, TimeRangeReq, InsulinCalculationReq } from "../requests";
 import { InsulinService } from "../services";
 
@@ -17,6 +17,7 @@ import { InsulinService } from "../services";
 export class UserInsulinController {
 
     @Get("/calculations")
+    @Authorized("biometrics:read")
     public async getInsulinCalculations(@Param("uid") uid: string,
                                         @QueryParams() t: TimeRangeReq,
                                         @QueryParams() s: InsulinSearchReq,
@@ -28,6 +29,7 @@ export class UserInsulinController {
     }
 
     @Get("/")
+    @Authorized("biometrics:read")
     public async getAllUserInsulin(@Param("uid") uid: string,
                                    @QueryParams() p: Pageable,
                                    @QueryParams() t: Timeable,
@@ -39,22 +41,26 @@ export class UserInsulinController {
     }
 
     @Post("/")
+    @Authorized("biometrics:write")
     public async addUserInsulin(@Param("uid") uid: string, @Body() body: InsulinCreateReq) {
         return InsulinService.addInsulin(uid, body);
     }
 
     @Get("/:id")
+    @Authorized("biometrics:read")
     public async getUserInsulin(@Param("uid") uid: string, @Param("id") insulinId: number) {
         return InsulinService.getInsulin(uid, insulinId);
     }
 
     @Put("/:id")
+    @Authorized("biometrics:write")
     public async updateUserInsulin(@Param("uid") uid: string, @Param("id") insulinId: number,
                                    @Body() body: InsulinUpdateReq) {
         return InsulinService.updateInsulin(uid, insulinId, body);
     }
 
     @Delete("/:id")
+    @Authorized("biometrics:write")
     public async deleteUserInsulin(@Param("uid") uid: string, @Param("id") insulinId: number) {
         await InsulinService.deleteInsulin(uid, insulinId);
     }

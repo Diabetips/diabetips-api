@@ -19,7 +19,7 @@ export class MassService extends BaseService {
     public static async addMassToHistory(user: User, h: number) {
         const mass = new Mass();
 
-        mass.timestamp = Math.round((new Date()).getTime() / 1000);
+        mass.time = new Date();
         mass.mass = h;
         mass.user = Promise.resolve(user);
         await mass.save();

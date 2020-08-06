@@ -41,7 +41,7 @@ export class InsulinService extends BaseService {
 
         // Add Insulin
         const insulin = new Insulin();
-        insulin.timestamp = req.timestamp;
+        insulin.time = req.time;
         insulin.quantity = req.quantity;
         insulin.description = req.description;
         insulin.type = req.type;
@@ -59,7 +59,7 @@ export class InsulinService extends BaseService {
 
         if (req.description !== undefined) { insulin.description = req.description; }
         if (req.quantity !== undefined) { insulin.quantity = req.quantity; }
-        if (req.timestamp !== undefined) { insulin.timestamp = req.timestamp; }
+        if (req.time !== undefined) { insulin.time = req.time; }
         if (req.type !== undefined) { insulin.type = req.type; }
 
         return insulin.save();

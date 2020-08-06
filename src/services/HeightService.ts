@@ -19,7 +19,7 @@ export class HeightService extends BaseService {
     public static async addHeightToHistory(user: User, h: number) {
         const height = new Height();
 
-        height.timestamp = Math.round((new Date()).getTime() / 1000);
+        height.time = new Date();
         height.height = h;
         height.user = Promise.resolve(user);
         await height.save();

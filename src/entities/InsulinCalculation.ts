@@ -16,16 +16,14 @@ export enum InsulinCalculationType {
 }
 
 export class InsulinCalculation {
-    public start: number;
-    public end: number;
+    public start: Date;
+    public end: Date;
     public average: InsulinCalculationItem[];
     public count: InsulinCalculationItem[];
 
     public async init(uid: string, range: TimeRangeReq, s: InsulinSearchReq, req: InsulinCalculationReq) {
-        // Remove hours > Jump to beginning of the day
-        range.start -= range.start % (3600 * 24);
-        // Remove hours + add a day - 1 sec > Jump to end of the day
-        range.end -= range.end % (3600 * 24) - (3600 * 24) + 1;
+        range.start.setHours(0, 0, 0, 0);
+        range.end.setHours(23, 59, 59, 999);
 
         this.start = range.start;
         this.end = range.end;
@@ -115,7 +113,7 @@ export class InsulinCalculation {
         }
 
         for (const ins of insulins) {
-            const date = new Date(ins.timestamp * 1000);
+            const date = ins.time;
             const hour = (date.getHours() + 23) % 24;
             hourly[hour].push(ins);
         }

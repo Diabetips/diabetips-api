@@ -25,7 +25,7 @@ export enum InsulinType {
 export class Insulin extends BaseEntity {
 
     @Column()
-    public timestamp: number;
+    public time: Date;
 
     @Column({ type: "float" })
     public quantity: number;
@@ -55,7 +55,7 @@ export class Insulin extends BaseEntity {
             .createQueryBuilder("insulin")
             .leftJoin("insulin.user", "user")
             .where("user.uid = :patientUid", { patientUid })
-            .orderBy("insulin.timestamp", "DESC");
+            .orderBy("insulin.time", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb
@@ -77,7 +77,7 @@ export class Insulin extends BaseEntity {
             .createQueryBuilder("insulin")
             .leftJoin("insulin.user", "user")
             .where("user.uid = :patientUid", { patientUid })
-            .orderBy("insulin.timestamp", "DESC");
+            .orderBy("insulin.time", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb

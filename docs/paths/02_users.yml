@@ -1,37 +1,13 @@
 "/v1/users":
-  get:
-    tags:
-      - "Users"
-    summary: "Get all users"
-    description: >
-      Get a list of all the users the currently authenticated user has permissions to see (depending on the user's
-      account type and their connections).
-
-
-      Implements [Paging](#tag/Paging)
-    parameters:
-      - $component: "queries:paging.yml:PageQuery"
-      - $component: "queries:paging.yml:SizeQuery"
-    responses:
-      200:
-        description: "List of all visible users"
-        headers:
-          "X-Pages":
-            schema:
-              $component: "schemas:paging.yml:PagesHeader"
-        content:
-          application/json:
-            schema:
-              type: "array"
-              items:
-                $component: "schemas:user.yml:User"
   post:
+    security:
+      - OAuth2:
+        - "user:create"
     tags:
       - "Users"
     summary: "Register user"
-    description: >
+    description: |
       Register a new user account using the supplied information.
-
 
       The specified email must not be already used by another active user account.
     requestBody:
@@ -57,10 +33,13 @@
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "profile:read"
     tags:
       - "Users"
     summary: "Get user"
-    description: >
+    description: |
       Get the user with the specified UID.
     responses:
       200:
@@ -70,7 +49,7 @@
             schema:
               $component: "schemas:user.yml:User"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
@@ -78,12 +57,14 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   put:
+    security:
+      - OAuth2:
+        - "profile:write"
     tags:
       - "Users"
     summary: "Update user"
-    description: >
+    description: |
       Update the user with the specified UID.
-
 
       Not all fields of the request body are required, only the fields that should be updated must be present.
     requestBody:
@@ -100,7 +81,7 @@
             schema:
               $component: "schemas:user.yml:User"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to modify
           them
         content:
@@ -122,19 +103,21 @@
                     "message":
                       example: "Email address already used by another account"
   delete:
+    security:
+      - OAuth2:
+        - "user:delete"
     tags:
       - "Users"
     summary: "Deactivate user account"
-    description: >
+    description: |
       Deactivate the account of the user with the specified UID.
-
 
       *WARNING: This can only be reversed by Diabetips customer support and administrators.*
     responses:
       204:
         description: "The user account has been deactivated"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to modify
           them
         content:
@@ -145,12 +128,14 @@
   parameters:
     - $component: "parameters:uid.yml:UID"
   get:
+    security:
+      - OAuth2:
+        - "profile:read"
     tags:
       - "Users"
     summary: "Get profile picture"
-    description: >
+    description: |
       Get the profile picture of the user with the specified UID.
-
 
       The returned profile picture's dimensions will always be 300 by 300 pixels.
     responses:
@@ -159,9 +144,10 @@
         content:
           image/jpeg:
             schema:
-              type: "binary"
+              type: "string"
+              format: "binary"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
@@ -169,12 +155,14 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   post:
+    security:
+      - OAuth2:
+        - "profile:write"
     tags:
       - "Users"
     summary: "Update profile picture"
-    description: >
+    description: |
       Update the profile picture of the user with the specified UID.
-
 
       The `Content-Type` header is ignored, the format of the file is auto-detected.
       The supported image file formats are:
@@ -190,12 +178,13 @@
       content:
         "*/*":
           schema:
-            type: "binary"
+            type: "string"
+            format: "binary"
     responses:
       204:
         description: "The user's profile picture has been updated"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to modify
           them
         content:
@@ -203,19 +192,21 @@
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
   delete:
+    security:
+      - OAuth2:
+        - "user:delete"
     tags:
       - "Users"
     summary: "Remove profile picture"
-    description: >
+    description: |
       Remove the profile picture of the user with the specified UID.
-
 
       This action cannot be reverted, the user's picture will be reset to the default profile picture.
     responses:
       204:
         description: "The user's picture has been removed"
       404:
-        description: >
+        description: |
           No user with the specified UID was found or the current authenticated user does not have permission to modify
           them
         content:

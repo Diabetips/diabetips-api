@@ -30,7 +30,7 @@ export class Meal extends BaseEntity {
     public total_sugar: number;
 
     @Column()
-    public timestamp: number;
+    public time: Date;
 
     @OneToMany(() => MealRecipe, (recipe) => recipe.meal, { cascade: true })
     public recipes: MealRecipe[];
@@ -63,10 +63,9 @@ export class Meal extends BaseEntity {
         let qb = this
             .createQueryBuilder("meal")
             .where((sqb) => "meal.id IN " + p.limit(subq(sqb.subQuery().from("meal", "meal"))).getQuery())
-            .orderBy("meal.timestamp", "DESC");
+            .orderBy("meal.time", "DESC");
 
         qb = this.getFullMealQuery(qb);
-        if (Utils.optionDefault(options.hideDeleted, true)) {}
 
         return p.queryWithCountQuery(t.applyTimeRange(qb), subq(this.createQueryBuilder("meal")));
     }

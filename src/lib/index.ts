@@ -7,6 +7,8 @@
 */
 
 export * from "./AuthInfo";
+export * from "./AuthScopes";
+export * from "./Authorized";
 export * from "./Context";
 export * from "./HttpStatus";
 export * from "./MathUtils";
