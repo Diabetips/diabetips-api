@@ -310,6 +310,7 @@
     description: |
       Get a list of all the recipes created by the specified user.
 
+
       Implements [Paging](#tag/Paging)
     parameters:
       - $component: "queries:name.yml:NameQuery"
@@ -317,7 +318,7 @@
       - $component: "queries:paging.yml:SizeQuery"
     responses:
       200:
-        description: "List of all available recipes"
+        description: "List of all recipes created by the user"
         headers:
           "X-Pages":
             schema:
@@ -336,3 +337,63 @@
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/recipes/favorites":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    security:
+      - OAuth2:
+          - "profile:read"
+    tags:
+      - "Recipes"
+    summary: "Get User's favorite recipes"
+    description: |
+      Get a list of all the favorite recipes of the specified user.
+    responses:
+      200:
+        description: "List of all recipes favorited by the user"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:recipe.yml:Recipe"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/recipes/favorites/{id}":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  post:
+    security:
+      - OAuth2:
+          - "profile:write"
+    tags:
+      - "Recipes"
+    summary: "Add favorite recipe"
+    description: |
+      Add recipe to the specified user's favorites
+    responses:
+      204:
+        description: "The recipe was added to the favorites"
+  delete:
+    security:
+      - OAuth2:
+          - "profile:write"
+    tags:
+      - "Recipes"
+    summary: "Remove favorite recipe"
+    description: |
+      Remove recipe from the specified user's favorites
+    responses:
+      204:
+        description: "The recipe was removed frmo the favorites"
