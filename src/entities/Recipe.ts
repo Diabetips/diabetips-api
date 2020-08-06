@@ -62,14 +62,17 @@ export class Recipe extends BaseEntity {
             return subqb;
         };
 
-        const qb = this
+        let qb = this
             .createQueryBuilder("recipe")
             .leftJoinAndSelect("recipe.author", "author")
             .leftJoinAndSelect("recipe.ingredients", "ingredients")
             .leftJoinAndSelect("ingredients.food", "food")
-            .andWhere(`author.uid = :author`, { author: s.author })
             .andWhere((sqb) => "recipe.id IN " + p.limit(subq(sqb.subQuery().from("recipe", "recipe"))).getQuery());
 
+        if (s.author !== undefined) {
+            qb = qb.andWhere(`author.uid = :author`, { author: s.author });
+
+        }
         return p.queryWithCountQuery(qb, subq(this.createQueryBuilder("recipe")));
     }
 

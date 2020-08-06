@@ -91,6 +91,12 @@ export class User extends BaseEntityHiddenId {
     @OneToMany((type) => Recipe, (recipe) => recipe.author)
     public recipes: Promise<Recipe[]>;
 
+    @ManyToMany((type) => Recipe, {cascade: true})
+    @JoinTable({
+        name: "user_favorite_recipes",
+    })
+    public favoriteRecipes: Promise<Recipe[]>;
+
     @OneToMany((type) => Meal, (meal) => meal.user)
     public meals: Promise<Meal[]>;
 
