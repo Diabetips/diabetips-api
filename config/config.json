@@ -20,7 +20,7 @@
     "firebase": "${FIREBASE_SERVICE_ACCOUNT}",
     "http": {
         "host": "0.0.0.0",
-        "port": "8080",
+        "port": 8080,
         "proxy": true
     },
     "logger": {
