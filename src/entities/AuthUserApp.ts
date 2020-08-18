@@ -65,7 +65,8 @@ export class AuthUserApp extends BaseEntity {
             .leftJoinAndSelect("user_app.app", "app")
             .where("user.uid = :uid", { uid })
             .andWhere("user_app.revoked = false")
-            .andWhere("app.internal = false");
+            .andWhere("app.internal = false")
+            .orderBy("user_app.date", "DESC");
 
         return qb.getMany();
     }

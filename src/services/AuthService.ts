@@ -136,10 +136,10 @@ export class AuthService extends BaseService {
 
                 const si = AuthScopes[scope];
                 if (si.target === "app" && si.restricted) {
-                    const app = auth.type === "app" ? auth.app : await AuthApp.findByAppid(auth.appid);
-                    if (app == null) {
-                        throw new Error("App not found");
+                    if (auth.type !== "app") {
+                        throw new ApiError(HttpStatus.UNAUTHORIZED, "access_denied", "Please provide app credentials");
                     }
+                    const app = auth.app;
                     if (!app.extra_scopes.includes(scope)) {
                         logger.warn(`App ${app.appid} doesn't have restricted scope ${scope}`);
                         throw new ApiError(HttpStatus.FORBIDDEN, "access_denied", "Access denied");
@@ -295,6 +295,7 @@ export class AuthService extends BaseService {
 
         let ua = await AuthUserApp.findByUidAndAppid(user.uid, app.appid);
         if (ua != null) {
+            ua.date = new Date();
             ua.scopes = ua.scopes.concat(scopes.filter((s) => !ua!.scopes.includes(s)));
             return [await ua.save(), ua.scopes];
         }

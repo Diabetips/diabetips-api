@@ -87,7 +87,7 @@ function userChecker(options: UserCheckerOptions = {}): AuthChecker {
 }
 
 export const AuthScopes: Record<AuthScope, AuthScopeInfo> = {
-    "auth:authorize":            { target: "app",  restricted: true },
+    "auth:authorize":            { target: "user", restricted: true },
     "auth:confirm":              { target: "app",  restricted: true },
     "auth:reset":                { target: "app" },
     "auth:reset2":               { target: "app",  restricted: true },
