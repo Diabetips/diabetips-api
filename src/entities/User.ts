@@ -28,10 +28,11 @@ import { PredictionSettings } from "./PredictionSettings";
 import { Recipe } from "./Recipe";
 
 import { UserConfirmation } from "./UserConfirmation";
+import { UserConnection } from "./UserConnection";
 import { UserPasswordReset } from "./UserPasswordReset";
 import { UserPicture } from "./UserPicture";
 
-export { UserConfirmation, UserPasswordReset, UserPicture };
+export { UserConfirmation, UserConnection, UserPasswordReset, UserPicture };
 
 @Entity()
 export class User extends BaseEntityHiddenId {
@@ -70,17 +71,11 @@ export class User extends BaseEntityHiddenId {
     @OneToMany((type) => UserPasswordReset, (pwdRst) => pwdRst.user)
     public password_resets: Promise<UserPasswordReset[]>;
 
-    @ManyToMany((type) => User)
-    @JoinTable({
-        name: "user_connections",
-        joinColumn: {
-            name: "source_user_id",
-        },
-        inverseJoinColumn: {
-            name: "target_user_id",
-        },
-    })
-    public connections: Promise<User[]>;
+    @OneToMany((type) => UserConnection, (c) => c.source)
+    public connections: Promise<UserConnection[]>;
+
+    @OneToMany((type) => UserConnection, (c) => c.target)
+    public reverseConnections: Promise<UserConnection[]>;
 
     @OneToMany((type) => Notification, (n) => n.target)
     public notifications: Promise<Notification[]>;

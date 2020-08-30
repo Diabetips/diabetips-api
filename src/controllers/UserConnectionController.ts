@@ -24,8 +24,8 @@ export class UserConnectionController {
     @Post("/")
     @HttpCode(HttpStatus.ACCEPTED)
     @Authorized("connections:write")
-    public async createConnection(@Param("uid") uid: string, @Body() req: UserConnectionInviteReq) {
-        await UserConnectionService.createUserConnection(uid, req);
+    public async inviteUser(@Param("uid") uid: string, @Body() req: UserConnectionInviteReq) {
+        await UserConnectionService.inviteUser(uid, req);
     }
 
     @Delete("/:conn_uid")

@@ -75,7 +75,7 @@ tags:
 
       | Scope name                | Description                     | Target | Implicit | Restricted |
       |:--------------------------|:--------------------------------|:------:|:--------:|:----------:|
-      | auth:reset                | Reset user account password     | app    | ✔        | ✘         |
+      | auth:reset                | Reset user account password     | app    | ✔        | ✔         |
       | biometrics:read           | Access biometric data           | user   | ✘        | ✘         |
       | biometrics:write          | Edit biometric data             | user   | ✘        | ✘         |
       | connections:read          | Access user connections list    | user   | ✘        | ✘         |
