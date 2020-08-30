@@ -6,7 +6,7 @@
 ** Created by Arthur MELIN on Sun Oct 13 2019
 */
 
-import { Body, Delete, Get, HttpCode, JsonController, Param, Post } from "routing-controllers";
+import { Body, Delete, Get, HttpCode, JsonController, Param, Post, Put } from "routing-controllers";
 
 import { Authorized, HttpStatus } from "../lib";
 import { UserConnectionInviteReq } from "../requests";
@@ -23,9 +23,15 @@ export class UserConnectionController {
 
     @Post("/")
     @HttpCode(HttpStatus.ACCEPTED)
+    @Authorized("connections:invite")
+    public async inviteUser(@Param("uid") uid: string, @Body() req: UserConnectionInviteReq) {
+        await UserConnectionService.inviteUser(uid, req);
+    }
+
+    @Put("/:conn_uid")
     @Authorized("connections:write")
-    public async createConnection(@Param("uid") uid: string, @Body() req: UserConnectionInviteReq) {
-        await UserConnectionService.createUserConnection(uid, req);
+    public async acceptConnection(@Param("uid") uid: string, @Param("conn_uid") connectionUid: string) {
+        await UserConnectionService.acceptUserConnection(uid, connectionUid);
     }
 
     @Delete("/:conn_uid")

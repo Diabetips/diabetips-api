@@ -8,7 +8,7 @@
 
 import moment = require("moment-timezone");
 
-import { IsEmail, IsIn, IsNotEmpty, IsString, Matches, MinLength } from "class-validator";
+import { IsEmail, IsIn, IsNotEmpty, IsOptional, IsString, IsUUID, Matches, MinLength } from "class-validator";
 
 import { getLangs } from "../i18n";
 
@@ -39,4 +39,9 @@ export class UserCreateReq {
     @IsString()
     @IsNotEmpty()
     public last_name: string;
+
+    @IsOptional()
+    @IsString()
+    @IsUUID()
+    public invite?: string;
 }

@@ -15,7 +15,15 @@
       content:
         application/json:
           schema:
-            $component: "schemas:user.yml:User"
+            allOf:
+              - $component: "schemas:user.yml:User"
+              - type: "object"
+                properties:
+                  "invite":
+                    type: "string"
+                    format: "uuid"
+                    description: "An optional invitation code from an user connection invitation"
+                    example: "01234567-89ab-cdef-0123-456789abcdef"
     responses:
       201:
         description: "The user account was created"

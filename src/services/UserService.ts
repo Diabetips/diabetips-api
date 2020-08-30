@@ -17,6 +17,7 @@ import { UserCreateReq, UserUpdateReq } from "../requests";
 
 import { BaseService } from "./BaseService";
 import { UserConfirmationService } from "./UserConfirmationService";
+import { UserConnectionService } from "./UserConnectionService";
 
 export class UserService extends BaseService {
 
@@ -64,6 +65,10 @@ export class UserService extends BaseService {
             email: user.email,
             code: confirm.code,
         });
+
+        if (req.invite != null) {
+            await UserConnectionService.completeUserInvite(req.invite, user);
+        }
 
         return user;
     }

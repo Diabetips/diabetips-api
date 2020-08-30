@@ -75,11 +75,12 @@ tags:
 
       | Scope name                | Description                     | Target | Implicit | Restricted |
       |:--------------------------|:--------------------------------|:------:|:--------:|:----------:|
-      | auth:reset                | Reset user account password     | app    | ✔        | ✘         |
+      | auth:reset                | Reset user account password     | app    | ✔        | ✔         |
       | biometrics:read           | Access biometric data           | user   | ✘        | ✘         |
       | biometrics:write          | Edit biometric data             | user   | ✘        | ✘         |
       | connections:read          | Access user connections list    | user   | ✘        | ✘         |
-      | connections:write         | Invite users/remove connections | user   | ✘        | ✔         |
+      | connections:write         | Accept/remove connections       | user   | ✘        | ✘         |
+      | connections:invite        | Invite new connections          | user   | ✘        | ✔         |
       | food                      | Access food data                | app    | ✔        | ✘         |
       | meals:read                | Access meal data                | user   | ✘        | ✘         |
       | meals:write               | Edit meal data                  | user   | ✘        | ✘         |

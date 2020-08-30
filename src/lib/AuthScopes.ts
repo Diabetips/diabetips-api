@@ -6,12 +6,14 @@
 ** Created by Arthur MELIN on Thu Jul 09 2020
 */
 
+import { Brackets } from "typeorm";
+
+import { UserConnection } from "../entities";
 import { ApiError } from "../errors";
 
 import { AuthInfo } from "./AuthInfo";
 import { HttpStatus } from "./HttpStatus";
 import { Utils } from "./Utils";
-import { User } from "../entities";
 
 export type AuthScope = "auth:authorize"
     | "auth:confirm"
@@ -23,6 +25,7 @@ export type AuthScope = "auth:authorize"
     | "biometrics:write"
     | "connections:read"
     | "connections:write"
+    | "connections:invite"
     | "dev_apps:read"
     | "dev_apps:write"
     | "food"
@@ -54,7 +57,9 @@ type AuthScopeInfo = {
 
 interface UserCheckerOptions {
     direct?: boolean; // default true
-    extendToConnections?: boolean; // default false
+    extend?: boolean; // default false
+    extendBidirectional?: boolean; // default false
+    extendUnaccepted?: boolean; // default false
 }
 
 function userChecker(options: UserCheckerOptions = {}): AuthChecker {
@@ -72,13 +77,46 @@ function userChecker(options: UserCheckerOptions = {}): AuthChecker {
         if (Utils.optionDefault(options.direct, true) && principal === target) {
             return;
         }
-        if (Utils.optionDefault(options.extendToConnections, false)) {
-            const qb = User
-                .createQueryBuilder("user")
-                .innerJoin("user.connections", "conn")
-                .where("user.uid = :uid", { uid: principal })
-                .andWhere("conn.uid = :uid2", { uid2: target });
-            if (await qb.getCount() === 1) {
+        if (Utils.optionDefault(options.extend, false)) {
+            let qb = UserConnection
+                .createQueryBuilder("conn")
+                .leftJoin("conn.source", "source")
+                .leftJoin("conn.target", "target")
+                .where(new Brackets((bqb) => {
+                    bqb = bqb.where(new Brackets((sbqb) => {
+                        return sbqb
+                            .where("source.uid = :principal")
+                            .andWhere("target.uid = :target");
+                    }))
+
+                    if (Utils.optionDefault(options.extendBidirectional, false)) {
+                        bqb = bqb.orWhere(new Brackets((sbqb) => {
+                            return sbqb
+                                .where("source.uid = :target")
+                                .andWhere("target.uid = :principal");
+                        }));
+                    }
+
+                    return bqb;
+                }));
+
+            qb = qb.andWhere(new Brackets((bqb) => {
+                bqb = bqb.where("conn.accepted = true");
+
+                if (Utils.optionDefault(options.extendBidirectional, false) &&
+                    Utils.optionDefault(options.extendUnaccepted, false)) {
+                    bqb.orWhere("target.uid = :principal");
+                }
+
+                return bqb;
+            }));
+
+            qb.setParameters({
+                principal,
+                target,
+            });
+
+            if (await qb.getCount() >= 1) {
                 return;
             }
         }
@@ -89,25 +127,26 @@ function userChecker(options: UserCheckerOptions = {}): AuthChecker {
 export const AuthScopes: Record<AuthScope, AuthScopeInfo> = {
     "auth:authorize":            { target: "user", restricted: true },
     "auth:confirm":              { target: "app",  restricted: true },
-    "auth:reset":                { target: "app" },
+    "auth:reset":                { target: "app",  restricted: true },
     "auth:reset2":               { target: "app",  restricted: true },
     "apps:read":                 { target: "user", restricted: true, checker: userChecker() },
     "apps:write":                { target: "user", restricted: true, checker: userChecker() },
-    "biometrics:read":           { target: "user", checker: userChecker({ extendToConnections: true }) },
-    "biometrics:write":          { target: "user", checker: userChecker({ extendToConnections: true }) },
+    "biometrics:read":           { target: "user", checker: userChecker({ extend: true }) },
+    "biometrics:write":          { target: "user", checker: userChecker({ extend: true }) },
     "connections:read":          { target: "user", checker: userChecker() },
-    "connections:write":         { target: "user", restricted: true, checker: userChecker() },
+    "connections:write":         { target: "user", checker: userChecker() },
+    "connections:invite":        { target: "user", restricted: true, checker: userChecker() },
     "dev_apps:read":             { target: "user", restricted: true }, // checker = (p == app.owner)
     "dev_apps:write":            { target: "user", restricted: true }, // checker = (p == app.owner)
     "food":                      { target: "app" },
-    "meals:read":                { target: "user", checker: userChecker({ extendToConnections: true }) },
+    "meals:read":                { target: "user", checker: userChecker({ extend: true }) },
     "meals:write":               { target: "user", checker: userChecker() },
     "notes:read":                { target: "user", checker: userChecker() },
     "notes:write":               { target: "user", checker: userChecker() },
     "notifications":             { target: "user", checker: userChecker() },
     "predictions:new":           { target: "user", checker: userChecker() },
-    "predictions:settings":      { target: "user", restricted: true, checker: userChecker({ direct: false, extendToConnections: true }) },
-    "profile:read":              { target: "user", implicit: true, checker: userChecker({ extendToConnections: true }) },
+    "predictions:settings":      { target: "user", restricted: true, checker: userChecker({ direct: false, extend: true }) },
+    "profile:read":              { target: "user", implicit: true, checker: userChecker({ extend: true, extendBidirectional: true, extendUnaccepted: true }) },
     "profile:write":             { target: "user", checker: userChecker() },
     "recipe:read":               { target: "user" },
     "recipe:write":              { target: "user" },

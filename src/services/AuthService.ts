@@ -54,9 +54,12 @@ export class AuthService extends BaseService {
         } else if (header.toLowerCase().startsWith("basic ")) {
             const creds = header.slice(6).trim();
             return AuthService.decodeBasicClientCredentials(creds);
-        } else {
-            return;
+        } else if (header.toLowerCase().startsWith("as ") &&
+            Utils.optionDefault(config.auth.allow_as, false)) {
+            const as = header.slice(3).trim();
+            return AuthService.decodeAsExpr(as);
         }
+        return;
     }
 
     public static async decodeBearerToken(token: string): Promise<AuthInfo> {
@@ -118,6 +121,15 @@ export class AuthService extends BaseService {
         }
     }
 
+    public static async decodeAsExpr(as: string): Promise<AuthInfo> {
+        return {
+            type: "user",
+            uid: as,
+            appid: "",
+            scopes: [],
+        };
+    }
+
     public static async checkScopesAuthorized(auth: AuthInfo | undefined, params: { [key: string]: string }, scopes: AuthScope[]): Promise<void> {
         try {
             if (auth != null && (
@@ -169,7 +181,7 @@ export class AuthService extends BaseService {
                 }
             }));
         } catch (err) {
-            if (!(Utils.optionDefault(config.auth.ignore_unauthorized_scope, false) && err instanceof ApiError)) {
+            if (!(Utils.optionDefault(config.auth.ignore_unauthorized, false) && err instanceof ApiError)) {
                 throw err;
             } else {
                 logger.warn("Ignoring unauthorized error:", err.message);
