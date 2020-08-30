@@ -30,7 +30,7 @@
   post:
     security:
       - OAuth2:
-        - "connections:write"
+        - "connections:invite"
     tags:
       - "Connections"
     summary: "Invite user"
@@ -59,6 +59,28 @@
         type: "string"
         format: "uuid"
         example: "01234567-89ab-cdef-0123-456789abcdef"
+  put:
+    security:
+      - OAuth2:
+        - "connections:write"
+    tags:
+      - "Connections"
+    summary: "Accept a connection"
+    description: |
+      Accept a connection from the user with the UID `other_uid` for the user with the UID `uid`.
+    responses:
+      204:
+        description: "The user connection has been accepted"
+      404:
+        description: |
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to
+             modify them.
+           * No connection with the specified UID was found.
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
   delete:
     security:
       - OAuth2:
@@ -68,6 +90,8 @@
     summary: "Remove a connection"
     description: |
       Remove the user with the UID `other_uid` from the connections of the user with the UID `uid`.
+
+      This may also be used to reject a connection request.
     responses:
       204:
         description: "The user connection has been removed"

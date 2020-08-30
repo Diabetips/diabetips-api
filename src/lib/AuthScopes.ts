@@ -25,6 +25,7 @@ export type AuthScope = "auth:authorize"
     | "biometrics:write"
     | "connections:read"
     | "connections:write"
+    | "connections:invite"
     | "dev_apps:read"
     | "dev_apps:write"
     | "food"
@@ -91,8 +92,8 @@ function userChecker(options: UserCheckerOptions = {}): AuthChecker {
                     if (Utils.optionDefault(options.extendBidirectional, false)) {
                         bqb = bqb.orWhere(new Brackets((sbqb) => {
                             return sbqb
-                                .where("target.uid = :target")
-                                .andWhere("source.uid = :principal");
+                                .where("source.uid = :target")
+                                .andWhere("target.uid = :principal");
                         }));
                     }
 
@@ -133,7 +134,8 @@ export const AuthScopes: Record<AuthScope, AuthScopeInfo> = {
     "biometrics:read":           { target: "user", checker: userChecker({ extend: true }) },
     "biometrics:write":          { target: "user", checker: userChecker({ extend: true }) },
     "connections:read":          { target: "user", checker: userChecker() },
-    "connections:write":         { target: "user", restricted: true, checker: userChecker() },
+    "connections:write":         { target: "user", checker: userChecker() },
+    "connections:invite":        { target: "user", restricted: true, checker: userChecker() },
     "dev_apps:read":             { target: "user", restricted: true }, // checker = (p == app.owner)
     "dev_apps:write":            { target: "user", restricted: true }, // checker = (p == app.owner)
     "food":                      { target: "app" },

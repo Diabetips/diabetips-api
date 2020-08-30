@@ -43,7 +43,7 @@ export class UserConnectionService extends BaseService {
                 invite,
             });
         } else if (user.uid === target.uid) {
-            throw new ApiError(HttpStatus.UNPROCESSABLE_ENTITY, "forever_alone", "User cannot invite themselves");
+            throw new ApiError(HttpStatus.FORBIDDEN, "forbidden", "Users cannot invite themselves");
         } else {
             const conn = new UserConnection();
             conn.source = user;
@@ -54,6 +54,20 @@ export class UserConnectionService extends BaseService {
                 from: user.uid,
             });
         }
+    }
+
+    public static async acceptUserConnection(uid: string, connectionUid: string) {
+        const conn = await UserConnection.findByUids(uid, connectionUid);
+        if (conn == null) {
+            throw new ApiError(HttpStatus.NOT_FOUND, "user_not_found", `Connection ${connectionUid} not found`);
+        }
+        if (conn.target.uid !== uid) {
+            throw new ApiError(HttpStatus.FORBIDDEN, "forbidden", "Users cannot accept their own invitations");
+        }
+        if (conn.accepted) { return; }
+
+        conn.accepted = true;
+        await conn.save();
     }
 
     public static async deleteUserConnection(uid: string, connectionUid: string) {

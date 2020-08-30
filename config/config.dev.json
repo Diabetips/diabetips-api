@@ -3,7 +3,8 @@
         "url": "http://localhost:5000"
     },
     "auth": {
-        "ignore_unauthorized_scope": true,
+        "allow_as": true,
+        "ignore_unauthorized": true,
         "token_key": "-----BEGIN EC PRIVATE KEY-----\nMHQCAQEEIDIjgcXhoseba1ndglTFMyB11G1pAeeKdHioMRIP2/odoAcGBSuBBAAK\noUQDQgAE7XkdpQx/Lu4/Htj6Y/PnyhLi57/vLtUE1NYqvcgiBl2CSX+Qu5MhXz0E\nwUVVNzXyZfm6TAbMzMRXmGEUIDRxGQ==\n-----END EC PRIVATE KEY-----"
     },
     "db": {

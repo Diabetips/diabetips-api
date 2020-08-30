@@ -62,8 +62,8 @@ export class UserConnection extends BaseEntity {
                     }))
                     .orWhere(new Brackets((sbqb) => {
                         return sbqb
-                            .where("target.uid = :uid2")
-                            .andWhere("source.uid = :uid");
+                            .where("source.uid = :uid2")
+                            .andWhere("target.uid = :uid");
                     }));
             }))
             .setParameters({ uid, uid2 });
