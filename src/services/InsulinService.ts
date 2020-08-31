@@ -12,6 +12,7 @@ import { HttpStatus, Page, Pageable, Timeable } from "../lib";
 import { InsulinCreateReq, InsulinUpdateReq, InsulinSearchReq, TimeRangeReq, InsulinCalculationReq } from "../requests";
 
 import { BaseService } from "./BaseService";
+import { PredictionService } from "./PredictionService";
 
 export class InsulinService extends BaseService {
 
@@ -47,6 +48,7 @@ export class InsulinService extends BaseService {
         insulin.type = req.type;
         insulin.user = Promise.resolve(user);
 
+        await PredictionService.getNewPrediction(uid, true);
         return insulin.save();
     }
 
