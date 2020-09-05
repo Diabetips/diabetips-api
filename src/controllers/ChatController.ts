@@ -65,4 +65,13 @@ export class ChatController {
         await ChatService.removeMessage(ctx.auth.uid, uid, messageId);
     }
 
+    @Get("/:uid/:id/attachments/:filename")
+    @Authorized("chat")
+    public async downloadAttachment(@Ctx() ctx: UserContext,
+                                    @Param("uid") uid: string,
+                                    @Param("id") messageId: string,
+                                    @Param("filename") filename: string) {
+        return ChatService.downloadAttachment(ctx.auth.uid, uid, messageId, filename);
+    }
+
 }
