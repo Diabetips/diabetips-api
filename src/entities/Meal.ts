@@ -20,7 +20,7 @@ import { MealFoodReq, MealRecipeReq } from "../requests";
 export class Meal extends BaseEntity {
 
     @ManyToOne(() => User, (user) => user.meals, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @JoinColumn()
     public user: Promise<User>;
 
     @Column({ length: 200 })

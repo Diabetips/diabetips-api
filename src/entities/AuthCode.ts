@@ -32,11 +32,11 @@ export class AuthCode extends BaseEntity {
     public scopes: string[];
 
     @JoinColumn()
-    @ManyToOne((type) => AuthUserApp)
+    @ManyToOne(() => AuthUserApp)
     public auth: AuthUserApp;
 
     @JoinColumn()
-    @OneToOne((type) => AuthRefreshToken)
+    @OneToOne(() => AuthRefreshToken)
     public refresh_token?: AuthRefreshToken;
 
     // Repository functions

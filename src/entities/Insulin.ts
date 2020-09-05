@@ -39,8 +39,8 @@ export class Insulin extends BaseEntity {
     @Column()
     public description: string;
 
-    @ManyToOne((type) => User, (user) => user.insulin, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @ManyToOne(() => User, (user) => user.insulin, { cascade: true })
+    @JoinColumn()
     public user: Promise<User>;
 
     // Repository functions

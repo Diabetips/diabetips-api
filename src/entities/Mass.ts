@@ -19,8 +19,8 @@ export class Mass extends BaseEntityHiddenId {
     @Column()
     public time: Date;
 
-    @ManyToOne((type) => User, (user) => user.mass_history, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @ManyToOne(() => User, (user) => user.mass_history, { cascade: true })
+    @JoinColumn()
     public user: Promise<User>;
 
     public static async findAll(uid: string,

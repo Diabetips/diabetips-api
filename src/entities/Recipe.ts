@@ -33,14 +33,14 @@ export class Recipe extends BaseEntity {
     @Column()
     public portions: number;
 
-    @OneToMany((type) => Ingredient, (ingredient) => ingredient.recipe, { cascade: true })
+    @OneToMany(() => Ingredient, (ingredient) => ingredient.recipe, { cascade: true })
     public ingredients: Ingredient[];
 
-    @OneToOne((type) => RecipePicture, (picture) => picture.recipe)
+    @OneToOne(() => RecipePicture, (picture) => picture.recipe)
     public picture: Promise<RecipePicture>;
 
-    @ManyToOne((type) => User, (user) => user.recipes, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @ManyToOne(() => User, (user) => user.recipes, { cascade: true })
+    @JoinColumn()
     public author: User | null;
 
     // Repository functions

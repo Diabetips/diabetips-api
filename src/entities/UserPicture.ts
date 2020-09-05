@@ -16,8 +16,8 @@ export class UserPicture extends BaseEntity {
     @PrimaryGeneratedColumn()
     public id: number;
 
-    @OneToOne((type) => User, (user) => user.picture, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @OneToOne(() => User, (user) => user.picture, { cascade: true })
+    @JoinColumn()
     public user: Promise<User>;
 
     @Column({ type: "bytea" })

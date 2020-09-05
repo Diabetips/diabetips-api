@@ -16,8 +16,8 @@ export class UserPasswordReset extends BaseEntity {
     @PrimaryGeneratedColumn()
     public id: number;
 
-    @ManyToOne((type) => User, (user) => user.password_resets, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @ManyToOne(() => User, (user) => user.password_resets, { cascade: true })
+    @JoinColumn()
     public user: Promise<User>;
 
     @Column({ type: "uuid", nullable: true })

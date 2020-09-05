@@ -44,7 +44,7 @@ export class Food extends BaseEntity {
     @Column({ name: "datalex", type: "tsvector", nullable: true, select: false })
     private _datalex: number;
 
-    @OneToOne((type) => FoodPicture, (pic) => pic.food)
+    @OneToOne(() => FoodPicture, (pic) => pic.food)
     public picture: Promise<FoodPicture>;
 
     // Repository functions

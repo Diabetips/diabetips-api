@@ -42,7 +42,7 @@ export class AuthApp extends BaseEntityHiddenId {
     @Column({ name: "extra_scopes", type: "simple-array", default: ""})
     public _extra_scopes: AuthScope[];
 
-    @OneToOne((type) => AuthAppLogo, (logo) => logo.app)
+    @OneToOne(() => AuthAppLogo, (logo) => logo.app)
     public logo: Promise<AuthAppLogo>;
 
     public get redirectUri(): string {

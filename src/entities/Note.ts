@@ -21,8 +21,8 @@ export class Note extends BaseEntity {
     @Column({ length: 500 })
     public description: string;
 
-    @ManyToOne((type) => User, (user) => user.note, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @ManyToOne(() => User, (user) => user.note, { cascade: true })
+    @JoinColumn()
     public user: Promise<User>;
 
     public static async findAll(userUid: string,

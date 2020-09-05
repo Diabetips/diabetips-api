@@ -30,18 +30,18 @@ export class AuthUserApp extends BaseEntity {
     @Column({ type: "simple-array" })
     public scopes: AuthScope[]
 
-    @ManyToOne((type) => User)
-    @JoinColumn({ name: "user_id" })
+    @ManyToOne(() => User)
+    @JoinColumn()
     public user: User;
 
-    @ManyToOne((type) => AuthApp)
-    @JoinColumn({ name: "app_id" })
+    @ManyToOne(() => AuthApp)
+    @JoinColumn()
     public app: AuthApp;
 
-    @OneToMany((type) => AuthCode, (code) => code.auth)
+    @OneToMany(() => AuthCode, (code) => code.auth)
     public auth_codes: AuthCode[];
 
-    @OneToMany((type) => AuthRefreshToken, (rt) => rt.auth)
+    @OneToMany(() => AuthRefreshToken, (rt) => rt.auth)
     public refresh_tokens: AuthRefreshToken[];
 
     public get id(): string {

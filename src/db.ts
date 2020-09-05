@@ -7,6 +7,7 @@
 */
 
 import { Connection, ConnectionOptions, createConnection, Logger, QueryRunner } from "typeorm";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 
 import { config } from "./config";
 import { sqlLogger } from "./logger";
@@ -68,6 +69,7 @@ export async function connectToDatabase(): Promise<Connection> {
     return database = await createConnection({
         ...config.db,
         logger: new TypeOrmBridgeLogger(),
+        namingStrategy: new SnakeNamingStrategy(),
         synchronize: (config.env === "dev" ? true : undefined),
     } as ConnectionOptions);
 }

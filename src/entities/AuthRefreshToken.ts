@@ -26,7 +26,7 @@ export class AuthRefreshToken extends BaseEntity {
     public scopes: string[];
 
     @JoinColumn()
-    @ManyToOne((type) => AuthUserApp)
+    @ManyToOne(() => AuthUserApp)
     public auth: AuthUserApp;
 
     public token?: string;

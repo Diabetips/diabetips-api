@@ -19,11 +19,11 @@ export class MealFood extends BaseEntityHiddenId {
     @Column({ type: "float" })
     public total_sugar: number;
 
-    @ManyToOne((type) => Food)
-    @JoinColumn({ name: "food_id" })
+    @ManyToOne(() => Food)
+    @JoinColumn()
     public food: Food;
 
-    @ManyToOne((type) => Meal, (meal) => meal.foods)
-    @JoinColumn({ name: "meal_id" })
+    @ManyToOne(() => Meal, (meal) => meal.foods)
+    @JoinColumn()
     public meal: Promise<Meal>;
 }

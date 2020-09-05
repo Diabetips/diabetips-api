@@ -16,8 +16,8 @@ export class AuthAppLogo extends BaseEntity {
     @PrimaryGeneratedColumn()
     public id: number;
 
-    @OneToOne((type) => AuthApp, (app) => app.logo)
-    @JoinColumn({ name: "app_id" })
+    @OneToOne(() => AuthApp, (app) => app.logo)
+    @JoinColumn()
     public app: Promise<AuthApp>;
 
     @Column({ type: "bytea" })

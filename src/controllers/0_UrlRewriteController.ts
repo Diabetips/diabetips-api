@@ -14,7 +14,7 @@ import { All, Controller, UseBefore } from "routing-controllers";
 
 import { ApiError } from "../errors";
 import { HttpStatus } from "../lib";
-import { AuthService, UserService } from "../services";
+import { AuthService } from "../services";
 
 @Controller()
 export class UrlRewriteController {

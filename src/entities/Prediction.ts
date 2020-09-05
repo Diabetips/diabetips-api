@@ -16,8 +16,8 @@ export class Prediction extends BaseEntity {
     @PrimaryGeneratedColumn()
     public id: number;
 
-    @ManyToOne((type) => User, (user) => user.prediction_history, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @ManyToOne(() => User, (user) => user.prediction_history, { cascade: true })
+    @JoinColumn()
     public user: Promise<User>;
 
     @Column({ default: () => "now()" })

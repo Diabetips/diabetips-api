@@ -15,11 +15,11 @@ import { Recipe } from "./Recipe";
 
 @Entity()
 export class MealRecipe extends BaseEntityHiddenId {
-    @ManyToOne((type) => Recipe)
-    @JoinColumn({ name: "recipe_id" })
+    @ManyToOne(() => Recipe)
+    @JoinColumn()
     public recipe: Recipe;
 
-    @OneToMany((type) => Ingredient, (modification) => modification.meal_recipe, { cascade: true })
+    @OneToMany(() => Ingredient, (modification) => modification.meal_recipe, { cascade: true })
     public modifications: Ingredient[];
 
     @Column({ type: "float" })
@@ -28,8 +28,8 @@ export class MealRecipe extends BaseEntityHiddenId {
     @Column({ type: "float" })
     public total_sugar: number;
 
-    @ManyToOne((type) => Meal, (meal) => meal.recipes)
-    @JoinColumn({ name: "meal_id" })
+    @ManyToOne(() => Meal, (meal) => meal.recipes)
+    @JoinColumn()
     public meal: Promise<Meal>;
 
     public async addModifications(modifications: IngredientCreateReq[]) {

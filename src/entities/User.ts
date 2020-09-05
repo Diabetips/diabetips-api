@@ -62,67 +62,67 @@ export class User extends BaseEntityHiddenId {
     @Column({ length: 100 })
     public last_name: string;
 
-    @OneToOne((type) => UserConfirmation, (confirmation) => confirmation.user)
+    @OneToOne(() => UserConfirmation, (confirmation) => confirmation.user)
     public confirmation: Promise<UserConfirmation>;
 
-    @OneToOne((type) => UserPicture, (picture) => picture.user)
+    @OneToOne(() => UserPicture, (picture) => picture.user)
     public picture: Promise<UserPicture>;
 
-    @OneToMany((type) => UserPasswordReset, (pwdRst) => pwdRst.user)
+    @OneToMany(() => UserPasswordReset, (pwdRst) => pwdRst.user)
     public password_resets: Promise<UserPasswordReset[]>;
 
-    @OneToMany((type) => UserConnection, (c) => c.source)
+    @OneToMany(() => UserConnection, (c) => c.source)
     public connections: Promise<UserConnection[]>;
 
-    @OneToMany((type) => UserConnection, (c) => c.target)
+    @OneToMany(() => UserConnection, (c) => c.target)
     public reverseConnections: Promise<UserConnection[]>;
 
-    @OneToMany((type) => Notification, (n) => n.target)
+    @OneToMany(() => Notification, (n) => n.target)
     public notifications: Promise<Notification[]>;
 
-    @OneToMany((type) => NotificationFcmToken, (nt) => nt.user)
+    @OneToMany(() => NotificationFcmToken, (nt) => nt.user)
     public notificationFcmTokens: Promise<NotificationFcmToken[]>;
 
-    @OneToMany((type) => Recipe, (recipe) => recipe.author)
+    @OneToMany(() => Recipe, (recipe) => recipe.author)
     public recipes: Promise<Recipe[]>;
 
-    @ManyToMany((type) => Recipe, {cascade: true})
+    @ManyToMany(() => Recipe, {cascade: true})
     @JoinTable({
         name: "user_favorite_recipes",
     })
     public favoriteRecipes: Promise<Recipe[]>;
 
-    @OneToMany((type) => Meal, (meal) => meal.user)
+    @OneToMany(() => Meal, (meal) => meal.user)
     public meals: Promise<Meal[]>;
 
-    @OneToMany((type) => Insulin, (insulin) => insulin.user)
+    @OneToMany(() => Insulin, (insulin) => insulin.user)
     public insulin: Promise<Insulin[]>;
 
-    @OneToMany((type) => Hba1c, (hba1c) => hba1c.user)
+    @OneToMany(() => Hba1c, (hba1c) => hba1c.user)
     public hba1c: Promise<Hba1c[]>;
 
-    @OneToMany((type) => BloodSugar, (blood_sugar) => blood_sugar.user)
+    @OneToMany(() => BloodSugar, (blood_sugar) => blood_sugar.user)
     public blood_sugar: Promise<BloodSugar[]>;
 
-    @OneToOne((type) => Biometric, (pd) => pd.user)
+    @OneToOne(() => Biometric, (pd) => pd.user)
     public biometric: Promise<Biometric>;
 
-    @OneToMany((type) => Height, (h) => h.user)
+    @OneToMany(() => Height, (h) => h.user)
     public height_history: Promise<Height[]>;
 
-    @OneToMany((type) => Mass, (m) => m.user)
+    @OneToMany(() => Mass, (m) => m.user)
     public mass_history: Promise<Mass[]>;
 
-    @OneToMany((type) => Note, (note) => note.user)
+    @OneToMany(() => Note, (note) => note.user)
     public note: Promise<Note[]>;
 
-    @OneToMany((type) => Event, (event) => event.user)
+    @OneToMany(() => Event, (event) => event.user)
     public event: Promise<Event[]>;
 
-    @OneToMany((type) => Prediction, (p) => p.user)
+    @OneToMany(() => Prediction, (p) => p.user)
     public prediction_history: Promise<Prediction[]>;
 
-    @OneToOne((type) => PredictionSettings, (ps) => ps.user)
+    @OneToOne(() => PredictionSettings, (ps) => ps.user)
     public prediction_settings: Promise<PredictionSettings>;
 
     public get password(): string | undefined {

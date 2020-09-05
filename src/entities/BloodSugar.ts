@@ -25,8 +25,8 @@ export class BloodSugar extends BaseEntityHiddenId {
     @Column({type: "float"})
     public value: number;
 
-    @ManyToOne((type) => User, (user) => user.blood_sugar, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @ManyToOne(() => User, (user) => user.blood_sugar, { cascade: true })
+    @JoinColumn()
     public user: Promise<User>;
 
     public static async findAllPageable(uid: string,

@@ -16,8 +16,8 @@ export class RecipePicture extends BaseEntity {
     @PrimaryGeneratedColumn()
     public id: number;
 
-    @OneToOne((type) => Recipe, (recipe) => recipe.picture, { cascade: true })
-    @JoinColumn({ name: "recipe_id" })
+    @OneToOne(() => Recipe, (recipe) => recipe.picture, { cascade: true })
+    @JoinColumn()
     public recipe: Promise<Recipe>;
 
     @Column({ type: "bytea" })

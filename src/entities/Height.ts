@@ -21,8 +21,8 @@ export class Height extends BaseEntityHiddenId {
     @Column()
     public time: Date;
 
-    @ManyToOne((type) => User, (user) => user.height_history, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @ManyToOne(() => User, (user) => user.height_history, { cascade: true })
+    @JoinColumn()
     public user: Promise<User>;
 
     public static async findAll(uid: string,
