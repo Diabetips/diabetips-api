@@ -6,8 +6,12 @@
 ** Created by Arthur MELIN on Mon Oct 07 2019
 */
 
-import { AuthInfo } from "./AuthInfo";
+import { AuthInfo, UserAuthInfo } from "./AuthInfo";
 
 export interface Context {
     auth?: AuthInfo;
+}
+
+export interface UserContext extends Context {
+    auth: UserAuthInfo;
 }

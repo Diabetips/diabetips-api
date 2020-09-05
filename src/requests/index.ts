@@ -11,6 +11,8 @@ export * from "./BloodSugarCalculationReq";
 export * from "./BloodSugarCreateReq";
 export * from "./BloodSugarUpdateReq";
 export * from "./BloodSugarTargetFormatReq";
+export * from "./ChatMessageEditReq";
+export * from "./ChatMessageSendReq";
 export * from "./EventCreateReq";
 export * from "./EventUpdateReq";
 export * from "./FoodSearchReq";
