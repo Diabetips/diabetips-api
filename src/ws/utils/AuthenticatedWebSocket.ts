@@ -15,7 +15,7 @@ import { JsonWebSocket } from "./JsonWebSocket";
 export class AuthenticatedWebSocket extends JsonWebSocket {
 
     protected auth?: AuthInfo;
-    private _authTimeout: NodeJS.Timeout;
+    private _authTimeout?: NodeJS.Timeout;
 
     constructor() {
         super();
@@ -32,7 +32,7 @@ export class AuthenticatedWebSocket extends JsonWebSocket {
 
             this.auth = await AuthService.decodeBearerToken(msg.token);
 
-            clearTimeout(this._authTimeout);
+            clearTimeout(this._authTimeout!);
             delete this._authTimeout;
             this.onJsonMessage = onJsonMessage;
 
@@ -47,7 +47,7 @@ export class AuthenticatedWebSocket extends JsonWebSocket {
     public async onDisconnect(code: number, reason: string) {
         super.onDisconnect(code, reason);
         if (this.auth == null) {
-            clearTimeout(this._authTimeout);
+            clearTimeout(this._authTimeout!);
         }
     }
 
