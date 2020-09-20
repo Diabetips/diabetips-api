@@ -17,7 +17,36 @@ Food:
       type: "string"
       description: "The food's most common measuring unit"
       example: "g"
+
+    "energy_100g":
+      type: "number"
+      description: "Caloric intake per 100g of the food in kcal"
+      example: 124.2
+    "carbohydrates_100g":
+      type: "number"
+      description: "Quantity of carbohydrates per 100g of the food in grams"
+      example: 2.5
     "sugars_100g":
       type: "number"
       description: "Quantity of sugar per 100g of the food in grams"
       example: 2.5
+    "fat_100g":
+      type: "number"
+      description: "Quantity of fat per 100g of the food in grams"
+      example: 2.5
+    "saturated_fat_100g":
+      type: "number"
+      description: "Quantity of saturated fat per 100g of the food in grams"
+      example: 2.5
+    "fiber_100g":
+      type: "number"
+      description: "Quantity of fiber per 100g of the food in grams"
+      example: 2.5
+    "proteins_100g":
+      type: "number"
+      description: "Quantity of proteins per 100g of the food in grams"
+      example: 2.5
+    "nutriscore":
+      type: "string"
+      description: "Nutrition grade of the food element (French Nutri-Score method, A to E levels)"
+      example: "B"

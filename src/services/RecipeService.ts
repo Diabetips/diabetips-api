@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
-import { Food, Ingredient, Recipe, User } from "../entities";
+import { Food, Ingredient, Recipe } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable, Context } from "../lib";
 import { RecipeCreateReq, RecipeSearchReq, RecipeUpdateReq } from "../requests";
@@ -43,13 +43,31 @@ export class RecipeService extends BaseService {
         recipe.name = req.name;
         recipe.description = req.description;
         recipe.ingredients = [];
-        recipe.total_sugar = 0;
+        recipe.portions_eaten = 0;
+
+        recipe.total_energy = 0;
+        recipe.total_carbohydrates = 0;
+        recipe.total_sugars = 0;
+        recipe.total_fat = 0;
+        recipe.total_saturated_fat = 0;
+        recipe.total_fiber = 0;
+        recipe.total_proteins = 0;
+
         recipe.portions = req.portions;
         recipe.author = author;
+
         for (const ingReq of req.ingredients) {
             const ing = new Ingredient();
             await ing.init(ingReq);
-            recipe.total_sugar += ing.total_sugar;
+
+            recipe.total_energy += ing.total_energy;
+            recipe.total_carbohydrates += ing.total_carbohydrates;
+            recipe.total_sugars += ing.total_sugars;
+            recipe.total_fat += ing.total_fat;
+            recipe.total_saturated_fat += ing.total_saturated_fat;
+            recipe.total_fiber += ing.total_fiber;
+            recipe.total_proteins += ing.total_proteins;
+
             recipe.ingredients.push(ing);
         }
 
@@ -71,7 +89,15 @@ export class RecipeService extends BaseService {
         if (req.portions !== undefined) { recipe.portions = req.portions; }
         if (req.ingredients !== undefined) {
             recipe.ingredients = [];
-            recipe.total_sugar = 0;
+
+            recipe.total_energy = 0;
+            recipe.total_carbohydrates = 0;
+            recipe.total_sugars = 0;
+            recipe.total_fat = 0;
+            recipe.total_saturated_fat = 0;
+            recipe.total_fiber = 0;
+            recipe.total_proteins = 0;
+
             for (const ingReq of req.ingredients) {
                 const f = await Food.findById(ingReq.food_id);
                 if (f === undefined) {
@@ -80,8 +106,16 @@ export class RecipeService extends BaseService {
                 const ing = new Ingredient();
                 ing.quantity = ingReq.quantity;
                 ing.food = f;
-                ing.total_sugar = ing.quantity * f.sugars_100g / 100;
-                recipe.total_sugar += ing.total_sugar;
+                ing.computeNutritionDataTotals();
+
+                recipe.total_energy += ing.total_energy;
+                recipe.total_carbohydrates += ing.total_carbohydrates;
+                recipe.total_sugars += ing.total_sugars;
+                recipe.total_fat += ing.total_fat;
+                recipe.total_saturated_fat += ing.total_saturated_fat;
+                recipe.total_fiber += ing.total_fiber;
+                recipe.total_proteins += ing.total_proteins;
+
                 recipe.ingredients.push(ing);
             }
         }

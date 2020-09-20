@@ -49,7 +49,7 @@ export class MealService extends BaseService {
         if (!meal.isValid()) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "empty_meal", `A meal must contain at least one recipe or one food`);
         }
-        meal.computeTotalSugar();
+        meal.computeNutritionDataTotals();
 
         return meal.save();
     }
@@ -76,7 +76,7 @@ export class MealService extends BaseService {
             throw new ApiError(HttpStatus.BAD_REQUEST, "empty_meal", `A meal must contain at least one recipe or one food`);
         }
 
-        meal.computeTotalSugar();
+        meal.computeNutritionDataTotals();
         return meal.save();
     }
 

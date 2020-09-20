@@ -23,7 +23,25 @@ export class Ingredient extends BaseEntityHiddenId {
     public quantity: number;
 
     @Column({ type: "float" })
-    public total_sugar: number;
+    public total_energy: number;
+
+    @Column({ type: "float" })
+    public total_carbohydrates: number;
+
+    @Column({ type: "float" })
+    public total_sugars: number;
+
+    @Column({ type: "float" })
+    public total_fat: number;
+
+    @Column({ type: "float" })
+    public total_saturated_fat: number;
+
+    @Column({ type: "float" })
+    public total_fiber: number;
+
+    @Column({ type: "float" })
+    public total_proteins: number;
 
     @ManyToOne(() => Food)
     @JoinColumn()
@@ -46,11 +64,17 @@ export class Ingredient extends BaseEntityHiddenId {
         }
         this.quantity = ingReq.quantity;
         this.food = f;
-        this.computeTotalSugar()
+        this.computeNutritionDataTotals()
     }
 
-    public computeTotalSugar() {
-        this.total_sugar = this.quantity * this.food.sugars_100g / 100;
+    public computeNutritionDataTotals() {
+        this.total_energy        = (this.food.energy_100g ?? 0) / 100 * this.quantity;
+        this.total_carbohydrates = (this.food.carbohydrates_100g ?? 0) / 100 * this.quantity;
+        this.total_sugars        = (this.food.sugars_100g ?? 0) / 100 * this.quantity;
+        this.total_fat           = (this.food.fat_100g ?? 0) / 100 * this.quantity;
+        this.total_saturated_fat = (this.food.saturated_fat_100g ?? 0) / 100 * this.quantity;
+        this.total_fiber         = (this.food.fiber_100g ?? 0) / 100 * this.quantity;
+        this.total_proteins      = (this.food.proteins_100g ?? 0) / 100 * this.quantity;
     }
 
     public static async findAll(options: IBaseQueryOptions = {}): Promise<Ingredient[]> {
