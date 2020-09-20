@@ -29,7 +29,9 @@ export class UrlRewriteController {
             throw new ApiError(HttpStatus.BAD_REQUEST, "bad_request", "This route is only available with a user authorization token");
         }
         req.url = "/v1/users/" + auth.uid + (req.params[0] || "");
-        next("route");
+        // Patch my own patch lmao fuck this
+        (req as any).routingControllersStarted = false;
+        return next("route");
     })
     public usersMeRewrite() {
         throw Error("Unreachable code");

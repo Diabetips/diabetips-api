@@ -81,11 +81,14 @@ app.get("/", (req: Request, res: Response) => {
 });
 app.get("/openapi.yml", getDocsSpec);
 
+app.use((req, res, next) => {
+    if (!res.headersSent) {
+        return next()
+    }
+});
+
 // 404 handler
 app.use((req: Request, res: Response, next: NextFunction) => {
-    if (res.headersSent) {
-        return;
-    }
     throw new ApiError(HttpStatus.NOT_FOUND,
         "invalid_route",
         `${req.method} ${req.originalUrl.split("?", 1)[0]} is not a valid route on this server`);
