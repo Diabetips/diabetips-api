@@ -20,14 +20,35 @@ export { FoodPicture };
 export class Food extends BaseEntity {
 
     // Indexed on prod server using GIN and gin_trgm_ops, but index types are not supported by TypeORM.
-    @Column({ length: 200 })
+    @Column({ length: 300 })
     public name: string;
 
     @Column({ length: 10 })
     public unit: string;
 
-    @Column({ type: "float" })
-    public sugars_100g: number;
+    @Column({ type: "float", nullable: true })
+    public energy_100g?: number;
+
+    @Column({ type: "float", nullable: true })
+    public carbohydrates_100g?: number;
+
+    @Column({ type: "float", nullable: true })
+    public sugars_100g?: number;
+
+    @Column({ type: "float", nullable: true })
+    public fat_100g?: number;
+
+    @Column({ type: "float", nullable: true })
+    public saturated_fat_100g?: number;
+
+    @Column({ type: "float", nullable: true })
+    public fiber_100g?: number;
+
+    @Column({ type: "float", nullable: true })
+    public proteins_100g?: number;
+
+    @Column({ nullable: true })
+    public nutriscore?: string;
 
     // Information about food data source
     // For OpenFoodFacts: "openfoodfacts:" + code
