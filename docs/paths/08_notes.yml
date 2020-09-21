@@ -4,10 +4,10 @@
   get:
     security:
       - OAuth2:
-        - "notes:read"
+          - "notes:read"
     tags:
       - "Notes"
-    summary: "Get all notes of the specified user"
+    summary: "Get all notes"
     description: |
       Get a list of all the notes of the user with the specified UID.
 
@@ -41,7 +41,7 @@
   post:
     security:
       - OAuth2:
-        - "notes:write"
+          - "notes:write"
     tags:
       - "Notes"
     summary: "Create a note"
@@ -67,7 +67,7 @@
   get:
     security:
       - OAuth2:
-        - "notes:read"
+          - "notes:read"
     tags:
       - "Notes"
     summary: "Get user's note"
@@ -93,7 +93,7 @@
   put:
     security:
       - OAuth2:
-        - "notes:write"
+          - "notes:write"
     tags:
       - "Notes"
     summary: "Update note"
@@ -127,7 +127,7 @@
   delete:
     security:
       - OAuth2:
-        - "notes:write"
+          - "notes:write"
     tags:
       - "Notes"
     summary: "Remove note"
@@ -152,10 +152,10 @@
   get:
     security:
       - OAuth2:
-        - "notes:read"
+          - "notes:read"
     tags:
       - "Notes"
-    summary: "Get all events of the specified user"
+    summary: "Get all events"
     description: |
       Get a list of all the events of the user with the specified UID.
 
@@ -189,7 +189,7 @@
   post:
     security:
       - OAuth2:
-        - "notes:write"
+          - "notes:write"
     tags:
       - "Notes"
     summary: "Create an event"
@@ -215,7 +215,7 @@
   get:
     security:
       - OAuth2:
-        - "notes:read"
+          - "notes:read"
     tags:
       - "Notes"
     summary: "Get user's event"
@@ -241,7 +241,7 @@
   put:
     security:
       - OAuth2:
-        - "notes:write"
+          - "notes:write"
     tags:
       - "Notes"
     summary: "Update event"
@@ -275,7 +275,7 @@
   delete:
     security:
       - OAuth2:
-        - "notes:write"
+          - "notes:write"
     tags:
       - "Notes"
     summary: "Remove event"
@@ -284,6 +284,145 @@
     responses:
       204:
         description: "The event was removed"
+      404:
+        description: |
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No meal with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/sticky/{patient_uid}":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+    - $component: "parameters:patient_uid.yml:PatientUID"
+  get:
+    security:
+      - OAuth2:
+          - "notes:read"
+    tags:
+      - "Notes"
+    summary: "Get all sticky notes"
+    description: |
+      Get a list of all the sticky notes of the user about the specified patient.
+    responses:
+      200:
+        description: "List of all user's sticky notes about the specified patient"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:sticky.yml:Sticky"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  post:
+    security:
+      - OAuth2:
+          - "notes:write"
+    tags:
+      - "Notes"
+    summary: "Create a sticky note"
+    description: |
+      Create a sticky note for the user with the specified UID about the specified patient.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:sticky.yml:Sticky"
+    responses:
+      201:
+        description: "The sticky note was created"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:sticky.yml:Sticky"
+"/v1/users/{uid}/sticky/{patient_uid}/{sticky_id}":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+    - $component: "parameters:patient_uid.yml:PatientUID"
+    - $component: "parameters:sticky_id.yml:StickyId"
+  get:
+    security:
+      - OAuth2:
+          - "notes:read"
+    tags:
+      - "Notes"
+    summary: "Get user's sticky note"
+    description: |
+      Get the sticky note of the user with the specified UID and ID.
+    responses:
+      200:
+        description: "The sticky note"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:sticky.yml:Sticky"
+      404:
+        description: |
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to view
+           them
+           * No sticky note with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  put:
+    security:
+      - OAuth2:
+          - "notes:write"
+    tags:
+      - "Notes"
+    summary: "Update sticky note"
+    description: |
+      Update the sticky note of the user with the specified UID and ID.
+
+      Not all fields of the request body are required, only the fields that should be updated must be present.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:sticky.yml:Sticky"
+    responses:
+      200:
+        description: "The updated sticky note's data"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:sticky.yml:Sticky"
+      404:
+        description: |
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to modify
+           them
+           * No sticky note with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  delete:
+    security:
+      - OAuth2:
+          - "notes:write"
+    tags:
+      - "Notes"
+    summary: "Remove sticky note"
+    description: |
+      Delete the sticky note of the user with the specified UID and ID.
+    responses:
+      204:
+        description: "The sticky note was removed"
       404:
         description: |
           Either:

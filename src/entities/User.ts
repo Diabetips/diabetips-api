@@ -26,6 +26,7 @@ import { NotificationFcmToken } from "./NotificationFcmToken";
 import { Prediction } from "./Prediction";
 import { PredictionSettings } from "./PredictionSettings";
 import { Recipe } from "./Recipe";
+import { StickyNote } from "./StickyNote";
 
 import { UserConfirmation } from "./UserConfirmation";
 import { UserConnection } from "./UserConnection";
@@ -118,6 +119,12 @@ export class User extends BaseEntityHiddenId {
 
     @OneToMany(() => Event, (event) => event.user)
     public event: Promise<Event[]>;
+
+    @OneToMany(() => StickyNote, (sticky_note) => sticky_note.user)
+    public sticky_notes: Promise<StickyNote[]>;
+
+    @OneToMany(() => StickyNote, (sticky_note) => sticky_note.patient)
+    public patient_sticky_notes: Promise<StickyNote[]>;
 
     @OneToMany(() => Prediction, (p) => p.user)
     public prediction_history: Promise<Prediction[]>;

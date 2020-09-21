@@ -33,6 +33,8 @@ export * from "./PredictionSettingsUpdateReq";
 export * from "./RecipeCreateReq";
 export * from "./RecipeSearchReq";
 export * from "./RecipeUpdateReq";
+export * from "./StickyNoteCreateReq";
+export * from "./StickyNoteUpdateReq";
 export * from "./TimeRangeReq";
 export * from "./UserConfirmAccountReq";
 export * from "./UserConnectionInviteReq";
