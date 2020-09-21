@@ -1,0 +1,8 @@
+StickyId:
+  in: "path"
+  name: "sticky_id"
+  description: "The user sticky note's ID"
+  required: true
+  schema:
+    type: "integer"
+    example: 1
