@@ -84,6 +84,13 @@ export class StickyNoteService extends BaseService {
             throw new ApiError(HttpStatus.NOT_FOUND, "sticky_note_not_found", `StickyNote (${noteId}) or User (${userUid}) not found`);
         }
         stickyNote.deleted = true;
+        const notes = await StickyNote.findAll(userUid);
+        Promise.all(notes.map((note) => {
+            if (note.index > stickyNote.index) {
+                note.index--;
+            }
+            note.save();
+        }));
         return stickyNote.save();
     }
 }
