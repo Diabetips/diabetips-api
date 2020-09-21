@@ -123,6 +123,9 @@ export class User extends BaseEntityHiddenId {
     @OneToMany(() => StickyNote, (sticky_note) => sticky_note.user)
     public sticky_notes: Promise<StickyNote[]>;
 
+    @OneToMany(() => StickyNote, (sticky_note) => sticky_note.patient)
+    public patient_sticky_notes: Promise<StickyNote[]>;
+
     @OneToMany(() => Prediction, (p) => p.user)
     public prediction_history: Promise<Prediction[]>;
 

@@ -14,24 +14,31 @@ import { StickyNoteCreateReq, StickyNoteUpdateReq } from "../requests";
 import { filterXSS } from "xss";
 
 export class StickyNoteService extends BaseService {
-    public static async getAllStickyNotes(uid: string, p: Pageable, t: Timeable): Promise<StickyNote[]> {
-        return StickyNote.findAll(uid);
+    public static async getAllStickyNotes(uid: string, patientUid: string): Promise<StickyNote[]> {
+        return StickyNote.findAll(uid, patientUid);
     }
 
-    public static async getStickyNote(userUid: string, noteId: number): Promise<StickyNote> {
-        const stickyNote = await StickyNote.findById(userUid, noteId);
+    public static async getStickyNote(userUid: string, patientUid: string, noteId: number): Promise<StickyNote> {
+        const stickyNote = await StickyNote.findById(userUid, patientUid, noteId);
         if (stickyNote === undefined) {
             throw new ApiError(HttpStatus.NOT_FOUND, "sticky_note_not_found", `StickyNote ${noteId} not found`);
         }
         return stickyNote;
     }
 
-    public static async addStickyNote(userUid: string, req: StickyNoteCreateReq): Promise<StickyNote> {
+    public static async addStickyNote(userUid: string, patientUid: string, req: StickyNoteCreateReq): Promise<StickyNote> {
         // Get the user
         const user = await User.findByUid(userUid);
 
         if (user === undefined) {
             throw new ApiError(HttpStatus.NOT_FOUND, "user_not_found", `User (${userUid}) not found`);
+        }
+
+        // Get the patient
+        const patient = await User.findByUid(patientUid);
+
+        if (patient === undefined) {
+            throw new ApiError(HttpStatus.NOT_FOUND, "user_not_found", `User (${patientUid}) not found`);
         }
 
         // Add StickyNote
@@ -40,16 +47,21 @@ export class StickyNoteService extends BaseService {
         stickyNote.content = filterXSS(req.content);
         stickyNote.color = req.color;
 
-        const raw = (await StickyNote.findMaxIndex(userUid)) ?? {max: 0};
+        const raw = (await StickyNote.findMaxIndex(userUid, patientUid)) ?? {max: 0};
         stickyNote.index = raw.max + 1;
 
+        stickyNote.patient = Promise.resolve(patient);
         stickyNote.user = Promise.resolve(user);
 
         return stickyNote.save();
     }
 
-    public static async updateStickyNote(userUid: string, noteId: number, req: StickyNoteUpdateReq): Promise<StickyNote> {
-        const stickyNote = await StickyNote.findById(userUid, noteId);
+    public static async updateStickyNote(userUid: string,
+                                         patientUid: string,
+                                         noteId: number,
+                                         req: StickyNoteUpdateReq):
+                                         Promise<StickyNote> {
+        const stickyNote = await StickyNote.findById(userUid, patientUid, noteId);
 
         if (stickyNote === undefined) {
             throw new ApiError(HttpStatus.NOT_FOUND, "sticky_note_not_found", `StickyNote (${noteId}) or User (${userUid}) not found`);
@@ -60,7 +72,7 @@ export class StickyNoteService extends BaseService {
         if (req.color !== undefined) { stickyNote.color = req.color; }
         if (req.index !== undefined) {
             const oldIndex = stickyNote.index;
-            const notes = await StickyNote.findAll(userUid);
+            const notes = await StickyNote.findAll(userUid, patientUid);
             const min = oldIndex < req.index ? oldIndex : req.index;
             const max = oldIndex < req.index ? req.index : oldIndex;
             const it = oldIndex < req.index ? -1 : 1;
@@ -77,14 +89,14 @@ export class StickyNoteService extends BaseService {
         return stickyNote.save();
     }
 
-    public static async deleteStickyNote(userUid: string, noteId: number) {
-        const stickyNote = await StickyNote.findById(userUid, noteId);
+    public static async deleteStickyNote(userUid: string, patientUid: string, noteId: number) {
+        const stickyNote = await StickyNote.findById(userUid, patientUid, noteId);
 
         if (stickyNote === undefined) {
             throw new ApiError(HttpStatus.NOT_FOUND, "sticky_note_not_found", `StickyNote (${noteId}) or User (${userUid}) not found`);
         }
         stickyNote.deleted = true;
-        const notes = await StickyNote.findAll(userUid);
+        const notes = await StickyNote.findAll(userUid, patientUid);
         Promise.all(notes.map((note) => {
             if (note.index > stickyNote.index) {
                 note.index--;

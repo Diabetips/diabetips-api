@@ -29,13 +29,20 @@ export class StickyNote extends BaseEntity {
     @JoinColumn()
     public user: Promise<User>;
 
+    @ManyToOne(() => User, (user) => user.patient_sticky_notes, { cascade: true })
+    @JoinColumn()
+    public patient: Promise<User>;
+
     public static async findAll(userUid: string,
+                                patientUid: string,
                                 options: IBaseQueryOptions = {}):
                                 Promise<StickyNote[]> {
         let qb = this
             .createQueryBuilder("sticky_note")
             .leftJoin("sticky_note.user", "user")
             .andWhere("user.uid = :userUid", { userUid })
+            .leftJoin("sticky_note.patient", "patient")
+            .andWhere("patient.uid = :patientUid", { patientUid })
             .orderBy("sticky_note.index", "ASC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
@@ -48,6 +55,7 @@ export class StickyNote extends BaseEntity {
     }
 
     public static async findById(userUid: string,
+                                 patientUid: string,
                                  noteId: number,
                                  options: IBaseQueryOptions = {}):
                                  Promise<StickyNote | undefined> {
@@ -55,7 +63,9 @@ export class StickyNote extends BaseEntity {
             .createQueryBuilder("sticky_note")
             .leftJoin("sticky_note.user", "user")
             .where("sticky_note.id = :noteId", { noteId })
-            .andWhere("user.uid = :userUid", { userUid });
+            .andWhere("user.uid = :userUid", { userUid })
+            .leftJoin("sticky_note.patient", "patient")
+            .andWhere("patient.uid = :patientUid", { patientUid });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb
@@ -66,13 +76,18 @@ export class StickyNote extends BaseEntity {
         return qb.getOne();
     }
 
-    public static async findMaxIndex(userUid: string, options: IBaseQueryOptions = {}): Promise<any> {
+    public static async findMaxIndex(userUid: string,
+                                     patientUid: string,
+                                     options: IBaseQueryOptions = {}):
+                                     Promise<any> {
         let qb = this
             .createQueryBuilder("sticky_note")
             .select("MAX(sticky_note.index)")
             .leftJoin("sticky_note.user", "user")
             .andWhere("user.uid = :userUid", { userUid })
-            .setOption("disable-global-order")
+            .leftJoin("sticky_note.patient", "patient")
+            .andWhere("patient.uid = :patientUid", { patientUid })
+            .setOption("disable-global-order");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb
