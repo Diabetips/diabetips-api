@@ -6,15 +6,12 @@
 ** Created by Arthur MELIN on Wed Aug 28 2019
 */
 
-import bcrypt = require("bcrypt");
-
 import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany, OneToOne } from "typeorm";
 
 import { Page, Pageable, Utils } from "../lib";
 
 import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
 
-import { AuthApp } from "./AuthApp";
 import { Biometric } from "./Biometric";
 import { BloodSugar } from "./BloodSugar";
 import { Event } from "./Event";
@@ -25,14 +22,18 @@ import { Mass } from "./Mass";
 import { Meal } from "./Meal";
 import { Note } from "./Note";
 import { Notification } from "./Notification";
+import { NotificationFcmToken } from "./NotificationFcmToken";
 import { Prediction } from "./Prediction";
 import { PredictionSettings } from "./PredictionSettings";
+import { Recipe } from "./Recipe";
+import { StickyNote } from "./StickyNote";
 
 import { UserConfirmation } from "./UserConfirmation";
+import { UserConnection } from "./UserConnection";
 import { UserPasswordReset } from "./UserPasswordReset";
 import { UserPicture } from "./UserPicture";
 
-export { UserConfirmation, UserPasswordReset, UserPicture };
+export { UserConfirmation, UserConnection, UserPasswordReset, UserPicture };
 
 @Entity()
 export class User extends BaseEntityHiddenId {
@@ -47,8 +48,14 @@ export class User extends BaseEntityHiddenId {
     @Column({ name: "password", length: 100, select: false })
     private _password?: string;
 
+    @Column({ name: "extra_scopes", type: "simple-array", default: "" })
+    private _extra_scopes: string[];
+
     @Column({ length: 10 })
     public lang: string;
+
+    @Column({ length: 100 })
+    public timezone: string;
 
     @Column({ length: 100 })
     public first_name: string;
@@ -56,73 +63,73 @@ export class User extends BaseEntityHiddenId {
     @Column({ length: 100 })
     public last_name: string;
 
-    @OneToOne((type) => UserConfirmation, (confirmation) => confirmation.user)
+    @OneToOne(() => UserConfirmation, (confirmation) => confirmation.user)
     public confirmation: Promise<UserConfirmation>;
 
-    @OneToMany((type) => UserPasswordReset, (pwdRst) => pwdRst.user)
-    public password_resets: Promise<UserPasswordReset[]>;
-
-    @OneToOne((type) => UserPicture, (picture) => picture.user)
+    @OneToOne(() => UserPicture, (picture) => picture.user)
     public picture: Promise<UserPicture>;
 
-    @ManyToMany((type) => AuthApp)
-    @JoinTable({
-        name: "user_apps",
-        joinColumn: {
-            name: "user_id",
-        },
-        inverseJoinColumn: {
-            name: "app_id",
-        },
-    })
-    public apps: Promise<AuthApp[]>;
+    @OneToMany(() => UserPasswordReset, (pwdRst) => pwdRst.user)
+    public password_resets: Promise<UserPasswordReset[]>;
 
-    @ManyToMany((type) => User)
-    @JoinTable({
-        name: "user_connections",
-        joinColumn: {
-            name: "source_user_id",
-        },
-        inverseJoinColumn: {
-            name: "target_user_id",
-        },
-    })
-    public connections: Promise<User[]>;
+    @OneToMany(() => UserConnection, (c) => c.source)
+    public connections: Promise<UserConnection[]>;
 
-    @OneToMany((type) => Notification, (n) => n.target)
+    @OneToMany(() => UserConnection, (c) => c.target)
+    public reverseConnections: Promise<UserConnection[]>;
+
+    @OneToMany(() => Notification, (n) => n.target)
     public notifications: Promise<Notification[]>;
 
-    @OneToMany((type) => Meal, (meal) => meal.user)
+    @OneToMany(() => NotificationFcmToken, (nt) => nt.user)
+    public notificationFcmTokens: Promise<NotificationFcmToken[]>;
+
+    @OneToMany(() => Recipe, (recipe) => recipe.author)
+    public recipes: Promise<Recipe[]>;
+
+    @ManyToMany(() => Recipe, {cascade: true})
+    @JoinTable({
+        name: "user_favorite_recipes",
+    })
+    public favoriteRecipes: Promise<Recipe[]>;
+
+    @OneToMany(() => Meal, (meal) => meal.user)
     public meals: Promise<Meal[]>;
 
-    @OneToMany((type) => Insulin, (insulin) => insulin.user)
+    @OneToMany(() => Insulin, (insulin) => insulin.user)
     public insulin: Promise<Insulin[]>;
 
-    @OneToMany((type) => Hba1c, (hba1c) => hba1c.user)
+    @OneToMany(() => Hba1c, (hba1c) => hba1c.user)
     public hba1c: Promise<Hba1c[]>;
 
-    @OneToMany((type) => BloodSugar, (blood_sugar) => blood_sugar.user)
+    @OneToMany(() => BloodSugar, (blood_sugar) => blood_sugar.user)
     public blood_sugar: Promise<BloodSugar[]>;
 
-    @OneToOne((type) => Biometric, (pd) => pd.user)
+    @OneToOne(() => Biometric, (pd) => pd.user)
     public biometric: Promise<Biometric>;
 
-    @OneToMany((type) => Height, (h) => h.user)
+    @OneToMany(() => Height, (h) => h.user)
     public height_history: Promise<Height[]>;
 
-    @OneToMany((type) => Mass, (h) => h.user)
+    @OneToMany(() => Mass, (m) => m.user)
     public mass_history: Promise<Mass[]>;
 
-    @OneToMany((type) => Note, (note) => note.user)
+    @OneToMany(() => Note, (note) => note.user)
     public note: Promise<Note[]>;
 
-    @OneToMany((type) => Event, (event) => event.user)
+    @OneToMany(() => Event, (event) => event.user)
     public event: Promise<Event[]>;
 
-    @OneToMany((type) => Prediction, (p) => p.user)
+    @OneToMany(() => StickyNote, (sticky_note) => sticky_note.user)
+    public sticky_notes: Promise<StickyNote[]>;
+
+    @OneToMany(() => StickyNote, (sticky_note) => sticky_note.patient)
+    public patient_sticky_notes: Promise<StickyNote[]>;
+
+    @OneToMany(() => Prediction, (p) => p.user)
     public prediction_history: Promise<Prediction[]>;
 
-    @OneToOne((type) => PredictionSettings, (ps) => ps.user)
+    @OneToOne(() => PredictionSettings, (ps) => ps.user)
     public prediction_settings: Promise<PredictionSettings>;
 
     public get password(): string | undefined {
@@ -130,7 +137,11 @@ export class User extends BaseEntityHiddenId {
     }
 
     public set password(password: string | undefined) {
-        this._password = password === undefined ? undefined : bcrypt.hashSync(password, 12);
+        this._password = password;
+    }
+
+    public get extra_scopes(): string[] {
+        return this._extra_scopes;
     }
 
     // Repository functions
@@ -152,6 +163,9 @@ export class User extends BaseEntityHiddenId {
 
         if (Utils.optionDefault(options.selectPassword, false)) {
             qb = qb.addSelect("user.password", "user_password");
+        }
+        if (Utils.optionDefault(options.selectNotificationFcmTokens, false)) {
+            qb = qb.leftJoinAndSelect("user.notificationFcmTokens", "notificationFcmToken");
         }
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb.andWhere("user.deleted = false");
@@ -199,4 +213,5 @@ export class User extends BaseEntityHiddenId {
 export interface IUserQueryOptions extends IBaseQueryOptions {
     selectPassword?: boolean;
     selectConfirmation?: boolean;
+    selectNotificationFcmTokens?: boolean;
 }

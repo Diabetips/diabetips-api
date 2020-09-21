@@ -1,0 +1,32 @@
+BloodSugarTarget:
+  type: "object"
+  properties:
+    "hypoglycemia":
+      type: "number"
+      description: "Time spent in hypoglycemia"
+      example: 18
+    "hyperglycemia":
+      type: "number"
+      description: "Time spent in hypoglycemia"
+      example: 24
+    "in_target":
+      type: "number"
+      description: "Time spent in the glycemia target"
+      example: 58
+    "start":
+      type: "string"
+      format: "date-time"
+      description: "Start of the period"
+      example: "2020-07-31T00:00:00.000Z"
+    "end":
+      type: "string"
+      format: "date-time"
+      description: "End of the period"
+      example: "2020-07-31T23:59:59.999Z"
+    "format":
+      type: "string"
+      description: "Format of the time"
+      example: "percentage"
+      enum:
+        - "percentage"
+        - "time"

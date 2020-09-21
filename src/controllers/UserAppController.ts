@@ -8,19 +8,24 @@
 
 import { Delete, Get, JsonController, Param } from "routing-controllers";
 
-import { AuthAppService } from "../services";
+import { Authorized } from "../lib";
+import { AuthService } from "../services";
 
 @JsonController("/v1/users/:uid/apps")
 export class UserAppController {
 
+    // INTERNAL
     @Get("/")
+    @Authorized("apps:read")
     public async getAllUserApps(@Param("uid") uid: string) {
-        return AuthAppService.getAllUserApps(uid);
+        return AuthService.getAllAuthorizedUserApps(uid);
     }
 
+    // INTERNAL
     @Delete("/:appid")
+    @Authorized("apps:write")
     public async deauthorizeApp(@Param("uid") uid: string, @Param("appid") appid: string) {
-        await AuthAppService.deauthorizeUserApp(uid, appid);
+        await AuthService.deauthorizeUserApp(uid, appid);
     }
 
 }

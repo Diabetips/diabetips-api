@@ -6,17 +6,22 @@
 ** Created by Alexandre DE BEAUMONT on Sat Dec 14 2019
 */
 
-import { Insulin, User } from "../entities";
+import { Insulin, User, InsulinCalculation } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable, Timeable } from "../lib";
-import { InsulinCreateReq, InsulinUpdateReq } from "../requests";
+import { InsulinCreateReq, InsulinUpdateReq, InsulinSearchReq, TimeRangeReq, InsulinCalculationReq } from "../requests";
 
 import { BaseService } from "./BaseService";
+import { PredictionService } from "./PredictionService";
 
 export class InsulinService extends BaseService {
 
-    public static async getAllInsulin(uid: string, p: Pageable, t: Timeable): Promise<Page<Insulin>> {
-        return Insulin.findAll(uid, p, t);
+    public static async getAllInsulin(uid: string,
+                                      p: Pageable,
+                                      t: Timeable,
+                                      s: InsulinSearchReq):
+                                      Promise<Page<Insulin>> {
+        return Insulin.findAllPageable(uid, p, t, s);
     }
 
     public static async getInsulin(uid: string, insulinId: number): Promise<Insulin> {
@@ -37,12 +42,13 @@ export class InsulinService extends BaseService {
 
         // Add Insulin
         const insulin = new Insulin();
-        insulin.timestamp = req.timestamp;
+        insulin.time = req.time;
         insulin.quantity = req.quantity;
         insulin.description = req.description;
         insulin.type = req.type;
         insulin.user = Promise.resolve(user);
 
+        await PredictionService.getNewPrediction(uid, true);
         return insulin.save();
     }
 
@@ -55,7 +61,7 @@ export class InsulinService extends BaseService {
 
         if (req.description !== undefined) { insulin.description = req.description; }
         if (req.quantity !== undefined) { insulin.quantity = req.quantity; }
-        if (req.timestamp !== undefined) { insulin.timestamp = req.timestamp; }
+        if (req.time !== undefined) { insulin.time = req.time; }
         if (req.type !== undefined) { insulin.type = req.type; }
 
         return insulin.save();
@@ -71,4 +77,14 @@ export class InsulinService extends BaseService {
         return insulin.save();
     }
 
+    // ----- Calculations -----
+    public static async getCalculations(uid: string,
+                                        t: TimeRangeReq,
+                                        s: InsulinSearchReq,
+                                        req: InsulinCalculationReq):
+                                        Promise<InsulinCalculation> {
+        const res = new InsulinCalculation();
+        await res.init(uid, t, s, req);
+        return res;
+    }
 }

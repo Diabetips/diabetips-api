@@ -6,22 +6,25 @@
 ** Created by Alexandre DE BEAUMONT on Sat Mar 14 2020
 */
 
-import { IsInt, IsPositive, Min, IsOptional } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDate, ValidateIf } from "class-validator";
 import { SelectQueryBuilder } from "typeorm";
 
 export class Timeable {
-    @IsOptional()
-    @IsInt()
-    @Min(0)
-    public start?: number;
+    // conditional IsOptional
+    @ValidateIf((t) => t.start !== undefined  || t.constructor !== Timeable)
+    @IsDate()
+    @Type(() => Date)
+    public start?: Date;
 
-    @IsOptional()
-    @IsInt()
-    @IsPositive()
-    public end?: number;
+    // conditional IsOptional
+    @ValidateIf((t) => t.end !== undefined  || t.constructor !== Timeable)
+    @IsDate()
+    @Type(() => Date)
+    public end?: Date;
 
     public applyTimeRange<T>(qb: SelectQueryBuilder<T>, isPeriod: boolean = false): SelectQueryBuilder<T> {
-        const val = qb.alias + (isPeriod ? ".start" : ".timestamp")
+        const val = qb.alias + (isPeriod ? ".start" : ".time")
 
         qb = this.start === undefined ? qb : qb.andWhere(`:start <= ${val}`, { start: this.start });
         qb = this.end === undefined ? qb : qb.andWhere(`${val} <= :end`, { end: this.end });

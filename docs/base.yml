@@ -1,9 +1,8 @@
 openapi: "3.0.0"
 info:
   title: "Diabetips API"
-  description: >
+  description: |
     This is the documentation for the Diabetips API.
-
 
     Diabetips is a Proof-of-Concept project that aims at creating an application that will help patients manage
     diabetes. It will keep track of blood sugar levels and with the help of a personalized artificial intelligence,
@@ -11,11 +10,10 @@ info:
     sport activity and morphology. It will also provides a platform for doctors to manage their patients and monitor
     their medical situation in real-time.
 
-
     **DISCLAIMER: Diabetips is currently in development, it has not been approved by medical authorities in any country
     of the world. Diabetips and its creator do not provide medical advice. Diabetips is not intended to be used by
     anyone for any purpose. Diabetips is not a substitute for professional medical advice, diagnosis or treatment.**
-  version: "0.4.0"
+  version: "0.5.0"
   contact:
     name: "Contact"
     email: "contact@diabetips.fr"
@@ -24,14 +22,16 @@ info:
     altText: Diabetips Logo
 servers:
   - url: "https://api.diabetips.fr"
+    description: "Prod"
+  - url: "https://api.dev.diabetips.fr"
+    description: "Dev"
 tags:
   - name: "Paging"
-    description: >
+    description: |
       Multiple routes of this API implement paging, which can be interacted with by using the following query
       parameters:
         - `page` which controls the number of the page to return. (Default: 1, the first page)
         - `size` which controls the number of items returned in each page. (Default: 20, Maximum: 100)
-
 
       Along with the requested data, these routes will produce an additional HTTP header `X-Pages` in the response. This
       header will contain a semi-colon separated list of the following values:
@@ -39,9 +39,7 @@ tags:
         * `next: X` where X is the next page number (if one exists).
         * `last: X` where X is the last page number.
 
-
       Routes that implement paging:
-       - [Users - Get all users](#tag/Users/paths/~1v1~1users/get)
        - [Notifications - Get all notifications](#tag/Notifications/paths/~1v1~1users~1{uid}~1notifications/get)
        - [Meals - Get all meals](#tag/Meals/paths/~1v1~1users~1{uid}~1meals/get)
        - [Recipe - Get all food items](#tag/Recipes/paths/~1v1~1food/get)
@@ -50,14 +48,13 @@ tags:
        - [Biometrics - Get all HbA1C measures](#tag/Biometrics/paths/~1v1~1users~1{uid}~1hba1c/get)
        - [Biometrics - Get all insulin injections](#tag/Biometrics/paths/~1v1~1users~1{uid}~1insulin/get)
   - name: "Timeable"
-    description: >
+    description: |
       Multiple routes of this API allow the developper to filter the data by period.
-
 
       This can be done by using the following query parameters:
         - `start` which represents the beginning of the desired period. (Default: No specific beginning)
         - `end` which represents the end of the desired period. (Default: Current time of the request)
-
+      These parameters use the ISO8601 date format.
 
       Routes that implement the timeable query:
        - [Mass history - Get user's mass history](#tag/Biometrics/paths/~1v1~1users~1{uid}~1mass/get)
@@ -69,27 +66,61 @@ tags:
        - [Notes - Get all notes of a user](#tag/Notes/paths/~1v1~1users~1{uid}~1notes/get)
        - [Notes - Get all events of a user](#tag/Notes/paths/~1v1~1users~1{uid}~1events/get)
   - name: "Authentication"
-    description: >
-      The Diabetips API uses an OAuth 2.0 based authentication system with JSON Web Tokens. Almost all of this API
-      routes require a valid authenticated user access token be passed via the `Authorization: Bearer xyz` HTTP header.
+    description: |
+      The Diabetips API uses an OAuth 2.0 based authentication system.
 
+      Access to routes of this API is controlled via OAuth scopes.
+      When an application wishes to have access to specific routes, it must obtain an authorization for the
+      corresponding scopes from the user via the OAuth endpoints. The table of currently existing scopes can be found below.
 
-      Tokens can be obtained via the OAuth flow that is most appropriate for your type of application, this API supports
-      the following flows:
-       * Authorization code
-       * Implicit
-       * Password
-       * Refresh
+      | Scope name                | Description                     | Target | Implicit | Restricted |
+      |:--------------------------|:--------------------------------|:------:|:--------:|:----------:|
+      | auth:reset                | Reset user account password     | app    | ✔        | ✔         |
+      | biometrics:read           | Access biometric data           | user   | ✘        | ✘         |
+      | biometrics:write          | Edit biometric data             | user   | ✘        | ✘         |
+      | connections:read          | Access user connections list    | user   | ✘        | ✘         |
+      | connections:write         | Accept/remove connections       | user   | ✘        | ✘         |
+      | connections:invite        | Invite new connections          | user   | ✘        | ✔         |
+      | food                      | Access food data                | app    | ✔        | ✘         |
+      | meals:read                | Access meal data                | user   | ✘        | ✘         |
+      | meals:write               | Edit meal data                  | user   | ✘        | ✘         |
+      | notes:read                | Access notes                    | user   | ✘        | ✘         |
+      | notes:write               | Edit notes                      | user   | ✘        | ✘         |
+      | notifications             | Access notifications            | user   | ✘        | ✘         |
+      | predictions:new           | Start new prediction            | user   | ✘        | ✘         |
+      | predictions:settings      | Edit prediction settings        | user   | ✘        | ✔         |
+      | profile:read              | Access user profile             | user   | ✔        | ✘         |
+      | profile:write             | Edit user profile               | user   | ✘        | ✘         |
+      | recipe:read               | Access recipe data              | user   | ✘        | ✘         |
+      | recipe:write              | Edit recipe data                | user   | ✘        | ✘         |
+      | user:create               | Register user account           | app    | ✔        | ✔         |
+      | user:delete               | Deactivate user account         | user   | ✘        | ✔         |
 
+       * Target indicates whether the scope requires authorization through client credentials (app) or an user access
+         token (user).
+       * Implicit scopes are automatically granted and can be omitted in authorization requests.
+       * Restricted scopes can only be granted to approved applications and/or users.
+
+      Client credentials (client ID and secret) are issued when registering an application, please note that 3rd party
+      application registration is not open at the moment. They can be used as username and password with a standard
+      `Authorization: Basic ...` header to authorize requests.
+
+      Access tokens can be obtained via the OAuth flow that is most appropriate for your type of application. This API
+      supports the following OAuth 2 grants:
+       * Authorization code grant
+       * Implicit grant
+       * Resource owner password grant
+       * Refresh token grant
+
+      Access token can then be used by inserting an `Authorization: Bearer <access_token>` header in requests.
 
       See also:
        * [RFC 6749: OAuth 2.0](https://tools.ietf.org/html/rfc6749)
        * [RFC 7519: JSON Web Token](https://tools.ietf.org/html/rfc7519)
   - name: "Users"
   - name: "Notifications"
-    description: >
+    description: |
       The Notifications API is available through the usual HTTP REST API but also have via WebSocket endpoints.
-
 
       The WebSocket endpoint uses the same URL as the
       [Notifications - Get all notifications](#tag/Notifications/paths/~1v1~1users~1{uid}~1notifications/get)
@@ -105,7 +136,6 @@ tags:
       If the client does not authenticate itself before the 1 minute limit or sends an invalid token, the server will
       send a JSON-formatted error similar to the ones used by the REST API then close the socket.
 
-
       After a successful authentication, the client will receive a JSON-formatted array containing all the unread
       notifications for the specified user. Then, any new notifications for the specified user will be sent to the
       client when they are created. However, the client must send ping messages to the server at a regular interval. If
@@ -113,8 +143,28 @@ tags:
   - name: "Connections"
   - name: "Biometrics"
   - name: "Predictions"
-    description: >
+    description: |
       **Work in progress, API objects and routes can be subject to changes until the final release.**
   - name: "Meals"
   - name: "Recipes"
   - name: "Notes"
+components:
+  securitySchemes:
+    "Client":
+      type: http
+      scheme: basic
+    "OAuth2":
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: "/v1/auth/authorize"
+          tokenUrl: "/v1/auth/token"
+          refreshUrl: "/v1/auth/token"
+          scopes: {}
+        implicit:
+          authorizationUrl: "/v1/auth/authorize"
+          scopes: {}
+        password:
+          tokenUrl: "/v1/auth/token"
+          refreshUrl: "/v1/auth/token"
+          scopes: {}

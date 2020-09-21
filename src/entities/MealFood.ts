@@ -17,13 +17,31 @@ export class MealFood extends BaseEntityHiddenId {
     public quantity: number;
 
     @Column({ type: "float" })
-    public total_sugar: number;
+    public total_energy: number;
 
-    @ManyToOne((type) => Food)
-    @JoinColumn({ name: "food_id" })
+    @Column({ type: "float" })
+    public total_carbohydrates: number;
+
+    @Column({ type: "float" })
+    public total_sugars: number;
+
+    @Column({ type: "float" })
+    public total_fat: number;
+
+    @Column({ type: "float" })
+    public total_saturated_fat: number;
+
+    @Column({ type: "float" })
+    public total_fiber: number;
+
+    @Column({ type: "float" })
+    public total_proteins: number;
+
+    @ManyToOne(() => Food)
+    @JoinColumn()
     public food: Food;
 
-    @ManyToOne((type) => Meal, (meal) => meal.foods)
-    @JoinColumn({ name: "meal_id" })
+    @ManyToOne(() => Meal, (meal) => meal.foods)
+    @JoinColumn()
     public meal: Promise<Meal>;
 }

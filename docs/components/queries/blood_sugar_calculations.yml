@@ -1,0 +1,11 @@
+BSCalcsQuery:
+  in: query
+  name: calcs
+  description: "Type of calculation requested"
+  required: false
+  schema:
+    type: "string"
+    enum:
+      - "average"
+      - "first"
+      - "third"

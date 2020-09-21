@@ -21,10 +21,10 @@ export class Hba1c extends BaseEntity {
     public value: number;
 
     @Column()
-    public timestamp: number;
+    public time: Date;
 
-    @ManyToOne((type) => User, (user) => user.meals, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @ManyToOne(() => User, (user) => user.meals, { cascade: true })
+    @JoinColumn()
     public user: Promise<User>;
 
     public static async findAll(patientUid: string,
@@ -36,7 +36,7 @@ export class Hba1c extends BaseEntity {
             .createQueryBuilder("hba1c")
             .leftJoin("hba1c.user", "user")
             .where("user.uid = :patientUid", { patientUid })
-            .orderBy("hba1c.timestamp", "DESC");
+            .orderBy("hba1c.time", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb

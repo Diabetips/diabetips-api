@@ -7,9 +7,9 @@
 */
 
 import { Response } from "express";
-import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
+import { Body, Ctx, Delete, Get, JsonController, Param, Post, Put, QueryParams, Res } from "routing-controllers";
 
-import { Pageable } from "../lib";
+import { Authorized, Context, Pageable } from "../lib";
 import { RecipeCreateReq, RecipeSearchReq, RecipeUpdateReq } from "../requests";
 import { RecipeService } from "../services";
 
@@ -17,27 +17,34 @@ import { RecipeService } from "../services";
 export class RecipeController {
 
     @Get("/")
-    public async getAllRecipes(@QueryParams() p: Pageable, @QueryParams() req: RecipeSearchReq, @Res() res: Response) {
-        const page = await RecipeService.getAllRecipes(p, req);
+    @Authorized("recipe:read")
+    public async getAllRecipes(@QueryParams() p: Pageable,
+                               @QueryParams() s: RecipeSearchReq,
+                               @Res() res: Response) {
+        const page = await RecipeService.getAllRecipes(p, s);
         return page.send(res);
     }
 
     @Post("/")
-    public async createRecipe(@Body() body: RecipeCreateReq) {
-        return RecipeService.createRecipe(body);
+    @Authorized("recipe:write")
+    public async createRecipe(@Body() body: RecipeCreateReq, @Ctx() context: Context) {
+        return RecipeService.createRecipe(body, context);
     }
 
     @Get("/:id")
+    @Authorized("recipe:read")
     public async getRecipe(@Param("id") id: number) {
         return RecipeService.getRecipe(id);
     }
 
     @Put("/:id")
+    @Authorized("recipe:write")
     public async updateRecipe(@Param("id") id: number, @Body() body: RecipeUpdateReq) {
         return RecipeService.updateRecipe(id, body);
     }
 
     @Delete("/:id")
+    @Authorized("recipe:write")
     public async deleteRecipe(@Param("id") id: number) {
         await RecipeService.deleteRecipe(id);
     }

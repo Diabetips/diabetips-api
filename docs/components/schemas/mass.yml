@@ -1,10 +1,11 @@
 Mass:
   type: "object"
   properties:
-    "timestamp":
-      type: "integer"
-      description: "The timestamp of when this mass was set to the profile"
-      example: 1581717727
+    "time":
+      type: "string"
+      format: "date-time"
+      description: "Time of the mass measure"
+      example: "2020-07-31T14:28:29.949Z"
     "mass":
       type: "number"
       format: "double"

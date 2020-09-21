@@ -1,0 +1,7 @@
+AuthorQuery:
+  in: query
+  name: author
+  description: "Author of the recipe"
+  required: false
+  schema:
+    type: "string"

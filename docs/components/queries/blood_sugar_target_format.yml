@@ -1,0 +1,10 @@
+BSTargetFormatQuery:
+  in: query
+  name: format
+  description: "Format for the target, percentage if omitted"
+  required: false
+  schema:
+    type: "string"
+    enum:
+      - "time"
+      - "percentage"

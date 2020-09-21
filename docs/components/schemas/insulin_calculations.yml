@@ -1,0 +1,36 @@
+InsulinCalculationsItem:
+  type: "object"
+  properties:
+    "slow":
+      type: "number"
+      example: 2.5
+    "fast":
+      type: "number"
+      example: 1
+    "very_fast":
+      type: "number"
+      example: 5
+
+InsulinCalculations:
+  type: "object"
+  properties:
+    "start":
+      type: string
+      format: date-time
+      description: "Start of the period"
+      example: "2020-07-31T00:00:00.000Z"
+    "end":
+      type: string
+      format: date-time
+      description: "End of the period"
+      example: "2020-07-31T23:59:59.999Z"
+    "average":
+      type: "array"
+      description: "Average amount of insulin injected"
+      items:
+        $component: "schemas:insulin_calculations.yml:InsulinCalculationsItem"
+    "count":
+      type: "array"
+      description: "Total amount of injections done"
+      items:
+        $component: "schemas:insulin_calculations.yml:InsulinCalculationsItem"

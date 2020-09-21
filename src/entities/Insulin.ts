@@ -13,6 +13,7 @@ import { Page, Pageable, Timeable, Utils } from "../lib";
 import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
 
 import { User } from "./User";
+import { InsulinSearchReq } from "../requests";
 
 export enum InsulinType {
     SLOW = "slow",
@@ -24,7 +25,7 @@ export enum InsulinType {
 export class Insulin extends BaseEntity {
 
     @Column()
-    public timestamp: number;
+    public time: Date;
 
     @Column({ type: "float" })
     public quantity: number;
@@ -38,30 +39,55 @@ export class Insulin extends BaseEntity {
     @Column()
     public description: string;
 
-    @ManyToOne((type) => User, (user) => user.insulin, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @ManyToOne(() => User, (user) => user.insulin, { cascade: true })
+    @JoinColumn()
     public user: Promise<User>;
 
     // Repository functions
 
-    public static async findAll(patientUid: string,
-                                p: Pageable,
-                                t: Timeable,
-                                options: IBaseQueryOptions = {}):
-                                Promise<Page<Insulin>> {
+    public static async findAllPageable(patientUid: string,
+                                        p: Pageable,
+                                        t: Timeable,
+                                        s: InsulinSearchReq,
+                                        options: IBaseQueryOptions = {}):
+                                        Promise<Page<Insulin>> {
         let qb = this
             .createQueryBuilder("insulin")
             .leftJoin("insulin.user", "user")
             .where("user.uid = :patientUid", { patientUid })
-            .orderBy("insulin.timestamp", "DESC");
+            .orderBy("insulin.time", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb
                 .andWhere("user.deleted = false")
                 .andWhere("insulin.deleted = false");
         }
+        qb = s.apply(qb);
+        qb = t.applyTimeRange(qb);
 
-        return p.query(t.applyTimeRange(qb));
+        return p.query(qb);
+    }
+
+    public static async findAll(patientUid: string,
+                                t: Timeable,
+                                s: InsulinSearchReq,
+                                options: IBaseQueryOptions = {}):
+                                Promise<Insulin[]> {
+        let qb = this
+            .createQueryBuilder("insulin")
+            .leftJoin("insulin.user", "user")
+            .where("user.uid = :patientUid", { patientUid })
+            .orderBy("insulin.time", "DESC");
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb
+                .andWhere("user.deleted = false")
+                .andWhere("insulin.deleted = false");
+        }
+        qb = s.apply(qb);
+        qb = t.applyTimeRange(qb);
+
+        return qb.getMany();
     }
 
     public static async findById(patientUid: string,

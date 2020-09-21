@@ -5,7 +5,7 @@ MealRecipe:
       allOf:
         - $component: "schemas:recipe.yml:RecipeId"
         - writeOnly: true
-    "modifications":
+    (including modifications"):
       type: "array"
       description: "The recipe's modified ingredients"
       items:
@@ -15,10 +15,40 @@ MealRecipe:
       description: "How many portions of the recipe have been eate"
       example: 1
     # Response
-    "total_sugar":
+    "total_energy":
       type: "number"
-      description: "Total quantity of sugar in the recipe in grams (taking modifications into account)"
-      example: 5.3
+      description: "Total calorific intake in kcal of the recipe (including modifications)"
+      example: 2.5
+      readOnly: true
+    "total_carbohydrates":
+      type: "number"
+      description: "Total quantity of carbohydrates in grams in the recipe (including modifications)"
+      example: 2.5
+      readOnly: true
+    "total_sugars":
+      type: "number"
+      description: "Total quantity of sugars in grams in the recipe (including modifications)"
+      example: 2.5
+      readOnly: true
+    "total_fat":
+      type: "number"
+      description: "Total quantity of fat in grams in the recipe (including modifications)"
+      example: 2.5
+      readOnly: true
+    "total_saturated_fat":
+      type: "number"
+      description: "Total quantity of saturated fat in grams in the recipe (including modifications)"
+      example: 2.5
+      readOnly: true
+    "total_fiber":
+      type: "number"
+      description: "Total quantity of fiber in grams in the recipe (including modifications)"
+      example: 2.5
+      readOnly: true
+    "total_proteins":
+      type: "number"
+      description: "Total quantity of proteins in grams in the recipe (including modifications)"
+      example: 2.5
       readOnly: true
     "recipe":
       type: "object"

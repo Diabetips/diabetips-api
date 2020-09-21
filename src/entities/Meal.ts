@@ -20,17 +20,35 @@ import { MealFoodReq, MealRecipeReq } from "../requests";
 export class Meal extends BaseEntity {
 
     @ManyToOne(() => User, (user) => user.meals, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @JoinColumn()
     public user: Promise<User>;
 
     @Column({ length: 200 })
     public description: string;
 
     @Column({ type: "float" })
-    public total_sugar: number;
+    public total_energy: number;
+
+    @Column({ type: "float" })
+    public total_carbohydrates: number;
+
+    @Column({ type: "float" })
+    public total_sugars: number;
+
+    @Column({ type: "float" })
+    public total_fat: number;
+
+    @Column({ type: "float" })
+    public total_saturated_fat: number;
+
+    @Column({ type: "float" })
+    public total_fiber: number;
+
+    @Column({ type: "float" })
+    public total_proteins: number;
 
     @Column()
-    public timestamp: number;
+    public time: Date;
 
     @OneToMany(() => MealRecipe, (recipe) => recipe.meal, { cascade: true })
     public recipes: MealRecipe[];
@@ -63,10 +81,9 @@ export class Meal extends BaseEntity {
         let qb = this
             .createQueryBuilder("meal")
             .where((sqb) => "meal.id IN " + p.limit(subq(sqb.subQuery().from("meal", "meal"))).getQuery())
-            .orderBy("meal.timestamp", "DESC");
+            .orderBy("meal.time", "DESC");
 
         qb = this.getFullMealQuery(qb);
-        if (Utils.optionDefault(options.hideDeleted, true)) {}
 
         return p.queryWithCountQuery(t.applyTimeRange(qb), subq(this.createQueryBuilder("meal")));
     }
@@ -132,24 +149,48 @@ export class Meal extends BaseEntity {
                 throw new ApiError(HttpStatus.NOT_FOUND, "food_not_found", `Food (${f.id}) not found`);
             }
             const mealFood = new MealFood();
-
             mealFood.food = food;
             mealFood.quantity = f.quantity;
-            mealFood.total_sugar = food.sugars_100g / 100 * mealFood.quantity;
+
+            mealFood.total_energy        = (food.energy_100g ?? 0) / 100 * mealFood.quantity;
+            mealFood.total_carbohydrates = (food.carbohydrates_100g ?? 0) / 100 * mealFood.quantity;
+            mealFood.total_sugars        = (food.sugars_100g ?? 0) / 100 * mealFood.quantity;
+            mealFood.total_fat           = (food.fat_100g ?? 0) / 100 * mealFood.quantity;
+            mealFood.total_saturated_fat = (food.saturated_fat_100g ?? 0) / 100 * mealFood.quantity;
+            mealFood.total_fiber         = (food.fiber_100g ?? 0) / 100 * mealFood.quantity;
+            mealFood.total_proteins      = (food.proteins_100g ?? 0) / 100 * mealFood.quantity;
 
             this.foods.push(mealFood);
         }
     }
 
-    public computeTotalSugar() {
-        this.total_sugar = 0;
+    public computeNutritionDataTotals() {
+        this.total_energy = 0;
+        this.total_carbohydrates = 0;
+        this.total_sugars = 0;
+        this.total_fat = 0;
+        this.total_saturated_fat = 0;
+        this.total_fiber = 0;
+        this.total_proteins = 0;
 
         for (const recipe of this.recipes) {
-            recipe.computeTotalSugar();
-            this.total_sugar += recipe.total_sugar;
+            recipe.computeNutritionDataTotals();
+            this.total_energy += recipe.total_energy;
+            this.total_carbohydrates += recipe.total_carbohydrates;
+            this.total_sugars += recipe.total_sugars;
+            this.total_fat += recipe.total_fat;
+            this.total_saturated_fat += recipe.total_saturated_fat;
+            this.total_fiber += recipe.total_fiber;
+            this.total_proteins += recipe.total_proteins;
         }
         for (const food of this.foods) {
-            this.total_sugar += food.total_sugar;
+            this.total_energy += food.total_energy;
+            this.total_carbohydrates += food.total_carbohydrates;
+            this.total_sugars += food.total_sugars;
+            this.total_fat += food.total_fat;
+            this.total_saturated_fat += food.total_saturated_fat;
+            this.total_fiber += food.total_fiber;
+            this.total_proteins += food.total_proteins;
         }
     }
 

@@ -1,0 +1,24 @@
+Sticky:
+  type: "object"
+  properties:
+    "id":
+      type: "integer"
+      description: "The sticky note's ID"
+      example: 1
+      readOnly: true
+    "title":
+      type: "string"
+      description: "The sticky note's title"
+      example: "HbA1C appointment"
+    "content":
+      type: "string"
+      description: "The sticky note's content"
+      example: "HbA1C appointment Monday 21st September"
+    "color":
+      type: "string"
+      description: "The sticky note's hex color (the '#' MUST be specified)"
+      example: "#12ab34"
+    "index":
+      type: "integer"
+      description: "The sticky note's index (0 is highest priority) to keep their sorted arrangement"
+      example: 1

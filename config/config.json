@@ -3,7 +3,9 @@
         "url": "${DIABETIPS_AI_URL}"
     },
     "auth": {
-        "token_key": "${DIABETIPS_AUTH_TOKEN_KEY}"
+        "code_ttl": "00:10:00",
+        "token_key": "${DIABETIPS_AUTH_TOKEN_KEY}",
+        "token_ttl": 3600
     },
     "db": {
         "type": "postgres",
@@ -13,11 +15,12 @@
         ]
     },
     "diabetips": {
-        "accountUrl": "https://account.diabetips.fr"
+        "accountUrl": "${DIABETIPS_ACCOUNT_URL}"
     },
+    "firebase": "${FIREBASE_SERVICE_ACCOUNT}",
     "http": {
         "host": "0.0.0.0",
-        "port": "8080",
+        "port": 8080,
         "proxy": true
     },
     "logger": {

@@ -6,17 +6,18 @@
 ** Created by Arthur MELIN on Tue Feb 25 2020
 */
 
-import { IsInt, IsNumber, IsOptional, IsPositive, Max, Min } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDate, IsNumber, IsOptional, Max, Min } from "class-validator";
 
 export class Hba1cUpdateReq {
+    @IsDate()
     @IsOptional()
-    @IsInt()
-    @IsPositive()
-    public timestamp?: number;
+    @Type(() => Date)
+    public time?: Date;
 
-    @IsOptional()
     @IsNumber()
     @Min(0)
-    @Max(30)
+    @Max(100)
+    @IsOptional()
     public value?: number;
 }

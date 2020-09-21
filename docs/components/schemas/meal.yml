@@ -13,24 +13,53 @@ Meal:
       type: "string"
       description: "The meal's description"
       example: "Lunch of October 7th 2019"
-    "timestamp":
-      type: "integer"
-      description: "Timestamp of the meal"
-      example: 1581907819
-    "total_sugar":
+    "time":
+      type: "string"
+      format: "date-time"
+      description: "Time of the meal"
+      example: "2020-07-31T12:28:29.949Z"
+    "total_energy":
       type: "number"
-      description: "Total quantity of sugar in the meal in grams"
-      example: 15.2
+      description: "Total calorific intake in kcal of the meal"
+      example: 2.5
+      readOnly: true
+    "total_carbohydrates":
+      type: "number"
+      description: "Total quantity of carbohydrates in grams in the meal"
+      example: 2.5
+      readOnly: true
+    "total_sugars":
+      type: "number"
+      description: "Total quantity of sugars in grams in the meal"
+      example: 2.5
+      readOnly: true
+    "total_fat":
+      type: "number"
+      description: "Total quantity of fat in grams in the meal"
+      example: 2.5
+      readOnly: true
+    "total_saturated_fat":
+      type: "number"
+      description: "Total quantity of saturated fat in grams in the meal"
+      example: 2.5
+      readOnly: true
+    "total_fiber":
+      type: "number"
+      description: "Total quantity of fiber in grams in the meal"
+      example: 2.5
+      readOnly: true
+    "total_proteins":
+      type: "number"
+      description: "Total quantity of proteins in grams in the meal"
+      example: 2.5
       readOnly: true
     "recipes":
       type: "array"
       description: "The meal's recipes"
       items:
         $component: "schemas:meal_recipe.yml:MealRecipe"
-      required: false
     "foods":
       type: "array"
       description: "The meal's foods"
       items:
         $component: "schemas:meal_food.yml:MealFood"
-      required: false

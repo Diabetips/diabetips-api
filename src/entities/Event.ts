@@ -15,16 +15,16 @@ import { BaseEntity } from "./BaseEntity";
 @Entity()
 export class Event extends BaseEntity {
     @Column()
-    public start: number;
+    public start: Date;
 
     @Column({ nullable: true })
-    public end: number;
+    public end: Date;
 
     @Column({ length: 500 })
     public description: string;
 
-    @ManyToOne((type) => User, (user) => user.event, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @ManyToOne(() => User, (user) => user.event, { cascade: true })
+    @JoinColumn()
     public user: Promise<User>;
 
     public static async findAll(userUid: string,

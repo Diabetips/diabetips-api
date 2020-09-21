@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Sun Sep 08 2019
 */
 
-import { Column, Entity, OneToMany, OneToOne, SelectQueryBuilder } from "typeorm";
+import { Column, Entity, OneToMany, OneToOne, SelectQueryBuilder, ManyToOne, JoinColumn } from "typeorm";
 
 import { Page, Pageable, Utils } from "../lib";
 import { RecipeSearchReq } from "../requests";
@@ -15,6 +15,7 @@ import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
 
 import { Ingredient } from "./Ingredient";
 import { RecipePicture } from "./RecipePicture";
+import { User } from "./User";
 export { RecipePicture };
 
 @Entity()
@@ -27,21 +28,46 @@ export class Recipe extends BaseEntity {
     public description: string;
 
     @Column({ type: "float" })
-    public total_sugar: number;
+    public portions_eaten: number;
+
+    @Column({ type: "float" })
+    public total_energy: number;
+
+    @Column({ type: "float" })
+    public total_carbohydrates: number;
+
+    @Column({ type: "float" })
+    public total_sugars: number;
+
+    @Column({ type: "float" })
+    public total_fat: number;
+
+    @Column({ type: "float" })
+    public total_saturated_fat: number;
+
+    @Column({ type: "float" })
+    public total_fiber: number;
+
+    @Column({ type: "float" })
+    public total_proteins: number;
 
     @Column()
     public portions: number;
 
-    @OneToMany((type) => Ingredient, (ingredient) => ingredient.recipe, { cascade: true })
+    @OneToMany(() => Ingredient, (ingredient) => ingredient.recipe, { cascade: true })
     public ingredients: Ingredient[];
 
-    @OneToOne((type) => RecipePicture, (picture) => picture.recipe)
+    @OneToOne(() => RecipePicture, (picture) => picture.recipe)
     public picture: Promise<RecipePicture>;
+
+    @ManyToOne(() => User, (user) => user.recipes, { cascade: true })
+    @JoinColumn()
+    public author: User | null;
 
     // Repository functions
 
     public static async findAll(p: Pageable,
-                                req: RecipeSearchReq = {},
+                                s: RecipeSearchReq = {},
                                 options: IBaseQueryOptions = {}):
                                 Promise<Page<Recipe>> {
         const subq = (sqb: SelectQueryBuilder<Recipe>) => {
@@ -50,25 +76,31 @@ export class Recipe extends BaseEntity {
             if (Utils.optionDefault(options.hideDeleted, true)) {
                 subqb = subqb.andWhere("recipe.deleted = false");
             }
-            if (req.name !== undefined) {
-                subqb = subqb.andWhere(`lower(recipe.name) LIKE lower(:name)`, { name: "%" + req.name + "%" });
+            if (s.name !== undefined) {
+                subqb = subqb.andWhere(`lower(recipe.name) LIKE lower(:name)`, { name: "%" + s.name + "%" });
             }
 
             return subqb;
         };
 
-        const qb = this
+        let qb = this
             .createQueryBuilder("recipe")
+            .leftJoinAndSelect("recipe.author", "author")
             .leftJoinAndSelect("recipe.ingredients", "ingredients")
             .leftJoinAndSelect("ingredients.food", "food")
-            .where((sqb) => "recipe.id IN " + p.limit(subq(sqb.subQuery().from("recipe", "recipe"))).getQuery());
+            .andWhere((sqb) => "recipe.id IN " + p.limit(subq(sqb.subQuery().from("recipe", "recipe"))).getQuery());
 
+        if (s.author !== undefined) {
+            qb = qb.andWhere(`author.uid = :author`, { author: s.author });
+
+        }
         return p.queryWithCountQuery(qb, subq(this.createQueryBuilder("recipe")));
     }
 
     public static async findById(id: number, options: IBaseQueryOptions = {}): Promise<Recipe | undefined> {
         let qb = this
             .createQueryBuilder("recipe")
+            .leftJoinAndSelect("recipe.author", "author")
             .leftJoinAndSelect("recipe.ingredients", "ingredients")
             .leftJoinAndSelect("ingredients.food", "food")
             .where("recipe.id = :id", { id });

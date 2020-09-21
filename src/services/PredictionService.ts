@@ -19,11 +19,11 @@ import { UserService } from "./UserService";
 
 export class PredictionService extends BaseService {
 
-    public static async getNewPrediction(uid: string): Promise<Prediction> {
+    public static async getNewPrediction(uid: string, isSimulation: boolean = true): Promise<Prediction> {
         const user = await UserService.getUser(uid);
         const settings = await user.prediction_settings || new PredictionSettings();
 
-        if (!settings.enabled) {
+        if (!isSimulation && !settings.enabled) {
             throw new ApiError(HttpStatus.FORBIDDEN, "predictions_disabled", "Predictions are not enabled for this user");
         }
 

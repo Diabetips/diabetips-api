@@ -16,8 +16,8 @@ export class FoodPicture extends BaseEntity {
     @PrimaryGeneratedColumn()
     public id: number;
 
-    @OneToOne((type) => Food, (food) => food.picture)
-    @JoinColumn({ name: "food_id" })
+    @OneToOne(() => Food, (food) => food.picture)
+    @JoinColumn()
     public food: Promise<Food>;
 
     @Column({ type: "bytea" })

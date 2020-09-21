@@ -6,14 +6,18 @@
 ** Created by Arthur MELIN on Wed Apr 29 2020
 */
 
-import { Notification, User } from "../entities";
+import admin = require("firebase-admin");
+
+import { Notification, User, NotificationFcmToken } from "../entities";
 import { ApiError } from "../errors";
-import { HttpStatus, Page, Pageable } from "../lib";
+import { HttpStatus, Page, Pageable, Utils } from "../lib";
+import { NotificationFcmTokenRegisterReq } from "../requests";
 import { NotificationsWebSocket } from "../ws";
 
 import { BaseService } from "./BaseService";
+import { UserService } from "./UserService";
 
-const clients: {
+const wsClients: {
     [key: string]: NotificationsWebSocket[];
 } = {};
 
@@ -27,9 +31,19 @@ export class NotificationService extends BaseService {
 
         notif = await notif.save();
 
-        if (clients[target.uid] != null) {
-            clients[target.uid].forEach((client) => {
+        if (wsClients[target.uid] != null) {
+            wsClients[target.uid].forEach((client) => {
                 client.sendJsonMessage(notif);
+            });
+        }
+
+        const fcmTokens = await target.notificationFcmTokens;
+        if (fcmTokens.length > 0) {
+            await admin.messaging().sendMulticast({
+                data: {
+                    "notification": JSON.stringify(notif, Utils.jsonReplacer),
+                },
+                tokens: fcmTokens.map((nt) => nt.token)
             });
         }
     }
@@ -47,21 +61,39 @@ export class NotificationService extends BaseService {
         return notif.save();
     }
 
-    public static async registerClient(uid: string, client: NotificationsWebSocket) {
+    public static async registerWsClient(uid: string, client: NotificationsWebSocket) {
         client.sendJsonMessage(await Notification.findAllUnread(uid));
-        if (clients[uid] == null) {
-            clients[uid] = [];
+        if (wsClients[uid] == null) {
+            wsClients[uid] = [];
         }
-        clients[uid].push(client);
+        wsClients[uid].push(client);
     }
 
-    public static async unregisterClient(uid: string, client: NotificationsWebSocket) {
-        if (clients[uid] != null) {
-            clients[uid] = clients[uid].filter((c) => c !== client);
-            if (clients[uid].length === 0) {
-                delete clients[uid];
+    public static async unregisterWsClient(uid: string, client: NotificationsWebSocket) {
+        if (wsClients[uid] != null) {
+            wsClients[uid] = wsClients[uid].filter((c) => c !== client);
+            if (wsClients[uid].length === 0) {
+                delete wsClients[uid];
             }
         }
+    }
+
+    public static async registerFcmToken(uid: string, req: NotificationFcmTokenRegisterReq) {
+        const user = await UserService.getUser(uid, { selectNotificationFcmTokens: true });
+
+        // Check if token is already registered
+        if ((await user.notificationFcmTokens).map((nt) => nt.token).indexOf(req.token) !== -1) {
+            return;
+        }
+
+        // Delete previous registrations of the token to other users.
+        NotificationFcmToken.deleteToken(req.token);
+
+        const nt = new NotificationFcmToken();
+        nt.user = Promise.resolve(user);
+        nt.token = req.token;
+
+        await nt.save();
     }
 
 }

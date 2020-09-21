@@ -26,3 +26,21 @@ Biometrics:
         - male
         - female
       nullable: true
+    "diabetes_type":
+      type: "string"
+      description: "Diabetes type of the user."
+      example: 1
+      enum:
+        - "1"
+        - "2"
+      nullable: true
+    "hypoglycemia":
+      type: "number"
+      description: "Value under which the patient is considered in hypoglycemia (in mg/dL)"
+      example: 57
+      nullable: true
+    "hyperglycemia":
+      type: "number"
+      description: "Value above which the patient is considered in hyperglycemia (in mg/dL)"
+      example: 110
+      nullable: true

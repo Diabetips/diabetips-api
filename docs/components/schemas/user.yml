@@ -22,6 +22,10 @@ User:
       type: "string"
       description: "The user's ISO 639-1 language code"
       example: "fr"
+    "timezone":
+      type: "string"
+      description: "The user's timezone name in the IANA database"
+      example: "Europe/Paris"
     "first_name":
       type: "string"
       description: "The user's first name"

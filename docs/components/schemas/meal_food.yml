@@ -5,10 +5,40 @@ MealFood:
       type: "number"
       description: "Quantity of the food in the meal"
       example: 200
-    "total_sugar":
+    "total_energy":
       type: "number"
-      description: "Total quantity of sugar in grams based on the quantity of the food"
-      example: 3.4
+      description: "Total calorific intake in kcal based on the quantity of the food"
+      example: 2.5
+      readOnly: true
+    "total_carbohydrates":
+      type: "number"
+      description: "Total quantity of carbohydrates in grams based on the quantity of the food"
+      example: 2.5
+      readOnly: true
+    "total_sugars":
+      type: "number"
+      description: "Total quantity of sugars in grams based on the quantity of the food"
+      example: 2.5
+      readOnly: true
+    "total_fat":
+      type: "number"
+      description: "Total quantity of fat in grams based on the quantity of the food"
+      example: 2.5
+      readOnly: true
+    "total_saturated_fat":
+      type: "number"
+      description: "Total quantity of saturated fat in grams based on the quantity of the food"
+      example: 2.5
+      readOnly: true
+    "total_fiber":
+      type: "number"
+      description: "Total quantity of fiber in grams based on the quantity of the food"
+      example: 2.5
+      readOnly: true
+    "total_proteins":
+      type: "number"
+      description: "Total quantity of proteins in grams based on the quantity of the food"
+      example: 2.5
       readOnly: true
     "food":
       allOf:

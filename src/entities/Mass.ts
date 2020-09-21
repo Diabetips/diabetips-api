@@ -17,10 +17,10 @@ export class Mass extends BaseEntityHiddenId {
     public mass: number;
 
     @Column()
-    public timestamp: number;
+    public time: Date;
 
-    @ManyToOne((type) => User, (user) => user.mass_history, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @ManyToOne(() => User, (user) => user.mass_history, { cascade: true })
+    @JoinColumn()
     public user: Promise<User>;
 
     public static async findAll(uid: string,
@@ -32,7 +32,7 @@ export class Mass extends BaseEntityHiddenId {
             .createQueryBuilder("mass")
             .leftJoin("mass.user", "user")
             .where("user.uid = :uid", { uid })
-            .orderBy("mass.timestamp", "DESC");
+            .orderBy("mass.time", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb

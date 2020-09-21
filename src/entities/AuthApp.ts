@@ -8,7 +8,7 @@
 
 import { Column, Entity, OneToOne } from "typeorm";
 
-import { Utils } from "../lib";
+import { AuthScope, Utils } from "../lib";
 
 import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
 
@@ -24,21 +24,45 @@ export class AuthApp extends BaseEntityHiddenId {
     @Column({ length: 200 })
     public name: string;
 
-    @Column({ name: "client_id", type: "uuid" })
+    @Column()
+    public description: string;
+
+    @Column({ default: false, select: false })
+    public internal: boolean;
+
+    @Column({ name: "redirect_uri", select: false })
+    public _redirect_uri: string;
+
+    @Column({ name: "client_id", length: 100, select: false })
     private _clientId: string;
 
-    @Column({ name: "client_secret", length: 100 })
+    @Column({ name: "client_secret", length: 100, select: false })
     private _clientSecret?: string;
 
-    @OneToOne((type) => AuthAppLogo, (logo) => logo.app)
+    @Column({ name: "extra_scopes", type: "simple-array", default: ""})
+    public _extra_scopes: AuthScope[];
+
+    @OneToOne(() => AuthAppLogo, (logo) => logo.app)
     public logo: Promise<AuthAppLogo>;
 
-    public get clientId(): string | undefined {
+    public get redirectUri(): string {
+        return this._redirect_uri;
+    }
+
+    public get clientId(): string {
         return this._clientId;
     }
 
     public get clientSecret(): string | undefined {
         return this._clientSecret;
+    }
+
+    public set clientSecret(val: string | undefined) {
+        this._clientSecret = val;
+    }
+
+    public get extra_scopes(): AuthScope[] {
+        return this._extra_scopes;
     }
 
     // Repository functions
@@ -53,7 +77,7 @@ export class AuthApp extends BaseEntityHiddenId {
         return qb.getMany();
     }
 
-    public static async findByAppid(appid: string, options: IBaseQueryOptions = {}): Promise<AuthApp | undefined> {
+    public static async findByAppid(appid: string, options: IAuthAppQueryOptions = {}): Promise<AuthApp | undefined> {
         let qb = this
             .createQueryBuilder("auth_app")
             .where("auth_app.appid = :appid", { appid });
@@ -62,10 +86,17 @@ export class AuthApp extends BaseEntityHiddenId {
             qb = qb.andWhere("auth_app.deleted = false");
         }
 
+        if (Utils.optionDefault(options.selectClientCredentials, false)) {
+            qb = qb
+                .addSelect("auth_app.redirect_uri", "auth_app_redirect_uri")
+                .addSelect("auth_app.client_id", "auth_app_client_id")
+                .addSelect("auth_app.client_secret", "auth_app_client_secret");
+        }
+
         return qb.getOne();
     }
 
-    public static async findByClientId(clientId: string, options: IBaseQueryOptions = {}):
+    public static async findByClientId(clientId: string, options: IAuthAppQueryOptions = {}):
                                        Promise<AuthApp | undefined> {
         let qb = this
             .createQueryBuilder("auth_app")
@@ -75,7 +106,23 @@ export class AuthApp extends BaseEntityHiddenId {
             qb = qb.andWhere("auth_app.deleted = false");
         }
 
+        if (Utils.optionDefault(options.selectInternal, false)) {
+            qb = qb.addSelect("auth_app.internal", "auth_app_internal");
+        }
+
+        if (Utils.optionDefault(options.selectClientCredentials, false)) {
+            qb = qb
+                .addSelect("auth_app.redirect_uri", "auth_app_redirect_uri")
+                .addSelect("auth_app.client_id", "auth_app_client_id")
+                .addSelect("auth_app.client_secret", "auth_app_client_secret");
+        }
+
         return qb.getOne();
     }
 
+}
+
+export interface IAuthAppQueryOptions extends IBaseQueryOptions {
+    selectInternal?: boolean;
+    selectClientCredentials?: boolean;
 }

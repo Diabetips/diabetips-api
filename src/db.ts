@@ -7,6 +7,7 @@
 */
 
 import { Connection, ConnectionOptions, createConnection, Logger, QueryRunner } from "typeorm";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 
 import { config } from "./config";
 import { sqlLogger } from "./logger";
@@ -17,7 +18,7 @@ class TypeOrmBridgeLogger implements Logger {
                     parameters?: any[] | undefined,
                     queryRunner?: QueryRunner | undefined) {
         if (config.env === "dev" && parameters != null) {
-            sqlLogger.trace(`Running query: "${query}" (params: ${parameters})`);
+            sqlLogger.trace(`Running query: "${query}" (params: ${JSON.stringify(parameters)})`);
         } else {
             sqlLogger.trace(`Running query: "${query}"`);
         }
@@ -68,5 +69,7 @@ export async function connectToDatabase(): Promise<Connection> {
     return database = await createConnection({
         ...config.db,
         logger: new TypeOrmBridgeLogger(),
+        namingStrategy: new SnakeNamingStrategy(),
+        synchronize: (config.env === "dev" ? true : undefined),
     } as ConnectionOptions);
 }

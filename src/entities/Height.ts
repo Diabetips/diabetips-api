@@ -7,9 +7,11 @@
 */
 
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
-import { User } from ".";
+
 import { Page, Pageable, Timeable, Utils } from "../lib";
+
 import { BaseEntityHiddenId, IBaseQueryOptions } from "./BaseEntityHiddenId";
+import { User } from ".";
 
 @Entity()
 export class Height extends BaseEntityHiddenId {
@@ -17,10 +19,10 @@ export class Height extends BaseEntityHiddenId {
     public height: number;
 
     @Column()
-    public timestamp: number;
+    public time: Date;
 
-    @ManyToOne((type) => User, (user) => user.height_history, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @ManyToOne(() => User, (user) => user.height_history, { cascade: true })
+    @JoinColumn()
     public user: Promise<User>;
 
     public static async findAll(uid: string,
@@ -32,7 +34,7 @@ export class Height extends BaseEntityHiddenId {
             .createQueryBuilder("height")
             .leftJoin("height.user", "user")
             .where("user.uid = :uid", { uid })
-            .orderBy("height.timestamp", "DESC");
+            .orderBy("height.time", "DESC");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb

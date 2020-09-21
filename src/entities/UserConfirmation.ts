@@ -16,8 +16,8 @@ export class UserConfirmation extends BaseEntity {
     @PrimaryGeneratedColumn()
     public id: number;
 
-    @OneToOne((type) => User, (user) => user.confirmation)
-    @JoinColumn({ name: "user_id" })
+    @OneToOne(() => User, (user) => user.confirmation)
+    @JoinColumn()
     public user: Promise<User>;
 
     @Column({ type: "uuid", nullable: true })

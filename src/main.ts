@@ -8,6 +8,7 @@
 
 import "reflect-metadata";
 
+import admin = require("firebase-admin");
 import http = require("http");
 import net = require("net");
 
@@ -32,6 +33,10 @@ async function main(args: string[]): Promise<void> {
     });
 
     await connectToDatabase();
+
+    admin.initializeApp({
+        credential: admin.credential.cert(config.firebase),
+    });
 
     const server = http.createServer(app);
     wsUseServer(wsApp, server, config.ws);

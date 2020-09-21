@@ -1,0 +1,25 @@
+BloodSugarCalculations:
+  type: "object"
+  properties:
+    "start":
+      type: string
+      format: date-time
+      description: "Start of the period"
+      example: "2020-07-31T00:00:00.000Z"
+    "end":
+      type: string
+      format: date-time
+      description: "End of the period"
+      example: "2020-07-31T23:59:59.999Z"
+    "average":
+      type: "number"
+      description: "Average of the values between the two timestamps"
+      example: 45.9
+    "first":
+      type: "number"
+      description: "First quartile of the values between the two timestamps"
+      example: 20.3
+    "third":
+      type: "number"
+      description: "Third quartile of the values between the two timestamps"
+      example: 60.5

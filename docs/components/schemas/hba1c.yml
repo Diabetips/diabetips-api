@@ -14,7 +14,8 @@ HbA1C:
       type: "number"
       description: "Value of the HbA1C measure as a percentage of glycated hemoglobin by total hemoglobin"
       example: 5.3
-    "timestamp":
-      type: "number"
-      description: "UNIX timestamp of the HbA1C measure (in the UTC timezone)"
-      example: 1576359970
+    "time":
+      type: "string"
+      format: "date-time"
+      description: "Time of the HbA1C measure"
+      example: "2020-07-31T14:28:29.949Z"

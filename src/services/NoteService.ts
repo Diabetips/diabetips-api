@@ -35,7 +35,7 @@ export class NoteService extends BaseService {
 
         // Add Note
         const note = new Note();
-        note.timestamp = req.timestamp;
+        note.time = req.time;
         note.description = req.description;
         note.user = Promise.resolve(user);
 
@@ -50,7 +50,7 @@ export class NoteService extends BaseService {
         }
 
         if (req.description !== undefined) { note.description = req.description; }
-        if (req.timestamp !== undefined) { note.timestamp = req.timestamp; }
+        if (req.time !== undefined) { note.time = req.time; }
 
         return note.save();
     }

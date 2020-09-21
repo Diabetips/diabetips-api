@@ -32,6 +32,7 @@ export class BiometricService extends BaseService {
 
         if (req.date_of_birth !== undefined) { biometric.date_of_birth = req.date_of_birth; }
         if (req.sex !== undefined) { biometric.sex = req.sex; }
+        if (req.diabetes_type !== undefined) { biometric.diabetes_type = req.diabetes_type; }
         if (req.mass !== undefined) {
             biometric.mass = req.mass;
             MassService.addMassToHistory(user, req.mass);
@@ -40,7 +41,10 @@ export class BiometricService extends BaseService {
             biometric.height = req.height;
             HeightService.addHeightToHistory(user, req.height);
         }
+        if (req.hypoglycemia !== undefined) { biometric.hypoglycemia = req.hypoglycemia; }
+        if (req.hyperglycemia !== undefined) { biometric.hyperglycemia = req.hyperglycemia; }
 
+        biometric.verify();
         return biometric.save();
     }
 }

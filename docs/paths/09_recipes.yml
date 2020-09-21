@@ -1,11 +1,13 @@
 "/v1/food":
   get:
+    security:
+      - OAuth2:
+          - "food"
     tags:
       - "Recipes"
     summary: "Get all food items"
-    description: >
+    description: |
       Get a list of all food items available.
-
 
       Implements [Paging](#tag/Paging)
     parameters:
@@ -29,10 +31,13 @@
   parameters:
     - $component: "parameters:food_id.yml:FoodId"
   get:
+    security:
+      - OAuth2:
+          - "food"
     tags:
       - "Recipes"
     summary: "Get food item"
-    description: >
+    description: |
       Get the food item with the specified ID.
     responses:
       200:
@@ -51,12 +56,14 @@
   parameters:
     - $component: "parameters:food_id.yml:FoodId"
   get:
+    security:
+      - OAuth2:
+          - "food"
     tags:
       - "Recipes"
     summary: "Get food picture"
-    description: >
+    description: |
       Get the picture of the food with the specified ID.
-
 
       The returned picture's dimensions will always be fit to 400 pixels.
     responses:
@@ -65,7 +72,8 @@
         content:
           image/jpeg:
             schema:
-              type: "binary"
+              type: "string"
+              format: "binary"
       404:
         description: "No food with the specified ID was found"
         content:
@@ -74,16 +82,19 @@
               $component: "schemas:error.yml:ErrorFoodNotFound"
 "/v1/recipes":
   get:
+    security:
+      - OAuth2:
+          - "recipe:read"
     tags:
       - "Recipes"
     summary: "Get all recipes"
-    description: >
+    description: |
       Get a list of all the recipes available.
-
 
       Implements [Paging](#tag/Paging)
     parameters:
       - $component: "queries:name.yml:NameQuery"
+      - $component: "queries:author.yml:AuthorQuery"
       - $component: "queries:paging.yml:PageQuery"
       - $component: "queries:paging.yml:SizeQuery"
     responses:
@@ -100,10 +111,13 @@
               items:
                 $component: "schemas:recipe.yml:Recipe"
   post:
+    security:
+      - OAuth2:
+          - "recipe:write"
     tags:
       - "Recipes"
     summary: "Create recipe"
-    description: >
+    description: |
       Create a recipe from the specified information and ingredients list.
     requestBody:
       required: true
@@ -128,10 +142,13 @@
   parameters:
     - $component: "parameters:recipe_id.yml:RecipeId"
   get:
+    security:
+      - OAuth2:
+          - "recipe:read"
     tags:
       - "Recipes"
     summary: "Get recipe"
-    description: >
+    description: |
       Get the recipe with the specified ID.
     responses:
       200:
@@ -147,10 +164,13 @@
             schema:
               $component: "schemas:error.yml:ErrorRecipeNotFound"
   put:
+    security:
+      - OAuth2:
+          - "recipe:write"
     tags:
       - "Recipes"
     summary: "Update recipe"
-    description: >
+    description: |
       Update the recipe with the specified ID.
     requestBody:
       required: true
@@ -166,7 +186,7 @@
             schema:
               $component: "schemas:recipe.yml:Recipe"
       404:
-        description: >
+        description: |
           Either:
             * No recipe with the specified ID was found
             * No food with the specified ID from the list of ingredients was found
@@ -175,10 +195,13 @@
             schema:
               $component: "schemas:error.yml:ErrorRecipeNotFound"
   delete:
+    security:
+      - OAuth2:
+          - "recipe:write"
     tags:
       - "Recipes"
     summary: "Remove recipe"
-    description: >
+    description: |
       Remove the recipe with the specified ID.
     responses:
       204:
@@ -193,12 +216,14 @@
   parameters:
     - $component: "parameters:recipe_id.yml:RecipeId"
   get:
+    security:
+      - OAuth2:
+          - "recipe:read"
     tags:
       - "Recipes"
     summary: "Get recipe picture"
-    description: >
+    description: |
       Get the picture of the recipe with the specified ID.
-
 
       The returned picture's dimensions will always be fit to 400 pixels.
     responses:
@@ -207,7 +232,8 @@
         content:
           image/jpeg:
             schema:
-              type: "binary"
+              type: "string"
+              format: "binary"
       404:
         description: "No recipe with the specified ID was found"
         content:
@@ -215,12 +241,14 @@
             schema:
               $component: "schemas:error.yml:ErrorRecipeNotFound"
   post:
+    security:
+      - OAuth2:
+          - "recipe:write"
     tags:
       - "Recipes"
     summary: "Update recipe picture"
-    description: >
+    description: |
       Update the picture of the recipe with the specified ID.
-
 
       The `Content-Type` header is ignored, the format of the file is auto-detected.
       The supported image file formats are:
@@ -236,33 +264,136 @@
       content:
         "*/*":
           schema:
-            type: "binary"
+            type: "string"
+            format: "binary"
     responses:
       204:
         description: "The recipe's picture has been updated"
       404:
-        description: >
+        description: |
           No recipe with the specified ID was found
         content:
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorRecipeNotFound"
   delete:
+    security:
+      - OAuth2:
+          - "recipe:write"
     tags:
       - "Recipes"
     summary: "Remove recipe picture"
-    description: >
+    description: |
       Remove the picture of the recipe with the specified ID.
-
 
       This action cannot be reverted, the recipe's picture will be reset to the default recipe picture.
     responses:
       204:
         description: "The recipe's picture has been removed"
       404:
-        description: >
+        description: |
           No recipe with the specified ID was found
         content:
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorRecipeNotFound"
+"/v1/users/{uid}/recipes":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    security:
+      - OAuth2:
+          - "recipe:read"
+    tags:
+      - "Recipes"
+    summary: "Get User's recipes"
+    description: |
+      Get a list of all the recipes created by the specified user.
+
+
+      Implements [Paging](#tag/Paging)
+    parameters:
+      - $component: "queries:name.yml:NameQuery"
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+    responses:
+      200:
+        description: "List of all recipes created by the user"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:recipe.yml:Recipe"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/recipes/favorites":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    security:
+      - OAuth2:
+          - "profile:read"
+    tags:
+      - "Recipes"
+    summary: "Get User's favorite recipes"
+    description: |
+      Get a list of all the favorite recipes of the specified user.
+    responses:
+      200:
+        description: "List of all recipes favorited by the user"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:recipe.yml:Recipe"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/recipes/favorites/{id}":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  post:
+    security:
+      - OAuth2:
+          - "profile:write"
+    tags:
+      - "Recipes"
+    summary: "Add favorite recipe"
+    description: |
+      Add recipe to the specified user's favorites
+    responses:
+      204:
+        description: "The recipe was added to the favorites"
+  delete:
+    security:
+      - OAuth2:
+          - "profile:write"
+    tags:
+      - "Recipes"
+    summary: "Remove favorite recipe"
+    description: |
+      Remove recipe from the specified user's favorites
+    responses:
+      204:
+        description: "The recipe was removed frmo the favorites"

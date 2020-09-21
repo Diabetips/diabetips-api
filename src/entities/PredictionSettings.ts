@@ -16,8 +16,8 @@ export class PredictionSettings extends BaseEntity {
     @PrimaryGeneratedColumn({ name: "id" })
     public _id: number;
 
-    @OneToOne((type) => User, (user) => user.prediction_settings, { cascade: true })
-    @JoinColumn({ name: "user_id" })
+    @OneToOne(() => User, (user) => user.prediction_settings, { cascade: true })
+    @JoinColumn()
     public user: Promise<User>;
 
     @Column()
