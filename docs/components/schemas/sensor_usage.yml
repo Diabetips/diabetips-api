@@ -1,0 +1,12 @@
+SensorUsageCount:
+  type: "integer"
+  description: "Total count of sensor uses over the specified period of time"
+  example: 5
+SensorUsage:
+  type: "object"
+  properties:
+    "time":
+      type: "string"
+      format: "date-time"
+      description: "Time of the sensor use"
+      example: "2020-07-31T14:28:29.949Z"
