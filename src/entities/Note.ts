@@ -44,6 +44,7 @@ export class Note extends BaseEntity {
 
         return p.query(t.applyTimeRange(qb));
     }
+
     public static async findById(userUid: string,
                                  noteId: number,
                                  options: IBaseQueryOptions = {}):

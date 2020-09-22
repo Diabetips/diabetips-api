@@ -24,6 +24,7 @@ export * from "./NotificationService";
 export * from "./PredictionService";
 export * from "./RecipePictureService";
 export * from "./RecipeService";
+export * from "./SensorUsageService";
 export * from "./StickyNoteService";
 export * from "./UserConfirmationService";
 export * from "./UserConnectionService";

@@ -11,6 +11,7 @@ import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable, Timeable } from "../lib";
 import { BloodSugarCreateReq, BloodSugarUpdateReq, TimeRangeReq, BloodSugarTargetFormatReq } from "../requests";
 import { BaseService } from "./BaseService";
+import { SensorUsageService } from "./SensorUsageService";
 
 export class BloodSugarService extends BaseService {
     public static async getAllBloodSugar(uid: string, p: Pageable, t: Timeable): Promise<Page<BloodSugar>> {
@@ -46,6 +47,7 @@ export class BloodSugarService extends BaseService {
             return bs.save();
         });
 
+        await SensorUsageService.addSensorUse(uid);
         return Promise.all(bsBuilders);
     }
 
