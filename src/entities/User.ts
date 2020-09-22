@@ -26,6 +26,7 @@ import { NotificationFcmToken } from "./NotificationFcmToken";
 import { Prediction } from "./Prediction";
 import { PredictionSettings } from "./PredictionSettings";
 import { Recipe } from "./Recipe";
+import { SensorUsage } from "./SensorUsage";
 import { StickyNote } from "./StickyNote";
 
 import { UserConfirmation } from "./UserConfirmation";
@@ -104,6 +105,9 @@ export class User extends BaseEntityHiddenId {
 
     @OneToMany(() => BloodSugar, (blood_sugar) => blood_sugar.user)
     public blood_sugar: Promise<BloodSugar[]>;
+
+    @OneToMany(() => SensorUsage, (sensor_usage) => sensor_usage.user)
+    public sensor_usage: Promise<SensorUsage[]>;
 
     @OneToOne(() => Biometric, (pd) => pd.user)
     public biometric: Promise<Biometric>;

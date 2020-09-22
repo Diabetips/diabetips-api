@@ -32,5 +32,6 @@ export * from "./NotificationFcmToken";
 export * from "./Prediction";
 export * from "./PredictionSettings";
 export * from "./Recipe";
+export * from "./SensorUsage";
 export * from "./StickyNote";
 export * from "./User";
