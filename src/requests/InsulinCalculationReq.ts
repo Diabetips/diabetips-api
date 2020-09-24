@@ -12,7 +12,7 @@ import { ApiError } from "../errors";
 import { HttpStatus } from "../lib";
 
 export class InsulinCalculationReq {
-    public calcs: InsulinCalculationType[] | InsulinCalculationType [];
+    public calcs: InsulinCalculationType[] | InsulinCalculationType = [];
 
     public init() {
         if (this.calcs === undefined) {

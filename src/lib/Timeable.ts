@@ -10,6 +10,11 @@ import { Type } from "class-transformer";
 import { IsDate, ValidateIf } from "class-validator";
 import { SelectQueryBuilder } from "typeorm";
 
+export enum PeriodMode {
+    HOURLY = "hourly",
+    DAILY = "daily",
+}
+
 export class Timeable {
     // conditional IsOptional
     @ValidateIf((t) => t.start !== undefined  || t.constructor !== Timeable)
