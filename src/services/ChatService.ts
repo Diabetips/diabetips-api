@@ -13,6 +13,8 @@ import { ChatMessageEditReq, ChatMessageSendReq } from "../requests";
 
 import { UserService } from "./UserService";
 
+// TODO ws/notif
+
 export class ChatService {
 
     public static async getAllConversations(uid: string, p: Pageable): Promise<Page<null>> {
@@ -38,8 +40,6 @@ export class ChatService {
             return ca.save();
         }));
 
-        // TODO send notif and ws
-
         return msg;
     }
 
@@ -50,7 +50,7 @@ export class ChatService {
         }
         msg.content = req.content;
         msg.edited = true;
-        return msg.save(); // TODO ws
+        return msg.save();
     }
 
     public static async removeMessage(uid: string, otherUid: string, messageId: string): Promise<void> {
@@ -58,7 +58,7 @@ export class ChatService {
         if (msg == null) {
             throw new ApiError(HttpStatus.NOT_FOUND, "message_not_found", "Message not found");
         }
-        await msg.remove(); // TODO ws
+        await msg.remove();
     }
 
     public static async downloadAttachment(uid: string, otherUid: string, messageId: string, filename: string): Promise<Buffer> {
