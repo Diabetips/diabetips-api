@@ -6,6 +6,7 @@
 ** Created by Arthur MELIN on Fri Apr 17 2020
 */
 
+import bcrypt = require("bcrypt");
 import uuid = require("uuid");
 
 import { User, UserPasswordReset } from "../entities";
@@ -45,7 +46,7 @@ export class UserResetPasswordService extends BaseService {
             throw new ApiError(HttpStatus.BAD_REQUEST, "invalid_code", "Invalid password reset code");
         }
 
-        user.password = req.password;
+        user.password = await bcrypt.hash(req.password, 12);
         rst.code = null;
         rst.used = true;
         return Promise.all([user.save(), rst.save()]);

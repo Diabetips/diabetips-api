@@ -4,7 +4,7 @@
   get:
     security:
       - OAuth2:
-        - "biometrics:read"
+          - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get general biometric information"
@@ -38,7 +38,7 @@
   put:
     security:
       - OAuth2:
-        - "biometrics:write"
+          - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Update general biometric information"
@@ -71,7 +71,7 @@
   get:
     security:
       - OAuth2:
-        - "biometrics:read"
+          - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get user mass history"
@@ -107,7 +107,7 @@
   get:
     security:
       - OAuth2:
-        - "biometrics:read"
+          - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get user height history"
@@ -144,7 +144,7 @@
   get:
     security:
       - OAuth2:
-        - "biometrics:read"
+          - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get last blood sugar measure"
@@ -173,7 +173,7 @@
   get:
     security:
       - OAuth2:
-        - "biometrics:read"
+          - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get all blood sugar measures"
@@ -211,7 +211,7 @@
   post:
     security:
       - OAuth2:
-        - "biometrics:write"
+          - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Add blood sugar measure"
@@ -241,7 +241,7 @@
   put:
     security:
       - OAuth2:
-        - "biometrics:write"
+          - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Update blood sugar measures"
@@ -276,7 +276,7 @@
   delete:
     security:
       - OAuth2:
-        - "biometrics:write"
+          - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Remove blood sugar measures"
@@ -303,7 +303,7 @@
   get:
     security:
       - OAuth2:
-        - "biometrics:read"
+          - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get blood sugar calculations"
@@ -341,7 +341,7 @@
   get:
     security:
       - OAuth2:
-        - "biometrics:read"
+          - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get blood sugar target time / percentage"
@@ -378,7 +378,7 @@
   get:
     security:
       - OAuth2:
-        - "biometrics:read"
+          - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get all HbA1C measures"
@@ -415,7 +415,7 @@
   post:
     security:
       - OAuth2:
-        - "biometrics:write"
+          - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Add HbA1C measure"
@@ -449,7 +449,7 @@
   get:
     security:
       - OAuth2:
-        - "biometrics:read"
+          - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get HbA1C measure"
@@ -475,7 +475,7 @@
   put:
     security:
       - OAuth2:
-        - "biometrics:write"
+          - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Update HbA1C measure"
@@ -507,7 +507,7 @@
   delete:
     security:
       - OAuth2:
-        - "biometrics:write"
+          - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Remove HbA1C measure"
@@ -533,7 +533,7 @@
   get:
     security:
       - OAuth2:
-        - "biometrics:read"
+          - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get all insulin injections"
@@ -571,7 +571,7 @@
   post:
     security:
       - OAuth2:
-        - "biometrics:write"
+          - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Add insulin injection"
@@ -605,7 +605,7 @@
   get:
     security:
       - OAuth2:
-        - "biometrics:read"
+          - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get insulin injection"
@@ -631,7 +631,7 @@
   put:
     security:
       - OAuth2:
-        - "biometrics:write"
+          - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Update insulin injection"
@@ -663,7 +663,7 @@
   delete:
     security:
       - OAuth2:
-        - "biometrics:write"
+          - "biometrics:write"
     tags:
       - "Biometrics"
     summary: "Remove insulin injection"
@@ -688,7 +688,7 @@
   get:
     security:
       - OAuth2:
-        - "biometrics:read"
+          - "biometrics:read"
     tags:
       - "Biometrics"
     summary: "Get insulin calculations"
@@ -728,6 +728,79 @@
           application/json:
             schema:
               $component: "schemas:insulin_calculations.yml:InsulinCalculations"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/blood_sugar/usage":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    security:
+      - OAuth2:
+          - "biometrics:read"
+    tags:
+      - "Biometrics"
+    summary: "Get all sensor uses"
+    description: |
+      Get a list of all the sensor uses for the user with the specified UID.
+
+      Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+    responses:
+      200:
+        description: "The user's sensor uses"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:sensor_usage.yml:SensorUsage"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/blood_sugar/usage/count":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    security:
+      - OAuth2:
+          - "biometrics:read"
+    tags:
+      - "Biometrics"
+    summary: "Get sensor usage count"
+    parameters:
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+
+    description: |
+      Get the total count of sensor usage for the user with the specified UID and ID.
+
+      Implements [Timeable](#tag/Timeable)
+    responses:
+      200:
+        description: "The sensor usage count"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:sensor_usage.yml:SensorUsageCount"
       404:
         description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view

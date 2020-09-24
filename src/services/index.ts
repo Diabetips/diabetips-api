@@ -11,6 +11,7 @@ export * from "./AuthAppService";
 export * from "./AuthService";
 export * from "./BiometricService";
 export * from "./BloodSugarService";
+export * from "./ChatService"
 export * from "./EventService";
 export * from "./FoodPictureService";
 export * from "./FoodService";
@@ -24,6 +25,7 @@ export * from "./NotificationService";
 export * from "./PredictionService";
 export * from "./RecipePictureService";
 export * from "./RecipeService";
+export * from "./SensorUsageService";
 export * from "./StickyNoteService";
 export * from "./UserConfirmationService";
 export * from "./UserConnectionService";
