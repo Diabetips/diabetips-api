@@ -23,6 +23,7 @@ export type AuthScope = "auth:authorize"
     | "apps:write"
     | "biometrics:read"
     | "biometrics:write"
+    | "chat"
     | "connections:read"
     | "connections:write"
     | "connections:invite"
@@ -133,6 +134,7 @@ export const AuthScopes: Record<AuthScope, AuthScopeInfo> = {
     "apps:write":                { target: "user", restricted: true, checker: userChecker() },
     "biometrics:read":           { target: "user", checker: userChecker({ extend: true }) },
     "biometrics:write":          { target: "user", checker: userChecker({ extend: true }) },
+    "chat":                      { target: "user" }, // TODO checker
     "connections:read":          { target: "user", checker: userChecker() },
     "connections:write":         { target: "user", checker: userChecker() },
     "connections:invite":        { target: "user", restricted: true, checker: userChecker() },

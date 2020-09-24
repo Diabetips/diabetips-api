@@ -15,6 +15,8 @@ export * from "./BiometricReport";
 export * from "./BloodSugar";
 export * from "./BloodSugarCalculation";
 export * from "./BloodSugarTarget";
+export * from "./ChatAttachment";
+export * from "./ChatMessage";
 export * from "./Event";
 export * from "./Food";
 export * from "./Hba1c";

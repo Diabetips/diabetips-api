@@ -11,6 +11,7 @@ export * from "./AuthAppService";
 export * from "./AuthService";
 export * from "./BiometricService";
 export * from "./BloodSugarService";
+export * from "./ChatService"
 export * from "./EventService";
 export * from "./FoodPictureService";
 export * from "./FoodService";
