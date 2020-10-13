@@ -1,0 +1,20 @@
+BiometricReport:
+  type: "object"
+  properties:
+    "start":
+      type: string
+      format: date-time
+      description: "Start of the period"
+      example: "2020-07-31T00:00:00.000Z"
+    "end":
+      type: string
+      format: date-time
+      description: "End of the period"
+      example: "2020-07-31T23:59:59.999Z"
+    "insulin":
+      description: "Average amount of insulin injected"
+      schema:
+        $component: "schemas:insulin_calculations.yml:InsulinCalculationsItem"
+    "blood_sugar":
+      schema:
+        - $component: "schemas:blood_sugar_calculations.yml:BloodSugarCalculations"
