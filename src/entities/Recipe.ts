@@ -85,7 +85,7 @@ export class Recipe extends BaseEntity {
 
         let qb = this
             .createQueryBuilder("recipe")
-            .leftJoinAndSelect("recipe.author", "author")
+            .leftJoin("recipe.author", "author")
             .leftJoinAndSelect("recipe.ingredients", "ingredients")
             .leftJoinAndSelect("ingredients.food", "food")
             .andWhere((sqb) => "recipe.id IN " + p.limit(subq(sqb.subQuery().from("recipe", "recipe"))).getQuery());
@@ -100,7 +100,6 @@ export class Recipe extends BaseEntity {
     public static async findById(id: number, options: IBaseQueryOptions = {}): Promise<Recipe | undefined> {
         let qb = this
             .createQueryBuilder("recipe")
-            .leftJoinAndSelect("recipe.author", "author")
             .leftJoinAndSelect("recipe.ingredients", "ingredients")
             .leftJoinAndSelect("ingredients.food", "food")
             .where("recipe.id = :id", { id });
