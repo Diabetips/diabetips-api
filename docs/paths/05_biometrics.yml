@@ -809,3 +809,87 @@
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/report/daily":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    security:
+      - OAuth2:
+          - "biometrics:read"
+    tags:
+      - "Biometrics"
+    summary: "Get user daily report"
+    description: |
+      Get the daily report of the user with the specified UID, of everyday between the two time bounds (inclusive).
+      Data types that are not requested will not appear in the resulting response.
+
+      If no `data` query parameters are provided, then all types of data will be returned.
+
+      In the case where multiple `data` QP are provided, they will be considered as a list and all requested data will be returned.
+
+      Example: `/report/daily?data=blood_sugar&data=insulin&start=...` will return both insulin and blood_sugar.
+
+      Implements [Timeable](#tag/Timeable)
+    parameters:
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+      - $component: "queries:report_data.yml:ReportDataQuery"
+    responses:
+      200:
+        description: "The daily report"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:biometric_report.yml:BiometricReport"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/report/hourly":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    security:
+      - OAuth2:
+          - "biometrics:read"
+    tags:
+      - "Biometrics"
+    summary: "Get user hourly report"
+    description: |
+      Get the hourly report of the user with the specified UID, of everyday between the two time bounds (inclusive).
+      Data types that are not requested will not appear in the resulting response.
+
+      If no `data` query parameters are provided, then all types of data will be returned.
+
+      In the case where multiple `data` QP are provided, they will be considered as a list and all requested data will be returned.
+
+      Example: `/report/hourly?data=blood_sugar&data=insulin&start=...` will return both insulin and blood_sugar.
+
+      Implements [Timeable](#tag/Timeable)
+    parameters:
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+      - $component: "queries:report_data.yml:ReportDataQuery"
+    responses:
+      200:
+        description: "The hourly report"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:biometric_report.yml:BiometricReport"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
