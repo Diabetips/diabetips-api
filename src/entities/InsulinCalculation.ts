@@ -6,9 +6,14 @@
 ** Created by Alexandre DE BEAUMONT on Tue Jul 14 2020
 */
 
+import moment = require("moment-timezone");
+
 import { InsulinCalculationItem } from "./InsulinCalculationItem";
 import { TimeRangeReq, InsulinCalculationReq, InsulinSearchReq } from "../requests";
 import { Insulin, InsulinType } from "./Insulin";
+import { User } from "./User";
+import { ApiError } from "../errors";
+import { HttpStatus } from "../lib";
 
 export enum InsulinCalculationType {
     AVERAGE = "average",
@@ -29,8 +34,13 @@ export class InsulinCalculation {
         this.end = range.end;
 
         const insulins = await Insulin.findAll(uid, range, s);
+        const user = await User.findByUid(uid);
+        if (user === undefined) {
+            throw new ApiError(HttpStatus.NOT_FOUND, "user_not_found", `User (${uid}) not found`);
+        }
+        const timezone = await user.timezone;
 
-        const hourly = this.getHourlyArray(insulins);
+        const hourly = this.getHourlyArray(insulins, timezone);
         if (req.calcs.includes(InsulinCalculationType.AVERAGE) || req.calcs.length === 0) {
             this.setAverage(hourly, s);
         }
@@ -106,15 +116,16 @@ export class InsulinCalculation {
         }
     }
 
-    private getHourlyArray(insulins: Insulin[]): Insulin[][] {
+    private getHourlyArray(insulins: Insulin[], timezone: string): Insulin[][] {
         const hourly = new Array<Insulin[]>(24);
+
         for (let i = 0; i < hourly.length; i++) {
             hourly[i] = new Array<Insulin>();
         }
 
         for (const ins of insulins) {
-            const date = ins.time;
-            const hour = (date.getHours()) % 24;
+            const date = moment.utc(ins.time).tz(timezone);
+            const hour = (date.hours()) % 24;
             hourly[hour].push(ins);
         }
         return hourly;
