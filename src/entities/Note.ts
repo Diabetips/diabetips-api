@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Mon May 18 2020
 */
 
-import { Column, Entity, ManyToOne, JoinColumn } from "typeorm";
+import { Column, Entity, ManyToOne, JoinColumn, SelectQueryBuilder } from "typeorm";
 
 import { Page, Pageable, Timeable, Utils } from "../lib";
 
@@ -25,41 +25,40 @@ export class Note extends BaseEntity {
     @JoinColumn()
     public user: Promise<User>;
 
-    public static async findAll(userUid: string,
+    private static getBaseQuery(uid: string, options: IBaseQueryOptions): SelectQueryBuilder<Note> {
+        let qb = this
+            .createQueryBuilder("note")
+            .leftJoin("note.user", "user")
+            .where("user.uid = :uid", { uid });
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb
+                .andWhere("user.deleted = false")
+                .andWhere("note.deleted = false");
+        }
+
+        return qb;
+    }
+
+    public static async findAll(uid: string,
                                 p: Pageable,
                                 t: Timeable,
                                 options: IBaseQueryOptions = {}):
                                 Promise<Page<Note>> {
-        let qb = this
-            .createQueryBuilder("note")
-            .leftJoin("note.user", "user")
-            .where("user.uid = :userUid", { userUid })
+        const qb = this
+            .getBaseQuery(uid, options)
             .orderBy("note.time", "DESC");
-
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb
-                .andWhere("user.deleted = false")
-                .andWhere("note.deleted = false");
-        }
 
         return p.query(t.applyTimeRange(qb));
     }
 
-    public static async findById(userUid: string,
+    public static async findById(uid: string,
                                  noteId: number,
                                  options: IBaseQueryOptions = {}):
                                  Promise<Note | undefined> {
-        let qb = this
-            .createQueryBuilder("note")
-            .leftJoin("note.user", "user")
-            .where("note.id = :noteId", { noteId })
-            .andWhere("user.uid = :userUid", { userUid });
-
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb
-                .andWhere("user.deleted = false")
-                .andWhere("note.deleted = false");
-        }
+        const qb = this
+            .getBaseQuery(uid, options)
+            .andWhere("note.id = :noteId", { noteId });
 
         return qb.getOne();
     }

@@ -6,7 +6,7 @@
 ** Created by Arthur MELIN on Wed Apr 29 2020
 */
 
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, SelectQueryBuilder } from "typeorm";
 
 import { Page, Pageable, Utils } from "../lib";
 
@@ -34,19 +34,26 @@ export class Notification extends BaseEntity {
     @JoinColumn()
     public target: Promise<User>;
 
-    public static async findAll(uid: string,
-                                p: Pageable,
-                                options: IUserQueryOptions = {}):
-                                Promise<Page<Notification>> {
+    private static getBaseQuery(uid: string, options: IUserQueryOptions): SelectQueryBuilder<Notification> {
         let qb = this
             .createQueryBuilder("notification")
             .leftJoin("notification.target", "user")
-            .where("user.uid = :uid", { uid })
-            .orderBy("notification.time", "DESC");
+            .where("user.uid = :uid", { uid });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb.andWhere("user.deleted = false");
         }
+
+        return qb;
+    }
+
+    public static async findAll(uid: string,
+                                p: Pageable,
+                                options: IUserQueryOptions = {}):
+                                Promise<Page<Notification>> {
+        const qb = this
+            .getBaseQuery(uid, options)
+            .orderBy("notification.time", "DESC");
 
         return p.query(qb);
     }
@@ -54,16 +61,10 @@ export class Notification extends BaseEntity {
     public static async findAllUnread(uid: string,
                                       options: IUserQueryOptions = {}):
                                       Promise<Notification[]> {
-        let qb = this
-            .createQueryBuilder("notification")
-            .leftJoin("notification.target", "user")
-            .where("user.uid = :uid", { uid })
+        const qb = this
+            .getBaseQuery(uid, options)
             .andWhere("notification.read = false")
             .orderBy("notification.time", "DESC");
-
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("user.deleted = false");
-        }
 
         return qb.getMany();
     }
@@ -71,15 +72,9 @@ export class Notification extends BaseEntity {
     public static async findById(uid: string, notifId: string,
                                  options: IUserQueryOptions = {}):
                                  Promise<Notification | undefined> {
-        let qb = this
-            .createQueryBuilder("notification")
-            .leftJoin("notification.target", "user")
-            .where("notification.id = :notifId", { notifId })
-            .andWhere("user.uid = :uid", { uid });
-
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("user.deleted = false")
-        }
+        const qb = this
+            .getBaseQuery(uid, options)
+            .andWhere("notification.id = :notifId", { notifId });
 
         return qb.getOne();
     }
