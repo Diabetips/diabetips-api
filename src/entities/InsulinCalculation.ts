@@ -114,7 +114,7 @@ export class InsulinCalculation {
 
         for (const ins of insulins) {
             const date = ins.time;
-            const hour = (date.getHours() + 23) % 24;
+            const hour = (date.getHours()) % 24;
             hourly[hour].push(ins);
         }
         return hourly;
