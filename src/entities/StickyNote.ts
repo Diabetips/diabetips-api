@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Sat Sep 19 2020
 */
 
-import { Column, Entity, JoinColumn, ManyToOne, Unique } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, SelectQueryBuilder, Unique } from "typeorm";
 import { User } from ".";
 import { Utils } from "../lib";
 import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
@@ -33,23 +33,30 @@ export class StickyNote extends BaseEntity {
     @JoinColumn()
     public patient: Promise<User>;
 
-    public static async findAll(userUid: string,
-                                patientUid: string,
-                                options: IBaseQueryOptions = {}):
-                                Promise<StickyNote[]> {
+    private static getBaseQuery(userUid: string, patientUid: string, options: IBaseQueryOptions): SelectQueryBuilder<StickyNote> {
         let qb = this
             .createQueryBuilder("sticky_note")
             .leftJoin("sticky_note.user", "user")
-            .andWhere("user.uid = :userUid", { userUid })
+            .where("user.uid = :userUid", { userUid })
             .leftJoin("sticky_note.patient", "patient")
-            .andWhere("patient.uid = :patientUid", { patientUid })
-            .orderBy("sticky_note.index", "ASC");
+            .andWhere("patient.uid = :patientUid", { patientUid });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb
             .andWhere("user.deleted = false")
             .andWhere("sticky_note.deleted = false");
         }
+
+        return qb;
+    }
+
+    public static async findAll(userUid: string,
+                                patientUid: string,
+                                options: IBaseQueryOptions = {}):
+                                Promise<StickyNote[]> {
+        const qb = this
+            .getBaseQuery(userUid, patientUid, options)
+            .orderBy("sticky_note.index", "ASC");
 
         return qb.getMany();
     }
@@ -59,19 +66,9 @@ export class StickyNote extends BaseEntity {
                                  noteId: number,
                                  options: IBaseQueryOptions = {}):
                                  Promise<StickyNote | undefined> {
-        let qb = this
-            .createQueryBuilder("sticky_note")
-            .leftJoin("sticky_note.user", "user")
-            .where("sticky_note.id = :noteId", { noteId })
-            .andWhere("user.uid = :userUid", { userUid })
-            .leftJoin("sticky_note.patient", "patient")
-            .andWhere("patient.uid = :patientUid", { patientUid });
-
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb
-                .andWhere("user.deleted = false")
-                .andWhere("sticky_note.deleted = false");
-        }
+        const qb = this
+            .getBaseQuery(userUid, patientUid, options)
+            .andWhere("sticky_note.id = :noteId", { noteId });
 
         return qb.getOne();
     }
@@ -80,20 +77,10 @@ export class StickyNote extends BaseEntity {
                                      patientUid: string,
                                      options: IBaseQueryOptions = {}):
                                      Promise<any> {
-        let qb = this
-            .createQueryBuilder("sticky_note")
+        const qb = this
+            .getBaseQuery(userUid, patientUid, options)
             .select("MAX(sticky_note.index)")
-            .leftJoin("sticky_note.user", "user")
-            .andWhere("user.uid = :userUid", { userUid })
-            .leftJoin("sticky_note.patient", "patient")
-            .andWhere("patient.uid = :patientUid", { patientUid })
             .setOption("disable-global-order");
-
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb
-                .andWhere("user.deleted = false")
-                .andWhere("sticky_note.deleted = false");
-        }
 
         return qb.getRawOne();
     }
