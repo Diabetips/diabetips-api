@@ -31,6 +31,8 @@ export * from "./MealUpdateReq";
 export * from "./NoteCreateReq";
 export * from "./NoteUpdateReq";
 export * from "./NotificationFcmTokenRegisterReq";
+export * from "./PhysicalActivityCreateReq";
+export * from "./PhysicalActivityUpdateReq";
 export * from "./PredictionSettingsUpdateReq";
 export * from "./RecipeCreateReq";
 export * from "./RecipeSearchReq";
