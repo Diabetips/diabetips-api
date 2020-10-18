@@ -24,7 +24,6 @@ export class UserInsulinController {
                                         @QueryParams() req: InsulinCalculationReq) {
         s.init();
         req.init();
-        req.calcs = Array.isArray(req.calcs) ? req.calcs : [req.calcs] || [ ];
         return InsulinService.getCalculations(uid, t, s, req);
     }
 
