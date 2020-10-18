@@ -22,6 +22,7 @@ export * from "./MassService";
 export * from "./MealService";
 export * from "./NoteService";
 export * from "./NotificationService";
+export * from "./PhysicalActivityService";
 export * from "./PredictionService";
 export * from "./RecipePictureService";
 export * from "./RecipeService";

@@ -23,6 +23,7 @@ import { Meal } from "./Meal";
 import { Note } from "./Note";
 import { Notification } from "./Notification";
 import { NotificationFcmToken } from "./NotificationFcmToken";
+import { PhysicalActivity } from "./PhysicalActivity";
 import { Prediction } from "./Prediction";
 import { PredictionSettings } from "./PredictionSettings";
 import { Recipe } from "./Recipe";
@@ -96,6 +97,9 @@ export class User extends BaseEntityHiddenId {
 
     @OneToMany(() => Meal, (meal) => meal.user)
     public meals: Promise<Meal[]>;
+
+    @OneToMany(() => PhysicalActivity, (activity) => activity.user)
+    public physical_activities: Promise<PhysicalActivity[]>;
 
     @OneToMany(() => Insulin, (insulin) => insulin.user)
     public insulin: Promise<Insulin[]>;

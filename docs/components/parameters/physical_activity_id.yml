@@ -1,0 +1,6 @@
+PhysicalActivityId:
+  in: "path"
+  name: "physical_activity_id"
+  required: true
+  schema:
+    $component: "schemas:physical_activity.yml:PhysicalActivityId"
