@@ -12,6 +12,7 @@
       Implements [Paging](#tag/Paging)
     parameters:
       - $component: "queries:name.yml:NameQuery"
+      - $component: "queries:code.yml:CodeQuery"
       - $component: "queries:paging.yml:PageQuery"
       - $component: "queries:paging.yml:SizeQuery"
     responses:
