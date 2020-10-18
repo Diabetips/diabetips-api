@@ -335,6 +335,51 @@
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/blood_sugar/calculations/aggregate":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    security:
+      - OAuth2:
+          - "biometrics:read"
+    tags:
+      - "Biometrics"
+    summary: "Get blood sugar calculations aggregate"
+    description: |
+      Get different calculations about the user's blood sugar over a period of time.
+      Calculations that are not requested will not appear in the resulting response.
+
+      This route will disregard the hours provided in the time range, and will instead include both full days
+      in it. For example : `start=2020-15-02T05:02:56` will become `2020-15-02T00:00:00` and
+      `end=2020-15-19T13:27:42` will become `2020-15-19T23:59:59`
+
+      The calculations are each represented by an array of 24 objects, each representing a 1 hour period,
+      starting from 00h00 to 00:59 at index 0.
+
+      If no `calcs` query parameters are provided, then all types of calculations will be returned.
+
+      In the case where multiple `calcs` or `types` QP are provided, they will be considered as a list and all requested calculations will be returned.
+
+      Example: `/calculations/aggregate?calcs=avereage&calcs=first&start=...` will include both averaege and first quartile calculations, but will omit third quartile.
+    parameters:
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+      - $component: "queries:blood_sugar_calculations.yml:BSCalcsQuery"
+    responses:
+      200:
+        description: "The calculations requested"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:blood_sugar_calculations.yml:BloodSugarCalculationsAggregate"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
 "/v1/users/{uid}/blood_sugar/target":
   parameters:
     - $component: "parameters:uid.yml:UID"
