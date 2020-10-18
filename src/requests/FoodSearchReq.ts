@@ -12,4 +12,8 @@ export class FoodSearchReq {
     @IsOptional()
     @IsString()
     public name?: string;
+
+    @IsOptional()
+    @IsString()
+    public code?: string;
 }
