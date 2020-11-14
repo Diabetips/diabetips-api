@@ -1,0 +1,34 @@
+PlanningEvent:
+  type: "object"
+  properties:
+    "id":
+      type: "integer"
+      description: "The planning event's ID"
+      example: 1
+      readOnly: true
+    "title":
+      type: "string"
+      description: "The planning event's title"
+      example: "Blood test appointment"
+    "description":
+      type: "string"
+      description: "The planning event's description"
+      example: "I had the flu"
+    "start":
+      type: "string"
+      format: "date-time"
+      description: "Start of the planning event"
+      example: "2020-07-31T00:00:00.000Z"
+    "end":
+      type: "string"
+      nullable: true
+      format: "date-time"
+      description: "End of the planning event"
+      example: "2020-07-31T23:59:59.999Z"
+    "members":
+      type: array
+      items:
+        allOf:
+          - $component: "schemas:user.yml:User"
+          - readOnly: true
+          - array: true

@@ -24,6 +24,7 @@ import { Note } from "./Note";
 import { Notification } from "./Notification";
 import { NotificationFcmToken } from "./NotificationFcmToken";
 import { PhysicalActivity } from "./PhysicalActivity";
+import { PlanningEvent } from "./PlanningEvent";
 import { Prediction } from "./Prediction";
 import { PredictionSettings } from "./PredictionSettings";
 import { Recipe } from "./Recipe";
@@ -127,6 +128,9 @@ export class User extends BaseEntityHiddenId {
 
     @OneToMany(() => Event, (event) => event.user)
     public event: Promise<Event[]>;
+
+    @OneToMany(() => PlanningEvent, (event) => event.owner)
+    public owned_events: Promise<Event[]>;
 
     @OneToMany(() => StickyNote, (sticky_note) => sticky_note.user)
     public sticky_notes: Promise<StickyNote[]>;
