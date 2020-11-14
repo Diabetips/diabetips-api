@@ -31,7 +31,7 @@ export class Event extends BaseEntity {
         let qb = this
             .createQueryBuilder("event")
             .leftJoin("event.user", "user")
-            .where("user.uid = :userUid", { uid });
+            .where("user.uid = :uid", { uid });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb
