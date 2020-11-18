@@ -88,6 +88,10 @@ type Mail = MailBase
     & MailAccountRegistration
     & MailInviteConnection;
 
+type Notification = {
+    [key in string]: ((params: { [key: string]: any }) => { title: string, body: string });
+};
+
 export interface Lang {
     mail: Mail;
     mail_template: {
@@ -98,4 +102,5 @@ export interface Lang {
         template_contact: string;
         template_contact_email: string;
     };
+    notif: Notification;
 }

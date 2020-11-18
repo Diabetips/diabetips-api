@@ -8,6 +8,7 @@
 
 import uuid = require("uuid");
 
+import { config } from "../config";
 import { User, UserConnection } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus } from "../lib";
@@ -15,6 +16,7 @@ import { logger } from "../logger";
 import { sendMail } from "../mail";
 import { UserConnectionInviteReq } from "../requests";
 
+import { AuthService } from "./AuthService";
 import { BaseService } from "./BaseService";
 import { NotificationService } from "./NotificationService";
 import { UserService } from "./UserService";
@@ -50,9 +52,12 @@ export class UserConnectionService extends BaseService {
             conn.target = target;
             await conn.save();
 
+            const imageToken = await AuthService.generateUrlAccessToken(target);
+            const imageUrl = `${config.diabetips.apiUrl}/v1/users/${user.uid}/picture?token=${imageToken}`;
+
             await NotificationService.sendNotification(target, "user_invite", {
                 from: user.uid,
-            });
+            }, imageUrl, { from: user });
         }
     }
 

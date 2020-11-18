@@ -110,6 +110,17 @@ class English implements Lang {
         template_contact: "Contact us:",
         template_contact_email: "contact@diabetips.fr",
     };
+
+    notif = {
+        "user_invite": ((params: any) => ({
+            title: "Connection request",
+            body: `Dr. ${params.from.lastname} requested access to your medical information`,
+        })),
+        "test": (() => ({
+            title: "Test notification",
+            body: "🤖 beep boop!"
+        })),
+    }
 }
 
 export const lang = new English();

@@ -27,9 +27,9 @@ export class NotificationFcmToken extends BaseEntity {
 
     public static async deleteToken(token: string) {
         const qb = this
-            .createQueryBuilder("notificationFcmToken")
+            .createQueryBuilder("notification_fcm_token")
             .delete()
-            .where("notificationFcmToken.token = :token", { token });
+            .where("notification_fcm_token.token = :token", { token });
 
         return qb.execute();
     }
