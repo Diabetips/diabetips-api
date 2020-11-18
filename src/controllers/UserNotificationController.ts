@@ -13,7 +13,9 @@ import { Authorized, Pageable } from "../lib";
 import { NotificationFcmTokenRegisterReq } from "../requests";
 import { NotificationService } from "../services";
 
-import { UserService } from "../services";
+// Temp imports for test route
+import { config } from "../config";
+import { AuthService, UserService } from "../services";
 
 @JsonController("/v1/users/:uid/notifications")
 export class UserNotificationController {
@@ -29,10 +31,11 @@ export class UserNotificationController {
     @Get("/test")
     public async test(@Param("uid") uid: string) {
         const user = await UserService.getUser(uid);
+        const imageToken = await AuthService.generateUrlAccessToken(user);
         await NotificationService.sendNotification(user, "test", {
             foo: "aled",
             bar: "oskour",
-        });
+        }, `${config.diabetips.apiUrl}/v1/users/me/picture?token=${imageToken}`);
     }
 
     @Post("/fcm_token")

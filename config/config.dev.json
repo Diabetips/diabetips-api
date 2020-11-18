@@ -11,7 +11,8 @@
         "url": "postgre://diabetips@localhost/diabetips"
     },
     "diabetips": {
-        "accountUrl": "http://localhost:9080"
+        "accountUrl": "http://localhost:9080",
+        "apiUrl": "http://localhost:8080"
     },
     "http": {
         "proxy": false

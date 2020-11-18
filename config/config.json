@@ -5,7 +5,8 @@
     "auth": {
         "code_ttl": "00:10:00",
         "token_key": "${DIABETIPS_AUTH_TOKEN_KEY}",
-        "token_ttl": 3600
+        "token_ttl": 3600,
+        "url_token_ttl": 2592000
     },
     "db": {
         "type": "postgres",
@@ -15,7 +16,8 @@
         ]
     },
     "diabetips": {
-        "accountUrl": "${DIABETIPS_ACCOUNT_URL}"
+        "accountUrl": "${DIABETIPS_ACCOUNT_URL}",
+        "apiUrl": "${DIABETIPS_API_URL}"
     },
     "firebase": "${FIREBASE_SERVICE_ACCOUNT}",
     "http": {

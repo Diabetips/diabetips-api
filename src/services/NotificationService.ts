@@ -10,7 +10,9 @@ import admin = require("firebase-admin");
 
 import { Notification, User, NotificationFcmToken } from "../entities";
 import { ApiError } from "../errors";
-import { HttpStatus, Page, Pageable, Utils } from "../lib";
+import { getLang } from "../i18n";
+import { HttpStatus, Page, Pageable } from "../lib";
+import { logger } from "../logger";
 import { NotificationFcmTokenRegisterReq } from "../requests";
 import { NotificationsWebSocket } from "../ws";
 
@@ -23,7 +25,7 @@ const wsClients: {
 
 export class NotificationService extends BaseService {
 
-    public static async sendNotification(target: User, type: string, data: any) {
+    public static async sendNotification(target: User, type: string, data: { [key: string]: string }, imageUrl?: string, i18nParams: { [key: string]: any } = {}) {
         let notif = new Notification();
         notif.type = type;
         notif.data = data;
@@ -39,9 +41,20 @@ export class NotificationService extends BaseService {
 
         const fcmTokens = await target.notificationFcmTokens;
         if (fcmTokens.length > 0) {
+            const i18nTemplate = getLang(target.lang)?.notif[type];
+            if (!i18nTemplate) {
+                logger.warn(`Missing notification i18n template for lang ${target.lang} and type ${type}`);
+            }
+
             await admin.messaging().sendMulticast({
+                notification: (i18nTemplate ? {
+                    ...i18nTemplate(i18nParams),
+                    imageUrl,
+                } : undefined),
                 data: {
-                    "notification": JSON.stringify(notif, Utils.jsonReplacer),
+                    id: notif.id,
+                    type,
+                    ...data,
                 },
                 tokens: fcmTokens.map((nt) => nt.token)
             });

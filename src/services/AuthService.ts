@@ -518,6 +518,15 @@ export class AuthService extends BaseService {
         return rt;
     }
 
+    public static async generateUrlAccessToken(user: User): Promise<AccessToken> {
+        return this.generateJwt({
+            jti: uuid.v4(),
+            sub: user.uid,
+        }, {
+            expiresIn: config.auth.url_token_ttl,
+        });
+    }
+
     private static async generateJwt(body: object, options: jwt.SignOptions): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             jwt.sign(body, config.auth.token_key, {
