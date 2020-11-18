@@ -7,6 +7,7 @@
 */
 
 import bcrypt = require("bcrypt");
+import { Request } from "express";
 import jwt = require("jsonwebtoken");
 import uuid = require("uuid");
 
@@ -42,7 +43,17 @@ let revokedRefreshTokens: RevokedAuth[] = [];
 
 export class AuthService extends BaseService {
 
-    public static async decodeAuthorization(header: string | undefined): Promise<AuthInfo | undefined> {
+    public static async authFromRequest(req: Request): Promise<AuthInfo | undefined> {
+        const auth = await this.authFromAuthorizationHeader(req.header("authorization"))
+        if (auth) return auth;
+
+        const queryToken = req.query["token"] as string | undefined;
+        if (queryToken) return this.authFromBearerToken(queryToken);
+
+        return;
+    }
+
+    public static async authFromAuthorizationHeader(header: string | undefined): Promise<AuthInfo | undefined> {
         if (header == null) {
             return undefined;
         }
@@ -50,19 +61,19 @@ export class AuthService extends BaseService {
 
         if (header.toLowerCase().startsWith("bearer ")) {
             const token = header.slice(7).trim();
-            return AuthService.decodeBearerToken(token);
+            return AuthService.authFromBearerToken(token);
         } else if (header.toLowerCase().startsWith("basic ")) {
             const creds = header.slice(6).trim();
-            return AuthService.decodeBasicClientCredentials(creds);
+            return AuthService.authFromBasicClientCredentials(creds);
         } else if (header.toLowerCase().startsWith("as ") &&
             Utils.optionDefault(config.auth.allow_as, false)) {
             const as = header.slice(3).trim();
-            return AuthService.decodeAsExpr(as);
+            return AuthService.authFromAsExpr(as);
         }
         return;
     }
 
-    public static async decodeBearerToken(token: string): Promise<AuthInfo> {
+    public static async authFromBearerToken(token: string): Promise<AuthInfo> {
         try {
             const body = await this.verifyJwt(token);
             if (typeof body !== "object") {
@@ -99,7 +110,7 @@ export class AuthService extends BaseService {
         }
     }
 
-    public static async decodeBasicClientCredentials(creds: string): Promise<AuthInfo> {
+    public static async authFromBasicClientCredentials(creds: string): Promise<AuthInfo> {
         try {
             const [clientId, clientSecret] = Buffer.from(creds, "base64").toString().split(":", 2);
 
@@ -121,7 +132,7 @@ export class AuthService extends BaseService {
         }
     }
 
-    public static async decodeAsExpr(as: string): Promise<AuthInfo> {
+    public static async authFromAsExpr(as: string): Promise<AuthInfo> {
         return {
             type: "user",
             uid: as,
