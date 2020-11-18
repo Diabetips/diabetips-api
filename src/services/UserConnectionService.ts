@@ -15,8 +15,8 @@ import { HttpStatus } from "../lib";
 import { logger } from "../logger";
 import { sendMail } from "../mail";
 import { UserConnectionInviteReq } from "../requests";
-import { AuthService } from "./AuthService";
 
+import { AuthService } from "./AuthService";
 import { BaseService } from "./BaseService";
 import { NotificationService } from "./NotificationService";
 import { UserService } from "./UserService";
