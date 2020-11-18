@@ -36,7 +36,7 @@ preapp.use(log4js.connectLogger(httpLogger, {
 
 async function buildContext(action: Action): Promise<Context> {
     return {
-        auth: await AuthService.decodeAuthorization(action.request.header("Authorization")),
+        auth: await AuthService.authFromRequest(action.request),
     };
 }
 

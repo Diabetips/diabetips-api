@@ -21,7 +21,7 @@ export class UrlRewriteController {
 
     @All(/^\/v1\/users\/me(\/.*)?/)
     @UseBefore(async (req: Request, res: Response, next: NextFunction) => {
-        const auth = await AuthService.decodeAuthorization(req.header("Authorization"));
+        const auth = await AuthService.authFromRequest(req);
         if (auth == null) {
             throw new ApiError(HttpStatus.UNAUTHORIZED, "unauthorized", "Please provide an authorization token");
         }
