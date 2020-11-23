@@ -15,10 +15,26 @@ import { UserService } from "./UserService";
 
 // TODO ws/notif
 
+type ChatConversation = Pick<ChatMessage, "id" | "time" | "content" | "edited"> & {
+    with: string;
+    from: string;
+};
+
 export class ChatService {
 
-    public static async getAllConversations(uid: string, p: Pageable): Promise<Page<null>> {
-        return new Page(p, [[], 0]);
+    public static async getAllConversations(uid: string, p: Pageable): Promise<Page<ChatConversation>> {
+        const page = await ChatMessage.findByUid(uid, p);
+        return new Page(p, [
+            await Promise.all(page.body.map(async (m): Promise<ChatConversation> => {
+                const [from, to] = await Promise.all([m.from, m.to]);
+                return {
+                    ...m,
+                    with: from.uid === uid ? to.uid : from.uid,
+                    from: from.uid,
+                };
+            })),
+            page.count,
+        ]);
     }
 
     public static async getMessages(uid: string, otherUid: string, p: Pageable): Promise<Page<ChatMessage>> {
