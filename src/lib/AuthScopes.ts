@@ -57,10 +57,10 @@ type AuthScopeInfo = {
 };
 
 interface UserCheckerOptions {
-    direct?: boolean; // default true
-    extend?: boolean; // default false
-    extendBidirectional?: boolean; // default false
-    extendUnaccepted?: boolean; // default false
+    direct?: boolean; // allows principal to see itself, default true
+    extend?: boolean; // allows principal to see users that they are connected to, default false
+    extendBidirectional?: boolean; // allows principal to see users that are connected to them, default false
+    extendUnaccepted?: boolean; // allows principal to see users that sent them a connection invite, default false
 }
 
 function userChecker(options: UserCheckerOptions = {}): AuthChecker {
@@ -125,6 +125,26 @@ function userChecker(options: UserCheckerOptions = {}): AuthChecker {
     };
 }
 
+function chatChecker(): AuthChecker {
+    const userCheck = userChecker({
+        direct: false,
+        extend: true,
+        extendBidirectional: true,
+    });
+
+    return async (auth: AuthInfo | undefined, params: { [key: string]: string }) => {
+        if (auth?.type !== "user") {
+            throw new ApiError(HttpStatus.UNAUTHORIZED, "unauthorized", "Please provide user authorization");
+        }
+
+        if (typeof params.uid !== "string") {
+            return;
+        }
+
+        return userCheck(auth, params);
+    };
+}
+
 export const AuthScopes: Record<AuthScope, AuthScopeInfo> = {
     "auth:authorize":            { target: "user", restricted: true },
     "auth:confirm":              { target: "app",  restricted: true },
@@ -134,7 +154,7 @@ export const AuthScopes: Record<AuthScope, AuthScopeInfo> = {
     "apps:write":                { target: "user", restricted: true, checker: userChecker() },
     "biometrics:read":           { target: "user", checker: userChecker({ extend: true }) },
     "biometrics:write":          { target: "user", checker: userChecker({ extend: true }) },
-    "chat":                      { target: "user" }, // TODO checker
+    "chat":                      { target: "user", checker: chatChecker() },
     "connections:read":          { target: "user", checker: userChecker() },
     "connections:write":         { target: "user", checker: userChecker() },
     "connections:invite":        { target: "user", restricted: true, checker: userChecker() },

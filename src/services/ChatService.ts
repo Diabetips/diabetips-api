@@ -6,19 +6,32 @@
 ** Created by Arthur MELIN on Sat Sep 05 2020
 */
 
+import { config } from "../config";
 import { ChatAttachment, ChatMessage } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable } from "../lib";
 import { ChatMessageEditReq, ChatMessageSendReq } from "../requests";
+import { ChatWebSocket } from "../ws";
 
+import { AuthService } from "./AuthService";
+import { NotificationService } from "./NotificationService";
 import { UserService } from "./UserService";
 
-// TODO ws/notif
+type ChatMessageBase = Pick<ChatMessage, "id" | "time" | "content" | "edited">;
 
-type ChatConversation = Pick<ChatMessage, "id" | "time" | "content" | "edited"> & {
+type ChatConversation = ChatMessageBase & {
     with: string;
     from: string;
 };
+
+type ChatMessageWs = Pick<ChatMessage, "id" | "time" | "content" | "edited"> & {
+    from: string;
+    to: string;
+};
+
+const wsClients: {
+    [key: string]: ChatWebSocket[];
+} = {};
 
 export class ChatService {
 
@@ -42,9 +55,12 @@ export class ChatService {
     }
 
     public static async sendMessage(uid: string, otherUid: string, req: ChatMessageSendReq): Promise<ChatMessage> {
+        const from = await UserService.getUser(uid);
+        const to = await UserService.getUser(otherUid);
+
         let msg = new ChatMessage();
-        msg.from = Promise.resolve(await UserService.getUser(uid));
-        msg.to = Promise.resolve(await UserService.getUser(otherUid));
+        msg.from = Promise.resolve(from);
+        msg.to = Promise.resolve(to);
         msg.content = req.content;
         msg = await msg.save();
 
@@ -56,17 +72,34 @@ export class ChatService {
             return ca.save();
         }));
 
+        this.sendMessageByWs(uid, msg);
+        if (!this.sendMessageByWs(otherUid, msg)) {
+            const imageToken = await AuthService.generateUrlAccessToken(to);
+            const imageUrl = `${config.diabetips.apiUrl}/v1/users/${from.uid}/picture?token=${imageToken}`;
+
+            await NotificationService.sendNotification(to, "chat_message", {
+                from: from.uid,
+                time: msg.time.toISOString(),
+                content: msg.content,
+            }, imageUrl, { from, content: msg.content });
+        }
+
         return msg;
     }
 
     public static async editMessage(uid: string, otherUid: string, messageId: string, req: ChatMessageEditReq): Promise<ChatMessage> {
-        const msg = await ChatMessage.findById(uid, otherUid, messageId);
+        let msg = await ChatMessage.findById(uid, otherUid, messageId);
         if (msg == null) {
             throw new ApiError(HttpStatus.NOT_FOUND, "message_not_found", "Message not found");
         }
         msg.content = req.content;
         msg.edited = true;
-        return msg.save();
+        msg = await msg.save();
+
+        this.sendMessageByWs(uid, msg);
+        this.sendMessageByWs(otherUid, msg);
+
+        return msg;
     }
 
     public static async removeMessage(uid: string, otherUid: string, messageId: string): Promise<void> {
@@ -83,6 +116,36 @@ export class ChatService {
             throw new ApiError(HttpStatus.NOT_FOUND, "attachment_not_found", "Attachment not found");
         }
         return attachment.blob;
+    }
+
+    public static async registerWsClient(uid: string, client: ChatWebSocket) {
+        (wsClients[uid] ??= []).push(client);
+    }
+
+    public static async unregisterWsClient(uid: string, client: ChatWebSocket) {
+        if (wsClients[uid] != null) {
+            wsClients[uid] = wsClients[uid].filter((c) => c !== client);
+            if (wsClients[uid].length === 0) {
+                delete wsClients[uid];
+            }
+        }
+    }
+
+    private static async sendMessageByWs(uid: string, msg: ChatMessage): Promise<boolean> {
+        if (wsClients[uid] == null) {
+            return false;
+        }
+
+        const wsMsg: ChatMessageWs = {
+            ...msg,
+            from: (await msg.from).uid,
+            to: (await msg.from).uid,
+        };
+
+        wsClients[uid].forEach((client) => {
+            client.sendJsonMessage(wsMsg);
+        });
+        return true;
     }
 
 }
