@@ -1,0 +1,78 @@
+ChatMessageId:
+  type: "string"
+  format: "uuid"
+  description: "The message's identifier"
+  example: "01234567-89ab-cdef-0123-456789abcdef"
+  readOnly: true
+ChatMessageBase:
+  type: "object"
+  properties:
+    "id":
+      $component: "schemas:chat.yml:ChatMessageId"
+    "time":
+      type: "string"
+      format: "date-time"
+      description: "Time of the message"
+      example: "2020-03-14T01:23:45Z"
+      readOnly: true
+    "content":
+      type: "string"
+      description: "The message content"
+      example: "Hello world!"
+    "edited":
+      type: "boolean"
+      description: "Flag that indicate if the message has been edited by its author"
+      example: false
+      readOnly: true
+ChatAttachment:
+  type: "object"
+  properties:
+    "filename":
+      type: "string"
+      description: "The attachment file name"
+      example: "BloodTest-JaneDoe-072020.pdf"
+    "size":
+      type: "number"
+      description: "The attachment file size in bytes"
+      example: 6816898
+ChatConversation:
+  allOf:
+    - $component: "schemas:chat.yml:ChatMessageBase"
+    - properties:
+        "with":
+          type: "string"
+          format: "uuid"
+          description: "UID of the other user in the conversation"
+          example: "01234567-89ab-cdef-0123-456789abcdef"
+          readOnly: true
+        "from":
+          type: "string"
+          format: "uuid"
+          description: "UID of the user that sent the last message in the conversation"
+          example: "01234567-89ab-cdef-0123-456789abcdef"
+          readOnly: true
+ChatMessage:
+  allOf:
+    - $component: "schemas:chat.yml:ChatMessageBase"
+    - properties:
+        "from":
+          type: "string"
+          format: "uuid"
+          description: "UID of the user that sent the message"
+          example: "01234567-89ab-cdef-0123-456789abcdef"
+          readOnly: true
+        "to":
+          type: "string"
+          format: "uuid"
+          description: "UID of the user that the message was sent to"
+          example: "01234567-89ab-cdef-0123-456789abcdef"
+          readOnly: true
+ChatMessageWithAttachments:
+  allOf:
+    - $component: "schemas:chat.yml:ChatMessage"
+    - properties:
+        "attachments":
+          type: "array"
+          readOnly: true
+          items:
+            $component: "schemas:chat.yml:ChatAttachment"

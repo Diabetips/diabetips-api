@@ -1,0 +1,6 @@
+ChatMessageId:
+  in: "path"
+  name: "message_id"
+  required: true
+  schema:
+    $component: "schemas:chat.yml:ChatMessageId"

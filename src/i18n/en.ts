@@ -112,6 +112,10 @@ class English implements Lang {
     };
 
     notif = {
+        "chat_message": ((params: any) => ({
+            title: `${params.from.firstname} ${params.from.lastname}:`,
+            body: params.content,
+        })),
         "user_invite": ((params: any) => ({
             title: "Connection request",
             body: `Dr. ${params.from.lastname} requested access to your medical information`,

@@ -76,10 +76,7 @@ export class NotificationService extends BaseService {
 
     public static async registerWsClient(uid: string, client: NotificationsWebSocket) {
         client.sendJsonMessage(await Notification.findAllUnread(uid));
-        if (wsClients[uid] == null) {
-            wsClients[uid] = [];
-        }
-        wsClients[uid].push(client);
+        (wsClients[uid] ??= []).push(client);
     }
 
     public static async unregisterWsClient(uid: string, client: NotificationsWebSocket) {

@@ -123,6 +123,10 @@ class French implements Lang {
     };
 
     notif = {
+        "chat_message": ((params: any) => ({
+            title: `${params.from.firstname} ${params.from.lastname} :`,
+            body: params.content,
+        })),
         "user_invite": ((params: any) => ({
             title: "Demande de connexion",
             body: `Dr. ${params.from.lastname} a demandé accès à votre profil patient`,
