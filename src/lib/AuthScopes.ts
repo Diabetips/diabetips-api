@@ -47,7 +47,7 @@ export type AuthScope = "auth:authorize"
     | "special:diaby"
     | "special:support";
 
-type AuthChecker = (auth: AuthInfo | undefined, params: { [key: string]: string }) => Promise<void>;
+type AuthChecker = (auth: AuthInfo, params: { [key: string]: string }) => Promise<void>;
 
 type AuthScopeInfo = {
     target: "app" | "user";
@@ -64,8 +64,8 @@ interface UserCheckerOptions {
 }
 
 function userChecker(options: UserCheckerOptions = {}): AuthChecker {
-    return async (auth: AuthInfo | undefined, params: { [key: string ]: string}) => {
-        if (auth?.type !== "user") {
+    return async (auth: AuthInfo, params: { [key: string ]: string}) => {
+        if (auth.type !== "user") {
             throw new ApiError(HttpStatus.UNAUTHORIZED, "unauthorized", "Please provide user authorization");
         }
         if (typeof params.uid !== "string") {
@@ -132,8 +132,8 @@ function chatChecker(): AuthChecker {
         extendBidirectional: true,
     });
 
-    return async (auth: AuthInfo | undefined, params: { [key: string]: string }) => {
-        if (auth?.type !== "user") {
+    return async (auth: AuthInfo, params: { [key: string]: string }) => {
+        if (auth.type !== "user") {
             throw new ApiError(HttpStatus.UNAUTHORIZED, "unauthorized", "Please provide user authorization");
         }
 
