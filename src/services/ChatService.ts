@@ -59,8 +59,10 @@ export class ChatService {
     }
 
     public static async sendMessage(uid: string, otherUid: string, req: ChatMessageSendReq): Promise<ChatMessageResult> {
-        const from = await UserService.getUser(uid);
-        const to = await UserService.getUser(otherUid);
+        const [from, to] = await Promise.all([
+            UserService.getUser(uid),
+            UserService.getUser(otherUid),
+        ]);
 
         let msg = new ChatMessage();
         msg.from = Promise.resolve(from);
