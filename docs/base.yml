@@ -78,6 +78,7 @@ tags:
       | auth:reset                | Reset user account password     | app    | ✔        | ✔         |
       | biometrics:read           | Access biometric data           | user   | ✘        | ✘         |
       | biometrics:write          | Edit biometric data             | user   | ✘        | ✘         |
+      | chat                      | Access and send direct messages | user   | ✘        | ✘         |
       | connections:read          | Access user connections list    | user   | ✘        | ✘         |
       | connections:write         | Accept/remove connections       | user   | ✘        | ✘         |
       | connections:invite        | Invite new connections          | user   | ✘        | ✔         |
@@ -163,18 +164,41 @@ tags:
 
       The following notification types are defined:
 
-      | Type        | Description        | Extra data                                                       |
-      |:------------|:-------------------|:-----------------------------------------------------------------|
-      | user_invite | Connection request | `{"from": "sender's UID"}`                                       |
-      | test        | Test               | `{"foo": "example extra data 1", "bar": "example extra data 2"}` |
+      | Type         | Description           | Extra data                                                       |
+      |:-------------|:----------------------|:-----------------------------------------------------------------|
+      | chat_message | Chat message received | `{"id": "message identifier", "from": "sender's UID" }`          |
+      | user_invite  | Connection request    | `{"from": "sender's UID"}`                                       |
+      | test         | Test                  | `{"foo": "example extra data 1", "bar": "example extra data 2"}` |
   - name: "Connections"
   - name: "Biometrics"
   - name: "Predictions"
-    description: |
-      **Work in progress, API objects and routes can be subject to changes until the final release.**
   - name: "Meals"
   - name: "Recipes"
   - name: "Notes"
+  - name: "Chat"
+    description: |
+      The Chat API is available both through the usual REST API with the routes described in this section as well as via a WebSocket endpoint.
+
+      The WebSocket endpoint for the Chat API is `wss:///${API_URL}/v1/chat/`. Upon connections, the client has 1 minute to authenticate itself
+      to the server by sending a valid user acces token in a JSON message:
+
+      ```json
+        {
+          "token": "xyz"
+        }
+      ```
+
+      If the client does not authenticate before the 1 minute limit or sends an invalid token, the server will send a JSON-formatted error similar
+      to the ones sent by the REST API, then close the socket.
+
+      After a successful authentication, the client will receive a JSON-formatted message when a new chat message is received by the currently
+      authenticated user and when an existing message is edited.
+
+      The client must send WebSocket ping messages to the server at a regular interval. If the server doesn't receive a ping from the client in a
+      period of 5 minutes, the server will send a timed out error message then close the socket.
+
+      The WebSocket endpoint does not support sending messages. Its purpose is to provide an alternative to polling the REST API for new messages
+      but it does not replace it.
 components:
   securitySchemes:
     "Client":

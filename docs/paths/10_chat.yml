@@ -1,0 +1,240 @@
+"/v1/chat":
+  get:
+    security:
+      - OAuth2:
+        - "chat"
+    tags:
+      - "Chat"
+    summary: "Get all conversations"
+    description: |
+      Get a list of all the conversations of the currently authenticated user.
+      Conversations are returned from the most recent to the oldest last message received or sent.
+
+      Implements [Paging](#tag/Paging)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+    responses:
+      200:
+        description: "The user's conversations"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:chat.yml:ChatConversation"
+"/v1/chat/:with_uid":
+  parameters:
+    - in: "path"
+      name: "with_uid"
+      description: "The other user's UID"
+      required: true
+      schema:
+        type: "string"
+        format: "uuid"
+        example: "01234567-89ab-cdef-0123-456789abcdef"
+  get:
+    security:
+      - OAuth2:
+        - "chat"
+    tags:
+      - "Chat"
+    summary: "Get all messages in a conversation"
+    description: |
+      Get a list of all the messages in a conversation between the currently authenticated user and the user with the specified UID.
+      Messages are returned from the most recent to the oldest.
+
+      Implements [Paging](#tag/Paging)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+    responses:
+      200:
+        description: "The conversation messages"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:chat.yml:ChatMessageWithAttachments"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to chat with them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  post:
+    security:
+      - OAuth2:
+        - "chat"
+    tags:
+      - "Chat"
+    summary: "Send a message"
+    description: |
+      Send a message to the user with the specified UID as the current authenticated user.
+
+      The message's `content` may not be empty.
+
+      Attachments can be sent with the message using the `multipart/form-data` format to upload them along with the message content.
+      There is no limit on the individual size or number of attachments, however the total size of the request must not exceed 10MB.
+
+      Note: attachments must all be uploaded with the same form field name `attachments` to be recognized. If a filename is provided, it will be saved.
+    requestBody:
+      required: true
+      content:
+        "application/json":
+          schema:
+            $component: "schemas:chat.yml:ChatMessage"
+        "multipart/form-data":
+          schema:
+            allOf:
+              - $component: "schemas:chat.yml:ChatMessage"
+              - properties:
+                  "attachments":
+                    type: "string"
+                    format: "binary"
+                    description: "Attached file(s)"
+    responses:
+      200:
+        description: "The message"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:chat.yml:ChatMessageWithAttachments"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to chat with them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/chat/:with_uid/:message_id/attachments/:filename":
+  parameters:
+    - in: "path"
+      name: "with_uid"
+      description: "The other user's UID"
+      required: true
+      schema:
+        type: "string"
+        format: "uuid"
+        example: "01234567-89ab-cdef-0123-456789abcdef"
+    - $component: "parameters:message_id.yml:ChatMessageId"
+    - in: "path"
+      name: "filename"
+      description: "The file name of the attachment"
+      required: true
+      schema:
+        type: "string"
+        example: "BloodTest-JaneDoe-072020.pdf"
+  get:
+    security:
+      - OAuth2:
+        - "chat"
+    tags:
+      - "Chat"
+    summary: "Download message attachment"
+    description: |
+      Download the file of the attachment with the specified name in the message of the specified ID from the conversation between the currently authenticated user and the user with the specified UID.
+    responses:
+      200:
+        description: "The attachment file"
+        content:
+          "*/*":
+            schema:
+              type: "string"
+              format: "binary"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to chat with them
+          No message with the specified ID was found
+          No attachment with the specified filename was found
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $component: "schemas:error.yml:ErrorUserNotFound"
+                - $component: "schemas:error.yml:ErrorMessageNotFound"
+                - $component: "schemas:error.yml:ErrorAttachmentNotFound"
+"/v1/chat/:with_uid/:message_id":
+  parameters:
+    - in: "path"
+      name: "with_uid"
+      description: "The other user's UID"
+      required: true
+      schema:
+        type: "string"
+        format: "uuid"
+        example: "01234567-89ab-cdef-0123-456789abcdef"
+    - $component: "parameters:message_id.yml:ChatMessageId"
+  put:
+    security:
+      - OAuth2:
+        - "chat"
+    tags:
+      - "Chat"
+    summary: "Edit a message"
+    description: |
+      Edit the message with the specified ID and sent to the user with the specified UID as the current authenticated user.
+
+      The message's `content` may not be empty.
+      Attachments cannot be modified.
+    requestBody:
+      required: true
+      content:
+        "application/json":
+          schema:
+            $component: "schemas:chat.yml:ChatMessage"
+    responses:
+      200:
+        description: "The edited message"
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $component: "schemas:chat.yml:ChatMessageWithAttachments"
+                - properties:
+                    "edited":
+                      example: true
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to chat with them
+          No message with the specified ID was found
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $component: "schemas:error.yml:ErrorUserNotFound"
+                - $component: "schemas:error.yml:ErrorMessageNotFound"
+  delete:
+    security:
+      - OAuth2:
+        - "chat"
+    tags:
+      - "Chat"
+    summary: "Delete a message"
+    description: |
+      Delete the message with the specified ID and sent to the user with the specified UID as the current authenticated user.
+
+      Only messages sent by the currently authenticated user may be deleted.
+    responses:
+      204:
+        description: "The message has been deleted"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to chat with them
+          No message with the specified ID was found
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $component: "schemas:error.yml:ErrorUserNotFound"
+                - $component: "schemas:error.yml:ErrorMessageNotFound"

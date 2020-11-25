@@ -24,7 +24,7 @@ type ChatConversation = ChatMessageBase & {
     from: string;
 };
 
-type ChatMessageWs = Pick<ChatMessage, "id" | "time" | "content" | "edited"> & {
+type ChatMessageResult = ChatMessageBase & {
     from: string;
     to: string;
 };
@@ -50,11 +50,15 @@ export class ChatService {
         ]);
     }
 
-    public static async getMessages(uid: string, otherUid: string, p: Pageable): Promise<Page<ChatMessage>> {
-        return ChatMessage.findByUids(uid, otherUid, p);
+    public static async getMessages(uid: string, otherUid: string, p: Pageable): Promise<Page<ChatMessageResult>> {
+        const page = await ChatMessage.findByUids(uid, otherUid, p);
+        return new Page(p, [
+            await Promise.all(page.body.map(this.chatMessageResult)),
+            page.count,
+        ]);
     }
 
-    public static async sendMessage(uid: string, otherUid: string, req: ChatMessageSendReq): Promise<ChatMessage> {
+    public static async sendMessage(uid: string, otherUid: string, req: ChatMessageSendReq): Promise<ChatMessageResult> {
         const from = await UserService.getUser(uid);
         const to = await UserService.getUser(otherUid);
 
@@ -64,30 +68,35 @@ export class ChatService {
         msg.content = req.content;
         msg = await msg.save();
 
-        await Promise.all(req.attachments.map((a) => {
-            const ca = new ChatAttachment();
+        msg.attachments = await Promise.all(req.attachments.map(async (a) => {
+            let ca = new ChatAttachment();
             ca.message = msg;
             ca.filename = a.filename;
             ca.blob = a.data;
-            return ca.save();
+            ca.size = a.data.length;
+            ca = await ca.save();
+            return {
+                filename: ca.filename,
+                size: ca.size,
+            } as any; // YEP
         }));
 
-        this.sendMessageByWs(uid, msg);
-        if (!this.sendMessageByWs(otherUid, msg)) {
+        const res = await this.chatMessageResult(msg);
+        this.sendMessageByWs(uid, res);
+        if (!this.sendMessageByWs(otherUid, res)) {
             const imageToken = await AuthService.generateUrlAccessToken(to);
             const imageUrl = `${config.diabetips.apiUrl}/v1/users/${from.uid}/picture?token=${imageToken}`;
 
             await NotificationService.sendNotification(to, "chat_message", {
+                id: msg.id,
                 from: from.uid,
-                time: msg.time.toISOString(),
-                content: msg.content,
             }, imageUrl, { from, content: msg.content });
         }
 
-        return msg;
+        return res;
     }
 
-    public static async editMessage(uid: string, otherUid: string, messageId: string, req: ChatMessageEditReq): Promise<ChatMessage> {
+    public static async editMessage(uid: string, otherUid: string, messageId: string, req: ChatMessageEditReq): Promise<ChatMessageResult> {
         let msg = await ChatMessage.findById(uid, otherUid, messageId);
         if (msg == null) {
             throw new ApiError(HttpStatus.NOT_FOUND, "message_not_found", "Message not found");
@@ -96,10 +105,12 @@ export class ChatService {
         msg.edited = true;
         msg = await msg.save();
 
-        this.sendMessageByWs(uid, msg);
-        this.sendMessageByWs(otherUid, msg);
+        const res = await this.chatMessageResult(msg);
 
-        return msg;
+        this.sendMessageByWs(uid, res);
+        this.sendMessageByWs(otherUid, res);
+
+        return res;
     }
 
     public static async removeMessage(uid: string, otherUid: string, messageId: string): Promise<void> {
@@ -118,6 +129,15 @@ export class ChatService {
         return attachment.blob;
     }
 
+    private static async chatMessageResult(msg: ChatMessage): Promise<ChatMessageResult> {
+        const [from, to] = await Promise.all([msg.from, msg.to]);
+        return {
+            ...msg,
+            from: from.uid,
+            to: to.uid,
+        };
+    }
+
     public static async registerWsClient(uid: string, client: ChatWebSocket) {
         (wsClients[uid] ??= []).push(client);
     }
@@ -131,19 +151,13 @@ export class ChatService {
         }
     }
 
-    private static async sendMessageByWs(uid: string, msg: ChatMessage): Promise<boolean> {
+    private static async sendMessageByWs(uid: string, msg: ChatMessageResult): Promise<boolean> {
         if (wsClients[uid] == null) {
             return false;
         }
 
-        const wsMsg: ChatMessageWs = {
-            ...msg,
-            from: (await msg.from).uid,
-            to: (await msg.from).uid,
-        };
-
         wsClients[uid].forEach((client) => {
-            client.sendJsonMessage(wsMsg);
+            client.sendJsonMessage(msg);
         });
         return true;
     }

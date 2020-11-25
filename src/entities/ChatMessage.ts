@@ -102,6 +102,8 @@ export class ChatMessage extends BaseEntity {
 
         const qb = this
             .createQueryBuilder("message")
+            .leftJoinAndSelect("message.from", "from")
+            .leftJoinAndSelect("message.to", "to")
             .leftJoinAndSelect("message.attachments", "attachment")
             .where((sqb) => "message.id IN " + p.limit(subq(sqb.subQuery().from(ChatMessage, "message"))).getQuery())
             .orderBy("message.time", "DESC");
@@ -112,8 +114,8 @@ export class ChatMessage extends BaseEntity {
     public static async findById(from: string, to: string, messageId: string): Promise<ChatMessage | undefined> {
         const qb = this
             .createQueryBuilder("message")
-            .leftJoin("message.from", "from")
-            .leftJoin("message.to", "to")
+            .leftJoinAndSelect("message.from", "from")
+            .leftJoinAndSelect("message.to", "to")
             .where("from.uid = :from", { from })
             .andWhere("to.uid = :to", { to })
             .andWhere("message.id = :id", { id: messageId });
