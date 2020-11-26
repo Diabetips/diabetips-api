@@ -1,6 +1,4 @@
-"/v1/users/{uid}/notifications":
-  parameters:
-    - $component: "parameters:uid.yml:UID"
+"/v1/notifications":
   get:
     security:
       - OAuth2:
@@ -9,7 +7,7 @@
       - "Notifications"
     summary: "Get all notifications"
     description: |
-      Get a list of all the notifications of the user with the specified UID.
+      Get a list of all the notifications of the currently authenticated user.
 
       Implements [Paging](#tag/Paging)
     parameters:
@@ -30,15 +28,13 @@
                 $component: "schemas:notification.yml:Notification"
       404:
         description: |
-          No user with the specified UID was found or the current authenticated user does not have permission to view
-          them
+          The currently authenticated user does not have permission to view notifications
         content:
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
-"/v1/users/{uid}/notifications/{notif_id}":
+"/v1/notifications/{notif_id}":
   parameters:
-    - $component: "parameters:uid.yml:UID"
     - $component: "parameters:notif_id.yml:NotificationId"
   delete:
     security:
@@ -55,8 +51,7 @@
       404:
         description: |
           Either:
-           * No user with the specified UID was found or the current authenticated user does not have permission to vie
-           modify them
+           * The currently authenticated user does not have permission to view notifications
            * No notification with the specified ID was found
         content:
           application/json:
@@ -64,9 +59,7 @@
               oneOf:
                 - $component: "schemas:error.yml:ErrorUserNotFound"
                 - $component: "schemas:error.yml:ErrorNotificationNotFound"
-"/v1/users/{uid}/notifications/fcm_token":
-  parameters:
-    - $component: "parameters:uid.yml:UID"
+"/v1/notifications/fcm_token":
   post:
     security:
       - OAuth2:
@@ -75,7 +68,7 @@
       - "Notifications"
     summary: "Register FCM device token"
     description: |
-      Register a Firebase Cloud Messaging device token to the user with the specified UID.
+      Register a Firebase Cloud Messaging device token to the currently authenticated user.
     requestBody:
       required: true
       content:
@@ -92,21 +85,18 @@
         description: "The token has been registered"
       404:
         description: |
-          No user with the specified UID was found or the current authenticated user does not have permission to view
-          them
+          The currently authenticated user does not have permission to view notifications
         content:
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
-"/v1/users/{uid}/notifications/test":
-  parameters:
-    - $component: "parameters:uid.yml:UID"
+"/v1/notifications/test":
   get:
     tags:
       - "Notifications"
     summary: "Send a test notification"
     description: |
-      Send a test notification to the user with the specified UID.
+      Send a test notification to the currently authenticated user.
 
       **TEMPORARY DEBUG ROUTE**
     responses:
@@ -114,8 +104,7 @@
         description: "Notification sent"
       404:
         description: |
-          No user with the specified UID was found or the current authenticated user does not have permission to view
-          them
+          The currently authenticated user does not have permission to view notifications
         content:
           application/json:
             schema:

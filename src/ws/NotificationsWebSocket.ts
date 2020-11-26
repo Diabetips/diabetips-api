@@ -11,12 +11,12 @@ import { NotificationService } from "../services";
 
 import { AuthenticatedWebSocket } from "./utils/AuthenticatedWebSocket";
 
-@WSHandler("/v1/users/:uid/notifications")
+@WSHandler("/v1/notifications")
 export class NotificationsWebSocket extends AuthenticatedWebSocket {
 
     public async onAuthenticated() {
         const auth = this.auth!;
-        if (auth!.type === "user" && this.params.uid === "me") {
+        if (auth!.type === "user") {
             this.params.uid = auth.uid;
         }
         await this.checkAuthorized("notifications");
