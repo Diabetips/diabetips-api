@@ -124,7 +124,7 @@ tags:
       The Notifications API is available through the usual HTTP REST API but also have via WebSocket endpoints.
 
       The WebSocket endpoint uses the same URL as the
-      [Notifications - Get all notifications](#tag/Notifications/paths/~1v1~1users~1{uid}~1notifications/get)
+      [Notifications - Get all notifications](#tag/Notifications/paths/~1v1~1notifications/get)
       route except for the scheme which is replaced by `wss://`. Upon connection, the client has 1 minute to
       authenticate itself to the server by sending a valid user access token in a JSON message:
 
