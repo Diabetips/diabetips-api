@@ -48,7 +48,7 @@ export class InsulinService extends BaseService {
         insulin.type = req.type;
         insulin.user = Promise.resolve(user);
 
-        await PredictionService.getNewPrediction(uid, true);
+        insulin.prediction = await PredictionService.getNewPrediction(uid, true);
         return insulin.save();
     }
 

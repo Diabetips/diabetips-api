@@ -26,6 +26,16 @@ export class UserPredictionController {
         return page.send(res);
     }
 
+    @Get("/comparison")
+    @Authorized("biometrics:read")
+    public async getPredictionComparison(@Param("uid") uid: string,
+                                         @QueryParams() p: Pageable,
+                                         @QueryParams() t: Timeable,
+                                         @Res() res: Response) {
+        const page = await PredictionService.getPredictionComparison(uid, p, t);
+        return page.send(res);
+    }
+
     @Get("/predict")
     @Authorized("predictions:new")
     public async getNewPrediction(@Param("uid") uid: string) {

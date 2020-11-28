@@ -9,7 +9,7 @@
 import { default as axios } from "axios";
 
 import { config } from "../config";
-import { Prediction, PredictionSettings } from "../entities";
+import { Insulin, Prediction, PredictionSettings } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable, Timeable } from "../lib";
 import { PredictionSettingsUpdateReq } from "../requests";
@@ -21,6 +21,10 @@ export class PredictionService extends BaseService {
 
     public static async getAllPredictions(uid: string, p: Pageable, t: Timeable): Promise<Page<Prediction>> {
         return Prediction.findAll(uid, p, t);
+    }
+
+    public static async getPredictionComparison(uid: string, p: Pageable, t: Timeable): Promise<Page<Insulin>> {
+        return Insulin.findAllAndCompare(uid, p, t);
     }
 
     public static async getNewPrediction(uid: string, isSimulation: boolean = true): Promise<Prediction> {

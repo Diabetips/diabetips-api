@@ -6,9 +6,10 @@
 ** Created by Arthur MELIN on Tue May 19 2020
 */
 
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, SelectQueryBuilder } from "typeorm";
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, SelectQueryBuilder } from "typeorm";
 import { Page, Pageable, Timeable, Utils } from "../lib";
 import { IBaseQueryOptions } from "./BaseEntity";
+import { Insulin } from "./Insulin";
 
 import { User } from "./User";
 
@@ -30,6 +31,9 @@ export class Prediction extends BaseEntity {
 
     @Column()
     public confidence: number;
+
+    @OneToOne(() => Insulin, (insulin) => insulin.prediction)
+    public injection: Promise<Insulin>;
 
     private static getBaseQuery(uid: string, options: IBaseQueryOptions): SelectQueryBuilder<Prediction> {
         let qb = this
