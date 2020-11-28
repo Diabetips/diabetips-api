@@ -11,13 +11,17 @@ import { default as axios } from "axios";
 import { config } from "../config";
 import { Prediction, PredictionSettings } from "../entities";
 import { ApiError } from "../errors";
-import { HttpStatus } from "../lib";
+import { HttpStatus, Page, Pageable, Timeable } from "../lib";
 import { PredictionSettingsUpdateReq } from "../requests";
 
 import { BaseService } from "./BaseService";
 import { UserService } from "./UserService";
 
 export class PredictionService extends BaseService {
+
+    public static async getAllPredictions(uid: string, p: Pageable, t: Timeable): Promise<Page<Prediction>> {
+        return Prediction.findAll(uid, p, t);
+    }
 
     public static async getNewPrediction(uid: string, isSimulation: boolean = true): Promise<Prediction> {
         const user = await UserService.getUser(uid);
@@ -54,5 +58,4 @@ export class PredictionService extends BaseService {
 
         return settings.save();
     }
-
 }
