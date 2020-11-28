@@ -4,7 +4,7 @@
   get:
     security:
       - OAuth2:
-        - "predictions:new"
+          - "predictions:new"
     tags:
       - "Predictions"
     summary: "Get new prediction"
@@ -37,7 +37,7 @@
   get:
     security:
       - OAuth2:
-        - "predictions:new"
+          - "predictions:new"
     tags:
       - "Predictions"
     summary: "Get prediction settings"
@@ -61,7 +61,7 @@
   put:
     security:
       - OAuth2:
-        - "predictions:settings"
+          - "predictions:settings"
     tags:
       - "Predictions"
     summary: "Update prediction settings"
@@ -83,6 +83,92 @@
       404:
         description: |
           No user with the specified UID was found or the current authenticated user does not have permission to modify
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/predictions/":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    security:
+      - OAuth2:
+          - "biometrics:read"
+    tags:
+      - "Predictions"
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+    summary: "Get all predictions"
+    description: |
+      Get an array of all insulin injection prediction for the user with the specified UID.
+
+      Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
+    responses:
+      200:
+        description: "The predictions"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:prediction.yml:Prediction"
+      403:
+        description: "The user with the specified UID does not have access to predictions"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorPredictionsDisabled"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/predictions/comparison":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    security:
+      - OAuth2:
+          - "biometrics:read"
+    tags:
+      - "Predictions"
+    summary: "Get prediction comparison"
+    description: |
+      Get a list of all the insulin injections for the user with the specified UID, and with the automatic prediction.
+
+      Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+    responses:
+      200:
+        description: "The comparison"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:prediction_comparison.yml:PredictionComparison"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to view
           them
         content:
           application/json:

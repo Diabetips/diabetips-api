@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Sat Dec 14 2019
 */
 
-import { Column, Entity, JoinColumn, ManyToOne, SelectQueryBuilder } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, SelectQueryBuilder } from "typeorm";
 
 import { Page, Pageable, Timeable, Utils } from "../lib";
 
@@ -14,6 +14,7 @@ import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
 
 import { User } from "./User";
 import { InsulinSearchReq } from "../requests";
+import { Prediction } from ".";
 
 export enum InsulinType {
     SLOW = "slow",
@@ -42,6 +43,10 @@ export class Insulin extends BaseEntity {
     @ManyToOne(() => User, (user) => user.insulin, { cascade: true })
     @JoinColumn()
     public user: Promise<User>;
+
+    @OneToOne(() => Prediction, (prediction) => prediction.injection)
+    @JoinColumn({ name: "prediction_id" })
+    public prediction: Prediction;
 
     // Repository functions
 
@@ -99,5 +104,17 @@ export class Insulin extends BaseEntity {
             .andWhere("insulin.id = :insulinId", { insulinId });
 
         return qb.getOne();
+    }
+
+    public static async findAllAndCompare(uid: string,
+                                          p: Pageable,
+                                          t: Timeable,
+                                          options: IBaseQueryOptions = {}):
+                                          Promise<Page<Insulin>> {
+        const qb = this
+            .getBaseQuery(uid, options)
+            .leftJoinAndSelect("insulin.prediction", "prediction");
+
+        return p.query(t.applyTimeRange(qb));
     }
 }
