@@ -20,3 +20,5 @@ jobs:
           registry: docker.pkg.github.com
           repository: Diabetips/diabetips-api/api
           tag_with_ref: true
+          tag_with_sha: true
+          add_git_labels: true
