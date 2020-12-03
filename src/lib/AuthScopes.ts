@@ -165,7 +165,7 @@ export const AuthScopes: Record<AuthScope, AuthScopeInfo> = {
     "meals:write":               { target: "user", checker: userChecker() },
     "notes:read":                { target: "user", checker: userChecker() },
     "notes:write":               { target: "user", checker: userChecker() },
-    "notifications":             { target: "user", checker: userChecker() },
+    "notifications":             { target: "user" },
     "predictions:new":           { target: "user", checker: userChecker() },
     "predictions:settings":      { target: "user", restricted: true, checker: userChecker({ direct: false, extend: true }) },
     "profile:read":              { target: "user", implicit: true, checker: userChecker({ extend: true, extendBidirectional: true, extendUnaccepted: true }) },
