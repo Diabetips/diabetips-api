@@ -90,7 +90,7 @@ export class ChatService {
             const imageUrl = `${config.diabetips.apiUrl}/v1/users/${from.uid}/picture?token=${imageToken}`;
 
             await NotificationService.sendNotification(to, "chat_message", {
-                id: msg.id,
+                msg_id: msg.id,
                 from: from.uid,
             }, imageUrl, { from, content: msg.content });
         }
