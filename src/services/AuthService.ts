@@ -536,7 +536,7 @@ export class AuthService extends BaseService {
                 if (err != null) {
                     reject(err);
                 } else {
-                    resolve(token);
+                    resolve(token!);
                 }
             });
         });
