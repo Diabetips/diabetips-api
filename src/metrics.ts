@@ -55,22 +55,6 @@ export const requestTotals = new prometheus.Counter({
     registers: [registry],
 });
 
-// Auth request counter (type, client_id)
-export const authRequests = new prometheus.Counter({
-    name: "auth_requests_total",
-    help: "Number of authentication requests",
-    labelNames: ["type", "client_id"],
-    registers: [registry],
-});
-
-// Auth errors counter (type, client_id, error)
-export const authErrors = new prometheus.Counter({
-    name: "auth_errors_total",
-    help: "Number of authentication errors",
-    labelNames: ["type", "client_id", "error"],
-    registers: [registry],
-});
-
 //
 // DATABASE METRICS
 //
@@ -99,9 +83,15 @@ addEntityGauge(entities.Event, {
 });
 
 // Insulin
+addEntityGauge(entities.BloodSugar, {
+    name: "db_insulin_count",
+    help: "Number of blood sugar values in the database",
+});
+
+// Insulin
 addEntityGauge(entities.Insulin, {
     name: "db_insulin_count",
-    help: "Number of insulin in the database",
+    help: "Number of insulin values in the database",
 });
 
 // Meals
@@ -114,6 +104,12 @@ addEntityGauge(entities.Meal, {
 addEntityGauge(entities.Note, {
     name: "db_notes_count",
     help: "Number of notes in the database",
+});
+
+// Predictions
+addEntityGauge(entities.Prediction, {
+    name: "db_notes_count",
+    help: "Number of AI predictions in the database",
 });
 
 // Planning event
