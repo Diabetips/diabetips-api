@@ -60,7 +60,7 @@
         "patch-package": "^6.2.2",
         "path-to-regexp": "^6.1.0",
         "pg": "^8.3.3",
-        "prom-client": "^12.0.0",
+        "prom-client": "git://github.com/siimon/prom-client.git#fecd75e",
         "pug": "^3.0.0",
         "reflect-metadata": "^0.1.13",
         "routing-controllers": "^0.9.0-alpha.6",

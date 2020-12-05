@@ -18,10 +18,10 @@ prometheus.collectDefaultMetrics({
     register: registry,
 });
 
-metricsApp.get("/metrics", (req, res) => {
-    res.send(registry.metrics());
+metricsApp.get("/metrics", async (req, res) => {
+    res.send(await registry.metrics());
 });
 
-metricsApp.get("/metricsdb", (req, res) => {
-    res.send(registryDb.metrics());
+metricsApp.get("/metricsdb", async (req, res) => {
+    res.send(await registryDb.metrics());
 });
