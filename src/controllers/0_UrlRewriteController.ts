@@ -16,10 +16,18 @@ import { ApiError } from "../errors";
 import { HttpStatus } from "../lib";
 import { AuthService } from "../services";
 
+// Annotated RegExp type to pretty print route
+type RouteRegExp = RegExp & { _str?: string };
+function makeRouteRegExp(re: RegExp, str: string): RouteRegExp {
+    const res: RouteRegExp = re;
+    res._str = str;
+    return res;
+}
+
 @Controller()
 export class UrlRewriteController {
 
-    @All(/^\/v1\/users\/me(\/.*)?/)
+    @All(makeRouteRegExp(/^\/v1\/users\/me(\/.*)?/, "/v1/users/me"))
     @UseBefore(async (req: Request, res: Response, next: NextFunction) => {
         const auth = await AuthService.authFromRequest(req);
         if (auth == null) {

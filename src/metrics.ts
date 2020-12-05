@@ -32,9 +32,19 @@ prometheus.collectDefaultMetrics({
 // Request time (method, route) summary
 export const requestResponseTime = new prometheus.Summary({
     name: "requests_response_time",
-    help: "Summary of requests response time",
-    labelNames: ["method", "route"],
+    help: "Summary of requests response time (in milliseconds)",
+    labelNames: ["method", "route", "response_code"],
     percentiles: [0.5, 0.9, 0.99, 0.999],
+    registers: [registry],
+});
+
+// Request size (method, route) summary
+export const requestResponseSize = new prometheus.Summary({
+    name: "requests_response_size",
+    help: "Summary of requests response size (in bytes)",
+    labelNames: ["method", "route", "response_code"],
+    percentiles: [0.5, 0.9, 0.99, 0.999],
+    registers: [registry],
 });
 
 // Request counter (method, route, response_code) counter
@@ -42,6 +52,7 @@ export const requestTotals = new prometheus.Counter({
     name: "requests_total",
     help: "Number of requests",
     labelNames: ["method", "route", "response_code"],
+    registers: [registry],
 });
 
 // Auth request counter (type, client_id)
@@ -49,13 +60,15 @@ export const authRequests = new prometheus.Counter({
     name: "auth_requests_total",
     help: "Number of authentication requests",
     labelNames: ["type", "client_id"],
+    registers: [registry],
 });
 
 // Auth errors counter (type, client_id, error)
 export const authErrors = new prometheus.Counter({
-    name: "auth_requests_total",
+    name: "auth_errors_total",
     help: "Number of authentication errors",
     labelNames: ["type", "client_id", "error"],
+    registers: [registry],
 });
 
 //
