@@ -34,12 +34,55 @@ function addEntityGauge(entity: typeof BaseEntity, options: prometheus.GaugeConf
         ...options,
         registers: [registryDb],
         collect: async () => {
-            gauge.set(await entity.count());
+            gauge.set(await entity.count({where: "deleted = false"}));
         },
     });
     return gauge;
 }
 
+// Events
+addEntityGauge(entities.Event, {
+    name: "db_events_count",
+    help: "Number of events in the database",
+});
+
+// Insulin
+addEntityGauge(entities.Insulin, {
+    name: "db_insulin_count",
+    help: "Number of insulin in the database",
+});
+
+// Meals
+addEntityGauge(entities.Meal, {
+    name: "db_meals_count",
+    help: "Number of meals in the database",
+});
+
+// Notes
+addEntityGauge(entities.Note, {
+    name: "db_notes_count",
+    help: "Number of notes in the database",
+});
+
+// Planning event
+addEntityGauge(entities.PlanningEvent, {
+    name: "db_planning_event_count",
+    help: "Number of planning events in the database",
+});
+
+// Recipes
+addEntityGauge(entities.Recipe, {
+    name: "db_recipes_count",
+    help: "Number of recipes in the database",
+});
+
+// Sticky notes
+addEntityGauge(entities.StickyNote, {
+    name: "db_sticky_notes_count",
+    help: "Number of sticky notes in the database",
+});
+
+// Users
 addEntityGauge(entities.User, {
     name: "db_users_count",
     help: "Number of users in the database",
