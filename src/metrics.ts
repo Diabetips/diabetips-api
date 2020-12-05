@@ -8,6 +8,9 @@
 
 import express = require("express");
 import prometheus = require("prom-client");
+import { BaseEntity } from "typeorm";
+
+import * as entities from "./entities";
 
 export const metricsApp = express();
 
@@ -24,4 +27,20 @@ metricsApp.get("/metrics", async (req, res) => {
 
 metricsApp.get("/metricsdb", async (req, res) => {
     res.send(await registryDb.metrics());
+});
+
+function addEntityGauge(entity: typeof BaseEntity, options: prometheus.GaugeConfiguration<string>) {
+    const gauge = new prometheus.Gauge({
+        ...options,
+        registers: [registryDb],
+        collect: async () => {
+            gauge.set(await entity.count());
+        },
+    });
+    return gauge;
+}
+
+addEntityGauge(entities.User, {
+    name: "db_users_count",
+    help: "Number of users in the database",
 });
