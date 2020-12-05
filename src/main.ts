@@ -17,6 +17,7 @@ import { config } from "./config";
 import { connectToDatabase } from "./db";
 import { log4js, logger } from "./logger";
 import { useServer as wsUseServer } from "./lib/ws";
+import { metricsApp } from "./metrics";
 
 async function main(args: string[]): Promise<void> {
     logger.info(`Starting ${config.pkg.name} ${config.pkg.version} ${config.env}`);
@@ -38,17 +39,23 @@ async function main(args: string[]): Promise<void> {
         credential: admin.credential.cert(config.firebase),
     });
 
+    const listen = (server: http.Server, options: net.ListenOptions, name: string) => {
+        server.listen(options, () => {
+            const addr = server.address() as net.AddressInfo;
+            const isIpV6 = addr.family === "IPv6";
+            logger.info(`${name} server listening on`,
+                isIpV6
+                ? `[${addr.address}]:${addr.port}`
+                : `${addr.address}:${addr.port}`);
+        });
+    };
+
     const server = http.createServer(app);
     wsUseServer(wsApp, server, config.ws);
+    listen(server, config.http, "API");
 
-    server.listen(config.http, () => {
-        const addr = server.address() as net.AddressInfo;
-        const isIpV6 = addr.family === "IPv6";
-        logger.info("Server listening on",
-            isIpV6
-            ? `[${addr.address}]:${addr.port}`
-            : `${addr.address}:${addr.port}`);
-    });
+    const metricsServer = http.createServer(metricsApp);
+    listen(metricsServer, config.metrics.http, "Metrics");
 }
 
 if (module.parent == null) {
