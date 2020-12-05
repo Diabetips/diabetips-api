@@ -8,7 +8,7 @@
 
 import express = require("express");
 import prometheus = require("prom-client");
-import { BaseEntity, FindConditions, FindManyOptions } from "typeorm";
+import { BaseEntity, FindManyOptions } from "typeorm";
 
 import * as entities from "./entities";
 
@@ -65,73 +65,35 @@ metricsApp.get("/metricsdb", async (req, res) => {
     res.send(await registryDb.metrics());
 });
 
-function addEntityGauge<T extends BaseEntity>(entity: typeof BaseEntity, options: prometheus.GaugeConfiguration<string>, conditions?: FindManyOptions<T>) {
-    const gauge = new prometheus.Gauge({
-        ...options,
-        registers: [registryDb],
-        collect: async () => {
-            gauge.set(await entity.count(conditions as FindManyOptions<BaseEntity>));
-        },
-    });
-    return gauge;
-}
+type MetricsEntity = {
+    entity: typeof BaseEntity,
+    conditions?: FindManyOptions<BaseEntity>
+};
 
-// Events
-addEntityGauge(entities.Event, {
-    name: "db_event_count",
-    help: "Number of events in the database",
-}, { where: "deleted = false" });
+const metricsEntities: MetricsEntity[] = [
+    { entity: entities.BloodSugar,       conditions: { where: "deleted = false" }},
+    { entity: entities.Event,            conditions: { where: "deleted = false" }},
+    { entity: entities.Food,             conditions: { where: "deleted = false" }},
+    { entity: entities.Hba1c,            conditions: { where: "deleted = false" }},
+    { entity: entities.Insulin,          conditions: { where: "deleted = false" }},
+    { entity: entities.Meal,             conditions: { where: "deleted = false" }},
+    { entity: entities.Note,             conditions: { where: "deleted = false" }},
+    { entity: entities.PhysicalActivity, conditions: { where: "deleted = false" }},
+    { entity: entities.PlanningEvent,    conditions: { where: "deleted = false" }},
+    { entity: entities.Prediction },
+    { entity: entities.Recipe,           conditions: { where: "deleted = false" }},
+    { entity: entities.StickyNote,       conditions: { where: "deleted = false" }},
+    { entity: entities.User,             conditions: { where: "deleted = false" }},
+];
 
-// Blood sugar
-addEntityGauge(entities.BloodSugar, {
-    name: "db_blood_sugar_count",
-    help: "Number of blood sugar values in the database",
-}, { where: "deleted = false" });
-
-// Insulin
-addEntityGauge(entities.Insulin, {
-    name: "db_insulin_count",
-    help: "Number of insulin values in the database",
-}, { where: "deleted = false" });
-
-// Meals
-addEntityGauge(entities.Meal, {
-    name: "db_meal_count",
-    help: "Number of meals in the database",
-}, { where: "deleted = false" });
-
-// Notes
-addEntityGauge(entities.Note, {
-    name: "db_note_count",
-    help: "Number of notes in the database",
-}, { where: "deleted = false" });
-
-// Predictions
-addEntityGauge(entities.Prediction, {
-    name: "db_prediction_count",
-    help: "Number of AI predictions in the database",
+const dbEntitiesGauge = new prometheus.Gauge({
+    name: "db_entity",
+    help: "Number of database entities",
+    labelNames: ["entity"],
+    registers: [registryDb],
+    collect: async () => {
+        await Promise.all(metricsEntities.map(async (e) => {
+            dbEntitiesGauge.set({ entity: e.entity.name }, await e.entity.count(e.conditions))
+        }));
+    },
 });
-
-// Planning event
-addEntityGauge(entities.PlanningEvent, {
-    name: "db_planning_event_count",
-    help: "Number of planning events in the database",
-}, { where: "deleted = false" });
-
-// Recipes
-addEntityGauge(entities.Recipe, {
-    name: "db_recipe_count",
-    help: "Number of recipes in the database",
-}, { where: "deleted = false" });
-
-// Sticky notes
-addEntityGauge(entities.StickyNote, {
-    name: "db_sticky_note_count",
-    help: "Number of sticky notes in the database",
-}, { where: "deleted = false" });
-
-// Users
-addEntityGauge(entities.User, {
-    name: "db_user_count",
-    help: "Number of users in the database",
-}, { where: "deleted = false" });
