@@ -78,13 +78,13 @@ function addEntityGauge(entity: typeof BaseEntity, options: prometheus.GaugeConf
 
 // Events
 addEntityGauge(entities.Event, {
-    name: "db_events_count",
+    name: "db_event_count",
     help: "Number of events in the database",
 });
 
-// Insulin
+// Blood sugar
 addEntityGauge(entities.BloodSugar, {
-    name: "db_insulin_count",
+    name: "db_blood_sugar_count",
     help: "Number of blood sugar values in the database",
 });
 
@@ -96,19 +96,19 @@ addEntityGauge(entities.Insulin, {
 
 // Meals
 addEntityGauge(entities.Meal, {
-    name: "db_meals_count",
+    name: "db_meal_count",
     help: "Number of meals in the database",
 });
 
 // Notes
 addEntityGauge(entities.Note, {
-    name: "db_notes_count",
+    name: "db_note_count",
     help: "Number of notes in the database",
 });
 
 // Predictions
 addEntityGauge(entities.Prediction, {
-    name: "db_notes_count",
+    name: "db_prediction_count",
     help: "Number of AI predictions in the database",
 });
 
@@ -120,18 +120,18 @@ addEntityGauge(entities.PlanningEvent, {
 
 // Recipes
 addEntityGauge(entities.Recipe, {
-    name: "db_recipes_count",
+    name: "db_recipe_count",
     help: "Number of recipes in the database",
 });
 
 // Sticky notes
 addEntityGauge(entities.StickyNote, {
-    name: "db_sticky_notes_count",
+    name: "db_sticky_note_count",
     help: "Number of sticky notes in the database",
 });
 
 // Users
 addEntityGauge(entities.User, {
-    name: "db_users_count",
+    name: "db_user_count",
     help: "Number of users in the database",
 });
