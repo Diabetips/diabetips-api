@@ -8,7 +8,7 @@
 
 import express = require("express");
 import prometheus = require("prom-client");
-import { BaseEntity } from "typeorm";
+import { BaseEntity, FindConditions, FindManyOptions } from "typeorm";
 
 import * as entities from "./entities";
 
@@ -65,12 +65,12 @@ metricsApp.get("/metricsdb", async (req, res) => {
     res.send(await registryDb.metrics());
 });
 
-function addEntityGauge(entity: typeof BaseEntity, options: prometheus.GaugeConfiguration<string>) {
+function addEntityGauge<T extends BaseEntity>(entity: typeof BaseEntity, options: prometheus.GaugeConfiguration<string>, conditions?: FindManyOptions<T>) {
     const gauge = new prometheus.Gauge({
         ...options,
         registers: [registryDb],
         collect: async () => {
-            gauge.set(await entity.count({where: "deleted = false"}));
+            gauge.set(await entity.count(conditions as FindManyOptions<BaseEntity>));
         },
     });
     return gauge;
@@ -80,31 +80,31 @@ function addEntityGauge(entity: typeof BaseEntity, options: prometheus.GaugeConf
 addEntityGauge(entities.Event, {
     name: "db_event_count",
     help: "Number of events in the database",
-});
+}, { where: "deleted = false" });
 
 // Blood sugar
 addEntityGauge(entities.BloodSugar, {
     name: "db_blood_sugar_count",
     help: "Number of blood sugar values in the database",
-});
+}, { where: "deleted = false" });
 
 // Insulin
 addEntityGauge(entities.Insulin, {
     name: "db_insulin_count",
     help: "Number of insulin values in the database",
-});
+}, { where: "deleted = false" });
 
 // Meals
 addEntityGauge(entities.Meal, {
     name: "db_meal_count",
     help: "Number of meals in the database",
-});
+}, { where: "deleted = false" });
 
 // Notes
 addEntityGauge(entities.Note, {
     name: "db_note_count",
     help: "Number of notes in the database",
-});
+}, { where: "deleted = false" });
 
 // Predictions
 addEntityGauge(entities.Prediction, {
@@ -116,22 +116,22 @@ addEntityGauge(entities.Prediction, {
 addEntityGauge(entities.PlanningEvent, {
     name: "db_planning_event_count",
     help: "Number of planning events in the database",
-});
+}, { where: "deleted = false" });
 
 // Recipes
 addEntityGauge(entities.Recipe, {
     name: "db_recipe_count",
     help: "Number of recipes in the database",
-});
+}, { where: "deleted = false" });
 
 // Sticky notes
 addEntityGauge(entities.StickyNote, {
     name: "db_sticky_note_count",
     help: "Number of sticky notes in the database",
-});
+}, { where: "deleted = false" });
 
 // Users
 addEntityGauge(entities.User, {
     name: "db_user_count",
     help: "Number of users in the database",
-});
+}, { where: "deleted = false" });
