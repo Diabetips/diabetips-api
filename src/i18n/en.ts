@@ -120,6 +120,10 @@ class English implements Lang {
             title: "Connection request",
             body: `Dr. ${params.from.lastname} requested access to your medical information`,
         })),
+        "user_invite_accepted": ((params: any) => ({
+            title: "Invitation accepted",
+            body: `${params.from.firstname} ${params.from.lastname} accepted your connection request`,
+        })),
         "test": (() => ({
             title: "Test notification",
             body: "🤖 beep boop!"

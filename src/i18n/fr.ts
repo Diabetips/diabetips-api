@@ -131,6 +131,10 @@ class French implements Lang {
             title: "Demande de connexion",
             body: `Dr. ${params.from.lastname} a demandé accès à votre profil patient`,
         })),
+        "user_invite_accepted": ((params: any) => ({
+            title: "Invitation acceptée",
+            body: `${params.from.firstname} ${params.from.lastname} a accepté votre demande de connexion`,
+        })),
         "test": (() => ({
             title: "Notification de test",
             body: "🤖 bip boup !"

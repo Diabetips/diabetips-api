@@ -73,6 +73,7 @@ export class UserConnectionService extends BaseService {
 
         conn.accepted = true;
         await conn.save();
+        await this.sendConnectionAcceptedNotification(conn);
     }
 
     public static async deleteUserConnection(uid: string, connectionUid: string) {
@@ -94,6 +95,16 @@ export class UserConnectionService extends BaseService {
         conn.invite = null;
         conn.accepted = true;
         await conn.save();
+        await this.sendConnectionAcceptedNotification(conn);
+    }
+
+    public static async sendConnectionAcceptedNotification(conn: UserConnection) {
+        const imageToken = await AuthService.generateUrlAccessToken(conn.source);
+        const imageUrl = `${config.diabetips.apiUrl}/v1/users/${conn.target.uid}/picture?token=${imageToken}`;
+
+        await NotificationService.sendNotification(conn.source, "user_invite_accepted", {
+            from: conn.target.uid,
+        }, imageUrl, { from: conn.target });
     }
 
 }
