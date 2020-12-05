@@ -14,16 +14,55 @@ import * as entities from "./entities";
 
 export const metricsApp = express();
 
-export const registry = new prometheus.Registry();
-export const registryDb = new prometheus.Registry();
+//
+// GENERAL METRICS
+//
 
-prometheus.collectDefaultMetrics({
-    register: registry,
-});
+const registry = new prometheus.Registry();
 
 metricsApp.get("/metrics", async (req, res) => {
     res.send(await registry.metrics());
 });
+
+// Process metrics
+prometheus.collectDefaultMetrics({
+    register: registry,
+});
+
+// Request time (method, route) summary
+export const requestResponseTime = new prometheus.Summary({
+    name: "requests_response_time",
+    help: "Summary of requests response time",
+    labelNames: ["method", "route"],
+    percentiles: [0.5, 0.9, 0.99, 0.999],
+});
+
+// Request counter (method, route, response_code) counter
+export const requestTotals = new prometheus.Counter({
+    name: "requests_total",
+    help: "Number of requests",
+    labelNames: ["method", "route", "response_code"],
+});
+
+// Auth request counter (type, client_id)
+export const authRequests = new prometheus.Counter({
+    name: "auth_requests_total",
+    help: "Number of authentication requests",
+    labelNames: ["type", "client_id"],
+});
+
+// Auth errors counter (type, client_id, error)
+export const authErrors = new prometheus.Counter({
+    name: "auth_requests_total",
+    help: "Number of authentication errors",
+    labelNames: ["type", "client_id", "error"],
+});
+
+//
+// DATABASE METRICS
+//
+
+const registryDb = new prometheus.Registry();
 
 metricsApp.get("/metricsdb", async (req, res) => {
     res.send(await registryDb.metrics());
