@@ -21,7 +21,9 @@ Notification:
       type: "string"
       enum:
         - "chat_message"
+        - "predictions_enabled"
         - "user_invite"
+        - "user_invite_accepted"
         - "test"
       description: "The notification's type"
       example: "user_invite"

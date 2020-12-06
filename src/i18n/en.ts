@@ -117,6 +117,10 @@ class English implements Lang {
             title: `${params.from.first_name} ${params.from.last_name}:`,
             body: params.content,
         })),
+        "predictions_enabled": ((params: {}) => ({
+            title: "Insulin predictions unlocked",
+            body: `Insulin predictions are now available for your account!`,
+        })),
         "user_invite": ((params: { from: User }) => ({
             title: "Connection request",
             body: `Dr. ${params.from.last_name} requested access to your medical information`,

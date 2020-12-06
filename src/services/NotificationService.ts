@@ -25,7 +25,7 @@ const wsClients: {
 
 export class NotificationService extends BaseService {
 
-    public static async sendNotification(target: User, type: string, data: { [key: string]: string }, imageUrl?: string, i18nParams: { [key: string]: any } = {}) {
+    public static async sendNotification(target: User, type: string, data: { [key: string]: string } = {}, imageUrl: string | undefined = undefined, i18nParams: { [key: string]: any } = {}) {
         let notif = new Notification();
         notif.type = type;
         notif.data = data;

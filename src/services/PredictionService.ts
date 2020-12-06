@@ -16,6 +16,7 @@ import { logger } from "../logger";
 import { PredictionSettingsUpdateReq } from "../requests";
 
 import { BaseService } from "./BaseService";
+import { NotificationService } from "./NotificationService";
 import { UserService } from "./UserService";
 
 export class PredictionService extends BaseService {
@@ -75,7 +76,12 @@ export class PredictionService extends BaseService {
             settings.user = Promise.resolve(user);
         }
 
-        if (req.enabled != null) { settings.enabled = req.enabled; }
+        if (req.enabled != null) {
+            if (!settings.enabled && req.enabled) {
+                await NotificationService.sendNotification(user, "predictions_enabled");
+            }
+            settings.enabled = req.enabled;
+        }
 
         return settings.save();
     }

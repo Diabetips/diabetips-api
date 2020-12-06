@@ -96,6 +96,9 @@ type NotificationBase = {
 type NotificationChatMessage = {
     [key in "chat_message"]: (params: { content: string, from: User }) => Notification;
 }
+type NotificationPredictionsEnabled = {
+    [key in "predictions_enabled"]: (params: {}) => Notification;
+}
 type NotificationUserInvite = {
     [key in "user_invite"]: (params: { from: User }) => Notification;
 }
@@ -108,6 +111,7 @@ type NotificationTest = {
 
 type Notifications = NotificationBase
     & NotificationChatMessage
+    & NotificationPredictionsEnabled
     & NotificationUserInvite
     & NotificationUserInviteAccepted
     & NotificationTest;

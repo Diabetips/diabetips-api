@@ -128,6 +128,10 @@ class French implements Lang {
             title: `${params.from.first_name} ${params.from.last_name} :`,
             body: params.content,
         })),
+        "predictions_enabled": ((params: {}) => ({
+            title: "Prédictions d'insuline débloquées",
+            body: `Les prédictions d'insuline sont maintenant disponibles pour votre compte !`,
+        })),
         "user_invite": ((params: { from: User }) => ({
             title: "Demande de connexion",
             body: `Dr. ${params.from.last_name} a demandé accès à votre profil patient`,
