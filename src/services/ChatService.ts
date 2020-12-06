@@ -91,7 +91,7 @@ export class ChatService {
 
             await NotificationService.sendNotification(to, "chat_message", {
                 msg_id: msg.id,
-                from: from.uid,
+                from_uid: from.uid,
             }, imageUrl, { from, content: msg.content });
         }
 

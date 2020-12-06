@@ -56,7 +56,7 @@ export class UserConnectionService extends BaseService {
             const imageUrl = `${config.diabetips.apiUrl}/v1/users/${user.uid}/picture?token=${imageToken}`;
 
             await NotificationService.sendNotification(target, "user_invite", {
-                from: user.uid,
+                from_uid: user.uid,
             }, imageUrl, { from: user });
         }
     }
@@ -103,7 +103,7 @@ export class UserConnectionService extends BaseService {
         const imageUrl = `${config.diabetips.apiUrl}/v1/users/${conn.target.uid}/picture?token=${imageToken}`;
 
         await NotificationService.sendNotification(conn.source, "user_invite_accepted", {
-            from: conn.target.uid,
+            from_uid: conn.target.uid,
         }, imageUrl, { from: conn.target });
     }
 

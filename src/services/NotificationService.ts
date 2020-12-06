@@ -46,7 +46,7 @@ export class NotificationService extends BaseService {
                 logger.warn(`Missing notification i18n template for lang ${target.lang} and type ${type}`);
             }
 
-            await admin.messaging().sendMulticast({
+            const res = await admin.messaging().sendMulticast({
                 notification: (i18nTemplate ? {
                     ...i18nTemplate(i18nParams),
                     imageUrl,
@@ -58,6 +58,11 @@ export class NotificationService extends BaseService {
                 },
                 tokens: fcmTokens.map((nt) => nt.token)
             });
+            if (res.failureCount > 0) {
+                res.responses.forEach((r) => {
+                    logger.error("Failed to send notification:", r.error);
+                });
+            }
         }
     }
 

@@ -7,6 +7,7 @@
 */
 
 import { config } from "../config";
+import { User } from "../entities";
 
 import { Lang } from ".";
 
@@ -112,19 +113,19 @@ class English implements Lang {
     };
 
     notif = {
-        "chat_message": ((params: any) => ({
-            title: `${params.from.firstname} ${params.from.lastname}:`,
+        "chat_message": ((params: { content: string, from: User }) => ({
+            title: `${params.from.first_name} ${params.from.last_name}:`,
             body: params.content,
         })),
-        "user_invite": ((params: any) => ({
+        "user_invite": ((params: { from: User }) => ({
             title: "Connection request",
-            body: `Dr. ${params.from.lastname} requested access to your medical information`,
+            body: `Dr. ${params.from.last_name} requested access to your medical information`,
         })),
-        "user_invite_accepted": ((params: any) => ({
+        "user_invite_accepted": ((params: { from: User }) => ({
             title: "Invitation accepted",
-            body: `${params.from.firstname} ${params.from.lastname} accepted your connection request`,
+            body: `${params.from.first_name} ${params.from.last_name} accepted your connection request`,
         })),
-        "test": (() => ({
+        "test": ((params: {}) => ({
             title: "Test notification",
             body: "🤖 beep boop!"
         })),

@@ -6,6 +6,7 @@
 ** Created by Arthur MELIN on Sun Dec 15 2019
 */
 
+import { User } from "../entities";
 import { lang as en } from "./en";
 import { lang as fr } from "./fr";
 
@@ -80,7 +81,7 @@ type MailInviteConnection = {
     }
 };
 
-type Mail = MailBase
+type Mails = MailBase
     & MailAccountDeletion
     & MailAccountEmailChanged
     & MailAccountPasswordChanged
@@ -88,12 +89,31 @@ type Mail = MailBase
     & MailAccountRegistration
     & MailInviteConnection;
 
-type Notification = {
-    [key in string]: ((params: { [key: string]: any }) => { title: string, body: string });
-};
+type Notification = { title: string, body: string };
+type NotificationBase = {
+    [key in string]: (params: any) => Notification;
+}
+type NotificationChatMessage = {
+    [key in "chat_message"]: (params: { content: string, from: User }) => Notification;
+}
+type NotificationUserInvite = {
+    [key in "user_invite"]: (params: { from: User }) => Notification;
+}
+type NotificationUserInviteAccepted = {
+    [key in "user_invite_accepted"]: (params: { from: User }) => Notification;
+}
+type NotificationTest = {
+    [key in "test"]: (params: {}) => Notification;
+}
+
+type Notifications = NotificationBase
+    & NotificationChatMessage
+    & NotificationUserInvite
+    & NotificationUserInviteAccepted
+    & NotificationTest;
 
 export interface Lang {
-    mail: Mail;
+    mail: Mails;
     mail_template: {
         template_baseline: string;
         template_website: string;
@@ -102,5 +122,5 @@ export interface Lang {
         template_contact: string;
         template_contact_email: string;
     };
-    notif: Notification;
+    notif: Notifications;
 }

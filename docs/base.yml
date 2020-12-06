@@ -166,9 +166,9 @@ tags:
 
       | Type                 | Description           | Extra data                                                       |
       |:---------------------|:----------------------|:-----------------------------------------------------------------|
-      | chat_message         | Chat message received | `{"msg_id": "message identifier", "from": "sender's UID" }`      |
-      | user_invite          | Connection request    | `{"from": "sender's UID"}`                                       |
-      | user_invite_accepted | Connection request    | `{"from": "new connection's UID"}`                               |
+      | chat_message         | Chat message received | `{"msg_id": "message identifier", "from_uid": "sender's UID" }`  |
+      | user_invite          | Connection request    | `{"from_uid": "sender's UID"}`                                   |
+      | user_invite_accepted | Connection request    | `{"from_uid": "new connection's UID"}`                           |
       | test                 | Test                  | `{"foo": "example extra data 1", "bar": "example extra data 2"}` |
   - name: "Connections"
   - name: "Biometrics"
