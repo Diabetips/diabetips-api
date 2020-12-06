@@ -1,8 +1,6 @@
 version: "3"
 services:
   diabetips-api:
-    build: .
-    image: diabetips-api
     command: npm run start
     environment:
       - NODE_ENV=production
