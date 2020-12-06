@@ -153,7 +153,7 @@ export class ChatService {
         }
     }
 
-    private static async sendMessageByWs(uid: string, msg: ChatMessageResult): Promise<boolean> {
+    private static sendMessageByWs(uid: string, msg: ChatMessageResult): boolean {
         if (wsClients[uid] == null) {
             return false;
         }

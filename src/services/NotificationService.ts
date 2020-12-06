@@ -58,8 +58,9 @@ export class NotificationService extends BaseService {
                 },
                 tokens: fcmTokens.map((nt) => nt.token)
             });
+
             if (res.failureCount > 0) {
-                res.responses.forEach((r) => {
+                res.responses.filter((r) => !r.success).forEach((r) => {
                     logger.error("Failed to send notification:", r.error);
                 });
             }
