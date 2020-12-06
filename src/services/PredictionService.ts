@@ -6,12 +6,13 @@
 ** Created by Arthur MELIN on Tue May 19 2020
 */
 
-import { default as axios } from "axios";
+import { AxiosResponse, default as axios } from "axios";
 
 import { config } from "../config";
 import { Insulin, Prediction, PredictionSettings } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable, Timeable } from "../lib";
+import { logger } from "../logger";
 import { PredictionSettingsUpdateReq } from "../requests";
 
 import { BaseService } from "./BaseService";
@@ -35,7 +36,23 @@ export class PredictionService extends BaseService {
             throw new ApiError(HttpStatus.FORBIDDEN, "predictions_disabled", "Predictions are not enabled for this user");
         }
 
-        const res = await axios.get(config.ai.url + `/models/${uid}/predict`);
+        let res: AxiosResponse;
+        try {
+            res = await axios.get(config.ai.url + `/models/${uid}/predict`);
+        } catch (err) {
+            if (err.response) {
+                const { message } = err.response.data;
+                logger.warn("AI error:", message);
+                if (err.response.status >= HttpStatus.INTERNAL_SERVER_ERROR) {
+                    throw new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "server_error", "AI server error");
+                } else {
+                    throw new ApiError(HttpStatus.BAD_REQUEST, "prediction_failed", message);
+                }
+            } else {
+                logger.error("Failed to send request to AI:", err.stack ?? err);
+                throw err;
+            }
+        }
 
         const prediction = new Prediction();
         prediction.user = Promise.resolve(user);

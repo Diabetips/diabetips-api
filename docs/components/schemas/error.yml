@@ -100,3 +100,13 @@ ErrorPredictionsDisabled:
           example: "predictions_disabled"
         "message":
           example: "Predictions are not enabled for this user"
+ErrorPredictionFailed:
+  allOf:
+    - $component: "schemas:error.yml:Error"
+    - properties:
+        "status":
+          example: 400
+        "error":
+          example: "prediction_failed"
+        "message":
+          example: "Missing recent blood sugar information"

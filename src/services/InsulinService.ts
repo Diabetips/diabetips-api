@@ -9,6 +9,7 @@
 import { Insulin, User, InsulinCalculation } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable, Timeable } from "../lib";
+import { logger } from "../logger";
 import { InsulinCreateReq, InsulinUpdateReq, InsulinSearchReq, TimeRangeReq, InsulinCalculationReq } from "../requests";
 
 import { BaseService } from "./BaseService";
@@ -48,7 +49,11 @@ export class InsulinService extends BaseService {
         insulin.type = req.type;
         insulin.user = Promise.resolve(user);
 
-        insulin.prediction = await PredictionService.getNewPrediction(uid, true);
+        try {
+            insulin.prediction = await PredictionService.getNewPrediction(uid, true);
+        } catch (err) {
+            logger.error("Failed to make insulin prediction", err.stack ?? err);
+        }
         return insulin.save();
     }
 

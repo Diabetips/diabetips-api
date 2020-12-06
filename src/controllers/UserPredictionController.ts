@@ -39,7 +39,7 @@ export class UserPredictionController {
     @Get("/predict")
     @Authorized("predictions:new")
     public async getNewPrediction(@Param("uid") uid: string) {
-        return PredictionService.getNewPrediction(uid, false);
+        return PredictionService.getNewPrediction(uid);
     }
 
     @Get("/settings")
