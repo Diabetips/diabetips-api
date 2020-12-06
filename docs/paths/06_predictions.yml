@@ -17,6 +17,12 @@
           application/json:
             schema:
               $component: "schemas:prediction.yml:Prediction"
+      400:
+        description: "The AI couldn't make a prediction"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorPredictionFailed"
       403:
         description: "The user with the specified UID does not have access to predictions"
         content:
