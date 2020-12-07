@@ -40,6 +40,7 @@ export * from "./RecipeUpdateReq";
 export * from "./StickyNoteCreateReq";
 export * from "./StickyNoteUpdateReq";
 export * from "./TimeRangeReq";
+export * from "./UserAppsSearchReq";
 export * from "./UserConfirmAccountReq";
 export * from "./UserConnectionInviteReq";
 export * from "./UserCreateReq";

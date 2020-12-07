@@ -9,6 +9,7 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, OneToMany, SelectQueryBuilder } from "typeorm";
 
 import { AuthScope, Utils } from "../lib";
+import { UserAppsSearchReq } from "../requests";
 
 import { AuthApp } from "./AuthApp";
 import { AuthCode } from "./AuthCode";
@@ -67,11 +68,14 @@ export class AuthUserApp extends BaseEntity {
             .andWhere("user_app.revoked = false");
     }
 
-    public static async findAllByUid(uid: string): Promise<AuthUserApp[]> {
-        const qb = this
+    public static async findAllByUid(uid: string, req: UserAppsSearchReq): Promise<AuthUserApp[]> {
+        let qb = this
             .getBaseQuery(uid)
-            .andWhere("app.internal = false")
             .orderBy("user_app.date", "DESC");
+
+        if (!Utils.optionDefault(req.internal, false)) {
+            qb = qb.andWhere("internal = false");
+        }
 
         return qb.getMany();
     }

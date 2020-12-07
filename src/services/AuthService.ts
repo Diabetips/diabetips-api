@@ -16,6 +16,7 @@ import { AuthApp, AuthCode, AuthRefreshToken, AuthUserApp, User } from "../entit
 import { ApiError, AuthError } from "../errors";
 import { AuthInfo, AuthScope, AuthScopes, Context, HttpStatus, Utils } from "../lib";
 import { logger } from "../logger";
+import { UserAppsSearchReq } from "../requests";
 
 import { BaseService } from "./BaseService";
 import { UserService } from "./UserService";
@@ -281,8 +282,8 @@ export class AuthService extends BaseService {
         }
     }
 
-    public static async getAllAuthorizedUserApps(uid: string): Promise<object[]> {
-        const uas = await AuthUserApp.findAllByUid(uid);
+    public static async getAllAuthorizedUserApps(uid: string, req: UserAppsSearchReq): Promise<object[]> {
+        const uas = await AuthUserApp.findAllByUid(uid, req);
         return uas.map((ua) => {
             return {
                 appid: ua.app.appid,
