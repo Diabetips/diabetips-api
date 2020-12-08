@@ -1,0 +1,41 @@
+PhysicalActivityId:
+  type: "integer"
+  description: "The physical activity's identifier"
+  example: 2
+PhysicalActivity:
+  type: "object"
+  properties:
+    "id":
+      allOf:
+        - $component: "schemas:physical_activity.yml:PhysicalActivityId"
+        - readOnly: true
+    "title":
+      type: "string"
+      description: "Hockey with the boys"
+      example: "We had a great time !!!"
+    "description":
+      type: "string"
+      description: "The physical activity description"
+      example: "We had a great time !!!"
+    "type":
+      type: "string"
+      description: "Type of the activity"
+      example: "Ice Hockey"
+    "intensity":
+      type: "number"
+      description: "Intensity of the activity (Must be 0 < `intensity` < 120)"
+      example: 70
+    "calories":
+      type: "number"
+      description: "Amount of calories burnt throughout the activity"
+      example: 224
+    "start":
+      type: "string"
+      format: "date-time"
+      description: "Start of the activity"
+      example: "2020-07-31T14:28:29.949Z"
+    "end":
+      type: "string"
+      format: "date-time"
+      description: "End of the activity"
+      example: "2020-07-31T14:28:29.949Z"

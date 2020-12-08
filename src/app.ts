@@ -19,6 +19,7 @@ import { ApiError, AuthError, ValidationError } from "./errors";
 import { AuthScope, Context, HttpStatus, Utils } from "./lib";
 import { WsApp, bindLogger as wsBindLogger } from "./lib/ws";
 import { httpLogger, log4js, logger, wsLogger } from "./logger";
+import { requestResponseSize, requestResponseTime, requestTotals } from "./metrics";
 import { AuthService } from "./services";
 
 const preapp = express();
@@ -29,6 +30,31 @@ preapp.set("json replacer", Utils.jsonReplacer);
 preapp.set("x-powered-by", false);
 
 // Middlewares
+preapp.use((req, res, next) => {
+    if (req.method === "OPTIONS") return next();
+
+    const start = process.hrtime()
+    res.on("finish", () => {
+        const delta = process.hrtime(start);
+        const responseTime = delta[0] * 1000 + delta[1] / 1000000;
+
+        let route = req.route?.path ?? req.url;
+        if (route instanceof RegExp) {
+            route = (route as any)._str;
+        }
+        const labels = {
+            method: req.method,
+            route,
+            response_code: res.statusCode,
+        };
+
+        requestResponseTime.observe(labels, responseTime);
+        requestResponseSize.observe(labels, Number.parseInt(res.get("content-length") ?? 0, 10));
+        requestTotals.inc(labels);
+    });
+    next();
+});
+
 preapp.use(log4js.connectLogger(httpLogger, {
     level: "info",
     format: ":remote-addr > \":method :url\" > :status :content-lengthB :response-timems",
@@ -36,13 +62,13 @@ preapp.use(log4js.connectLogger(httpLogger, {
 
 async function buildContext(action: Action): Promise<Context> {
     return {
-        auth: await AuthService.decodeAuthorization(action.request.header("Authorization")),
+        auth: await AuthService.authFromRequest(action.request),
     };
 }
 
 // Setup routing-controllers
 export const app = useExpressServer(preapp, {
-    authorizationChecker: (async (action: Action, scopes: AuthScope[]): Promise<boolean> => {
+    authorizationChecker: (async (action, scopes: AuthScope[]): Promise<boolean> => {
         const ctx = await buildContext(action);
         action.context = ctx; // cache our context for ctxBuilder
         await AuthService.checkScopesAuthorized(ctx.auth, action.request.params || {}, scopes);
@@ -74,7 +100,7 @@ export const app = useExpressServer(preapp, {
 });
 
 // Static routes
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (req, res) => {
     res.send({
         documentation_url: `https://docs.${config.env === "dev" ? "dev." : ""}diabetips.fr/`,
     });
@@ -88,7 +114,7 @@ app.use((req, res, next) => {
 });
 
 // 404 handler
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req, res, next) => {
     throw new ApiError(HttpStatus.NOT_FOUND,
         "invalid_route",
         `${req.method} ${req.originalUrl.split("?", 1)[0]} is not a valid route on this server`);
@@ -137,6 +163,7 @@ app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction)
             message: apiErr.message,
         });
 });
+
 
 // Setup WebSocket app
 export const wsApp = WsApp({

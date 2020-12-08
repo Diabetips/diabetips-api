@@ -20,9 +20,13 @@ Notification:
     "type":
       type: "string"
       enum:
-        - "user-invite"
-      description: "The notification's type (full list of possible values to be documented)"
-      example: "user-invite"
+        - "chat_message"
+        - "predictions_enabled"
+        - "user_invite"
+        - "user_invite_accepted"
+        - "test"
+      description: "The notification's type"
+      example: "user_invite"
     "data":
       type: "object"
-      description: "Additional data specific to the notification type (to be documented)"
+      description: "Additional data specific to the notification type"

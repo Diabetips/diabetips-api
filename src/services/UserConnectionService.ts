@@ -8,6 +8,7 @@
 
 import uuid = require("uuid");
 
+import { config } from "../config";
 import { User, UserConnection } from "../entities";
 import { ApiError } from "../errors";
 import { HttpStatus } from "../lib";
@@ -15,6 +16,7 @@ import { logger } from "../logger";
 import { sendMail } from "../mail";
 import { UserConnectionInviteReq } from "../requests";
 
+import { AuthService } from "./AuthService";
 import { BaseService } from "./BaseService";
 import { NotificationService } from "./NotificationService";
 import { UserService } from "./UserService";
@@ -50,9 +52,12 @@ export class UserConnectionService extends BaseService {
             conn.target = target;
             await conn.save();
 
+            const imageToken = await AuthService.generateUrlAccessToken(target);
+            const imageUrl = `${config.diabetips.apiUrl}/v1/users/${user.uid}/picture?token=${imageToken}`;
+
             await NotificationService.sendNotification(target, "user_invite", {
-                from: user.uid,
-            });
+                from_uid: user.uid,
+            }, imageUrl, { from: user });
         }
     }
 
@@ -68,6 +73,7 @@ export class UserConnectionService extends BaseService {
 
         conn.accepted = true;
         await conn.save();
+        await this.sendConnectionAcceptedNotification(conn);
     }
 
     public static async deleteUserConnection(uid: string, connectionUid: string) {
@@ -89,6 +95,16 @@ export class UserConnectionService extends BaseService {
         conn.invite = null;
         conn.accepted = true;
         await conn.save();
+        await this.sendConnectionAcceptedNotification(conn);
+    }
+
+    public static async sendConnectionAcceptedNotification(conn: UserConnection) {
+        const imageToken = await AuthService.generateUrlAccessToken(conn.source);
+        const imageUrl = `${config.diabetips.apiUrl}/v1/users/${conn.target.uid}/picture?token=${imageToken}`;
+
+        await NotificationService.sendNotification(conn.source, "user_invite_accepted", {
+            from_uid: conn.target.uid,
+        }, imageUrl, { from: conn.target });
     }
 
 }

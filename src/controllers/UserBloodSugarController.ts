@@ -61,9 +61,17 @@ export class UserBloodSugarController {
     public async getBloodSugarCalculations(@Param("uid") uid: string,
                                            @QueryParams() t: TimeRangeReq,
                                            @QueryParams() { calcs }: BloodSugarCalculationReq) {
-        // TODO: Refactor this part to be cleaner like the others
         const values: BloodSugarCalculationType[] = Array.isArray(calcs) ? calcs : [calcs] || [ ];
         return BloodSugarService.getCalculations(uid, t, values);
+    }
+
+    @Get("/calculations/aggregate")
+    @Authorized("biometrics:read")
+    public async getBloodSugarCalculationsAggregate(@Param("uid") uid: string,
+                                                    @QueryParams() t: TimeRangeReq,
+                                                    @QueryParams() { calcs }: BloodSugarCalculationReq) {
+        const values: BloodSugarCalculationType[] = Array.isArray(calcs) ? calcs : [calcs] || [ ];
+        return BloodSugarService.getCalculationsAggregate(uid, t, values);
     }
 
     @Get("/target")

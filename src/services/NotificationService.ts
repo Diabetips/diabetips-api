@@ -10,7 +10,9 @@ import admin = require("firebase-admin");
 
 import { Notification, User, NotificationFcmToken } from "../entities";
 import { ApiError } from "../errors";
-import { HttpStatus, Page, Pageable, Utils } from "../lib";
+import { getLang } from "../i18n";
+import { HttpStatus, Page, Pageable } from "../lib";
+import { logger } from "../logger";
 import { NotificationFcmTokenRegisterReq } from "../requests";
 import { NotificationsWebSocket } from "../ws";
 
@@ -23,7 +25,7 @@ const wsClients: {
 
 export class NotificationService extends BaseService {
 
-    public static async sendNotification(target: User, type: string, data: any) {
+    public static async sendNotification(target: User, type: string, data: { [key: string]: string } = {}, imageUrl: string | undefined = undefined, i18nParams: { [key: string]: any } = {}) {
         let notif = new Notification();
         notif.type = type;
         notif.data = data;
@@ -39,12 +41,29 @@ export class NotificationService extends BaseService {
 
         const fcmTokens = await target.notificationFcmTokens;
         if (fcmTokens.length > 0) {
-            await admin.messaging().sendMulticast({
+            const i18nTemplate = getLang(target.lang)?.notif[type];
+            if (!i18nTemplate) {
+                logger.warn(`Missing notification i18n template for lang ${target.lang} and type ${type}`);
+            }
+
+            const res = await admin.messaging().sendMulticast({
+                notification: (i18nTemplate ? {
+                    ...i18nTemplate(i18nParams),
+                    imageUrl,
+                } : undefined),
                 data: {
-                    "notification": JSON.stringify(notif, Utils.jsonReplacer),
+                    id: notif.id,
+                    type,
+                    ...data,
                 },
                 tokens: fcmTokens.map((nt) => nt.token)
             });
+
+            if (res.failureCount > 0) {
+                res.responses.filter((r) => !r.success).forEach((r) => {
+                    logger.error("Failed to send notification:", r.error);
+                });
+            }
         }
     }
 
@@ -63,10 +82,7 @@ export class NotificationService extends BaseService {
 
     public static async registerWsClient(uid: string, client: NotificationsWebSocket) {
         client.sendJsonMessage(await Notification.findAllUnread(uid));
-        if (wsClients[uid] == null) {
-            wsClients[uid] = [];
-        }
-        wsClients[uid].push(client);
+        (wsClients[uid] ??= []).push(client);
     }
 
     public static async unregisterWsClient(uid: string, client: NotificationsWebSocket) {

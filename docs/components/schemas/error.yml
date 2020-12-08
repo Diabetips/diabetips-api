@@ -50,6 +50,26 @@ ErrorMealNotFound:
           example: "meal_not_found"
         "message":
           example: "Meal 7 or User 01234567-89ab-cdef-0123-456789abcdef not found"
+ErrorMessageNotFound:
+  allOf:
+    - $component: "schemas:error.yml:Error"
+    - properties:
+        "status":
+          example: 404
+        "error":
+          example: "message_not_found"
+        "message":
+          example: "Message not found"
+ErrorAttachmentNotFound:
+  allOf:
+    - $component: "schemas:error.yml:Error"
+    - properties:
+        "status":
+          example: 404
+        "error":
+          example: "attachment_not_found"
+        "message":
+          example: "Attachment not found"
 ErrorNotificationNotFound:
   allOf:
     - $component: "schemas:error.yml:Error"
@@ -80,3 +100,13 @@ ErrorPredictionsDisabled:
           example: "predictions_disabled"
         "message":
           example: "Predictions are not enabled for this user"
+ErrorPredictionFailed:
+  allOf:
+    - $component: "schemas:error.yml:Error"
+    - properties:
+        "status":
+          example: 400
+        "error":
+          example: "prediction_failed"
+        "message":
+          example: "Missing recent blood sugar information"

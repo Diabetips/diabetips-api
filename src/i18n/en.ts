@@ -7,6 +7,7 @@
 */
 
 import { config } from "../config";
+import { User } from "../entities";
 
 import { Lang } from ".";
 
@@ -110,6 +111,29 @@ class English implements Lang {
         template_contact: "Contact us:",
         template_contact_email: "contact@diabetips.fr",
     };
+
+    notif = {
+        "chat_message": ((params: { content: string, from: User }) => ({
+            title: `${params.from.first_name} ${params.from.last_name}:`,
+            body: params.content,
+        })),
+        "predictions_enabled": ((params: {}) => ({
+            title: "Insulin predictions unlocked",
+            body: `Insulin predictions are now available for your account!`,
+        })),
+        "user_invite": ((params: { from: User }) => ({
+            title: "Connection request",
+            body: `Dr. ${params.from.last_name} requested access to your medical information`,
+        })),
+        "user_invite_accepted": ((params: { from: User }) => ({
+            title: "Invitation accepted",
+            body: `${params.from.first_name} ${params.from.last_name} accepted your connection request`,
+        })),
+        "test": ((params: {}) => ({
+            title: "Test notification",
+            body: "🤖 beep boop!"
+        })),
+    }
 }
 
 export const lang = new English();

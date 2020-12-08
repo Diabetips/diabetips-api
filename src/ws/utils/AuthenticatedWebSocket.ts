@@ -30,7 +30,7 @@ export class AuthenticatedWebSocket extends JsonWebSocket {
                 throw new ApiError(HttpStatus.BAD_REQUEST, "bad_request", "Invalid authentication message");
             }
 
-            this.auth = await AuthService.decodeBearerToken(msg.token);
+            this.auth = await AuthService.authFromBearerToken(msg.token);
 
             clearTimeout(this._authTimeout!);
             delete this._authTimeout;

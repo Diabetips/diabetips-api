@@ -7,6 +7,7 @@
 */
 
 import { config } from "../config";
+import { User } from "../entities";
 
 import { Lang } from ".";
 
@@ -121,6 +122,29 @@ class French implements Lang {
         template_contact: "Nous contacter :",
         template_contact_email: "contact@diabetips.fr",
     };
+
+    notif = {
+        "chat_message": ((params: { content: string, from: User }) => ({
+            title: `${params.from.first_name} ${params.from.last_name} :`,
+            body: params.content,
+        })),
+        "predictions_enabled": ((params: {}) => ({
+            title: "Prédictions d'insuline débloquées",
+            body: `Les prédictions d'insuline sont maintenant disponibles pour votre compte !`,
+        })),
+        "user_invite": ((params: { from: User }) => ({
+            title: "Demande de connexion",
+            body: `Dr. ${params.from.last_name} a demandé accès à votre profil patient`,
+        })),
+        "user_invite_accepted": ((params: { from: User }) => ({
+            title: "Invitation acceptée",
+            body: `${params.from.first_name} ${params.from.last_name} a accepté votre demande de connexion`,
+        })),
+        "test": ((params: {}) => ({
+            title: "Notification de test",
+            body: "🤖 bip boup !"
+        })),
+    }
 }
 
 export const lang = new French();

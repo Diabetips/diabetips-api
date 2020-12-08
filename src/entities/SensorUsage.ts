@@ -7,7 +7,7 @@
 */
 
 import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
-import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, SelectQueryBuilder } from "typeorm";
 import { Note, User } from ".";
 import { Pageable, Timeable, Page, Utils } from "../lib";
 
@@ -20,40 +20,39 @@ export class SensorUsage extends BaseEntity {
     @JoinColumn()
     public user: Promise<User>;
 
-    public static async findAll(userUid: string,
+    private static getBaseQuery(uid: string, options: IBaseQueryOptions): SelectQueryBuilder<SensorUsage> {
+        let qb = this
+            .createQueryBuilder("sensor_usage")
+            .leftJoin("sensor_usage.user", "user")
+            .where("user.uid = :uid", { uid });
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb
+                .andWhere("user.deleted = false")
+                .andWhere("sensor_usage.deleted = false");
+        }
+
+        return qb;
+    }
+
+    public static async findAll(uid: string,
                                 p: Pageable,
                                 t: Timeable,
                                 options: IBaseQueryOptions = {}):
                                 Promise<Page<SensorUsage>> {
-        let qb = this
-            .createQueryBuilder("sensor_usage")
-            .leftJoin("sensor_usage.user", "user")
-            .andWhere("user.uid = :userUid", { userUid })
+        const qb = this
+            .getBaseQuery(uid, options)
             .orderBy("sensor_usage.time", "DESC");
-
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb
-                .andWhere("user.deleted = false")
-                .andWhere("sensor_usage.deleted = false");
-        }
 
         return p.query(t.applyTimeRange(qb));
     }
 
-    public static async getCount(userUid: string,
+    public static async getCount(uid: string,
                                  t: Timeable,
                                  options: IBaseQueryOptions = {}):
                                  Promise<number> {
-        let qb = this
-            .createQueryBuilder("sensor_usage")
-            .leftJoin("sensor_usage.user", "user")
-            .where("user.uid = :userUid", { userUid })
+        const qb = this.getBaseQuery(uid, options)
 
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb
-                .andWhere("user.deleted = false")
-                .andWhere("sensor_usage.deleted = false");
-        }
         return t.applyTimeRange(qb).getCount();
     }
 }

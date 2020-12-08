@@ -1,0 +1,8 @@
+PlanningEventId:
+  in: "path"
+  name: "event_id"
+  description: "The user planning event's ID"
+  required: true
+  schema:
+    type: "integer"
+    example: 1

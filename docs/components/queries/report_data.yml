@@ -1,0 +1,10 @@
+ReportDataQuery:
+  in: query
+  name: data
+  description: "Type of data requested"
+  required: false
+  schema:
+    type: "string"
+    enum:
+      - "insulin"
+      - "blood_sugar"

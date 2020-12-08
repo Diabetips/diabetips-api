@@ -1,6 +1,7 @@
 version: "3"
 services:
   diabetips-api:
+    image: docker.pkg.github.com/diabetips/diabetips-api/api:sample
     container_name: diabetips-api.sample
     env_file: env.sample.txt
     networks:

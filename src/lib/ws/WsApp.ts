@@ -50,9 +50,18 @@ export function WsApp(options: WsAppOptions = {}): Application {
         logger(log, "connected");
         socket.on("close", (code) => { logger(log, `disconnected (${code})`); });
 
-        const handler = handlers.find((hdlr) => url.match(hdlr.route));
+        let path = url;
+        if (path.indexOf('?') !== -1) {
+            path = path.substr(0, path.indexOf('?'));
+        }
+
+        const handler = handlers.find((hdlr) => path.match(hdlr.route));
         if (handler == null) {
-            defaultHandler(socket, req);
+            try {
+                defaultHandler(socket, req);
+            } catch (err) {
+                errorHandler(socket, req, err);
+            }
             return;
         }
 

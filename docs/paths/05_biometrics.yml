@@ -335,6 +335,51 @@
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/blood_sugar/calculations/aggregate":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    security:
+      - OAuth2:
+          - "biometrics:read"
+    tags:
+      - "Biometrics"
+    summary: "Get blood sugar calculations aggregate"
+    description: |
+      Get different calculations about the user's blood sugar over a period of time.
+      Calculations that are not requested will not appear in the resulting response.
+
+      This route will disregard the hours provided in the time range, and will instead include both full days
+      in it. For example : `start=2020-15-02T05:02:56` will become `2020-15-02T00:00:00` and
+      `end=2020-15-19T13:27:42` will become `2020-15-19T23:59:59`
+
+      The calculations are each represented by an array of 24 objects, each representing a 1 hour period,
+      starting from 00h00 to 00:59 at index 0.
+
+      If no `calcs` query parameters are provided, then all types of calculations will be returned.
+
+      In the case where multiple `calcs` or `types` QP are provided, they will be considered as a list and all requested calculations will be returned.
+
+      Example: `/calculations/aggregate?calcs=avereage&calcs=first&start=...` will include both averaege and first quartile calculations, but will omit third quartile.
+    parameters:
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+      - $component: "queries:blood_sugar_calculations.yml:BSCalcsQuery"
+    responses:
+      200:
+        description: "The calculations requested"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:blood_sugar_calculations.yml:BloodSugarCalculationsAggregate"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
 "/v1/users/{uid}/blood_sugar/target":
   parameters:
     - $component: "parameters:uid.yml:UID"
@@ -805,6 +850,244 @@
         description: |
           No user with the specified UID was found or the current authenticated user does not have permission to view
           them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/report/daily":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    security:
+      - OAuth2:
+          - "biometrics:read"
+    tags:
+      - "Biometrics"
+    summary: "Get user daily report"
+    description: |
+      Get the daily report of the user with the specified UID, of everyday between the two time bounds (inclusive).
+      Data types that are not requested will not appear in the resulting response.
+
+      If no `data` query parameters are provided, then all types of data will be returned.
+
+      In the case where multiple `data` QP are provided, they will be considered as a list and all requested data will be returned.
+
+      Example: `/report/daily?data=blood_sugar&data=insulin&start=...` will return both insulin and blood_sugar.
+
+      Implements [Timeable](#tag/Timeable)
+    parameters:
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+      - $component: "queries:report_data.yml:ReportDataQuery"
+    responses:
+      200:
+        description: "The daily report"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:biometric_report.yml:BiometricReport"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/report/hourly":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    security:
+      - OAuth2:
+          - "biometrics:read"
+    tags:
+      - "Biometrics"
+    summary: "Get user hourly report"
+    description: |
+      Get the hourly report of the user with the specified UID, of everyday between the two time bounds (inclusive).
+      Data types that are not requested will not appear in the resulting response.
+
+      If no `data` query parameters are provided, then all types of data will be returned.
+
+      In the case where multiple `data` QP are provided, they will be considered as a list and all requested data will be returned.
+
+      Example: `/report/hourly?data=blood_sugar&data=insulin&start=...` will return both insulin and blood_sugar.
+
+      Implements [Timeable](#tag/Timeable)
+    parameters:
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+      - $component: "queries:report_data.yml:ReportDataQuery"
+    responses:
+      200:
+        description: "The hourly report"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:biometric_report.yml:BiometricReport"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/activity":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+  get:
+    security:
+      - OAuth2:
+          - "biometrics:read"
+    tags:
+      - "Biometrics"
+    summary: "Get all physical activities"
+    description: |
+      Get a list of all the physical activities for the user with the specified UID.
+
+      Implements [Paging](#tag/Paging) and [Timeable](#tag/Timeable)
+    parameters:
+      - $component: "queries:paging.yml:PageQuery"
+      - $component: "queries:paging.yml:SizeQuery"
+      - $component: "queries:period.yml:StartQuery"
+      - $component: "queries:period.yml:EndQuery"
+    responses:
+      200:
+        description: "The user's activities"
+        headers:
+          "X-Pages":
+            schema:
+              $component: "schemas:paging.yml:PagesHeader"
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $component: "schemas:physical_activity.yml:PhysicalActivity"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to view
+          them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  post:
+    security:
+      - OAuth2:
+          - "biometrics:write"
+    tags:
+      - "Biometrics"
+    summary: "Add physical activity"
+    description: |
+      Add a physical activity for the user with the specified UID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:physical_activity.yml:PhysicalActivity"
+    responses:
+      200:
+        description: "The physical activity was added"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:physical_activity.yml:PhysicalActivity"
+      404:
+        description: |
+          No user with the specified UID was found or the current authenticated user does not have permission to
+          modify them
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+"/v1/users/{uid}/activity/{activity_id}":
+  parameters:
+    - $component: "parameters:uid.yml:UID"
+    - $component: "parameters:physical_activity_id.yml:PhysicalActivityId"
+  get:
+    security:
+      - OAuth2:
+          - "biometrics:read"
+    tags:
+      - "Biometrics"
+    summary: "Get activity"
+    description: |
+      Get the physical activity for the user with the specified UID and ID.
+    responses:
+      200:
+        description: "The physical activity"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:physical_activity.yml:PhysicalActivity"
+      404:
+        description: |
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to view
+           them
+           * No physical activity with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  put:
+    security:
+      - OAuth2:
+          - "biometrics:write"
+    tags:
+      - "Biometrics"
+    summary: "Update physical activity"
+    description: |
+      Update the physical activity for the user with the specified UID and ID.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $component: "schemas:physical_activity.yml:PhysicalActivity"
+    responses:
+      200:
+        description: "The updated physical activity injection's data"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:physical_activity.yml:PhysicalActivity"
+      404:
+        description: |
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No physical activity with the specified ID was found"
+        content:
+          application/json:
+            schema:
+              $component: "schemas:error.yml:ErrorUserNotFound"
+  delete:
+    security:
+      - OAuth2:
+          - "biometrics:write"
+    tags:
+      - "Biometrics"
+    summary: "Remove physical activity"
+    description: |
+      Remove the physical activity for the user with the specified UID and ID.
+    responses:
+      204:
+        description: "The physical activity was removed"
+      404:
+        description: |
+          Either:
+           * No user with the specified UID was found or the current authenticated user does not have permission to vie
+           modify them
+           * No physical activity with the specified ID was found"
         content:
           application/json:
             schema:

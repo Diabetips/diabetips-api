@@ -23,6 +23,8 @@ import { Meal } from "./Meal";
 import { Note } from "./Note";
 import { Notification } from "./Notification";
 import { NotificationFcmToken } from "./NotificationFcmToken";
+import { PhysicalActivity } from "./PhysicalActivity";
+import { PlanningEvent } from "./PlanningEvent";
 import { Prediction } from "./Prediction";
 import { PredictionSettings } from "./PredictionSettings";
 import { Recipe } from "./Recipe";
@@ -97,6 +99,9 @@ export class User extends BaseEntityHiddenId {
     @OneToMany(() => Meal, (meal) => meal.user)
     public meals: Promise<Meal[]>;
 
+    @OneToMany(() => PhysicalActivity, (activity) => activity.user)
+    public physical_activities: Promise<PhysicalActivity[]>;
+
     @OneToMany(() => Insulin, (insulin) => insulin.user)
     public insulin: Promise<Insulin[]>;
 
@@ -123,6 +128,9 @@ export class User extends BaseEntityHiddenId {
 
     @OneToMany(() => Event, (event) => event.user)
     public event: Promise<Event[]>;
+
+    @OneToMany(() => PlanningEvent, (event) => event.owner)
+    public owned_events: Promise<Event[]>;
 
     @OneToMany(() => StickyNote, (sticky_note) => sticky_note.user)
     public sticky_notes: Promise<StickyNote[]>;

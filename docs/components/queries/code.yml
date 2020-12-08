@@ -1,0 +1,7 @@
+CodeQuery:
+  in: query
+  name: code
+  description: "Barcode of the food"
+  required: false
+  schema:
+    type: "string"

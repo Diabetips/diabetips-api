@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Sat Dec 14 2019
 */
 
-import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, SelectQueryBuilder } from "typeorm";
 
 import { Page, Pageable, Timeable, Utils } from "../lib";
 
@@ -14,6 +14,7 @@ import { BaseEntity, IBaseQueryOptions } from "./BaseEntity";
 
 import { User } from "./User";
 import { InsulinSearchReq } from "../requests";
+import { Prediction } from ".";
 
 export enum InsulinType {
     SLOW = "slow",
@@ -43,7 +44,25 @@ export class Insulin extends BaseEntity {
     @JoinColumn()
     public user: Promise<User>;
 
+    @OneToOne(() => Prediction, (prediction) => prediction.injection)
+    @JoinColumn({ name: "prediction_id" })
+    public prediction: Prediction;
+
     // Repository functions
+
+    public static getBaseQuery(patientUid: string, options: IBaseQueryOptions): SelectQueryBuilder<Insulin> {
+        let qb = this
+            .createQueryBuilder("insulin")
+            .leftJoin("insulin.user", "user")
+            .where("user.uid = :patientUid", { patientUid })
+
+        if (Utils.optionDefault(options.hideDeleted, true)) {
+            qb = qb
+                .andWhere("user.deleted = false")
+                .andWhere("insulin.deleted = false");
+        }
+        return qb;
+    }
 
     public static async findAllPageable(patientUid: string,
                                         p: Pageable,
@@ -51,17 +70,10 @@ export class Insulin extends BaseEntity {
                                         s: InsulinSearchReq,
                                         options: IBaseQueryOptions = {}):
                                         Promise<Page<Insulin>> {
-        let qb = this
-            .createQueryBuilder("insulin")
-            .leftJoin("insulin.user", "user")
-            .where("user.uid = :patientUid", { patientUid })
+        let qb = this.
+            getBaseQuery(patientUid, options)
             .orderBy("insulin.time", "DESC");
 
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb
-                .andWhere("user.deleted = false")
-                .andWhere("insulin.deleted = false");
-        }
         qb = s.apply(qb);
         qb = t.applyTimeRange(qb);
 
@@ -74,16 +86,9 @@ export class Insulin extends BaseEntity {
                                 options: IBaseQueryOptions = {}):
                                 Promise<Insulin[]> {
         let qb = this
-            .createQueryBuilder("insulin")
-            .leftJoin("insulin.user", "user")
-            .where("user.uid = :patientUid", { patientUid })
+            .getBaseQuery(patientUid, options)
             .orderBy("insulin.time", "DESC");
 
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb
-                .andWhere("user.deleted = false")
-                .andWhere("insulin.deleted = false");
-        }
         qb = s.apply(qb);
         qb = t.applyTimeRange(qb);
 
@@ -94,18 +99,22 @@ export class Insulin extends BaseEntity {
                                  insulinId: number,
                                  options: IBaseQueryOptions = {}):
                                  Promise<Insulin | undefined> {
-        let qb = this
-            .createQueryBuilder("insulin")
-            .leftJoin("insulin.user", "user")
-            .where("insulin.id = :insulinId", { insulinId })
-            .andWhere("user.uid = :patientUid", { patientUid });
-
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb
-                .andWhere("user.deleted = false")
-                .andWhere("insulin.deleted = false");
-        }
+        const qb = this
+            .getBaseQuery(patientUid, options)
+            .andWhere("insulin.id = :insulinId", { insulinId });
 
         return qb.getOne();
+    }
+
+    public static async findAllAndCompare(uid: string,
+                                          p: Pageable,
+                                          t: Timeable,
+                                          options: IBaseQueryOptions = {}):
+                                          Promise<Page<Insulin>> {
+        const qb = this
+            .getBaseQuery(uid, options)
+            .leftJoinAndSelect("insulin.prediction", "prediction");
+
+        return p.query(t.applyTimeRange(qb));
     }
 }

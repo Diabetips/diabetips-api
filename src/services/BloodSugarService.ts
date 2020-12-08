@@ -7,6 +7,7 @@
 */
 
 import { BloodSugar, User, BloodSugarCalculation, BloodSugarCalculationType, BloodSugarTarget } from "../entities";
+import { BloodSugarCalculationAggregate } from "../entities/BloodSugarCalculationAggregate";
 import { ApiError } from "../errors";
 import { HttpStatus, Page, Pageable, Timeable } from "../lib";
 import { BloodSugarCreateReq, BloodSugarUpdateReq, TimeRangeReq, BloodSugarTargetFormatReq } from "../requests";
@@ -86,6 +87,15 @@ export class BloodSugarService extends BaseService {
                                         calcs: BloodSugarCalculationType[]):
                                         Promise<BloodSugarCalculation> {
         const res = new BloodSugarCalculation();
+        await res.init(uid, t, calcs);
+        return res;
+    }
+
+    public static async getCalculationsAggregate(uid: string,
+                                                 t: TimeRangeReq,
+                                                 calcs: BloodSugarCalculationType[]):
+                                                 Promise<BloodSugarCalculationAggregate> {
+        const res = new BloodSugarCalculationAggregate();
         await res.init(uid, t, calcs);
         return res;
     }

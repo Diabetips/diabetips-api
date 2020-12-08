@@ -6,9 +6,10 @@
 ** Created by Arthur MELIN on Fri Jul 10 2020
 */
 
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, OneToMany, SelectQueryBuilder } from "typeorm";
 
 import { AuthScope, Utils } from "../lib";
+import { UserAppsSearchReq } from "../requests";
 
 import { AuthApp } from "./AuthApp";
 import { AuthCode } from "./AuthCode";
@@ -58,27 +59,31 @@ export class AuthUserApp extends BaseEntity {
 
     // Repository functions
 
-    public static async findAllByUid(uid: string): Promise<AuthUserApp[]> {
-        const qb = this
+    public static getBaseQuery(uid: string): SelectQueryBuilder<AuthUserApp> {
+        return this
             .createQueryBuilder("user_app")
-            .leftJoin("user_app.user", "user")
             .leftJoinAndSelect("user_app.app", "app")
+            .leftJoin("user_app.user", "user")
             .where("user.uid = :uid", { uid })
-            .andWhere("user_app.revoked = false")
-            .andWhere("app.internal = false")
+            .andWhere("user_app.revoked = false");
+    }
+
+    public static async findAllByUid(uid: string, req: UserAppsSearchReq): Promise<AuthUserApp[]> {
+        let qb = this
+            .getBaseQuery(uid)
             .orderBy("user_app.date", "DESC");
+
+        if (!Utils.optionDefault(req.internal, false)) {
+            qb = qb.andWhere("internal = false");
+        }
 
         return qb.getMany();
     }
 
     public static async findByUidAndAppid(uid: string, appid: string, options: IAuthUserAppQueryOptions = {}): Promise<AuthUserApp | undefined> {
         let qb = this
-            .createQueryBuilder("user_app")
-            .leftJoinAndSelect("user_app.app", "app")
-            .leftJoin("user_app.user", "user")
-            .where("user.uid = :uid", { uid })
-            .andWhere("app.appid = :appid", { appid })
-            .andWhere("user_app.revoked = false");
+            .getBaseQuery(uid)
+            .andWhere("app.appid = :appid", { appid });
 
         if (Utils.optionDefault(options.selectAuthCodesAndRefreshTokens, false)) {
             qb = qb

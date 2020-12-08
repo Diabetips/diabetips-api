@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Thu Oct 10 2019
 */
 
-import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, SelectQueryBuilder } from "typeorm";
 
 import { HttpStatus, Utils } from "../lib";
 
@@ -77,24 +77,26 @@ export class Ingredient extends BaseEntityHiddenId {
         this.total_proteins      = (this.food.proteins_100g ?? 0) / 100 * this.quantity;
     }
 
-    public static async findAll(options: IBaseQueryOptions = {}): Promise<Ingredient[]> {
+    private static getBaseQuery(options: IBaseQueryOptions): SelectQueryBuilder<Ingredient> {
         let qb = this.createQueryBuilder("ingredient");
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb.andWhere("ingredient.deleted = false");
         }
 
+        return qb;
+    }
+
+    public static async findAll(options: IBaseQueryOptions = {}): Promise<Ingredient[]> {
+        const qb = this.getBaseQuery(options);
+
         return qb.getMany();
     }
 
     public static async findById(id: number, options: IBaseQueryOptions = {}): Promise<Ingredient | undefined> {
-        let qb = this
-            .createQueryBuilder("ingredient")
+        const qb = this
+            .getBaseQuery(options)
             .where("ingredient.id = :id", { id });
-
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb.andWhere("ingredient.deleted = false");
-        }
 
         return qb.getOne();
     }

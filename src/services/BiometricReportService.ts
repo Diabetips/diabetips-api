@@ -32,7 +32,7 @@ export class BiometricReportService extends BaseService {
             }
             if (d.data.includes(BiometricReportCalculationType.INSULIN) || d.data.length === 0) {
                 const insulinReport = new InsulinReport();
-                insulinReport.init(uid, period, new InsulinSearchReq());
+                await insulinReport.init(uid, period, new InsulinSearchReq());
                 report.insulin = insulinReport;
             }
             reports.push(report);

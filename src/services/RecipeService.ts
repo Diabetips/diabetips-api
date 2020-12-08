@@ -135,7 +135,12 @@ export class RecipeService extends BaseService {
 
     public static async getFavoriteRecipes(uid: string, p: Pageable): Promise<Recipe[]> {
         const user = await UserService.getUser(uid);
-        return user.favoriteRecipes;
+        const favorites: Recipe[] = [];
+        for (const recipe of await user.favoriteRecipes) {
+            const favorite = await RecipeService.getRecipe(recipe.id);
+            favorites.push(favorite);
+        }
+        return favorites;
     }
 
     public static async addFavoriteRecipe(uid: string, id: number) {

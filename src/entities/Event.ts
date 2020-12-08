@@ -6,7 +6,7 @@
 ** Created by Alexandre DE BEAUMONT on Mon May 18 2020
 */
 
-import { Column, ManyToOne, JoinColumn, Entity } from "typeorm";
+import { Column, ManyToOne, JoinColumn, Entity, SelectQueryBuilder } from "typeorm";
 import { User } from ".";
 import { Pageable, Timeable, Page, Utils } from "../lib";
 import { IBaseQueryOptions } from "./BaseEntityHiddenId";
@@ -27,40 +27,40 @@ export class Event extends BaseEntity {
     @JoinColumn()
     public user: Promise<User>;
 
-    public static async findAll(userUid: string,
-                                p: Pageable,
-                                t: Timeable,
-                                options: IBaseQueryOptions = {}):
-                                Promise<Page<Event>> {
+    private static getBaseQuery(uid: string, options: IBaseQueryOptions): SelectQueryBuilder<Event> {
         let qb = this
             .createQueryBuilder("event")
             .leftJoin("event.user", "user")
-            .andWhere("user.uid = :userUid", { userUid })
-            .orderBy("event.start", "DESC");
-
-        if (Utils.optionDefault(options.hideDeleted, true)) {
-            qb = qb
-                .andWhere("user.deleted = false")
-                .andWhere("event.deleted = false");
-    }
-
-        return p.query(t.applyTimeRange(qb, true));
-    }
-    public static async findById(userUid: string,
-                                 eventId: number,
-                                 options: IBaseQueryOptions = {}):
-                                 Promise<Event | undefined> {
-        let qb = this
-            .createQueryBuilder("event")
-            .leftJoin("event.user", "user")
-            .where("event.id = :eventId", { eventId })
-            .andWhere("user.uid = :userUid", { userUid });
+            .where("user.uid = :uid", { uid });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {
             qb = qb
                 .andWhere("user.deleted = false")
                 .andWhere("event.deleted = false");
         }
+
+        return qb;
+    }
+
+    public static async findAll(uid: string,
+                                p: Pageable,
+                                t: Timeable,
+                                options: IBaseQueryOptions = {}):
+                                Promise<Page<Event>> {
+        const qb = this
+            .getBaseQuery(uid, options)
+            .orderBy("event.start", "DESC");
+
+        return p.query(t.applyTimeRange(qb, true));
+    }
+    public static async findById(uid: string,
+                                 eventId: number,
+                                 options: IBaseQueryOptions = {}):
+                                 Promise<Event | undefined> {
+        const qb = this
+            .getBaseQuery(uid, options)
+            .andWhere("event.id = :eventId", { eventId });
+
 
         return qb.getOne();
     }

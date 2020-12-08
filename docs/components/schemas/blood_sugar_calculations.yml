@@ -23,3 +23,35 @@ BloodSugarCalculations:
       type: "number"
       description: "Third quartile of the values between the two timestamps"
       example: 60.5
+
+BloodSugarCalculationsAggregate:
+  type: "object"
+  properties:
+    "start":
+      type: string
+      format: date-time
+      description: "Start of the period"
+      example: "2020-07-31T00:00:00.000Z"
+    "end":
+      type: string
+      format: date-time
+      description: "End of the period"
+      example: "2020-07-31T23:59:59.999Z"
+    "average":
+      type: "array"
+      description: "Average of the values between the two timestamps"
+      items:
+        type: number
+        example: 45.9
+    "first":
+      type: "array"
+      description: "First quartile of the values between the two timestamps"
+      items:
+        type: number
+        example: 20.3
+    "third":
+      type: "array"
+      description: "Third quartile of the values between the two timestamps"
+      items:
+        type: number
+        example: 60.5

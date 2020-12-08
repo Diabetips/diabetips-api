@@ -66,6 +66,15 @@ export class Recipe extends BaseEntity {
 
     // Repository functions
 
+    private static getBaseQuery(options: IBaseQueryOptions): SelectQueryBuilder<Recipe> {
+        const qb = this
+            .createQueryBuilder("recipe")
+            .leftJoinAndSelect("recipe.ingredients", "ingredients")
+            .leftJoinAndSelect("ingredients.food", "food");
+
+        return qb;
+    }
+
     public static async findAll(p: Pageable,
                                 s: RecipeSearchReq = {},
                                 options: IBaseQueryOptions = {}):
@@ -84,10 +93,8 @@ export class Recipe extends BaseEntity {
         };
 
         let qb = this
-            .createQueryBuilder("recipe")
-            .leftJoinAndSelect("recipe.author", "author")
-            .leftJoinAndSelect("recipe.ingredients", "ingredients")
-            .leftJoinAndSelect("ingredients.food", "food")
+            .getBaseQuery(options)
+            .leftJoin("recipe.author", "author")
             .andWhere((sqb) => "recipe.id IN " + p.limit(subq(sqb.subQuery().from("recipe", "recipe"))).getQuery());
 
         if (s.author !== undefined) {
@@ -99,10 +106,7 @@ export class Recipe extends BaseEntity {
 
     public static async findById(id: number, options: IBaseQueryOptions = {}): Promise<Recipe | undefined> {
         let qb = this
-            .createQueryBuilder("recipe")
-            .leftJoinAndSelect("recipe.author", "author")
-            .leftJoinAndSelect("recipe.ingredients", "ingredients")
-            .leftJoinAndSelect("ingredients.food", "food")
+            .getBaseQuery(options)
             .where("recipe.id = :id", { id });
 
         if (Utils.optionDefault(options.hideDeleted, true)) {

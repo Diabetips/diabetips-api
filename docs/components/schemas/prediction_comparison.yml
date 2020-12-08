@@ -1,0 +1,31 @@
+PredictionComparison:
+  type: "object"
+  properties:
+    "id":
+      allOf:
+        - $component: "schemas:insulin.yml:InsulinId"
+        - readOnly: true
+    "description":
+      type: "string"
+      description: "The insulin injection's description"
+      example: "Slow insulin before bed"
+    "quantity":
+      type: "number"
+      description: "Quantity of insulin injected in milligrams"
+    "time":
+      type: "string"
+      format: "date-time"
+      description: "Time of the insulin injection"
+      example: "2020-07-31T14:28:29.949Z"
+    "type":
+      type: string
+      description: "Type of the injected insulin"
+      example: slow
+      enum:
+        - slow
+        - fast
+        - very_fast
+      nullable: false
+    "prediction":
+      allOf:
+        - $component: "schemas:prediction.yml:Prediction"

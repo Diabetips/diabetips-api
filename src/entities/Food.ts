@@ -100,6 +100,10 @@ export class Food extends BaseEntity {
         } else {
             qb.orderBy("food.datarank", "DESC");
         }
+        if (req.code !== undefined) {
+            qb = qb
+                .andWhere(`food.datasrc LIKE :pattern`, { pattern: `%:%${req.code}%` });
+        }
 
         return p.query(qb);
     }

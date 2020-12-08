@@ -11,21 +11,23 @@ import { NotificationService } from "../services";
 
 import { AuthenticatedWebSocket } from "./utils/AuthenticatedWebSocket";
 
-@WSHandler("/v1/users/:uid/notifications")
+@WSHandler("/v1/notifications")
 export class NotificationsWebSocket extends AuthenticatedWebSocket {
+
+    private uid: string;
 
     public async onAuthenticated() {
         const auth = this.auth!;
-        if (auth!.type === "user" && this.params.uid === "me") {
-            this.params.uid = auth.uid;
+        if (auth.type === "user") {
+            this.uid = auth.uid;
         }
         await this.checkAuthorized("notifications");
-        await NotificationService.registerWsClient(this.params.uid, this);
+        await NotificationService.registerWsClient(this.uid, this);
     }
 
     public async onDisconnect(code: number, reason: string) {
         super.onDisconnect(code, reason);
-        await NotificationService.unregisterWsClient(this.params.uid, this);
+        await NotificationService.unregisterWsClient(this.uid, this);
     }
 
 }
