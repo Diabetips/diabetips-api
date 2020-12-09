@@ -90,22 +90,3 @@
           application/json:
             schema:
               $component: "schemas:error.yml:ErrorUserNotFound"
-"/v1/notifications/test":
-  get:
-    tags:
-      - "Notifications"
-    summary: "Send a test notification"
-    description: |
-      Send a test notification to the currently authenticated user.
-
-      **TEMPORARY DEBUG ROUTE**
-    responses:
-      204:
-        description: "Notification sent"
-      404:
-        description: |
-          The currently authenticated user does not have permission to view notifications
-        content:
-          application/json:
-            schema:
-              $component: "schemas:error.yml:ErrorUserNotFound"
