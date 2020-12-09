@@ -44,20 +44,27 @@ export class UserConnectionService extends BaseService {
                 last_name: user.last_name,
                 invite,
             });
-        } else if (user.uid === target.uid) {
-            throw new ApiError(HttpStatus.FORBIDDEN, "forbidden", "Users cannot invite themselves");
         } else {
-            const conn = new UserConnection();
-            conn.source = user;
-            conn.target = target;
-            await conn.save();
+            if (user.uid === target.uid) {
+                throw new ApiError(HttpStatus.FORBIDDEN, "forbidden", "Users cannot invite themselves");
+            }
 
-            const imageToken = await AuthService.generateUrlAccessToken(target);
-            const imageUrl = `${config.diabetips.apiUrl}/v1/users/${user.uid}/picture?token=${imageToken}`;
+            let conn = await UserConnection.findByUids(uid, target.uid);
+            if (conn == null) {
+                conn = new UserConnection();
+                conn.source = user;
+                conn.target = target;
+                conn = await conn.save();
+            }
 
-            await NotificationService.sendNotification(target, "user_invite", {
-                from_uid: user.uid,
-            }, imageUrl, { from: user });
+            if (!conn.accepted) {
+                const imageToken = await AuthService.generateUrlAccessToken(target);
+                const imageUrl = `${config.diabetips.apiUrl}/v1/users/${user.uid}/picture?token=${imageToken}`;
+
+                await NotificationService.sendNotification(target, "user_invite", {
+                    from_uid: user.uid,
+                }, imageUrl, { from: user });
+            }
         }
     }
 
